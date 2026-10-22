@@ -12,6 +12,19 @@ The Pulse project is not touched by this folder.
   - It prints this laptop's IP address. On the TV, open `http://<that IP>:3300/live`.
   - Windows may ask to allow Node.js through the firewall. Allow it for private networks.
 
+## MongoDB & Cloud Deployment
+- **MongoDB Atlas Integration**: Data is stored in MongoDB Atlas (`nazar.tweets`).
+- When running without local CSV files (e.g., deployed to **Railway**, **Render**, or **Vercel**), `server.js` automatically connects to MongoDB Atlas.
+- Configure `.env` with:
+  ```env
+  MONGODB_URI=your_mongodb_connection_string
+  USE_MONGO=true
+  ```
+- **To deploy on Railway or Render**:
+  1. Link your GitHub repo: `https://github.com/harshit22oct-lang/NazarIndianPoliticsPulse`
+  2. Set environment variable: `MONGODB_URI`
+  3. Start command: `npm start`
+
 Useful links:
 
 | Link | What it shows |

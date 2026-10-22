@@ -430,7 +430,7 @@ function makeFacts(s) {
              aAccounts: a.accounts.collected, bAccounts: b.accounts.collected });
   }
   var st = s.states.filter(function (x) { return !x.limited; })[0];
-  if (st) f.push({ type: 'top_state', state: st.state, posts: st.posts });
+  if (st && !stateOfScope(s.scope)) f.push({ type: 'top_state', state: st.state, posts: st.posts });   // inside one state it says nothing
   if (s.topPost && s.topPost.views > 0) {
     f.push({ type: 'top_post', name: s.topPost.name, handle: s.topPost.handle, views: s.topPost.views });
   }

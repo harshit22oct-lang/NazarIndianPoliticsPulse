@@ -21,8 +21,26 @@ var urlm = require('url');
 var APP = path.join(__dirname, 'app');
 var DATA = path.join(__dirname, 'data');
 var ASSETS = path.join(APP, 'live_assets');
+
+/* Load .env file if present */
+try {
+  var envPath = path.join(__dirname, '.env');
+  if (fs.existsSync(envPath)) {
+    fs.readFileSync(envPath, 'utf8').split(/\r?\n/).forEach(function (line) {
+      var m = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
+      if (m && process.env[m[1]] === undefined) {
+        var val = (m[2] || '').trim();
+        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.slice(1, -1);
+        }
+        process.env[m[1]] = val;
+      }
+    });
+  }
+} catch (e) {}
+
 var PORT = Number(process.env.PORT) || 3300;
-var HOST = process.env.HOST || '127.0.0.1';
+var HOST = process.env.HOST || (process.env.PORT ? '0.0.0.0' : '127.0.0.1');
 
 var LIVE = require(path.join(APP, 'live_lib.js'));
 var NEWS = require(path.join(APP, 'news_lib.js'));
@@ -35,7 +53,15 @@ LIVE.C.BASE_DAYS = 7;
 LIVE.C.BASE_MIN_DAYS = 3;
 LIVE.C.BREAK_BASE_DAYS = 6;
 
-/* ------------------------------------------------------------ CSV loading */
+var MONGO_URI = process.env.MONGODB_URI || 'mongodb+srv://harshit22oct_db_user:harshit22oct5094@cluster0.hjn4toa.mongodb.net/';
+var DB_NAME = process.env.DB_NAME || 'nazar';
+var COLL_NAME = process.env.COLL_NAME || 'tweets';
+
+if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
+/* ------------------------------------------------------------ Data loading (Mongo / CSV) */
 var KEEP = ['Handle', 'Tweet URL', 'Tweet ID', 'Tweet Date', 'Tweet Text', 'Total Comments', 'Total Likes',
             'Total Retweets', 'Total Views', 'Sentiment', 'State', 'Candidate Name', 'Category', 'Party'];
 
@@ -65,10 +91,31 @@ function readCsv(file, onRow) {
   });
 }
 
-async function loadData() {
-  var files = [];
-  try { files = fs.readdirSync(DATA).filter(function (f) { return /\.csv$/i.test(f); }); } catch (e) {}
-  if (!files.length) throw new Error('No .csv file in ' + DATA + ' -- put the PulseData export there.');
+async function loadFromMongo() {
+  var { MongoClient } = require('mongodb');
+  console.log('  Connecting to MongoDB Atlas (' + DB_NAME + '.' + COLL_NAME + ')...');
+  var client = new MongoClient(MONGO_URI);
+  await client.connect();
+  var coll = client.db(DB_NAME).collection(COLL_NAME);
+  var t0 = Date.now();
+  console.log('  Loading tweets from MongoDB Atlas...');
+  var rows = await coll.find({}, {
+    projection: {
+      Handle: 1, 'Tweet URL': 1, 'Tweet ID': 1, 'Tweet Date': 1, 'Tweet Text': 1,
+      'Total Comments': 1, 'Total Likes': 1, 'Total Retweets': 1, 'Total Views': 1,
+      Sentiment: 1, State: 1, 'Candidate Name': 1, Category: 1, Party: 1
+    }
+  }).sort({ 'Tweet Date': 1 }).toArray();
+  console.log('  Loaded ' + rows.length.toLocaleString('en-IN') + ' posts from MongoDB in ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s');
+  await client.close();
+  for (var i = 0; i < rows.length; i++) {
+    var cs = LIVE.stateOf(rows[i].State);
+    if (cs) rows[i].State = cs;
+  }
+  return rows;
+}
+
+async function loadFromCsv(files) {
   var byId = {}, rows = [], skipped = 0;
   for (var k = 0; k < files.length; k++) {
     var head = null, ix = null, t0 = Date.now(), n = 0;
@@ -78,11 +125,11 @@ async function loadData() {
       var d = {};
       for (var j = 0; j < KEEP.length; j++) d[KEEP[j]] = ix[j] >= 0 && r[ix[j]] !== undefined ? r[ix[j]] : '';
       if (!/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d/.test(d['Tweet Date']) || !d.Handle) { skipped++; return; }
-      var cs = LIVE.stateOf(d.State); if (cs) d.State = cs;     // one spelling per state, so a state filter finds all of it
+      var cs = LIVE.stateOf(d.State); if (cs) d.State = cs;
       ['Total Views', 'Total Likes', 'Total Retweets', 'Total Comments'].forEach(function (f) { var v = Number(d[f]); d[f] = isFinite(v) ? v : 0; });
       var id = d['Tweet ID'] || d['Tweet URL'] || (d.Handle + '|' + d['Tweet Date']);
       d._id = id;
-      if (byId[id]) { Object.assign(byId[id], d); return; }    // same post in two files: keep the newer counts
+      if (byId[id]) { Object.assign(byId[id], d); return; }
       byId[id] = d; rows.push(d); n++;
     });
     console.log('  loaded ' + files[k] + ' -- ' + n.toLocaleString('en-IN') + ' posts in ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s');
@@ -90,6 +137,28 @@ async function loadData() {
   rows.sort(function (a, b) { return a['Tweet Date'] < b['Tweet Date'] ? -1 : a['Tweet Date'] > b['Tweet Date'] ? 1 : 0; });
   if (skipped) console.log('  skipped ' + skipped + ' rows without a valid date / handle');
   return rows;
+}
+
+async function loadData() {
+  var files = [];
+  try { files = fs.readdirSync(DATA).filter(function (f) { return /\.csv$/i.test(f); }); } catch (e) {}
+
+  if (process.env.USE_MONGO === 'true' || !files.length) {
+    if (files.length) console.log('  [Data Source] USE_MONGO set -> loading from MongoDB Atlas');
+    else console.log('  [Data Source] No local CSV found -> loading from MongoDB Atlas');
+    try {
+      return await loadFromMongo();
+    } catch (err) {
+      if (files.length) {
+        console.warn('  ⚠️ MongoDB connection failed (' + err.message + '). Falling back to local CSV...');
+        return await loadFromCsv(files);
+      }
+      throw err;
+    }
+  }
+
+  console.log('  [Data Source] Local CSV found -> loading from ' + DATA + ' (set USE_MONGO=true to use MongoDB Atlas)');
+  return await loadFromCsv(files);
 }
 
 /* ------------------------------------------- an in-memory "collection" --
