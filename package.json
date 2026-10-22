@@ -11,5 +11,8 @@
   "dependencies": {
     "@ngrok/ngrok": "^1.7.0",
     "mongodb": "^6.21.0"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
