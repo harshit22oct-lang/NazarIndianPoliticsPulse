@@ -98,20 +98,28 @@ async function loadFromMongo() {
   await client.connect();
   var coll = client.db(DB_NAME).collection(COLL_NAME);
   var t0 = Date.now();
-  console.log('  Loading tweets from MongoDB Atlas...');
-  var rows = await coll.find({}, {
+  console.log('  Loading tweets from MongoDB Atlas (streaming)...');
+  var cursor = coll.find({}, {
     projection: {
-      Handle: 1, 'Tweet URL': 1, 'Tweet ID': 1, 'Tweet Date': 1, 'Tweet Text': 1,
-      'Total Comments': 1, 'Total Likes': 1, 'Total Retweets': 1, 'Total Views': 1,
+      _id: 0, Handle: 1, 'Tweet Date': 1, 'Tweet Text': 1, 'Tweet URL': 1,
+      'Total Views': 1, 'Total Likes': 1, 'Total Retweets': 1, 'Total Comments': 1,
       Sentiment: 1, State: 1, 'Candidate Name': 1, Category: 1, Party: 1
     }
-  }).sort({ 'Tweet Date': 1 }).toArray();
+  }).sort({ 'Tweet Date': 1 });
+
+  var rows = [];
+  while (await cursor.hasNext()) {
+    var doc = await cursor.next();
+    // Memory optimization: retweets only need 'RT' marker as their text is never displayed
+    if (doc['Tweet Text'] && doc['Tweet Text'].startsWith('RT @')) {
+      doc['Tweet Text'] = 'RT';
+    }
+    var cs = LIVE.stateOf(doc.State);
+    if (cs) doc.State = cs;
+    rows.push(doc);
+  }
   console.log('  Loaded ' + rows.length.toLocaleString('en-IN') + ' posts from MongoDB in ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s');
   await client.close();
-  for (var i = 0; i < rows.length; i++) {
-    var cs = LIVE.stateOf(rows[i].State);
-    if (cs) rows[i].State = cs;
-  }
   return rows;
 }
 
