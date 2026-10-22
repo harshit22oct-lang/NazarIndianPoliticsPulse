@@ -331,7 +331,11 @@ function makeService(rows) {
 /* ------------------------------------------------------------------ http */
 var TYPES = { '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.json': 'application/json' };
 function send(res, code, type, body, extra) {
-  var h = { 'Content-Type': type, 'Cache-Control': 'no-store' };
+  var h = {
+    'Content-Type': type,
+    'Cache-Control': 'no-store',
+    'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet'
+  };
   Object.keys(extra || {}).forEach(function (k) { h[k] = extra[k]; });
   res.writeHead(code, h); res.end(body);
 }
@@ -354,6 +358,7 @@ function pageHtml() {
 var server = http.createServer(function (req, res) {
   var u = urlm.parse(req.url, true), p = u.pathname, q = u.query, m;
   if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'text/plain', 'GET only');
+  if (p === '/robots.txt') return send(res, 200, 'text/plain; charset=utf-8', 'User-agent: *\nDisallow: /\n');
   if (p === '/' || p === '/up') { res.writeHead(302, { Location: '/live' + (p === '/up' ? '?scope=up' : '') }); return res.end(); }
   if (p === '/live' || p === '/tv') {
     if (!svc) return send(res, 503, 'text/html; charset=utf-8', '<meta http-equiv="refresh" content="3"><body style="background:#160602;color:#FFC857;font:24px sans-serif;padding:40px">Nazar is loading the data file... this page reloads by itself.</body>');
@@ -409,3 +414,6 @@ server.on('error', function (e) {
   console.log('\n  ERROR: ' + (e.code === 'EADDRINUSE' ? 'port ' + PORT + ' is already in use -- close the other window or set PORT=...' : e.message) + '\n');
   process.exit(1);
 });
+
+module.exports = server;
+
