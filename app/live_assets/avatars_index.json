@@ -1,0 +1,2478 @@
+{
+ "avatars": {
+  "amitshah": {
+   "file": "avatars/amitshah.jpg",
+   "handle": "amitshah",
+   "name": "Amit Shah",
+   "at": 1792658791921
+  },
+  "narendramodi": {
+   "file": "avatars/narendramodi.jpg",
+   "handle": "narendramodi",
+   "name": "Narendra Modi",
+   "at": 1792658794096
+  },
+  "myogiadityanath": {
+   "file": "avatars/myogiadityanath.jpg",
+   "handle": "myogiadityanath",
+   "name": "Yogi Adityanath",
+   "at": 1792660052253,
+   "via": "x"
+  },
+  "himantabiswa": {
+   "file": "avatars/himantabiswa.jpg",
+   "handle": "himantabiswa",
+   "name": "Himanta Biswa Sarma",
+   "at": 1792658801113
+  },
+  "bjp4india": {
+   "file": "avatars/bjp4india.jpg",
+   "handle": "BJP4India",
+   "name": "BJP",
+   "at": 1792660054843,
+   "via": "x"
+  },
+  "naralokesh": {
+   "file": "avatars/naralokesh.jpg",
+   "handle": "naralokesh",
+   "name": "Lokesh Nara",
+   "at": 1792658807614
+  },
+  "yadavakhilesh": {
+   "file": "avatars/yadavakhilesh.jpg",
+   "handle": "yadavakhilesh",
+   "name": "Akhilesh Yadav",
+   "at": 1792658809687
+  },
+  "rahulgandhi": {
+   "file": "avatars/rahulgandhi.jpg",
+   "handle": "RahulGandhi",
+   "name": "Rahul Gandhi",
+   "at": 1792658813990
+  },
+  "nitin_gadkari": {
+   "file": "avatars/nitin_gadkari.jpg",
+   "handle": "nitin_gadkari",
+   "name": "Nitin Gadkari",
+   "at": 1792658816297
+  },
+  "dev_fadnavis": {
+   "file": "avatars/dev_fadnavis.jpg",
+   "handle": "Dev_Fadnavis",
+   "name": "Devendra Fadnavis",
+   "at": 1792658818226
+  },
+  "pawankalyan": {
+   "file": "avatars/pawankalyan.jpg",
+   "handle": "PawanKalyan",
+   "name": "Pawan Kalyan",
+   "at": 1792658820203
+  },
+  "arvindkejriwal": {
+   "file": "avatars/arvindkejriwal.jpg",
+   "handle": "ArvindKejriwal",
+   "name": "Arvind Kejriwal",
+   "at": 1792660057671,
+   "via": "x"
+  },
+  "ncbn": {
+   "file": "avatars/ncbn.jpg",
+   "handle": "ncbn",
+   "name": "N Chandrababu Naidu",
+   "at": 1792660060272,
+   "via": "x"
+  },
+  "samrat4bjp": {
+   "file": "avatars/samrat4bjp.jpg",
+   "handle": "samrat4bjp",
+   "name": "Samrat Choudhary",
+   "at": 1792658831122
+  },
+  "rajnathsingh": {
+   "file": "avatars/rajnathsingh.jpg",
+   "handle": "rajnathsingh",
+   "name": "Rajnath Singh",
+   "at": 1792658833153
+  },
+  "kirenrijiju": {
+   "file": "avatars/kirenrijiju.jpg",
+   "handle": "KirenRijiju",
+   "name": "Kiren Rijiju",
+   "at": 1792658836456
+  },
+  "drmohanyadav51": {
+   "file": "avatars/drmohanyadav51.jpg",
+   "handle": "DrMohanYadav51",
+   "name": "Dr Mohan Yadav",
+   "at": 1792658840774
+  },
+  "piyushgoyal": {
+   "file": "avatars/piyushgoyal.jpg",
+   "handle": "PiyushGoyal",
+   "name": "Piyush Goyal",
+   "at": 1792660063313,
+   "via": "x"
+  },
+  "chouhanshivraj": {
+   "file": "avatars/chouhanshivraj.jpg",
+   "handle": "ChouhanShivraj",
+   "name": "Shivraj Singh Chouhan",
+   "at": 1792658847422
+  },
+  "sachinpilot": {
+   "file": "avatars/sachinpilot.jpg",
+   "handle": "SachinPilot",
+   "name": "Sachin Pilot",
+   "at": 1792658851051
+  },
+  "pawankhera": {
+   "file": "avatars/pawankhera.jpg",
+   "handle": "Pawankhera",
+   "name": "Pawan Khera 🇮🇳 ಪವನ್ ಖೇರಾ",
+   "at": 1792658852981
+  },
+  "dkshivakumar": {
+   "file": "avatars/dkshivakumar.jpg",
+   "handle": "DKShivakumar",
+   "name": "DK Shivakumar",
+   "at": 1792658856084
+  },
+  "nitinnabin": {
+   "file": "avatars/nitinnabin.jpg",
+   "handle": "NitinNabin",
+   "name": "Nitin Nabin",
+   "at": 1792658858190
+  },
+  "govinddotasra": {
+   "file": "avatars/govinddotasra.jpg",
+   "handle": "GovindDotasra",
+   "name": "Govind Singh Dotasra",
+   "at": 1792658861537
+  },
+  "drsjaishankar": {
+   "file": "avatars/drsjaishankar.jpg",
+   "handle": "DrSJaishankar",
+   "name": "Dr. S. Jaishankar",
+   "at": 1792658866002
+  },
+  "ktrbrs": {
+   "file": "avatars/ktrbrs.jpg",
+   "handle": "KTRBRS",
+   "name": "KTR",
+   "at": 1792658868697
+  },
+  "ysjagan": {
+   "file": "avatars/ysjagan.jpg",
+   "handle": "ysjagan",
+   "name": "YS Jagan Mohan Reddy",
+   "at": 1792658870859
+  },
+  "chdadapatil": {
+   "file": "avatars/chdadapatil.jpg",
+   "handle": "ChDadaPatil",
+   "name": "Chandrakant Patil",
+   "at": 1792658872828
+  },
+  "sambitswaraj": {
+   "file": "avatars/sambitswaraj.jpg",
+   "handle": "sambitswaraj",
+   "name": "Sambit Patra",
+   "at": 1792658875578
+  },
+  "mieknathshinde": {
+   "file": "avatars/mieknathshinde.jpg",
+   "handle": "mieknathshinde",
+   "name": "Eknath Shinde - एकनाथ शिंदे",
+   "at": 1792658877517
+  },
+  "girirajsinghbjp": {
+   "file": "avatars/girirajsinghbjp.jpg",
+   "handle": "girirajsinghbjp",
+   "name": "Giriraj Singh",
+   "at": 1792658879909
+  },
+  "gupta_rekha": {
+   "file": "avatars/gupta_rekha.jpg",
+   "handle": "gupta_rekha",
+   "name": "Rekha Gupta",
+   "at": 1792660066430,
+   "via": "x"
+  },
+  "kishanreddybjp": {
+   "file": "avatars/kishanreddybjp.jpg",
+   "handle": "kishanreddybjp",
+   "name": "G Kishan Reddy",
+   "at": 1792660069065,
+   "via": "x"
+  },
+  "sanghaviharsh": {
+   "file": "avatars/sanghaviharsh.jpg",
+   "handle": "sanghaviharsh",
+   "name": "Harsh Sanghavi",
+   "at": 1792658893357
+  },
+  "rrpspeaks": {
+   "file": "avatars/rrpspeaks.jpg",
+   "handle": "RRPSpeaks",
+   "name": "Rohit Pawar",
+   "at": 1792660072250,
+   "via": "x"
+  },
+  "harjotbains": {
+   "file": "avatars/harjotbains.jpg",
+   "handle": "harjotbains",
+   "name": "Harjot Singh Bains",
+   "at": 1792658900257
+  },
+  "smritiirani": {
+   "file": "avatars/smritiirani.jpg",
+   "handle": "smritiirani",
+   "name": "Smriti Z Irani",
+   "at": 1792658902426
+  },
+  "omarabdullah": {
+   "file": "avatars/omarabdullah.jpg",
+   "handle": "OmarAbdullah",
+   "name": "Omar Abdullah",
+   "at": 1792658906014
+  },
+  "brajeshpathakup": {
+   "file": "avatars/brajeshpathakup.jpg",
+   "handle": "brajeshpathakup",
+   "name": "Brajesh Pathak",
+   "at": 1792660075036,
+   "via": "x"
+  },
+  "madandilawar": {
+   "file": "avatars/madandilawar.jpg",
+   "handle": "madandilawar",
+   "name": "Madan Dilawar",
+   "at": 1792658913333
+  },
+  "arungovil12": {
+   "file": "avatars/arungovil12.jpg",
+   "handle": "arungovil12",
+   "name": "Arun Govil",
+   "at": 1792658916845
+  },
+  "kpmaurya1": {
+   "file": "avatars/kpmaurya1.jpg",
+   "handle": "kpmaurya1",
+   "name": "Keshav Prasad Maurya",
+   "at": 1792658918916
+  },
+  "bjp4karnataka": {
+   "file": "avatars/bjp4karnataka.jpg",
+   "handle": "BJP4Karnataka",
+   "name": "BJP Karnataka",
+   "at": 1792658921979
+  },
+  "bjp4jnk": {
+   "file": "avatars/bjp4jnk.jpg",
+   "handle": "BJP4JnK",
+   "name": "BJP Jammu & Kashmir",
+   "at": 1792658924845
+  },
+  "pushkardhami": {
+   "file": "avatars/pushkardhami.jpg",
+   "handle": "pushkardhami",
+   "name": "Pushkar Singh Dhami",
+   "at": 1792660078192,
+   "via": "x"
+  },
+  "srinivasiyc": {
+   "file": "avatars/srinivasiyc.jpg",
+   "handle": "srinivasiyc",
+   "name": "Srinivas BV",
+   "at": 1792658931587
+  },
+  "ashwinivaishnaw": {
+   "file": "avatars/ashwinivaishnaw.jpg",
+   "handle": "AshwiniVaishnaw",
+   "name": "Ashwini Vaishnaw",
+   "at": 1792660080693,
+   "via": "x"
+  },
+  "yourbabulal": {
+   "file": "avatars/yourbabulal.jpg",
+   "handle": "yourBabulal",
+   "name": "Babulal Marandi",
+   "at": 1792658938503
+  },
+  "udhaystalin": {
+   "file": "avatars/udhaystalin.jpg",
+   "handle": "Udhaystalin",
+   "name": "Udhay",
+   "at": 1792658940523
+  },
+  "jm_scindia": {
+   "file": "avatars/jm_scindia.jpg",
+   "handle": "JM_Scindia",
+   "name": "Jyotiraditya M. Scindia",
+   "at": 1792658942565
+  },
+  "atishiaap": {
+   "file": "avatars/atishiaap.jpg",
+   "handle": "AtishiAAP",
+   "name": "Atishi",
+   "at": 1792658944624
+  },
+  "nayabsainibjp": {
+   "file": "avatars/nayabsainibjp.jpg",
+   "handle": "nayabsainibjp",
+   "name": "Nayab Saini",
+   "at": 1792658946660
+  },
+  "bhajanlalbjp": {
+   "file": "avatars/bhajanlalbjp.jpg",
+   "handle": "BhajanlalBjp",
+   "name": "Bhajanlal Sharma",
+   "at": 1792658948817
+  },
+  "harbhajan_singh": {
+   "file": "avatars/harbhajan_singh.jpg",
+   "handle": "harbhajan_singh",
+   "name": "Harbhajan Turbanator",
+   "at": 1792660083372,
+   "via": "x"
+  },
+  "tejasvi_surya": {
+   "file": "avatars/tejasvi_surya.jpg",
+   "handle": "Tejasvi_Surya",
+   "name": "Tejasvi Surya",
+   "at": 1792658955197
+  },
+  "revanth_anumula": {
+   "file": "avatars/revanth_anumula.jpg",
+   "handle": "revanth_anumula",
+   "name": "Revanth Reddy",
+   "at": 1792658957222
+  },
+  "keerthana4vnr": {
+   "file": "avatars/keerthana4vnr.jpg",
+   "handle": "Keerthana4VNR",
+   "name": "Virudhai Magal Keerthana",
+   "at": 1792658959256
+  },
+  "nishikant_dubey": {
+   "file": "avatars/nishikant_dubey.jpg",
+   "handle": "nishikant_dubey",
+   "name": "Dr Nishikant Dubey",
+   "at": 1792658961487
+  },
+  "bhagwantmann": {
+   "file": "avatars/bhagwantmann.jpg",
+   "handle": "BhagwantMann",
+   "name": "Bhagwant Mann",
+   "at": 1792658964054
+  },
+  "bjp4up": {
+   "file": "avatars/bjp4up.jpg",
+   "handle": "BJP4UP",
+   "name": "BJP Uttar Pradesh",
+   "at": 1792658967359
+  },
+  "priyankkharge": {
+   "file": "avatars/priyankkharge.jpg",
+   "handle": "PriyankKharge",
+   "name": "Priyank Kharge / ಪ್ರಿಯಾಂಕ್ ಖರ್ಗೆ",
+   "at": 1792660085954,
+   "via": "x"
+  },
+  "shashitharoor": {
+   "file": "avatars/shashitharoor.jpg",
+   "handle": "ShashiTharoor",
+   "name": "Shashi Tharoor",
+   "at": 1792658974279
+  },
+  "raghav_chadha": {
+   "file": "avatars/raghav_chadha.jpg",
+   "handle": "raghav_chadha",
+   "name": "Raghav Chadha",
+   "at": 1792658976731
+  },
+  "hemantsorenjmm": {
+   "file": "avatars/hemantsorenjmm.jpg",
+   "handle": "HemantSorenJMM",
+   "name": "Hemant Soren",
+   "at": 1792658979345
+  },
+  "kapilmishra_ind": {
+   "file": "avatars/kapilmishra_ind.jpg",
+   "handle": "KapilMishra_IND",
+   "name": "Kapil Mishra",
+   "at": 1792658981630
+  },
+  "ashokgehlot51": {
+   "file": "avatars/ashokgehlot51.jpg",
+   "handle": "ashokgehlot51",
+   "name": "Ashok Gehlot",
+   "at": 1792660088631,
+   "via": "x"
+  },
+  "sowmiyanbumani": {
+   "file": "avatars/sowmiyanbumani.jpg",
+   "handle": "Sowmiyanbumani",
+   "name": "Sowmiya Anbumani",
+   "at": 1792660091297,
+   "via": "x"
+  },
+  "hd_kumaraswamy": {
+   "file": "avatars/hd_kumaraswamy.jpg",
+   "handle": "hd_kumaraswamy",
+   "name": "ಹೆಚ್.ಡಿ.ಕುಮಾರಸ್ವಾಮಿ | HD Kumaraswamy",
+   "at": 1792660093976,
+   "via": "x"
+  },
+  "krishnabgowda": {
+   "file": "avatars/krishnabgowda.jpg",
+   "handle": "krishnabgowda",
+   "name": "Krishna Byre Gowda",
+   "at": 1792658998713
+  },
+  "suvenduwb": {
+   "file": "avatars/suvenduwb.jpg",
+   "handle": "SuvenduWB",
+   "name": "Suvendu Adhikari",
+   "at": 1792659001691
+  },
+  "brsharish": {
+   "file": "avatars/brsharish.jpg",
+   "handle": "Brsharish",
+   "name": "Harish Rao Thanneeru",
+   "at": 1792659004098
+  },
+  "pchidambaram_in": {
+   "file": "avatars/pchidambaram_in.jpg",
+   "handle": "PChidambaram_IN",
+   "name": "P. Chidambaram",
+   "at": 1792660096772,
+   "via": "x"
+  },
+  "bjp4delhi": {
+   "file": "avatars/bjp4delhi.jpg",
+   "handle": "BJP4Delhi",
+   "name": "BJP Delhi",
+   "at": 1792659011929
+  },
+  "amitmalviya": {
+   "file": "avatars/amitmalviya.jpg",
+   "handle": "amitmalviya",
+   "name": "Amit Malviya",
+   "at": 1792659014054
+  },
+  "sanjayazadsln": {
+   "file": "avatars/sanjayazadsln.jpg",
+   "handle": "SanjayAzadSln",
+   "name": "Sanjay Singh AAP",
+   "at": 1792659019046
+  },
+  "ranojpeguassam": {
+   "file": "avatars/ranojpeguassam.jpg",
+   "handle": "ranojpeguassam",
+   "name": "Ranoj Pegu",
+   "at": 1792659020974
+  },
+  "bhupendrapbjp": {
+   "file": "avatars/bhupendrapbjp.jpg",
+   "handle": "Bhupendrapbjp",
+   "name": "Bhupendra Patel",
+   "at": 1792659023122
+  },
+  "nsitharaman": {
+   "file": "avatars/nsitharaman.jpg",
+   "handle": "nsitharaman",
+   "name": "Nirmala Sitharaman",
+   "at": 1792659025608
+  },
+  "bjp4keralam": {
+   "file": "avatars/bjp4keralam.jpg",
+   "handle": "BJP4Keralam",
+   "name": "BJP KERALAM",
+   "at": 1792659028031
+  },
+  "siddaramaiah": {
+   "file": "avatars/siddaramaiah.jpg",
+   "handle": "siddaramaiah",
+   "name": "Siddaramaiah",
+   "at": 1792659032077
+  },
+  "saurabh_mlagk": {
+   "file": "avatars/saurabh_mlagk.jpg",
+   "handle": "Saurabh_MLAgk",
+   "name": "Saurabh Bharadwaj",
+   "at": 1792660099489,
+   "via": "x"
+  },
+  "dpradhanbjp": {
+   "file": "avatars/dpradhanbjp.jpg",
+   "handle": "dpradhanbjp",
+   "name": "Dharmendra Pradhan",
+   "at": 1792659041504
+  },
+  "p_sahibsingh": {
+   "file": "avatars/p_sahibsingh.jpg",
+   "handle": "p_sahibsingh",
+   "name": "Parvesh Sahib Singh",
+   "at": 1792659044507
+  },
+  "thirumaofficial": {
+   "file": "avatars/thirumaofficial.jpg",
+   "handle": "thirumaofficial",
+   "name": "Thol. Thirumavalavan",
+   "at": 1792659047300
+  },
+  "mamataofficial": {
+   "file": "avatars/mamataofficial.jpg",
+   "handle": "MamataOfficial",
+   "name": "Mamata Banerjee",
+   "at": 1792660102027,
+   "via": "x"
+  },
+  "awhadspeaks": {
+   "file": "avatars/awhadspeaks.jpg",
+   "handle": "Awhadspeaks",
+   "name": "Dr.Jitendra Awhad",
+   "at": 1792659054970
+  },
+  "bjp4tamilnadu": {
+   "file": "avatars/bjp4tamilnadu.jpg",
+   "handle": "BJP4TamilNadu",
+   "name": "BJP Tamilnadu",
+   "at": 1792660104474,
+   "via": "x"
+  },
+  "prahladspatel": {
+   "file": "avatars/prahladspatel.jpg",
+   "handle": "prahladspatel",
+   "name": "Prahlad Singh Patel ( वृक्ष से जल, जल से जीवन)",
+   "at": 1792659063788
+  },
+  "sukhusukhvinder": {
+   "file": "avatars/sukhusukhvinder.jpg",
+   "handle": "SukhuSukhvinder",
+   "name": "Sukhvinder Singh Sukhu",
+   "at": 1792660107021,
+   "via": "x"
+  },
+  "ianuragthakur": {
+   "file": "avatars/ianuragthakur.jpg",
+   "handle": "ianuragthakur",
+   "name": "Anurag Thakur",
+   "at": 1792660109494,
+   "via": "x"
+  },
+  "ra_thore": {
+   "file": "avatars/ra_thore.jpg",
+   "handle": "Ra_THORe",
+   "name": "Col Rajyavardhan Rathore",
+   "at": 1792659077498
+  },
+  "hardeepspuri": {
+   "file": "avatars/hardeepspuri.jpg",
+   "handle": "HardeepSPuri",
+   "name": "Hardeep Singh Puri",
+   "at": 1792659080140
+  },
+  "hanumanbeniwal": {
+   "file": "avatars/hanumanbeniwal.jpg",
+   "handle": "hanumanbeniwal",
+   "name": "HANUMAN BENIWAL",
+   "at": 1792659082467
+  },
+  "mohanmodisha": {
+   "file": "avatars/mohanmodisha.jpg",
+   "handle": "MohanMOdisha",
+   "name": "Mohan Charan Majhi",
+   "at": 1792659086485
+  },
+  "vishnudsai": {
+   "file": "avatars/vishnudsai.jpg",
+   "handle": "vishnudsai",
+   "name": "Vishnu Deo Sai",
+   "at": 1792660112037,
+   "via": "x"
+  },
+  "oprajbhar": {
+   "file": "avatars/oprajbhar.jpg",
+   "handle": "oprajbhar",
+   "name": "Om Prakash Rajbhar",
+   "at": 1792660114542,
+   "via": "x"
+  },
+  "ravikishann": {
+   "file": "avatars/ravikishann.jpg",
+   "handle": "ravikishann",
+   "name": "Ravi Kishan",
+   "at": 1792659097649
+  },
+  "bjp4rajasthan": {
+   "file": "avatars/bjp4rajasthan.jpg",
+   "handle": "BJP4Rajasthan",
+   "name": "BJP Rajasthan",
+   "at": 1792659099705
+  },
+  "jcdprabhakar": {
+   "file": "avatars/jcdprabhakar.jpg",
+   "handle": "JCDPrabhakar",
+   "name": "JCD Prabhakar",
+   "at": 1792659101890
+  },
+  "bjp4telangana": {
+   "file": "avatars/bjp4telangana.jpg",
+   "handle": "BJP4Telangana",
+   "name": "BJP Telangana",
+   "at": 1792659104271
+  },
+  "bhimarmychief": {
+   "file": "avatars/bhimarmychief.jpg",
+   "handle": "BhimArmyChief",
+   "name": "Chandra Shekhar Aazad",
+   "at": 1792660117355,
+   "via": "x"
+  },
+  "mbpatil": {
+   "file": "avatars/mbpatil.jpg",
+   "handle": "MBPatil",
+   "name": "M B Patil",
+   "at": 1792659110976
+  },
+  "kailashonline": {
+   "file": "avatars/kailashonline.jpg",
+   "handle": "KailashOnline",
+   "name": "Kailash Vijayvargiya",
+   "at": 1792659112980
+  },
+  "satyakumar_y": {
+   "file": "avatars/satyakumar_y.jpg",
+   "handle": "satyakumar_y",
+   "name": "Satya Kumar Yadav",
+   "at": 1792660120141,
+   "via": "x"
+  },
+  "kumaridiya": {
+   "file": "avatars/kumaridiya.jpg",
+   "handle": "KumariDiya",
+   "name": "Diya Kumari",
+   "at": 1792659119842
+  },
+  "vasundharabjp": {
+   "file": "avatars/vasundharabjp.jpg",
+   "handle": "VasundharaBJP",
+   "name": "Vasundhara Raje",
+   "at": 1792660122740,
+   "via": "x"
+  },
+  "kaushikreddybrs": {
+   "file": "avatars/kaushikreddybrs.jpg",
+   "handle": "KaushikReddyBRS",
+   "name": "Padi Kaushik Reddy",
+   "at": 1792660125244,
+   "via": "x"
+  },
+  "jpnadda": {
+   "file": "avatars/jpnadda.jpg",
+   "handle": "JPNadda",
+   "name": "Jagat Prakash Nadda",
+   "at": 1792660127849,
+   "via": "x"
+  },
+  "inc_ponguleti": {
+   "file": "avatars/inc_ponguleti.jpg",
+   "handle": "INC_Ponguleti",
+   "name": "Ponguleti Srinivasa Reddy",
+   "at": 1792660130643,
+   "via": "x"
+  },
+  "bjp4bengal": {
+   "file": "avatars/bjp4bengal.jpg",
+   "handle": "BJP4Bengal",
+   "name": "BJP West Bengal",
+   "at": 1792659141830
+  },
+  "satishmahanaup": {
+   "file": "avatars/satishmahanaup.jpg",
+   "handle": "Satishmahanaup",
+   "name": "Satish Mahana",
+   "at": 1792660133194,
+   "via": "x"
+  },
+  "sanjeev_aap": {
+   "file": "avatars/sanjeev_aap.jpg",
+   "handle": "Sanjeev_aap",
+   "name": "Sanjeev Jha",
+   "at": 1792659149565
+  },
+  "swatijaihind": {
+   "file": "avatars/swatijaihind.jpg",
+   "handle": "SwatiJaiHind",
+   "name": "Swati Maliwal",
+   "at": 1792659153971
+  },
+  "rsprasad": {
+   "file": "avatars/rsprasad.jpg",
+   "handle": "rsprasad",
+   "name": "Ravi Shankar Prasad",
+   "at": 1792659156991
+  },
+  "joshipralhad": {
+   "file": "avatars/joshipralhad.jpg",
+   "handle": "JoshiPralhad",
+   "name": "Pralhad Joshi",
+   "at": 1792660135634,
+   "via": "x"
+  },
+  "rashokabjp": {
+   "file": "avatars/rashokabjp.jpg",
+   "handle": "RAshokaBJP",
+   "name": "R. Ashoka",
+   "at": 1792659163901
+  },
+  "pravatipodisha": {
+   "file": "avatars/pravatipodisha.jpg",
+   "handle": "PravatiPOdisha",
+   "name": "Pravati Parida",
+   "at": 1792660138327,
+   "via": "x"
+  },
+  "rivaba4bjp": {
+   "file": "avatars/rivaba4bjp.jpg",
+   "handle": "Rivaba4BJP",
+   "name": "Rivaba Ravindrasinh Jadeja",
+   "at": 1792659171725
+  },
+  "vijaykchy": {
+   "file": "avatars/vijaykchy.jpg",
+   "handle": "VijayKChy",
+   "name": "Vijay Kumar Choudhary",
+   "at": 1792660140889,
+   "via": "x"
+  },
+  "shayarimran": {
+   "file": "avatars/shayarimran.jpg",
+   "handle": "ShayarImran",
+   "name": "Imran Pratapgarhi",
+   "at": 1792660143940,
+   "via": "x"
+  },
+  "bjp4mp": {
+   "file": "avatars/bjp4mp.jpg",
+   "handle": "BJP4MP",
+   "name": "BJP Madhya Pradesh",
+   "at": 1792659182795
+  },
+  "rajeshwars73": {
+   "file": "avatars/rajeshwars73.jpg",
+   "handle": "RajeshwarS73",
+   "name": "Rajeshwar Singh",
+   "at": 1792659187004
+  },
+  "bjp4assam": {
+   "file": "avatars/bjp4assam.jpg",
+   "handle": "BJP4Assam",
+   "name": "BJP Assam Pradesh",
+   "at": 1792659189518
+  },
+  "kraghuraju": {
+   "file": "avatars/kraghuraju.jpg",
+   "handle": "KRaghuRaju",
+   "name": "K Raghu Rama Krishna Raju (RRR)",
+   "at": 1792659191944
+  },
+  "mlkhattar": {
+   "file": "avatars/mlkhattar.jpg",
+   "handle": "mlkhattar",
+   "name": "Manohar Lal",
+   "at": 1792659195188
+  },
+  "pemakhandubjp": {
+   "file": "avatars/pemakhandubjp.jpg",
+   "handle": "PemaKhanduBJP",
+   "name": "Pema Khandu པདྨ་མཁའ་འགྲོ་།",
+   "at": 1792659197130
+  },
+  "bjp4haryana": {
+   "file": "avatars/bjp4haryana.jpg",
+   "handle": "BJP4Haryana",
+   "name": "Haryana BJP",
+   "at": 1792659200911
+  },
+  "arvinderlovely": {
+   "file": "avatars/arvinderlovely.jpg",
+   "handle": "ArvinderLovely",
+   "name": "Arvinder S. Lovely",
+   "at": 1792659204078
+  },
+  "kanganateam": {
+   "file": "avatars/kanganateam.jpg",
+   "handle": "KanganaTeam",
+   "name": "Kangana Ranaut",
+   "at": 1792659206035
+  },
+  "rajkumarbhatisp": {
+   "file": "avatars/rajkumarbhatisp.jpg",
+   "handle": "rajkumarbhatisp",
+   "name": "Rajkumar Bhati",
+   "at": 1792659208846
+  },
+  "sudhanshutrived": {
+   "file": "avatars/sudhanshutrived.jpg",
+   "handle": "SudhanshuTrived",
+   "name": "Dr. Sudhanshu Trivedi",
+   "at": 1792660146657,
+   "via": "x"
+  },
+  "mayawati": {
+   "file": "avatars/mayawati.jpg",
+   "handle": "Mayawati",
+   "name": "Mayawati",
+   "at": 1792660149053,
+   "via": "x"
+  },
+  "gssjodhpur": {
+   "file": "avatars/gssjodhpur.jpg",
+   "handle": "gssjodhpur",
+   "name": "Gajendra Singh Shekhawat",
+   "at": 1792659219467
+  },
+  "pankajsinghbjp": {
+   "file": "avatars/pankajsinghbjp.jpg",
+   "handle": "PankajSinghBJP",
+   "name": "Pankaj Singh",
+   "at": 1792659222707
+  },
+  "vijaykrsinhabih": {
+   "file": "avatars/vijaykrsinhabih.jpg",
+   "handle": "VijayKrSinhaBih",
+   "name": "Vijay Kumar Sinha",
+   "at": 1792659226187
+  },
+  "harishkhuranna": {
+   "file": "avatars/harishkhuranna.jpg",
+   "handle": "HarishKhuranna",
+   "name": "Harish Khurana",
+   "at": 1792659229294
+  },
+  "byvijayendra": {
+   "file": "avatars/byvijayendra.jpg",
+   "handle": "BYVijayendra",
+   "name": "Vijayendra Yediyurappa",
+   "at": 1792659232039
+  },
+  "bjp4gujarat": {
+   "file": "avatars/bjp4gujarat.jpg",
+   "handle": "BJP4Gujarat",
+   "name": "BJP Gujarat",
+   "at": 1792659235409
+  },
+  "bjp4bihar": {
+   "file": "avatars/bjp4bihar.jpg",
+   "handle": "BJP4Bihar",
+   "name": "BJP Bihar",
+   "at": 1792659239173
+  },
+  "bhatti_mallu": {
+   "file": "avatars/bhatti_mallu.jpg",
+   "handle": "Bhatti_Mallu",
+   "name": "Bhatti Vikramarka Mallu",
+   "at": 1792659242837
+  },
+  "authackeray": {
+   "file": "avatars/authackeray.jpg",
+   "handle": "AUThackeray",
+   "name": "Aaditya Thackeray",
+   "at": 1792659244786
+  },
+  "jairam_ramesh": {
+   "file": "avatars/jairam_ramesh.jpg",
+   "handle": "Jairam_Ramesh",
+   "name": "Jairam Ramesh",
+   "at": 1792659248110
+  },
+  "officeofknath": {
+   "file": "avatars/officeofknath.jpg",
+   "handle": "OfficeOfKNath",
+   "name": "Kamal Nath",
+   "at": 1792660151606,
+   "via": "x"
+  },
+  "drparameshwara": {
+   "file": "avatars/drparameshwara.jpg",
+   "handle": "DrParameshwara",
+   "name": "Dr. G Parameshwara",
+   "at": 1792659256771
+  },
+  "byadavbjp": {
+   "file": "avatars/byadavbjp.jpg",
+   "handle": "byadavbjp",
+   "name": "Bhupender Yadav",
+   "at": 1792659259957
+  },
+  "bjp4jharkhand": {
+   "file": "avatars/bjp4jharkhand.jpg",
+   "handle": "BJP4Jharkhand",
+   "name": "BJP JHARKHAND",
+   "at": 1792660154116,
+   "via": "x"
+  },
+  "ganta_srinivasa": {
+   "file": "avatars/ganta_srinivasa.jpg",
+   "handle": "Ganta_Srinivasa",
+   "name": "Ganta Srinivasa Rao",
+   "at": 1792660156612,
+   "via": "x"
+  },
+  "drhemangjoshimp": {
+   "file": "avatars/drhemangjoshimp.jpg",
+   "handle": "drhemangjoshimp",
+   "name": "Dr. Hemang Joshi (MP Vadodara)",
+   "at": 1792659271924
+  },
+  "drjitendrasingh": {
+   "file": "avatars/drjitendrasingh.jpg",
+   "handle": "DrJitendraSingh",
+   "name": "Dr Jitendra Singh",
+   "at": 1792660159034,
+   "via": "x"
+  },
+  "dipikaps": {
+   "file": "avatars/dipikaps.jpg",
+   "handle": "DipikaPS",
+   "name": "Dipika Pandey Singh",
+   "at": 1792659279212
+  },
+  "gopal_italia": {
+   "file": "avatars/gopal_italia.jpg",
+   "handle": "Gopal_Italia",
+   "name": "Gopal Italia",
+   "at": 1792659282476
+  },
+  "sunetraa_pawar": {
+   "file": "avatars/sunetraa_pawar.jpg",
+   "handle": "SunetraA_Pawar",
+   "name": "Sunetra Ajit Pawar",
+   "at": 1792659285954
+  },
+  "anitha_tdp": {
+   "file": "avatars/anitha_tdp.jpg",
+   "handle": "Anitha_TDP",
+   "name": "Anitha Vangalapudi",
+   "at": 1792660161520,
+   "via": "x"
+  },
+  "kuldeepkumaraap": {
+   "file": "avatars/kuldeepkumaraap.jpg",
+   "handle": "KuldeepKumarAAP",
+   "name": "MLA Kuldeep Kumar",
+   "at": 1792659293745
+  },
+  "supriya_sule": {
+   "file": "avatars/supriya_sule.jpg",
+   "handle": "supriya_sule",
+   "name": "Supriya Sule",
+   "at": 1792659296803
+  },
+  "cbawankule": {
+   "file": "avatars/cbawankule.jpg",
+   "handle": "cbawankule",
+   "name": "Chandrashekhar Bawankule",
+   "at": 1792660164204,
+   "via": "x"
+  },
+  "bhupindershooda": {
+   "file": "avatars/bhupindershooda.jpg",
+   "handle": "BhupinderSHooda",
+   "name": "Bhupinder Singh Hooda",
+   "at": 1792659305491
+  },
+  "bjp4maharashtra": {
+   "file": "avatars/bjp4maharashtra.jpg",
+   "handle": "BJP4Maharashtra",
+   "name": "भाजपा महाराष्ट्र",
+   "at": 1792659309632
+  },
+  "niteshnrane": {
+   "file": "avatars/niteshnrane.jpg",
+   "handle": "NiteshNRane",
+   "name": "Nitesh Rane",
+   "at": 1792659312250
+  },
+  "bjp4cgstate": {
+   "file": "avatars/bjp4cgstate.jpg",
+   "handle": "BJP4CGState",
+   "name": "BJP Chhattisgarh",
+   "at": 1792660166915,
+   "via": "x"
+  },
+  "tawdevinod": {
+   "file": "avatars/tawdevinod.jpg",
+   "handle": "TawdeVinod",
+   "name": "Vinod Tawde",
+   "at": 1792660169361,
+   "via": "x"
+  },
+  "mukeshsharmagg": {
+   "file": "avatars/mukeshsharmagg.jpg",
+   "handle": "MukeshSharmaGG",
+   "name": "Mukesh Sharma",
+   "at": 1792659323662
+  },
+  "mahuamoitra": {
+   "file": "avatars/mahuamoitra.jpg",
+   "handle": "MahuaMoitra",
+   "name": "Mahua Moitra",
+   "at": 1792659327570
+  },
+  "shalabhmani": {
+   "file": "avatars/shalabhmani.jpg",
+   "handle": "shalabhmani",
+   "name": "Dr. Shalabh Mani Tripathi",
+   "at": 1792659329491
+  },
+  "pankhuripathak": {
+   "file": "avatars/pankhuripathak.jpg",
+   "handle": "pankhuripathak",
+   "name": "Pankhuri Pathak पंखुड़ी पाठक پنکھڑی",
+   "at": 1792660172079,
+   "via": "x"
+  },
+  "mppchaudhary": {
+   "file": "avatars/mppchaudhary.jpg",
+   "handle": "mppchaudhary",
+   "name": "Pankaj Chaudhary",
+   "at": 1792659336520
+  },
+  "katchannaidu": {
+   "file": "avatars/katchannaidu.jpg",
+   "handle": "katchannaidu",
+   "name": "Kinjarapu Atchannaidu",
+   "at": 1792659339229
+  },
+  "opchoudhary_ind": {
+   "file": "avatars/opchoudhary_ind.jpg",
+   "handle": "opchoudhary_ind",
+   "name": "OP Choudhary",
+   "at": 1792659342560
+  },
+  "drdineshbjp": {
+   "file": "avatars/drdineshbjp.jpg",
+   "handle": "drdineshbjp",
+   "name": "Dr Dinesh",
+   "at": 1792660174564,
+   "via": "x"
+  },
+  "pijush_hazarika": {
+   "file": "avatars/pijush_hazarika.jpg",
+   "handle": "Pijush_hazarika",
+   "name": "Pijush Hazarika",
+   "at": 1792659349909
+  },
+  "drprembairwa": {
+   "file": "avatars/drprembairwa.jpg",
+   "handle": "DrPremBairwa",
+   "name": "Dr Prem Chand Bairwa",
+   "at": 1792660177100,
+   "via": "x"
+  },
+  "iamkondasurekha": {
+   "file": "avatars/iamkondasurekha.jpg",
+   "handle": "iamkondasurekha",
+   "name": "Konda Surekha",
+   "at": 1792660179651,
+   "via": "x"
+  },
+  "drpramodpsawant": {
+   "file": "avatars/drpramodpsawant.jpg",
+   "handle": "DrPramodPSawant",
+   "name": "Dr. Pramod Sawant",
+   "at": 1792659362955
+  },
+  "jaggesh2": {
+   "file": "avatars/jaggesh2.jpg",
+   "handle": "Jaggesh2",
+   "name": "ನವರಸನಾಯಕ ಜಗ್ಗೇಶ್",
+   "at": 1792659367341
+  },
+  "atulpradhansp": {
+   "file": "avatars/atulpradhansp.jpg",
+   "handle": "atulpradhansp",
+   "name": "Atul Pradhan",
+   "at": 1792660182190,
+   "via": "x"
+  },
+  "dhananjay_munde": {
+   "file": "avatars/dhananjay_munde.jpg",
+   "handle": "dhananjay_munde",
+   "name": "Dhananjay Munde",
+   "at": 1792659374689
+  },
+  "anandmishraips": {
+   "file": "avatars/anandmishraips.jpg",
+   "handle": "anandmishraips",
+   "name": "Anand Mishra",
+   "at": 1792660184619,
+   "via": "x"
+  },
+  "mukeshahlawatap": {
+   "file": "avatars/mukeshahlawatap.jpg",
+   "handle": "mukeshahlawatap",
+   "name": "Mukesh Ahlawat",
+   "at": 1792659381752
+  },
+  "theashoksinghal": {
+   "file": "avatars/theashoksinghal.jpg",
+   "handle": "TheAshokSinghal",
+   "name": "Ashok Singhal",
+   "at": 1792659386167
+  },
+  "ravidadachavan": {
+   "file": "avatars/ravidadachavan.jpg",
+   "handle": "RaviDadaChavan",
+   "name": "Ravindra Chavan",
+   "at": 1792659388819
+  },
+  "sagarikaghose": {
+   "file": "avatars/sagarikaghose.jpg",
+   "handle": "sagarikaghose",
+   "name": "Sagarika Ghose",
+   "at": 1792659391709
+  },
+  "ravindrabhati__": {
+   "file": "avatars/ravindrabhati__.jpg",
+   "handle": "RavindraBhati__",
+   "name": "Ravindra Singh Bhati",
+   "at": 1792660187341,
+   "via": "x"
+  },
+  "crpaatil": {
+   "file": "avatars/crpaatil.jpg",
+   "handle": "CRPaatil",
+   "name": "C R Paatil",
+   "at": 1792659398759
+  },
+  "nayakragini": {
+   "file": "avatars/nayakragini.jpg",
+   "handle": "NayakRagini",
+   "name": "Dr. Ragini Nayak",
+   "at": 1792660189896,
+   "via": "x"
+  },
+  "suve4madurai": {
+   "file": "avatars/suve4madurai.jpg",
+   "handle": "SuVe4Madurai",
+   "name": "Su Venkatesan MP",
+   "at": 1792660192483,
+   "via": "x"
+  },
+  "shivpalsinghyad": {
+   "file": "avatars/shivpalsinghyad.jpg",
+   "handle": "shivpalsinghyad",
+   "name": "Shivpal Singh Yadav",
+   "at": 1792660195093,
+   "via": "x"
+  },
+  "mohol_murlidhar": {
+   "file": "avatars/mohol_murlidhar.jpg",
+   "handle": "mohol_murlidhar",
+   "name": "Murlidhar Mohol",
+   "at": 1792660197550,
+   "via": "x"
+  },
+  "priyankagandhi": {
+   "file": "avatars/priyankagandhi.jpg",
+   "handle": "priyankagandhi",
+   "name": "Priyanka Gandhi Vadra",
+   "at": 1792660200248,
+   "via": "x"
+  },
+  "jitu_vaghani": {
+   "file": "avatars/jitu_vaghani.jpg",
+   "handle": "jitu_vaghani",
+   "name": "Jitu Vaghani",
+   "at": 1792659424758
+  },
+  "bjp4punjab": {
+   "file": "avatars/bjp4punjab.jpg",
+   "handle": "BJP4Punjab",
+   "name": "BJP PUNJAB",
+   "at": 1792659428392
+  },
+  "rhevanth95": {
+   "file": "avatars/rhevanth95.jpg",
+   "handle": "rhevanth95",
+   "name": "Rhevanth Charan",
+   "at": 1792660202771,
+   "via": "x"
+  },
+  "rajabrar_inc": {
+   "file": "avatars/rajabrar_inc.jpg",
+   "handle": "RajaBrar_INC",
+   "name": "Amarinder Singh Raja Warring",
+   "at": 1792659435390
+  },
+  "ashishsood_bjp": {
+   "file": "avatars/ashishsood_bjp.jpg",
+   "handle": "ashishsood_bjp",
+   "name": "Ashish Sood",
+   "at": 1792660205242,
+   "via": "x"
+  },
+  "bjp4odisha": {
+   "file": "avatars/bjp4odisha.jpg",
+   "handle": "BJP4Odisha",
+   "name": "BJP Odisha",
+   "at": 1792659443714
+  },
+  "sukhpalkhaira": {
+   "file": "avatars/sukhpalkhaira.jpg",
+   "handle": "SukhpalKhaira",
+   "name": "Sukhpal Singh Khaira",
+   "at": 1792660207856,
+   "via": "x"
+  },
+  "mpnaveenjindal": {
+   "file": "avatars/mpnaveenjindal.jpg",
+   "handle": "MPNaveenJindal",
+   "name": "Naveen Jindal",
+   "at": 1792660210381,
+   "via": "x"
+  },
+  "ichiragpaswan": {
+   "file": "avatars/ichiragpaswan.jpg",
+   "handle": "iChiragPaswan",
+   "name": "युवा बिहारी चिराग पासवान",
+   "at": 1792659455853
+  },
+  "harishd_bjp": {
+   "file": "avatars/harishd_bjp.jpg",
+   "handle": "HarishD_BJP",
+   "name": "Harish Dwivedi",
+   "at": 1792659458395
+  },
+  "arjunrammeghwal": {
+   "file": "avatars/arjunrammeghwal.jpg",
+   "handle": "arjunrammeghwal",
+   "name": "Arjun Ram Meghwal",
+   "at": 1792659463047
+  },
+  "ikamalhaasan": {
+   "file": "avatars/ikamalhaasan.jpg",
+   "handle": "ikamalhaasan",
+   "name": "Kamal Haasan",
+   "at": 1792660212928,
+   "via": "x"
+  },
+  "bandisanjay_bjp": {
+   "file": "avatars/bandisanjay_bjp.jpg",
+   "handle": "bandisanjay_bjp",
+   "name": "Bandi Sanjay Kumar",
+   "at": 1792660215368,
+   "via": "x"
+  },
+  "nbirensingh": {
+   "file": "avatars/nbirensingh.jpg",
+   "handle": "NBirenSingh",
+   "name": "N. Biren Singh",
+   "at": 1792659475873
+  },
+  "mssirsa": {
+   "file": "avatars/mssirsa.jpg",
+   "handle": "mssirsa",
+   "name": "Manjinder Singh Sirsa",
+   "at": 1792660217883,
+   "via": "x"
+  },
+  "iadititatkare": {
+   "file": "avatars/iadititatkare.jpg",
+   "handle": "iAditiTatkare",
+   "name": "Aditi S Tatkare",
+   "at": 1792660220436,
+   "via": "x"
+  },
+  "nandiguptabjp": {
+   "file": "avatars/nandiguptabjp.jpg",
+   "handle": "NandiGuptaBJP",
+   "name": "Nand Gopal Gupta 'Nandi'",
+   "at": 1792660223081,
+   "via": "x"
+  },
+  "ramanaidutdp": {
+   "file": "avatars/ramanaidutdp.jpg",
+   "handle": "RamanaiduTDP",
+   "name": "Nimmala Ramanaidu",
+   "at": 1792659492269
+  },
+  "arvindharmapuri": {
+   "file": "avatars/arvindharmapuri.jpg",
+   "handle": "Arvindharmapuri",
+   "name": "Arvind Dharmapuri",
+   "at": 1792659495828
+  },
+  "pcmohanmp": {
+   "file": "avatars/pcmohanmp.jpg",
+   "handle": "PCMohanMP",
+   "name": "P C Mohan",
+   "at": 1792660225592,
+   "via": "x"
+  },
+  "drsudhakar_": {
+   "file": "avatars/drsudhakar_.jpg",
+   "handle": "DrSudhakar_",
+   "name": "Dr Sudhakar K",
+   "at": 1792659502877
+  },
+  "anuragspparty": {
+   "file": "avatars/anuragspparty.jpg",
+   "handle": "anuragspparty",
+   "name": "Dr Anurag bhadouria",
+   "at": 1792660228065,
+   "via": "x"
+  },
+  "bhuma_akhila": {
+   "file": "avatars/bhuma_akhila.jpg",
+   "handle": "bhuma_akhila",
+   "name": "Bhuma Akhila Priya Reddy",
+   "at": 1792660230797,
+   "via": "x"
+  },
+  "bjp4andhra": {
+   "file": "avatars/bjp4andhra.jpg",
+   "handle": "BJP4Andhra",
+   "name": "BJP ANDHRA PRADESH",
+   "at": 1792660233333,
+   "via": "x"
+  },
+  "sarbanandsonwal": {
+   "file": "avatars/sarbanandsonwal.jpg",
+   "handle": "sarbanandsonwal",
+   "name": "Sarbananda Sonowal",
+   "at": 1792659518823
+  },
+  "hkhandelwal1964": {
+   "file": "avatars/hkhandelwal1964.jpg",
+   "handle": "Hkhandelwal1964",
+   "name": "Hemant Khandelwal",
+   "at": 1792659520752
+  },
+  "mukeshbhakar_": {
+   "file": "avatars/mukeshbhakar_.jpg",
+   "handle": "MukeshBhakar_",
+   "name": "Mukesh Bhakar",
+   "at": 1792660235971,
+   "via": "x"
+  },
+  "dramsinghvi": {
+   "file": "avatars/dramsinghvi.jpg",
+   "handle": "DrAMSinghvi",
+   "name": "Abhishek Singhvi",
+   "at": 1792660238531,
+   "via": "x"
+  },
+  "rammnk": {
+   "file": "avatars/rammnk.jpg",
+   "handle": "RamMNK",
+   "name": "Ram Mohan Naidu Kinjarapu",
+   "at": 1792659529624
+  },
+  "kharge": {
+   "file": "avatars/kharge.jpg",
+   "handle": "kharge",
+   "name": "Mallikarjun Kharge",
+   "at": 1792659531585
+  },
+  "tikaramjullyinc": {
+   "file": "avatars/tikaramjullyinc.jpg",
+   "handle": "TikaRamJullyINC",
+   "name": "Tika Ram Jully",
+   "at": 1792659533551
+  },
+  "draramadoss": {
+   "file": "avatars/draramadoss.jpg",
+   "handle": "draramadoss",
+   "name": "Dr ANBUMANI RAMADOSS",
+   "at": 1792659535506
+  },
+  "bsbommai": {
+   "file": "avatars/bsbommai.jpg",
+   "handle": "BSBommai",
+   "name": "Basavaraj S Bommai",
+   "at": 1792659537397
+  },
+  "uttaminc": {
+   "file": "avatars/uttaminc.jpg",
+   "handle": "UttamINC",
+   "name": "Uttam Kumar Reddy",
+   "at": 1792659539366
+  },
+  "rais_shk": {
+   "file": "avatars/rais_shk.jpg",
+   "handle": "rais_shk",
+   "name": "Rais Shaikh",
+   "at": 1792659541306
+  },
+  "ombirlakota": {
+   "file": "avatars/ombirlakota.jpg",
+   "handle": "ombirlakota",
+   "name": "Om Birla",
+   "at": 1792659543371
+  },
+  "rautsanjay61": {
+   "file": "avatars/rautsanjay61.jpg",
+   "handle": "rautsanjay61",
+   "name": "Sanjay Raut",
+   "at": 1792659545407
+  },
+  "kanimozhidmk": {
+   "file": "avatars/kanimozhidmk.jpg",
+   "handle": "KanimozhiDMK",
+   "name": "Kanimozhi (கனிமொழி)",
+   "at": 1792659547736
+  },
+  "ponnam_inc": {
+   "file": "avatars/ponnam_inc.jpg",
+   "handle": "Ponnam_INC",
+   "name": "Ponnam Prabhakar",
+   "at": 1792659549809
+  },
+  "seethakkamla": {
+   "file": "avatars/seethakkamla.jpg",
+   "handle": "seethakkaMLA",
+   "name": "Danasari Seethakka",
+   "at": 1792659551848
+  },
+  "blsanthosh": {
+   "file": "avatars/blsanthosh.jpg",
+   "handle": "blsanthosh",
+   "name": "B L Santhosh",
+   "at": 1792659553877
+  },
+  "manishtewari": {
+   "file": "avatars/manishtewari.jpg",
+   "handle": "ManishTewari",
+   "name": "Manish Tewari",
+   "at": 1792659555913
+  },
+  "shivendraraje11": {
+   "file": "avatars/shivendraraje11.jpg",
+   "handle": "Shivendraraje11",
+   "name": "Shivendrasinh A Bhonsle",
+   "at": 1792659558077
+  },
+  "abhipawarbjp": {
+   "file": "avatars/abhipawarbjp.jpg",
+   "handle": "AbhiPawarBJP",
+   "name": "Abhimanyu Pawar",
+   "at": 1792659560026
+  },
+  "vishvassarang": {
+   "file": "avatars/vishvassarang.jpg",
+   "handle": "VishvasSarang",
+   "name": "विश्वास कैलाश सारंग",
+   "at": 1792659561988
+  },
+  "captbrijesh": {
+   "file": "avatars/captbrijesh.jpg",
+   "handle": "CaptBrijesh",
+   "name": "Captain Brijesh Chowta ಕ್ಯಾಪ್ಟನ್ ಬ್ರಿಜೇಶ್ ಚೌಟ",
+   "at": 1792659563984
+  },
+  "deependershooda": {
+   "file": "avatars/deependershooda.jpg",
+   "handle": "DeependerSHooda",
+   "name": "Deepender Singh Hooda",
+   "at": 1792659566054
+  },
+  "arshadrizwan": {
+   "file": "avatars/arshadrizwan.jpg",
+   "handle": "ArshadRizwan",
+   "name": "Rizwan Arshad",
+   "at": 1792659568315
+  },
+  "mahalingmukesh": {
+   "file": "avatars/mahalingmukesh.jpg",
+   "handle": "MahalingMukesh",
+   "name": "Dr. Mukesh Mahaling",
+   "at": 1792659570581
+  },
+  "vikramsahney": {
+   "file": "avatars/vikramsahney.jpg",
+   "handle": "vikramsahney",
+   "name": "Vikramjit Singh MP",
+   "at": 1792659573334
+  },
+  "barmer_harish": {
+   "file": "avatars/barmer_harish.jpg",
+   "handle": "Barmer_Harish",
+   "name": "Harish Chaudhary",
+   "at": 1792659575482
+  },
+  "manojtiwarimp": {
+   "file": "avatars/manojtiwarimp.jpg",
+   "handle": "ManojTiwariMP",
+   "name": "Manoj Tiwari",
+   "at": 1792659577689
+  },
+  "vijaywadettiwar": {
+   "file": "avatars/vijaywadettiwar.jpg",
+   "handle": "VijayWadettiwar",
+   "name": "Vijay Wadettiwar",
+   "at": 1792659579699
+  },
+  "jairamthakurbjp": {
+   "file": "avatars/jairamthakurbjp.jpg",
+   "handle": "jairamthakurbjp",
+   "name": "Jairam Thakur",
+   "at": 1792659581943
+  },
+  "drashokuike_mla": {
+   "file": "avatars/drashokuike_mla.jpg",
+   "handle": "drashokuike_mla",
+   "name": "Dr.Ashok Uike",
+   "at": 1792659584512
+  },
+  "rshuklabjp": {
+   "file": "avatars/rshuklabjp.jpg",
+   "handle": "rshuklabjp",
+   "name": "Rajendra Shukla",
+   "at": 1792659586749
+  },
+  "jayant_r_patil": {
+   "file": "avatars/jayant_r_patil.jpg",
+   "handle": "Jayant_R_Patil",
+   "name": "Jayant Patil- जयंत पाटील",
+   "at": 1792659588996
+  },
+  "komatireddykvr": {
+   "file": "avatars/komatireddykvr.jpg",
+   "handle": "KomatireddyKVR",
+   "name": "Komatireddy Venkat Reddy",
+   "at": 1792659591170
+  },
+  "thisissanjubjp": {
+   "file": "avatars/thisissanjubjp.jpg",
+   "handle": "thisissanjubjp",
+   "name": "Sandeep Singh",
+   "at": 1792659593370
+  },
+  "drramansingh": {
+   "file": "avatars/drramansingh.jpg",
+   "handle": "drramansingh",
+   "name": "Dr Raman Singh",
+   "at": 1792659595742
+  },
+  "sonker_ragini": {
+   "file": "avatars/sonker_ragini.jpg",
+   "handle": "sonker_ragini",
+   "name": "Dr Ragini Sonker",
+   "at": 1792659598788
+  },
+  "sofiafirdous1": {
+   "file": "avatars/sofiafirdous1.jpg",
+   "handle": "sofiafirdous1",
+   "name": "Sofia Firdous",
+   "at": 1792659601474
+  },
+  "jvsinghinc": {
+   "file": "avatars/jvsinghinc.jpg",
+   "handle": "JVSinghINC",
+   "name": "Jaivardhan Singh",
+   "at": 1792659603764
+  },
+  "arunsao3": {
+   "file": "avatars/arunsao3.jpg",
+   "handle": "ArunSao3",
+   "name": "Arun Sao",
+   "at": 1792659605813
+  },
+  "mansukhmandviya": {
+   "file": "avatars/mansukhmandviya.jpg",
+   "handle": "mansukhmandviya",
+   "name": "Dr Mansukh Mandaviya",
+   "at": 1792659607895
+  },
+  "milinddeora": {
+   "file": "avatars/milinddeora.jpg",
+   "handle": "milinddeora",
+   "name": "Milind Deora | मिलिंद देवरा",
+   "at": 1792659610742
+  },
+  "phogat_vinesh": {
+   "file": "avatars/phogat_vinesh.jpg",
+   "handle": "Phogat_Vinesh",
+   "name": "Vinesh Phogat",
+   "at": 1792659612913
+  },
+  "dhirendragbn": {
+   "file": "avatars/dhirendragbn.jpg",
+   "handle": "DhirendraGBN",
+   "name": "Dhirendra Singh",
+   "at": 1792659614937
+  },
+  "vdsharmabjp": {
+   "file": "avatars/vdsharmabjp.jpg",
+   "handle": "vdsharmabjp",
+   "name": "VD Sharma",
+   "at": 1792659616963
+  },
+  "aksharmabharat": {
+   "file": "avatars/aksharmabharat.jpg",
+   "handle": "aksharmaBharat",
+   "name": "A K Sharma",
+   "at": 1792659619094
+  },
+  "rlr_btm": {
+   "file": "avatars/rlr_btm.jpg",
+   "handle": "RLR_BTM",
+   "name": "Ramalinga Reddy",
+   "at": 1792659621204
+  },
+  "eatala_rajender": {
+   "file": "avatars/eatala_rajender.jpg",
+   "handle": "Eatala_Rajender",
+   "name": "Eatala Rajender",
+   "at": 1792659623356
+  },
+  "ptshrikant": {
+   "file": "avatars/ptshrikant.jpg",
+   "handle": "ptshrikant",
+   "name": "Shrikant Sharma",
+   "at": 1792659625745
+  },
+  "nana_patole": {
+   "file": "avatars/nana_patole.jpg",
+   "handle": "NANA_PATOLE",
+   "name": "Nana Patole",
+   "at": 1792659628313
+  },
+  "lambaalka": {
+   "file": "avatars/lambaalka.jpg",
+   "handle": "LambaAlka",
+   "name": "Alka Lamba 🇮🇳",
+   "at": 1792659630662
+  },
+  "bjp4himachal": {
+   "file": "avatars/bjp4himachal.jpg",
+   "handle": "BJP4Himachal",
+   "name": "BJP Himachal Pradesh",
+   "at": 1792659632754
+  },
+  "gopaljeebjp": {
+   "file": "avatars/gopaljeebjp.jpg",
+   "handle": "gopaljeebjp",
+   "name": "Gopal Jee Thakur",
+   "at": 1792659635081
+  },
+  "pargatsofficial": {
+   "file": "avatars/pargatsofficial.jpg",
+   "handle": "PargatSOfficial",
+   "name": "Pargat Singh",
+   "at": 1792659637348
+  },
+  "mp_kaushal": {
+   "file": "avatars/mp_kaushal.jpg",
+   "handle": "mp_kaushal",
+   "name": "Kaushal Kishore",
+   "at": 1792659639463
+  },
+  "hardikpatel_": {
+   "file": "avatars/hardikpatel_.jpg",
+   "handle": "HardikPatel_",
+   "name": "Hardik Patel",
+   "at": 1792659641634
+  },
+  "vsomanna_bjp": {
+   "file": "avatars/vsomanna_bjp.jpg",
+   "handle": "VSOMANNA_BJP",
+   "name": "V. Somanna",
+   "at": 1792659644011
+  },
+  "drkirodilalbjp": {
+   "file": "avatars/drkirodilalbjp.jpg",
+   "handle": "DrKirodilalBJP",
+   "name": "Dr. Kirodi Lal Meena",
+   "at": 1792659646377
+  },
+  "rssurjewala": {
+   "file": "avatars/rssurjewala.jpg",
+   "handle": "rssurjewala",
+   "name": "Randeep Singh Surjewala",
+   "at": 1792659648599
+  },
+  "arjunmodhwadia": {
+   "file": "avatars/arjunmodhwadia.jpg",
+   "handle": "arjunmodhwadia",
+   "name": "Arjun Modhwadia",
+   "at": 1792659650714
+  },
+  "asim_arun": {
+   "file": "avatars/asim_arun.jpg",
+   "handle": "asim_arun",
+   "name": "Asim Arun",
+   "at": 1792659652853
+  },
+  "bhupeshbaghel": {
+   "file": "avatars/bhupeshbaghel.jpg",
+   "handle": "bhupeshbaghel",
+   "name": "Bhupesh Baghel",
+   "at": 1792659654956
+  },
+  "pratapsarnaik": {
+   "file": "avatars/pratapsarnaik.jpg",
+   "handle": "PratapSarnaik",
+   "name": "Pratap Baburao Sarnaik",
+   "at": 1792659657096
+  },
+  "sureshkkhanna": {
+   "file": "avatars/sureshkkhanna.jpg",
+   "handle": "SureshKKhanna",
+   "name": "सुरेश कुमार खन्ना",
+   "at": 1792659659156
+  },
+  "mkrtiwari_bjp": {
+   "file": "avatars/mkrtiwari_bjp.jpg",
+   "handle": "mkrtiwari_bjp",
+   "name": "Mithilesh Tiwari",
+   "at": 1792659661209
+  },
+  "champaisoren": {
+   "file": "avatars/champaisoren.jpg",
+   "handle": "ChampaiSoren",
+   "name": "Champai Soren",
+   "at": 1792659663398
+  },
+  "swatantrabjp": {
+   "file": "avatars/swatantrabjp.jpg",
+   "handle": "swatantrabjp",
+   "name": "Swatantra Dev Singh",
+   "at": 1792659665657
+  },
+  "kvsinghdeo1": {
+   "file": "avatars/kvsinghdeo1.jpg",
+   "handle": "KVSinghDeo1",
+   "name": "Kanak Vardhan Singh Deo (Modiji Ka Parivar)",
+   "at": 1792659668213
+  },
+  "sangmaconrad": {
+   "file": "avatars/sangmaconrad.jpg",
+   "handle": "SangmaConrad",
+   "name": "Conrad K Sangma",
+   "at": 1792660241018,
+   "via": "x"
+  },
+  "pallavi_apnadal": {
+   "file": "avatars/pallavi_apnadal.jpg",
+   "handle": "pallavi_apnadal",
+   "name": "Dr. Pallavi Patel",
+   "at": 1792659675369
+  },
+  "bandaru_sravani": {
+   "file": "avatars/bandaru_sravani.jpg",
+   "handle": "bandaru_sravani",
+   "name": "Bandaru Sravani Sree",
+   "at": 1792659677553
+  },
+  "abhimanyup00nia": {
+   "file": "avatars/abhimanyup00nia.jpg",
+   "handle": "AbhimanyuP00NIA",
+   "name": "Abhimanyu Poonia",
+   "at": 1792659681998
+  },
+  "sethsanjaymp": {
+   "file": "avatars/sethsanjaymp.jpg",
+   "handle": "SethSanjayMP",
+   "name": "Sanjay Seth",
+   "at": 1792659684805
+  },
+  "aadhavarjuna": {
+   "file": "avatars/aadhavarjuna.jpg",
+   "handle": "AadhavArjuna",
+   "name": "Aadhav Arjuna",
+   "at": 1792660243672,
+   "via": "x"
+  },
+  "kartipc": {
+   "file": "avatars/kartipc.jpg",
+   "handle": "KartiPC",
+   "name": "Karti P Chidambaram",
+   "at": 1792659692725
+  },
+  "umangsinghar": {
+   "file": "avatars/umangsinghar.jpg",
+   "handle": "UmangSinghar",
+   "name": "Umang Singhar",
+   "at": 1792659695118
+  },
+  "irfanansarimla": {
+   "file": "avatars/irfanansarimla.jpg",
+   "handle": "IrfanAnsariMLA",
+   "name": "Dr. Irfan Ansari",
+   "at": 1792659697143
+  },
+  "aditisinghrbl": {
+   "file": "avatars/aditisinghrbl.jpg",
+   "handle": "aditisinghrbl",
+   "name": "Aditi Singh",
+   "at": 1792659701304
+  },
+  "maheshklandge": {
+   "file": "avatars/maheshklandge.jpg",
+   "handle": "maheshklandge",
+   "name": "Mahesh Landge",
+   "at": 1792660246206,
+   "via": "x"
+  },
+  "jitupatwari": {
+   "file": "avatars/jitupatwari.jpg",
+   "handle": "jitupatwari",
+   "name": "Jitendra (Jitu) Patwari",
+   "at": 1792659707667
+  },
+  "amitchavdainc": {
+   "file": "avatars/amitchavdainc.jpg",
+   "handle": "AmitChavdaINC",
+   "name": "Amit Chavda",
+   "at": 1792659710603
+  },
+  "nitishkumar": {
+   "file": "avatars/nitishkumar.jpg",
+   "handle": "NitishKumar",
+   "name": "Nitish Kumar",
+   "at": 1792659714557
+  },
+  "mprakeshsingh": {
+   "file": "avatars/mprakeshsingh.jpg",
+   "handle": "MPRakeshSingh",
+   "name": "Rakesh Singh",
+   "at": 1792659717118
+  },
+  "sanjay_saraogi": {
+   "file": "avatars/sanjay_saraogi.jpg",
+   "handle": "sanjay_saraogi",
+   "name": "Sanjay Saraogi",
+   "at": 1792659719799
+  },
+  "sunithatdp": {
+   "file": "avatars/sunithatdp.jpg",
+   "handle": "SunithaTDP",
+   "name": "Paritala Sunitha",
+   "at": 1792659722182
+  },
+  "roysaryu": {
+   "file": "avatars/roysaryu.jpg",
+   "handle": "roysaryu",
+   "name": "Saryu Roy",
+   "at": 1792659724503
+  },
+  "ipsinghsp": {
+   "file": "avatars/ipsinghsp.jpg",
+   "handle": "IPSinghSp",
+   "name": "I.P. Singh",
+   "at": 1792659726973
+  },
+  "rajeevrai": {
+   "file": "avatars/rajeevrai.jpg",
+   "handle": "RajeevRai",
+   "name": "Rajeev Rai",
+   "at": 1792659730448
+  },
+  "manojsinghkaka": {
+   "file": "avatars/manojsinghkaka.jpg",
+   "handle": "ManojSinghKAKA",
+   "name": "Manoj KAKA",
+   "at": 1792659733093
+  },
+  "pwilsondmk": {
+   "file": "avatars/pwilsondmk.jpg",
+   "handle": "PWilsonDMK",
+   "name": "P. Wilson",
+   "at": 1792660248787,
+   "via": "x"
+  },
+  "kn_nehru": {
+   "file": "avatars/kn_nehru.jpg",
+   "handle": "KN_NEHRU",
+   "name": "K.N.NEHRU",
+   "at": 1792659739897
+  },
+  "tthenarasu": {
+   "file": "avatars/tthenarasu.jpg",
+   "handle": "TThenarasu",
+   "name": "Thangam Thenarasu-தமிழ்நாட்டை தலைகுனிய விடமாட்டேன்",
+   "at": 1792659742276
+  },
+  "pksekarbabu": {
+   "file": "avatars/pksekarbabu.jpg",
+   "handle": "PKSekarbabu",
+   "name": "P.K. Sekar Babu",
+   "at": 1792659744488
+  },
+  "dayanidhi_maran": {
+   "file": "avatars/dayanidhi_maran.jpg",
+   "handle": "Dayanidhi_Maran",
+   "name": "Dayanidhi Maran தயாநிதி மாறன்",
+   "at": 1792660251367,
+   "via": "x"
+  },
+  "salma_poet": {
+   "file": "avatars/salma_poet.jpg",
+   "handle": "salma_poet",
+   "name": "Salma",
+   "at": 1792659751130
+  },
+  "r_sakkarapani": {
+   "file": "avatars/r_sakkarapani.jpg",
+   "handle": "r_sakkarapani",
+   "name": "R.SAKKARAPANI - தமிழ்நாட்டை தலைகுனிய விடமாட்டேன்",
+   "at": 1792660254007,
+   "via": "x"
+  },
+  "thamizhachith": {
+   "file": "avatars/thamizhachith.jpg",
+   "handle": "ThamizhachiTh",
+   "name": "தமிழச்சி",
+   "at": 1792659758300
+  },
+  "yadavtalasani": {
+   "file": "avatars/yadavtalasani.jpg",
+   "handle": "YadavTalasani",
+   "name": "Talasani Srinivas Yadav",
+   "at": 1792659764741
+  },
+  "brssabithaindra": {
+   "file": "avatars/brssabithaindra.jpg",
+   "handle": "BrsSabithaIndra",
+   "name": "Sabitha Reddy",
+   "at": 1792660256546,
+   "via": "x"
+  },
+  "kp_vivekanand": {
+   "file": "avatars/kp_vivekanand.jpg",
+   "handle": "kp_vivekanand",
+   "name": "Vivekanand KP",
+   "at": 1792660258962,
+   "via": "x"
+  },
+  "chmallareddymla": {
+   "file": "avatars/chmallareddymla.jpg",
+   "handle": "chmallareddyMLA",
+   "name": "Chamakura Malla Reddy",
+   "at": 1792659776712
+  },
+  "gangulabrs": {
+   "file": "avatars/gangulabrs.jpg",
+   "handle": "GangulaBRS",
+   "name": "Gangula Kamalakar",
+   "at": 1792659779128
+  },
+  "jagadishbrs": {
+   "file": "avatars/jagadishbrs.jpg",
+   "handle": "jagadishBRS",
+   "name": "Jagadish Reddy G",
+   "at": 1792660261554,
+   "via": "x"
+  },
+  "mkrkkpmla": {
+   "file": "avatars/mkrkkpmla.jpg",
+   "handle": "mkrkkpmla",
+   "name": "Madhavaram Krishna Rao",
+   "at": 1792659785992
+  },
+  "rameshoffcl": {
+   "file": "avatars/rameshoffcl.jpg",
+   "handle": "RameshOffcl",
+   "name": "TVK Ramesh",
+   "at": 1792659788428
+  },
+  "logintvk": {
+   "file": "avatars/logintvk.jpg",
+   "handle": "logintvk",
+   "name": "Logesh TamilSelvan D",
+   "at": 1792659790842
+  },
+  "ambatturbalatvk": {
+   "file": "avatars/ambatturbalatvk.jpg",
+   "handle": "Ambatturbalatvk",
+   "name": "G.Balamurugan MLA",
+   "at": 1792659795580
+  },
+  "ecrpsaravanann": {
+   "file": "avatars/ecrpsaravanann.jpg",
+   "handle": "EcrPSaravanann",
+   "name": "ECR.P.Saravanan",
+   "at": 1792659798994
+  },
+  "arunraajkg": {
+   "file": "avatars/arunraajkg.jpg",
+   "handle": "arunraajkg",
+   "name": "Arunraaj TVK",
+   "at": 1792659801983
+  },
+  "mariewilson_tvk": {
+   "file": "avatars/mariewilson_tvk.jpg",
+   "handle": "MarieWilson_TVK",
+   "name": "Dr N. Marie Wilson",
+   "at": 1792659804170
+  },
+  "v_sathyabama": {
+   "file": "avatars/v_sathyabama.jpg",
+   "handle": "V_SathyaBama",
+   "name": "Sathyabama",
+   "at": 1792659807250
+  },
+  "mangalpandeybjp": {
+   "file": "avatars/mangalpandeybjp.jpg",
+   "handle": "mangalpandeybjp",
+   "name": "Mangal Pandey",
+   "at": 1792659809331
+  },
+  "manojkjhadu": {
+   "file": "avatars/manojkjhadu.jpg",
+   "handle": "manojkjhadu",
+   "name": "Manoj Kumar Jha",
+   "at": 1792659811976
+  },
+  "maithilithakur": {
+   "file": "avatars/maithilithakur.jpg",
+   "handle": "maithilithakur",
+   "name": "Maithili Thakur",
+   "at": 1792659815238
+  },
+  "rajksinghindia": {
+   "file": "avatars/rajksinghindia.jpg",
+   "handle": "RajKSinghIndia",
+   "name": "R. K. Singh",
+   "at": 1792660264043,
+   "via": "x"
+  },
+  "sanjaysingh_ljp": {
+   "file": "avatars/sanjaysingh_ljp.jpg",
+   "handle": "sanjaysingh_ljp",
+   "name": "Sanjay Singh",
+   "at": 1792659822871
+  },
+  "drmdjawaid1": {
+   "file": "avatars/drmdjawaid1.jpg",
+   "handle": "DrMdJawaid1",
+   "name": "Dr Md Jawaid",
+   "at": 1792659826851
+  },
+  "_sudhaker_singh": {
+   "file": "avatars/_sudhaker_singh.jpg",
+   "handle": "_Sudhaker_singh",
+   "name": "Sudhakar Singh (रोज़गार जहाँ, वोट वहाँ)",
+   "at": 1792659829497
+  },
+  "jibeshkumarbih": {
+   "file": "avatars/jibeshkumarbih.jpg",
+   "handle": "JIBESHKUMARBIH",
+   "name": "Jibesh Kumar",
+   "at": 1792660266702,
+   "via": "x"
+  },
+  "profshekharrjd": {
+   "file": "avatars/profshekharrjd.jpg",
+   "handle": "ProfShekharRJD",
+   "name": "Prof. Chandra Shekhar",
+   "at": 1792659836420
+  },
+  "sanjayjhabihar": {
+   "file": "avatars/sanjayjhabihar.jpg",
+   "handle": "SanjayJhaBihar",
+   "name": "Sanjay Kumar Jha",
+   "at": 1792659838554
+  },
+  "lalansingh_1": {
+   "file": "avatars/lalansingh_1.jpg",
+   "handle": "LalanSingh_1",
+   "name": "Rajiv Ranjan (Lalan) Singh",
+   "at": 1792660269176,
+   "via": "x"
+  },
+  "shalinijdu": {
+   "file": "avatars/shalinijdu.jpg",
+   "handle": "ShaliniJDU",
+   "name": "Shalini Mishra",
+   "at": 1792659845856
+  },
+  "mla_hayaghat": {
+   "file": "avatars/mla_hayaghat.jpg",
+   "handle": "mla_hayaghat",
+   "name": "Dr. Ram Chandra Prasad ( Modi Ka Parivar )",
+   "at": 1792659848289
+  },
+  "rnk_thakur": {
+   "file": "avatars/rnk_thakur.jpg",
+   "handle": "RNK_Thakur",
+   "name": "Ram Nath Thakur",
+   "at": 1792659851165
+  },
+  "jhamurarimohan": {
+   "file": "avatars/jhamurarimohan.jpg",
+   "handle": "jhamurarimohan",
+   "name": "Dr. Murari Mohan Jha",
+   "at": 1792660271769,
+   "via": "x"
+  },
+  "sarfaraza024": {
+   "file": "avatars/sarfaraza024.jpg",
+   "handle": "sarfaraza024",
+   "name": "Md Sarfaraz Alam",
+   "at": 1792660274308,
+   "via": "x"
+  },
+  "meneeleshnrane": {
+   "file": "avatars/meneeleshnrane.jpg",
+   "handle": "meNeeleshNRane",
+   "name": "Nilesh N Rane",
+   "at": 1792660276970,
+   "via": "x"
+  },
+  "samant_uday": {
+   "file": "avatars/samant_uday.jpg",
+   "handle": "samant_uday",
+   "name": "Uday Samant",
+   "at": 1792660279543,
+   "via": "x"
+  },
+  "sanjaydrathods": {
+   "file": "avatars/sanjaydrathods.jpg",
+   "handle": "SanjayDRathods",
+   "name": "Sanjay Rathod",
+   "at": 1792660281955,
+   "via": "x"
+  },
+  "iyogeshrkadam": {
+   "file": "avatars/iyogeshrkadam.jpg",
+   "handle": "iYogeshRKadam",
+   "name": "Yogesh Ramdas Kadam",
+   "at": 1792659876816
+  },
+  "abitkar_prakash": {
+   "fail": "X: no photo / no account",
+   "at": 1792660284385,
+   "handle": "abitkar_prakash"
+  },
+  "sanjaygaikwad34": {
+   "file": "avatars/sanjaygaikwad34.jpg",
+   "handle": "sanjaygaikwad34",
+   "name": "Sanjay Gaikwad - संजय गायकवाड",
+   "at": 1792659883929
+  },
+  "dadajibhuse": {
+   "file": "avatars/dadajibhuse.jpg",
+   "handle": "dadajibhuse",
+   "name": "Dadaji Bhuse",
+   "at": 1792659886876
+  },
+  "kirtiazaad": {
+   "file": "avatars/kirtiazaad.jpg",
+   "handle": "KirtiAzaad",
+   "name": "Kirti Azad",
+   "at": 1792660287129,
+   "via": "x"
+  },
+  "ritabratabanerj": {
+   "file": "avatars/ritabratabanerj.jpg",
+   "handle": "RitabrataBanerj",
+   "name": "Ritabrata Banerjee",
+   "at": 1792660289542,
+   "via": "x"
+  },
+  "idevadhikari": {
+   "file": "avatars/idevadhikari.jpg",
+   "handle": "idevadhikari",
+   "name": "Dev",
+   "at": 1792660291983,
+   "via": "x"
+  },
+  "shatrugansinha": {
+   "file": "avatars/shatrugansinha.jpg",
+   "handle": "ShatruganSinha",
+   "name": "Shatrughan Sinha",
+   "at": 1792659902417
+  },
+  "abhishekaitc": {
+   "file": "avatars/abhishekaitc.jpg",
+   "handle": "abhishekaitc",
+   "name": "Abhishek Banerjee",
+   "at": 1792659904658
+  },
+  "derekobrienmp": {
+   "file": "avatars/derekobrienmp.jpg",
+   "handle": "derekobrienmp",
+   "name": "Derek O'Brien | ডেরেক ও'ব্রায়েন",
+   "at": 1792659908117
+  },
+  "dwalsepatil": {
+   "file": "avatars/dwalsepatil.jpg",
+   "handle": "Dwalsepatil",
+   "name": "Dilip Walse Patil",
+   "at": 1792659911507
+  },
+  "bharanemamancp": {
+   "file": "avatars/bharanemamancp.jpg",
+   "handle": "bharanemamaNCP",
+   "name": "Dattatray Bharane",
+   "at": 1792659914697
+  },
+  "shelkesunilanna": {
+   "file": "avatars/shelkesunilanna.jpg",
+   "handle": "shelkesunilanna",
+   "name": "Sunil Shelke",
+   "at": 1792660294391,
+   "via": "x"
+  },
+  "praful_patel": {
+   "file": "avatars/praful_patel.jpg",
+   "handle": "praful_patel",
+   "name": "Praful Patel",
+   "at": 1792659921889
+  },
+  "vijaysinhpandit": {
+   "file": "avatars/vijaysinhpandit.jpg",
+   "handle": "VijaysinhPandit",
+   "name": "Vijaysinh Pandit",
+   "at": 1792659924509
+  },
+  "rajeshvitekar_": {
+   "file": "avatars/rajeshvitekar_.jpg",
+   "handle": "rajeshvitekar_",
+   "name": "Rajesh Vitekar",
+   "at": 1792659929126
+  },
+  "narhari_zirwal": {
+   "file": "avatars/narhari_zirwal.jpg",
+   "handle": "Narhari_Zirwal",
+   "name": "Narhari Zirwal",
+   "at": 1792659931206
+  },
+  "parthajitpawar": {
+   "file": "avatars/parthajitpawar.jpg",
+   "handle": "parthajitpawar",
+   "name": "Parth Sunetra Ajit Pawar",
+   "at": 1792659933264
+  },
+  "vijaysundarapu": {
+   "file": "avatars/vijaysundarapu.jpg",
+   "handle": "vijaysundarapu",
+   "name": "Sundarapu Vijay Kumar",
+   "at": 1792660296849,
+   "via": "x"
+  },
+  "lokammadhavi": {
+   "file": "avatars/lokammadhavi.jpg",
+   "handle": "LokamMadhavi",
+   "name": "Madhavi Lokam",
+   "at": 1792659941261
+  },
+  "kanduladurgesh": {
+   "file": "avatars/kanduladurgesh.jpg",
+   "handle": "kanduladurgesh",
+   "name": "Kandula Durgesh",
+   "at": 1792660299399,
+   "via": "x"
+  },
+  "bnayakar_jsp": {
+   "file": "avatars/bnayakar_jsp.jpg",
+   "handle": "BNayakar_JSP",
+   "name": "Bommidi Nayakar",
+   "at": 1792659948067
+  },
+  "bolisettisrinu": {
+   "file": "avatars/bolisettisrinu.jpg",
+   "handle": "BolisettiSrinu",
+   "name": "Bolisetti Srinivas",
+   "at": 1792660301972,
+   "via": "x"
+  },
+  "battulabalarama": {
+   "file": "avatars/battulabalarama.jpg",
+   "handle": "BattulaBalarama",
+   "name": "Battula Balarama Krishna MLA",
+   "at": 1792659955413
+  },
+  "chvamsiyadav": {
+   "file": "avatars/chvamsiyadav.jpg",
+   "handle": "ChVamsiYadav",
+   "name": "Vamsi Krishna Yadav",
+   "at": 1792660304738,
+   "via": "x"
+  },
+  "pantham_nanaji": {
+   "file": "avatars/pantham_nanaji.jpg",
+   "handle": "pantham_nanaji",
+   "name": "Pantham Nanaji",
+   "at": 1792659962697
+  },
+  "dharmarajupdr": {
+   "file": "avatars/dharmarajupdr.jpg",
+   "handle": "DharmarajuPdr",
+   "name": "Patsmatla Dharmaraju",
+   "at": 1792659967770
+  },
+  "rabindranathji": {
+   "file": "avatars/rabindranathji.jpg",
+   "handle": "rabindranathji",
+   "name": "Rabindra Nath Mahato",
+   "at": 1792659970536
+  },
+  "jmmkalpanasoren": {
+   "file": "avatars/jmmkalpanasoren.jpg",
+   "handle": "jmmkalpanasoren",
+   "name": "Kalpana Murmu Soren",
+   "at": 1792659973701
+  },
+  "hafizulhasan001": {
+   "file": "avatars/hafizulhasan001.jpg",
+   "handle": "hafizulhasan001",
+   "name": "Hafizul Hassan",
+   "at": 1792660307241,
+   "via": "x"
+  },
+  "deepakbiruajmm": {
+   "file": "avatars/deepakbiruajmm.jpg",
+   "handle": "deepakbiruajmm",
+   "name": "Deepak Birua",
+   "at": 1792659981681
+  },
+  "mpmahatojmm": {
+   "file": "avatars/mpmahatojmm.jpg",
+   "handle": "MPMahatoJMM",
+   "name": "Mathura Prasad Mahato",
+   "at": 1792659984777
+  },
+  "kumarsudivya": {
+   "file": "avatars/kumarsudivya.jpg",
+   "handle": "kumarsudivya",
+   "name": "Sudivya Kumar",
+   "at": 1792659986956
+  },
+  "sanjibsardar46": {
+   "file": "avatars/sanjibsardar46.jpg",
+   "handle": "SanjibSardar46",
+   "name": "Sanjib Sardar- MLA, Potka",
+   "at": 1792660309906,
+   "via": "x"
+  },
+  "yogendragomia": {
+   "file": "avatars/yogendragomia.jpg",
+   "handle": "YogendraGomia",
+   "name": "Yogendra Prasad",
+   "at": 1792659993987
+  },
+  "aloksorenjmm": {
+   "file": "avatars/aloksorenjmm.jpg",
+   "handle": "AlokSorenJMM",
+   "name": "Alok Kumar Soren",
+   "at": 1792659997141
+  }
+ },
+ "parties": {
+  "BJP": {
+   "file": "parties/BJP.jpg",
+   "handle": "BJP4India",
+   "name": "BJP",
+   "at": 1792658739823
+  },
+  "INC": {
+   "file": "parties/INC.jpg",
+   "handle": "INCIndia",
+   "name": "Congress",
+   "at": 1792658741954
+  },
+  "AAP": {
+   "file": "parties/AAP.jpg",
+   "handle": "AamAadmiParty",
+   "name": "AAP",
+   "at": 1792658745576
+  },
+  "SP": {
+   "file": "parties/SP.jpg",
+   "handle": "samajwadiparty",
+   "name": "Samajwadi Party",
+   "at": 1792658748549
+  },
+  "TMC": {
+   "file": "parties/TMC.jpg",
+   "handle": "AITCofficial",
+   "name": "All India Trinamool Congress",
+   "at": 1792658751311
+  },
+  "TDP": {
+   "file": "parties/TDP.jpg",
+   "handle": "JaiTDP",
+   "name": "Telugu Desam Party",
+   "at": 1792658753259
+  },
+  "DMK": {
+   "file": "parties/DMK.jpg",
+   "handle": "arivalayam",
+   "name": "DMK",
+   "at": 1792660042013,
+   "via": "x"
+  },
+  "RJD": {
+   "file": "parties/RJD.jpg",
+   "handle": "RJDforIndia",
+   "name": "Rashtriya Janata Dal",
+   "at": 1792658759959
+  },
+  "NCP(SP)": {
+   "file": "parties/NCP_SP.jpg",
+   "handle": "NCPspeaks",
+   "name": "Nationalist Congress Party - Sharadchandra Pawar",
+   "at": 1792658762316
+  },
+  "SS(UBT)": {
+   "file": "parties/SS_UBT.jpg",
+   "handle": "ShivSenaUBT_",
+   "name": "ShivSena - शिवसेना Uddhav Balasaheb Thackeray",
+   "at": 1792658764737
+  },
+  "AIMIM": {
+   "file": "parties/AIMIM.jpg",
+   "handle": "aimim_national",
+   "name": "AIMIM",
+   "at": 1792660044564,
+   "via": "x"
+  },
+  "CPI(M)": {
+   "file": "parties/CPI_M.jpg",
+   "handle": "cpimspeak",
+   "name": "CPI (M)",
+   "at": 1792658772704
+  },
+  "JSP": {
+   "file": "parties/JSP.jpg",
+   "handle": "JanaSenaParty",
+   "name": "JanaSena Party",
+   "at": 1792660047084,
+   "via": "x"
+  },
+  "YSRCP": {
+   "file": "parties/YSRCP.jpg",
+   "handle": "YSRCParty",
+   "name": "YSR Congress Party",
+   "at": 1792660049700,
+   "via": "x"
+  },
+  "BRS": {
+   "file": "parties/BRS.jpg",
+   "handle": "BRSparty",
+   "name": "BRS Party",
+   "at": 1792658783663
+  },
+  "BJD": {
+   "file": "parties/BJD.jpg",
+   "handle": "bjd_odisha",
+   "name": "Biju Janata Dal",
+   "at": 1792658785710
+  },
+  "JD(U)": {
+   "file": "parties/JD_U.jpg",
+   "handle": "Jduonline",
+   "name": "Janata Dal (United)",
+   "at": 1792658788003
+  }
+ }
+}

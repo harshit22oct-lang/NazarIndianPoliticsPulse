@@ -1,0 +1,13 @@
+{
+  "name": "nazar-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Nazar (TV view of India Political Pulse) as a standalone prototype that reads a PulseData CSV export",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@ngrok/ngrok": "^1.7.0"
+  }
+}

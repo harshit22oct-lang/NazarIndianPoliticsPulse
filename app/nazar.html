@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Nazar · India Political Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<!--
+  NAZAR (नज़र) -- the TV page of India Political Pulse.
+  Two shows: All India (the whole picture) and One leader (a personal channel).
+  Data: /api/live-snapshot, /api/live-person, /api/live-search (definitions in live_lib.js).
+  Written for old smart-TV browsers (Chromium 68+): ES5, CSS variables + calc,
+  no clamp(), inset, flex gap, aspect-ratio, color-mix, conic gradients or optional chaining.
+  The layout is in rem; the root font size follows the screen, so 4K, 1080p, laptops
+  and phones all get the same composition. Nothing must depend on an animation finishing.
+  Leader photos: live_assets/leaders (see ATTRIBUTION.md there).
+-->
+<style>
+:root{
+  --text:#FFF7EE; --muted:rgba(255,247,238,.80); --dim:rgba(255,247,238,.56);
+  --saffron:#FF9933; --saffron2:#E65100; --deep:#9E3600; --gold:#FFC857; --green:#2E9E4A;
+  --glass:rgba(26,8,3,.82); --glass2:rgba(40,12,4,.70); --line:rgba(255,153,51,.24);
+  --live:#FF3D00; --amber:#FFB300; --grey:#B0A49A; --good:#7BD389; --bad:#FF6B5B;
+  --head:'Rajdhani','Noto Sans Devanagari',sans-serif;
+  --body:'DM Sans','Noto Sans Devanagari',sans-serif;
+  --deva:'Noto Sans Devanagari','DM Sans',sans-serif;
+  --heroMain:.26; --heroSide:.2;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;height:100%;background:#160602}
+body{height:100%;overflow:hidden;background:#160602;color:var(--text);font-family:var(--body);-webkit-font-smoothing:antialiased}
+body.idle,body.kiosk{cursor:none}
+button,input{font-family:inherit;color:inherit}
+.hidden{display:none!important}
+
+/* ---------- backdrop: saffron dawn + the three leaders ---------- */
+#sky{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 75% 60% at 50% -5%,rgba(255,153,51,.55) 0%,rgba(255,120,0,.18) 38%,rgba(255,120,0,0) 64%),
+             radial-gradient(ellipse 45% 40% at -5% 105%,rgba(46,158,74,.26) 0%,rgba(46,158,74,0) 65%),
+             radial-gradient(ellipse 45% 40% at 105% 105%,rgba(255,153,51,.22) 0%,rgba(255,153,51,0) 65%),
+             linear-gradient(180deg,#4a1504 0%,#2a0a03 42%,#150502 100%)}
+#sky:after{content:'';position:absolute;top:0;left:0;right:0;height:.35rem;
+  background:linear-gradient(90deg,#FF9933 0%,#FF9933 33%,#FFFFFF 33%,#FFFFFF 66%,#138808 66%,#138808 100%);opacity:.85}
+#hero{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;overflow:hidden}
+/* three standing leaders on one ground line: Modi ji in front (tallest, head just
+   under the header), Shah ji left and Yogi ji right a step behind (a little smaller
+   and dimmer), heads level with each other. A soft saffron floor glow grounds them. */
+.hero-floor{position:absolute;left:8%;right:8%;bottom:-6%;height:30%;opacity:var(--heroMain);transition:opacity 1.2s ease;
+  background:radial-gradient(ellipse 50% 45% at 50% 70%,rgba(255,153,51,.38) 0%,rgba(255,120,0,.12) 45%,rgba(255,120,0,0) 72%)}
+/* Each leader = a wrapper (position, size, glow) around the photo (bottom fade).
+   The glow sits on the wrapper so it follows the faded silhouette -- on the photo
+   itself the fade mask would clip the glow into a visible rectangle. */
+.hero-main,.hero-side{position:absolute;-webkit-transform:translateX(-50%);transform:translateX(-50%)}
+.hero-main img,.hero-side img{display:block;height:100%;width:auto}
+.hero-main{bottom:0;left:50%;height:94%;z-index:5;opacity:var(--heroMain);
+  -webkit-filter:drop-shadow(0 0 2.6rem rgba(255,153,51,.45));filter:drop-shadow(0 0 2.6rem rgba(255,153,51,.45))}
+.hero-main img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 20%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 20%)}
+/* five leaders, three rows: front Modi ji; middle Shah ji (left) and Yogi ji (right);
+   back Nitin Nabin ji (far left) and Rajnath Singh ji (far right). Positions are the
+   centre of each figure; heights keep faces of one row the same size. Nitin ji's photo
+   is a half-length shot, so it is smaller and raised, fading out at the waist. */
+.hero-side{bottom:2%;z-index:4;opacity:var(--heroSide);
+  -webkit-filter:brightness(.95) drop-shadow(0 0 2rem rgba(255,153,51,.35));filter:brightness(.95) drop-shadow(0 0 2rem rgba(255,153,51,.35))}
+.hero-side img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 14%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 14%)}
+.hero-side.l{height:82%;left:26%}
+.hero-side.r{height:82%;left:74%}
+.hero-side.l2,.hero-side.r2{z-index:3;-webkit-filter:brightness(.86) drop-shadow(0 0 1.6rem rgba(255,153,51,.3));filter:brightness(.86) drop-shadow(0 0 1.6rem rgba(255,153,51,.3))}
+.hero-side.l2{height:44%;bottom:31%;left:10%}
+.hero-side.l2 img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 22%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 22%)}
+.hero-side.r2{height:73%;left:90%}
+/* start screen: the question is centred at the top, so everyone stands a little
+   lower and Modi ji's face stays clear of the text */
+body.choosing .hero-main{height:76%}
+body.choosing .hero-side.l,body.choosing .hero-side.r{height:67%}
+body.choosing .hero-side.l2{height:36%;bottom:25%}
+body.choosing .hero-side.r2{height:60%}
+.hero-main,.hero-side{transition:opacity 1.2s ease,height .8s ease,bottom .8s ease}
+/* screens narrower than 3:2 (4:3 TVs, tablets): only the front and middle rows fit */
+@media (max-aspect-ratio:3/2){.hero-side.l2,.hero-side.r2{display:none}.hero-side.l{left:18%}.hero-side.r{left:82%}}
+body.hero-hi{--heroMain:.97;--heroSide:.88}
+body.hero-mid{--heroMain:.55;--heroSide:.45}
+
+/* ---------- frame ---------- */
+#app{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;padding:1.6rem 3.4rem 1.4rem}
+.top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;height:5.6rem}
+.brand{display:flex;align-items:center}
+.logo{width:4.6rem;height:4.6rem;border-radius:50%;overflow:hidden;margin-right:1.2rem;flex:0 0 auto;position:relative;
+  background:linear-gradient(135deg,#FF9933,#E65100);box-shadow:0 0 0 .2rem rgba(255,200,87,.7),0 .6rem 1.8rem rgba(230,81,0,.5)}
+.logo img{width:100%;height:100%;object-fit:cover;display:block}
+.logo svg{position:absolute;top:18%;left:18%;width:64%;height:64%}
+.wm{font-family:var(--deva);font-weight:800;font-size:3rem;line-height:1;letter-spacing:.02rem;color:#fff;text-shadow:0 .2rem 1rem rgba(230,81,0,.6)}
+.wm small{font-family:var(--head);font-weight:700;font-size:1.5rem;letter-spacing:.35rem;color:var(--gold);margin-left:.9rem;vertical-align:.35rem}
+.wm-sub{font-size:1rem;color:var(--muted);letter-spacing:.14rem;text-transform:uppercase;margin-top:.45rem}
+.right{display:flex;align-items:center}
+.right > *{margin-left:1.2rem}
+.chip{display:flex;align-items:center;height:3rem;padding:0 1.3rem;border-radius:3rem;background:var(--glass);border:.08rem solid var(--line);font-size:1.15rem;font-weight:700;white-space:nowrap}
+.chip .cd{width:.85rem;height:.85rem;border-radius:50%;margin-right:.75rem;background:var(--grey);flex:0 0 auto}
+.chip.lvl-live{border-color:rgba(255,61,0,.7);background:rgba(255,61,0,.22)}
+.chip.lvl-live .cd{background:var(--live);animation:pulse 1.6s ease-out infinite}
+.chip.lvl-recent .cd{background:var(--good)} .chip.lvl-delayed .cd{background:var(--amber)}
+.chip.lvl-stale .cd,.chip.lvl-nodata .cd{background:var(--grey)}
+.chip.lvl-offline{border-color:rgba(255,107,91,.6)} .chip.lvl-offline .cd{background:var(--bad)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,61,0,.7)}70%{box-shadow:0 0 0 .8rem rgba(255,61,0,0)}100%{box-shadow:0 0 0 0 rgba(255,61,0,0)}}
+.clock{text-align:right;line-height:1.05}
+.clock b{display:block;font-family:var(--head);font-weight:700;font-size:2.2rem;color:var(--gold)}
+.clock span{font-size:1rem;color:var(--muted)}
+.tbtn{height:3rem;padding:0 1.2rem;border-radius:.8rem;border:.08rem solid var(--line);background:var(--glass);font-size:1.1rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.tbtn:hover,.tbtn:focus{border-color:var(--gold);outline:none}
+body.kiosk .tbtn{display:none}
+
+#stage{flex:1 1 auto;min-height:0;position:relative;display:flex;flex-direction:column;padding-top:1.4rem}
+.st-head{flex:0 0 auto;display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.4rem}
+.st-title{font-family:var(--head);font-weight:700;font-size:4.2rem;line-height:1.02;text-shadow:0 .3rem 1.4rem rgba(0,0,0,.55)}
+.st-title em{font-style:normal;color:var(--gold)}
+.st-title .tl{display:inline-block;width:3.6rem;height:3.6rem;border-radius:50%;overflow:hidden;vertical-align:-.5rem;margin-left:1rem;box-shadow:0 0 0 .15rem rgba(255,200,87,.6)}
+.st-title .tl img{width:100%;height:100%;object-fit:cover;display:block}
+.st-when{font-size:1.35rem;color:var(--muted);margin-top:.5rem;text-shadow:0 .1rem .5rem rgba(0,0,0,.6)}
+.st-count{font-family:var(--head);font-size:1.4rem;color:var(--dim);white-space:nowrap;margin-left:2rem}
+#scene{flex:1 1 auto;min-height:0;position:relative;overflow:hidden;opacity:1;transition:opacity .45s ease,transform .45s ease}
+#scene.out{opacity:0;-webkit-transform:translateY(.8rem);transform:translateY(.8rem)}
+body.reduced #scene{transition:none}
+.glass{background:var(--glass);border:.08rem solid var(--line);border-radius:1.8rem;padding:2.2rem 2.6rem;box-shadow:0 2rem 4rem rgba(0,0,0,.35),inset 0 .08rem 0 rgba(255,200,87,.15)}
+.glass.full{height:100%}
+.honesty{flex:0 0 auto;font-size:1.05rem;color:var(--dim);margin-top:1rem;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 .1rem .4rem rgba(0,0,0,.8)}
+.honesty b{color:var(--muted);font-weight:700} .honesty .warn{color:var(--amber)}
+#prog{flex:0 0 auto;height:.3rem;border-radius:.3rem;background:rgba(255,255,255,.1);margin-top:.8rem;overflow:hidden}
+#prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#E65100,#FFC857)}
+
+/* ticker */
+.ticker{flex:0 0 auto;height:4.4rem;margin-top:.9rem;border-radius:1rem;display:flex;align-items:center;overflow:hidden;background:rgba(26,8,3,.9);border:.08rem solid rgba(255,153,51,.4)}
+.tk-lbl{flex:0 0 auto;height:100%;display:flex;align-items:center;padding:0 1.5rem;font-family:var(--head);font-weight:700;font-size:1.45rem;letter-spacing:.12rem;text-transform:uppercase;background:linear-gradient(135deg,#E65100,#FF9933);color:#fff;white-space:nowrap}
+.tk-track{flex:1 1 auto;height:100%;overflow:hidden;position:relative}
+.tk-inner{position:absolute;top:0;left:0;height:100%;display:flex;align-items:center;white-space:nowrap;will-change:transform}
+.tk-inner.run{animation:tk linear infinite}
+@keyframes tk{from{-webkit-transform:translateX(0);transform:translateX(0)}to{-webkit-transform:translateX(-50%);transform:translateX(-50%)}}
+.tk-item{display:flex;align-items:center;padding:0 2.2rem;font-size:1.45rem;border-right:.08rem solid var(--line);height:2.4rem}
+.tk-tag{font-size:.95rem;font-weight:700;letter-spacing:.08rem;text-transform:uppercase;padding:.2rem .6rem;border-radius:.4rem;margin-right:.9rem;background:rgba(255,200,87,.15);color:var(--gold)}
+.tk-tag.brk{background:var(--live);color:#fff}
+.tk-src{color:var(--muted);margin-left:.9rem;font-size:1.15rem}
+.tk-single{padding:0 2rem;font-size:1.45rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:4.4rem}
+
+/* controls / banners / overlay */
+.ctl{position:fixed;left:50%;bottom:7.6rem;-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:20;display:flex;align-items:center;padding:.6rem;border-radius:3rem;background:rgba(26,8,3,.95);border:.08rem solid var(--line);box-shadow:0 1rem 3rem rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s}
+.ctl.on{opacity:1;pointer-events:auto}
+.ctl button{width:4rem;height:4rem;border-radius:50%;border:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 .2rem}
+.ctl button:hover,.ctl button:focus{background:rgba(255,255,255,.1);outline:none}
+.ctl svg{width:1.9rem;height:1.9rem}
+.ctl .sep{width:.08rem;height:2.4rem;background:var(--line);margin:0 .5rem}
+.ctl .dots{display:flex;align-items:center;padding:0 .8rem}
+.ctl .dots i{width:.7rem;height:.7rem;border-radius:50%;background:rgba(255,255,255,.25);margin:0 .22rem}
+.ctl .dots i.on{background:var(--gold);width:1.8rem;border-radius:.4rem}
+.banner{position:fixed;top:.35rem;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:60;padding:.5rem 1.6rem;border-radius:0 0 .8rem .8rem;font-weight:700;font-size:1.1rem;letter-spacing:.06rem;text-transform:uppercase}
+.banner.demo{background:#FFC857;color:#111} .banner.hist{background:#7E57C2;color:#fff}
+.banner.proto{background:rgba(26,8,3,.92);color:var(--gold);border:.08rem solid rgba(255,200,87,.45);border-top:0;text-transform:none;letter-spacing:.02rem}
+/* the prototype has no dashboard to go back to */
+body.proto #backBtn,body.proto #chBack{display:none}
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:70;background:rgba(22,6,2,.9);display:flex;align-items:center;justify-content:center}
+.ov-box{max-width:52rem;padding:3.2rem 3.6rem;border-radius:1.6rem;background:#2a0a03;border:.08rem solid var(--line);text-align:center}
+.ov-box h2{font-family:var(--head);font-size:3.2rem;margin-bottom:1rem}
+.ov-box p{font-size:1.5rem;color:var(--muted);line-height:1.5;margin-bottom:2rem}
+.btn{display:inline-block;padding:1rem 2.4rem;border-radius:3rem;background:linear-gradient(135deg,#E65100,#FF9933);color:#fff;font-weight:700;font-size:1.4rem;text-decoration:none;border:0;cursor:pointer}
+
+/* ---------- intro ---------- */
+#intro{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse 60% 55% at 50% 45%,#5a1a05 0%,#2a0a03 55%,#140502 100%);transition:opacity .8s ease}
+#intro.gone{opacity:0;pointer-events:none}
+/* "Kamal Udaya" -- the lotus rises over India (about 9 s, any key / click skips):
+   0.0 a spark at the heart of the map -> 0.3 light spreads state by state outward
+   -> 1.7 ripples on water -> 2.0 a bud rises on its stem -> 2.6 the petals open
+   (outer first, like a real lotus) -> 3.7 pollen burst + rays -> 4.5 the official
+   BJP disc grows behind the lotus while the lotus settles to exactly the size and
+   place of the lotus in the logo, then hands over to it -> 5.2 wordmark -> 6.1 numbers.
+   Everything inside .in-stage is in % of the (square) stage, so portrait just
+   shrinks the stage. Only transform/opacity/stroke are animated (cheap on TVs). */
+.in-stage{position:relative;width:36rem;height:36rem}
+.in-stage > *{position:absolute}
+.in-rays{top:-14%;left:-14%;width:128%;height:128%;opacity:0;animation:inFade 1.4s 3.6s ease forwards}
+.in-rays g{-webkit-transform-origin:100px 100px;transform-origin:100px 100px;animation:inSpin 70s linear infinite}
+.in-map{top:0;left:0;width:100%;height:100%;animation:inMapDim 1.2s 4.6s ease forwards}
+.in-map path{fill:url(#inTri);fill-opacity:0;stroke:#FFB04D;stroke-width:.05;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;
+  animation:inDraw 1.1s ease forwards,inFill 1.4s 2.3s ease forwards}
+@keyframes inDraw{0%{stroke-dashoffset:1;stroke:#FFF3C4}60%{stroke:#FFE08A}100%{stroke-dashoffset:0;stroke:#FF9933}}
+@keyframes inFill{to{fill-opacity:.2}}
+/* a state show: that state glows gold on the map */
+.in-map path.sel{fill:#FFC857;stroke:#FFF3C4;stroke-width:.12;animation:inDraw 1.1s ease forwards,inFillSel 1.6s 2.1s ease forwards}
+@keyframes inFillSel{to{fill-opacity:.62}}
+body.reduced .in-map path.sel{fill-opacity:.62}
+@keyframes inMapDim{to{opacity:.55}}
+.in-spark{top:50%;left:50%;width:1.4rem;height:1.4rem;margin:-.7rem 0 0 -.7rem;border-radius:50%;background:#FFF6D8;
+  box-shadow:0 0 1.2rem .5rem rgba(255,200,87,.9),0 0 4rem 1.6rem rgba(255,153,51,.6);opacity:0;animation:inSpark 1.5s ease forwards}
+@keyframes inSpark{0%{opacity:0;-webkit-transform:scale(0);transform:scale(0)}25%{opacity:1;-webkit-transform:scale(1.4);transform:scale(1.4)}
+  60%{opacity:1;-webkit-transform:scale(.8);transform:scale(.8)}100%{opacity:0;-webkit-transform:scale(5);transform:scale(5)}}
+.in-glow{top:8%;left:8%;width:84%;height:84%;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,214,120,.62) 0%,rgba(255,153,51,.24) 34%,rgba(255,153,51,0) 68%);opacity:0;animation:inGlow 2.4s 3.4s ease forwards}
+@keyframes inGlow{0%{opacity:0;-webkit-transform:scale(.3);transform:scale(.3)}35%{opacity:1;-webkit-transform:scale(1.08);transform:scale(1.08)}100%{opacity:.8;-webkit-transform:scale(1);transform:scale(1)}}
+/* official logo disc: grows behind the lotus, then a gold ring is drawn round it and a shine passes over */
+.in-logo{top:31.94%;left:31.94%;width:36.11%;height:36.11%;border-radius:50%;overflow:hidden;
+  box-shadow:0 0 0 .35rem rgba(255,200,87,.9),0 0 3.4rem rgba(255,153,51,.85),0 1.4rem 3rem rgba(0,0,0,.45);
+  opacity:0;-webkit-transform:scale(.2);transform:scale(.2);animation:inDisc 1s 4.45s cubic-bezier(.2,1.25,.35,1) forwards}
+@keyframes inDisc{0%{opacity:0;-webkit-transform:scale(.2);transform:scale(.2)}30%{opacity:1}100%{opacity:1;-webkit-transform:scale(1);transform:scale(1)}}
+.in-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.in-logo svg{position:absolute;top:18%;left:18%;width:64%;height:64%}
+.in-logo:after{content:'';position:absolute;top:-20%;left:-60%;width:40%;height:140%;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.55),rgba(255,255,255,0));
+  -webkit-transform:skewX(-20deg);transform:skewX(-20deg);animation:inShine 1.1s 5.6s ease-in-out forwards}
+@keyframes inShine{to{left:130%}}
+.in-ring{top:29.5%;left:29.5%;width:41%;height:41%;overflow:visible}
+.in-ring circle{fill:none;stroke-width:.9;stroke-linecap:round}
+.in-ring .r1{stroke:#FFC857;stroke-dasharray:1;stroke-dashoffset:1;animation:inRing 1.3s 5s cubic-bezier(.6,0,.2,1) forwards}
+.in-ring .r2{stroke:rgba(255,200,87,.45);stroke-width:.35;stroke-dasharray:.6 2.2;opacity:0;-webkit-transform-origin:20px 20px;transform-origin:20px 20px;
+  animation:inFade 1s 5.6s ease forwards,inSpin 40s linear infinite}
+@keyframes inRing{to{stroke-dashoffset:0}}
+/* the lotus: drawn in the same proportions as the lotus in the official logo.
+   Full size while it blooms; .4333x and centred on the logo's lotus when it settles. */
+.in-lotus{top:23.6%;left:26.26%;width:50%;height:53.33%;overflow:visible;
+  -webkit-filter:drop-shadow(0 0 1.2rem rgba(255,200,87,.55));filter:drop-shadow(0 0 1.2rem rgba(255,200,87,.55));
+  animation:inSettle 1.1s 4.45s cubic-bezier(.5,0,.2,1) forwards}
+@keyframes inSettle{0%{-webkit-transform:scale(1);transform:scale(1);opacity:1}62%{opacity:1}100%{-webkit-transform:scale(.4333);transform:scale(.4333);opacity:0}}
+.in-lotus .bud{opacity:0;-webkit-transform:translateY(40px);transform:translateY(40px);animation:inBud 1s 1.95s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes inBud{to{opacity:1;-webkit-transform:none;transform:none}}
+.in-lotus .pt{fill:url(#inPetal);stroke:#FFC24A;stroke-width:2.2;stroke-linejoin:round;-webkit-transform-origin:120px 150px;transform-origin:120px 150px}
+.in-lotus .vein{fill:none;stroke:rgba(230,81,0,.35);stroke-width:1.4;stroke-linecap:round}
+.in-lotus .bowl{fill:url(#inPetal);stroke:#FFC24A;stroke-width:2.2;stroke-linejoin:round}
+.in-lotus .stem{fill:none;stroke:#7BD389;stroke-width:5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:inStem .9s 1.9s ease-out forwards}
+.in-lotus .roots path{fill:none;stroke:#7BD389;stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:inStem .6s 2.5s ease-out forwards}
+@keyframes inStem{to{stroke-dashoffset:0}}
+.in-lotus .wave{fill:none;stroke:#FFD27A;stroke-width:3.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:inStem .8s ease-out forwards}
+.in-lotus .rip{fill:none;stroke:rgba(255,210,122,.8);stroke-width:1.6;opacity:0;-webkit-transform-origin:120px 236px;transform-origin:120px 236px;animation:inRip 2s ease-out forwards}
+@keyframes inRip{0%{opacity:0;-webkit-transform:scale(.1);transform:scale(.1)}20%{opacity:.9}100%{opacity:0;-webkit-transform:scale(1.6);transform:scale(1.6)}}
+/* petals: closed bud -> open; slight overshoot so it feels alive, not mechanical */
+.in-lotus .pt{animation-duration:1.25s;animation-timing-function:cubic-bezier(.25,.9,.3,1.12);animation-fill-mode:both}
+.in-lotus .o1{animation-name:inO1;animation-delay:2.55s}.in-lotus .o2{animation-name:inO2;animation-delay:2.55s}
+.in-lotus .l1{animation-name:inL1;animation-delay:2.7s}.in-lotus .l2{animation-name:inL2;animation-delay:2.7s}
+.in-lotus .i1{animation-name:inI1;animation-delay:2.85s}.in-lotus .i2{animation-name:inI2;animation-delay:2.85s}
+.in-lotus .c0{animation-name:inC0;animation-delay:3.0s}
+@keyframes inO1{from{-webkit-transform:rotate(-4deg) scale(.42,.62);transform:rotate(-4deg) scale(.42,.62)}to{-webkit-transform:rotate(-42deg);transform:rotate(-42deg)}}
+@keyframes inO2{from{-webkit-transform:rotate(4deg) scale(.42,.62);transform:rotate(4deg) scale(.42,.62)}to{-webkit-transform:rotate(42deg);transform:rotate(42deg)}}
+@keyframes inL1{from{-webkit-transform:rotate(-8deg) scale(.4,.5);transform:rotate(-8deg) scale(.4,.5)}to{-webkit-transform:rotate(-72deg);transform:rotate(-72deg)}}
+@keyframes inL2{from{-webkit-transform:rotate(8deg) scale(.4,.5);transform:rotate(8deg) scale(.4,.5)}to{-webkit-transform:rotate(72deg);transform:rotate(72deg)}}
+@keyframes inI1{from{-webkit-transform:rotate(-2deg) scale(.45,.66);transform:rotate(-2deg) scale(.45,.66)}to{-webkit-transform:rotate(-20deg);transform:rotate(-20deg)}}
+@keyframes inI2{from{-webkit-transform:rotate(2deg) scale(.45,.66);transform:rotate(2deg) scale(.45,.66)}to{-webkit-transform:rotate(20deg);transform:rotate(20deg)}}
+@keyframes inC0{from{-webkit-transform:scale(.5,.7);transform:scale(.5,.7)}to{-webkit-transform:none;transform:none}}
+/* pollen burst from the heart of the flower + embers drifting up */
+.in-burst{top:45.5%;left:51.3%;width:0;height:0}
+.in-burst i{position:absolute;top:0;left:0;width:0;height:0}
+.in-burst i b{position:absolute;top:-.3rem;left:-.3rem;width:.6rem;height:.6rem;border-radius:50%;background:#FFE7A3;box-shadow:0 0 .8rem .2rem rgba(255,180,60,.8);
+  opacity:0;animation:inPollen 1.6s cubic-bezier(.1,.7,.3,1) forwards}
+.in-burst i b.pe{width:.9rem;height:1.5rem;top:-.75rem;left:-.45rem;border-radius:50% 50% 50% 50%/70% 70% 30% 30%;background:linear-gradient(#FFFFFF,#FFB866);box-shadow:none}
+@keyframes inPollen{0%{opacity:0;-webkit-transform:translateY(0) scale(.4);transform:translateY(0) scale(.4)}15%{opacity:1}
+  100%{opacity:0;-webkit-transform:translateY(-15rem) scale(1) rotate(160deg);transform:translateY(-15rem) scale(1) rotate(160deg)}}
+.in-embers{top:0;left:0;right:0;bottom:0;position:absolute;overflow:hidden;pointer-events:none}
+.in-embers i{position:absolute;bottom:-2rem;width:.45rem;height:.45rem;border-radius:50%;background:#FFD27A;box-shadow:0 0 .7rem .2rem rgba(255,153,51,.7);opacity:0;animation:inEmber linear infinite}
+@keyframes inEmber{0%{opacity:0;-webkit-transform:translateY(0);transform:translateY(0)}12%{opacity:.85}80%{opacity:.5}100%{opacity:0;-webkit-transform:translateY(-70rem);transform:translateY(-70rem)}}
+@keyframes inFade{to{opacity:1}}
+@keyframes inSpin{to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}
+/* wordmark: नज़र rises out of a slot, a gold shimmer runs through it; NAZAR tracks in */
+.in-wm{margin-top:.6rem;text-align:center;position:relative;z-index:2}
+.in-wm .slot{display:block;overflow:hidden;padding:0 1rem .4rem}
+.in-wm b{display:inline-block;font-family:var(--deva);font-weight:800;font-size:7rem;line-height:1.12;color:#FFF3DC;
+  background:linear-gradient(100deg,#FFF3DC 0%,#FFF3DC 40%,#FFC857 50%,#FFF3DC 60%,#FFF3DC 100%);background-size:250% 100%;background-position:100% 0;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;-webkit-filter:drop-shadow(0 .4rem 1.6rem rgba(230,81,0,.75));filter:drop-shadow(0 .4rem 1.6rem rgba(230,81,0,.75));
+  -webkit-transform:translateY(110%);transform:translateY(110%);animation:inUp .9s 5.2s cubic-bezier(.2,.9,.25,1) forwards,inShimmer 1.6s 6s ease-in-out forwards}
+@keyframes inUp{to{-webkit-transform:none;transform:none}}
+@keyframes inShimmer{to{background-position:0 0}}
+.in-wm .nz{display:block;font-family:var(--head);font-weight:700;font-size:2rem;letter-spacing:1.1rem;padding-left:1.1rem;color:var(--gold);margin-top:.2rem;
+  opacity:0;animation:inTrack 1.2s 5.55s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes inTrack{from{opacity:0;letter-spacing:3rem}to{opacity:1;letter-spacing:1.1rem}}
+.in-wm .tri{display:block;width:16rem;height:.3rem;margin:1rem auto 0;border-radius:.3rem;
+  background:linear-gradient(90deg,#FF9933 0%,#FF9933 33%,#FFFFFF 33%,#FFFFFF 66%,#138808 66%,#138808 100%);
+  -webkit-transform:scaleX(0);transform:scaleX(0);animation:inBar .8s 5.9s ease forwards}
+@keyframes inBar{to{-webkit-transform:scaleX(1);transform:scaleX(1)}}
+.in-wm i{display:block;font-style:normal;font-size:1.6rem;color:var(--muted);margin-top:.9rem;opacity:0;animation:inRise .8s 6.1s ease forwards}
+@keyframes inRise{from{opacity:0;-webkit-transform:translateY(1.2rem);transform:translateY(1.2rem)}to{opacity:1;-webkit-transform:none;transform:none}}
+.in-stats{margin-top:2rem;min-height:6.5rem;display:flex;justify-content:center;position:relative;z-index:2}
+.in-stat{margin:0 2.6rem;text-align:center;opacity:0;animation:inRise .7s ease forwards}
+.in-stat b{display:block;font-family:var(--head);font-weight:700;font-size:4.4rem;color:var(--gold);line-height:1;text-shadow:0 0 1.6rem rgba(255,153,51,.45)}
+.in-stat span{font-size:1.3rem;color:var(--muted)}
+.in-skip{position:absolute;bottom:2rem;right:2.4rem;font-size:1.1rem;color:var(--dim)}
+/* reduced motion: the finished picture, no movement */
+body.reduced #intro *{-webkit-animation:none!important;animation:none!important}
+body.reduced .in-map path{stroke-dashoffset:0;fill-opacity:.2} body.reduced .in-map{opacity:.55}
+body.reduced .in-rays,body.reduced .in-glow,body.reduced .in-logo,body.reduced .in-ring .r2,body.reduced .in-wm .nz,body.reduced .in-wm i,body.reduced .in-stat{opacity:1;-webkit-transform:none;transform:none}
+body.reduced .in-ring .r1{stroke-dashoffset:0} body.reduced .in-wm b,body.reduced .in-wm .tri{-webkit-transform:none;transform:none}
+body.reduced .in-lotus,body.reduced .in-spark,body.reduced .in-burst,body.reduced .in-embers{display:none}
+
+/* ---------- start screen ---------- */
+#chooser{position:fixed;top:0;left:0;right:0;bottom:0;z-index:40;display:flex;flex-direction:column;padding:2.2rem 3.4rem}
+.ch-top{display:flex;align-items:center;justify-content:space-between}
+.ch-q{text-align:center;margin-top:1.4rem}
+.ch-q h1{font-family:var(--deva);font-weight:800;font-size:4.6rem;line-height:1.1;text-shadow:0 .4rem 2rem rgba(0,0,0,.6)}
+.ch-q p{font-size:1.7rem;color:var(--muted);margin-top:.6rem;text-shadow:0 .2rem .8rem rgba(0,0,0,.7)}
+.ch-cards{margin-top:auto;display:flex;align-items:stretch;justify-content:center}
+.ch-card{background:var(--glass);border:.12rem solid var(--line);border-radius:2rem;padding:2.4rem 2.6rem;box-shadow:0 2rem 5rem rgba(0,0,0,.45);text-align:left}
+.ch-all{width:38rem;margin-right:2.4rem;cursor:pointer;transition:border-color .2s,-webkit-transform .2s;transition:border-color .2s,transform .2s;display:flex;flex-direction:column}
+.ch-all:hover,.ch-all:focus{border-color:var(--gold);outline:none;-webkit-transform:translateY(-.3rem);transform:translateY(-.3rem)}
+.ch-one{width:62rem}
+/* state picker (inside the "full picture" card) + the state pill in the header */
+.ch-st{margin-top:1.3rem}
+.ch-st-k{font-size:1.15rem;font-weight:700;letter-spacing:.05rem;color:var(--dim);margin-bottom:.7rem}
+.ch-st-list{display:flex;flex-wrap:wrap;align-items:center}
+.ch-st-list button,.ch-st-list select{margin:0 .6rem .6rem 0;height:3rem;padding:0 1.1rem;border-radius:2rem;border:.08rem solid var(--line);background:rgba(255,255,255,.06);
+  font-family:var(--deva);font-size:1.2rem;font-weight:700;cursor:pointer;color:var(--text)}
+.ch-st-list select{background:#2a0a03;padding-right:.6rem}
+.ch-st-list button:hover,.ch-st-list button:focus,.ch-st-list select:focus{border-color:var(--gold);outline:none;background-color:rgba(255,153,51,.2)}
+.ch-st-list button.on{background:linear-gradient(135deg,#E65100,#FF9933);border-color:transparent}
+.ch-st-list button.all{border-color:rgba(255,200,87,.55);color:var(--gold)}
+.stpill{border-color:rgba(255,200,87,.6);background:rgba(255,153,51,.22);color:#FFE3A3}
+.stpill svg{width:1.4rem;height:1.4rem;margin-right:.6rem;fill:var(--gold);flex:0 0 auto}
+.ch-k{font-family:var(--head);font-weight:700;font-size:1.3rem;letter-spacing:.2rem;text-transform:uppercase;color:var(--gold)}
+.ch-t{font-family:var(--deva);font-weight:800;font-size:3.4rem;line-height:1.15;margin-top:.5rem}
+.ch-d{font-size:1.35rem;color:var(--muted);margin-top:.6rem;line-height:1.45}
+.ch-go{margin-top:auto;padding-top:1.6rem;display:flex;align-items:center;font-weight:700;font-size:1.4rem;color:var(--gold)}
+.ch-ring{width:3.6rem;height:3.6rem;margin-right:1rem}
+.ch-ring circle{fill:none;stroke-width:3}
+.ch-search{margin-top:1.4rem;position:relative}
+.ch-search input{width:100%;height:5rem;border-radius:1.2rem;border:.12rem solid var(--line);background:rgba(0,0,0,.35);padding:0 1.6rem 0 4.6rem;font-size:1.8rem;outline:none}
+.ch-search input:focus{border-color:var(--gold)}
+.ch-search svg{position:absolute;left:1.5rem;top:1.45rem;width:2.1rem;height:2.1rem;opacity:.7}
+.ch-list{margin-top:1rem;max-height:23rem;overflow-y:auto}
+.ch-row{display:flex;align-items:center;padding:.9rem 1rem;border-radius:1rem;cursor:pointer}
+.ch-row.on,.ch-row:hover{background:rgba(255,153,51,.16)}
+.ch-row .av{width:4.6rem;height:4.6rem;font-size:1.7rem;margin-right:1.2rem;border-width:.18rem}
+.ch-row .n{flex:1 1 auto;min-width:0}
+.ch-row .n b{display:block;font-family:var(--head);font-weight:700;font-size:1.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-row .n span{font-size:1.15rem;color:var(--muted)}
+.ch-row .pt{font-size:1.1rem;font-weight:700;padding:.25rem .8rem;border-radius:.5rem;color:#fff;margin-left:1rem}
+.ch-hint{font-size:1.2rem;color:var(--dim);margin-top:1rem}
+.ch-recent{margin-top:1rem;display:flex;flex-wrap:wrap}
+.ch-recent button{margin:0 .8rem .8rem 0;padding:.6rem 1.2rem;border-radius:2rem;border:.08rem solid var(--line);background:rgba(255,255,255,.06);font-size:1.15rem;cursor:pointer}
+
+/* ---------- shared bits ---------- */
+.vc{display:flex;flex-direction:column;height:100%}
+.vc > :first-child{margin-top:auto} .vc > :last-child{margin-bottom:auto}
+.note{font-size:1.2rem;color:var(--dim);line-height:1.45;margin-top:1.2rem}
+.av{position:relative;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:700;color:#fff;overflow:hidden;flex:0 0 auto;border:.3rem solid}
+.av img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.pl{display:inline-block;width:2.4rem;height:2.4rem;border-radius:50%;overflow:hidden;vertical-align:middle;flex:0 0 auto;box-shadow:0 0 0 .12rem rgba(255,255,255,.35)}
+.pl img{width:100%;height:100%;object-fit:cover;display:block}
+.dot{display:inline-block;width:1.1rem;height:1.1rem;border-radius:50%;flex:0 0 auto}
+
+/* glance: poster -- leaders above, numbers strip below */
+.glance{height:100%;display:flex;flex-direction:column;justify-content:flex-end}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);grid-gap:1.6rem}
+.kpi{background:var(--glass);border:.08rem solid var(--line);border-radius:1.6rem;padding:1.8rem 2rem;min-width:0;box-shadow:0 1.6rem 3rem rgba(0,0,0,.4)}
+.kpi-v{font-family:var(--head);font-weight:700;font-size:5.6rem;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-v.txt{font-size:3.6rem;line-height:1.05;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.kpi-v .u{font-size:.55em;margin-left:.15em}
+.kpi-l{font-size:1.4rem;color:var(--muted);margin-top:.8rem;font-weight:500}
+.kpi-s{font-size:1.15rem;color:var(--dim);margin-top:.4rem}
+.kpi-s .up{color:var(--good)} .kpi-s .down{color:var(--amber)}
+.scale{margin-top:1.4rem;text-align:center;font-size:1.5rem;color:var(--muted);text-shadow:0 .2rem .8rem rgba(0,0,0,.8)}
+.scale b{font-family:var(--head);font-size:2.1rem;color:var(--text);font-weight:700}
+
+/* bars */
+.bar-row{display:grid;grid-template-columns:14rem 1fr 14rem;align-items:center;margin-bottom:1.1rem}
+.bar-name{display:flex;align-items:center;font-family:var(--head);font-weight:700;font-size:2.4rem;white-space:nowrap;overflow:hidden}
+.bar-name .pl,.bar-name .dot{margin-right:.9rem}
+.bar-mid{min-width:0;padding:0 1.6rem}
+.bar-val{font-family:var(--head);font-weight:700;font-size:2.6rem;text-align:right;white-space:nowrap}
+.bar-val small{font-size:1.4rem;color:var(--muted);font-weight:600;margin-left:.6rem}
+.bar-track{height:1.7rem;border-radius:1rem;background:rgba(255,255,255,.08);overflow:hidden}
+.bar-fill{height:100%;width:0;border-radius:1rem;transition:width 1.4s cubic-bezier(.3,.7,.2,1)}
+body.reduced .bar-fill{transition:none}
+.bar-sub{font-size:1.15rem;color:var(--dim);margin-top:.4rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-sub .ltd{color:var(--amber)}
+.bar-row.others .bar-name,.bar-row.others .bar-val{color:var(--muted)}
+
+/* leaders */
+.leads{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-gap:1.8rem;height:100%}
+.lead{background:var(--glass);border:.08rem solid var(--line);border-radius:1.8rem;padding:2.2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-width:0;box-shadow:0 1.6rem 3rem rgba(0,0,0,.4)}
+.lead-1{background:linear-gradient(180deg,rgba(255,153,51,.24),rgba(26,8,3,.86));border-color:rgba(255,200,87,.5)}
+.rank{font-family:var(--head);font-weight:700;font-size:1.5rem;color:var(--gold);margin-bottom:1rem;letter-spacing:.1rem}
+.lead .av{width:11rem;height:11rem;font-size:4rem}
+.lead-1 .av{width:13.5rem;height:13.5rem;font-size:4.8rem}
+.ln{font-family:var(--head);font-weight:700;font-size:2.3rem;line-height:1.1;margin-top:1.4rem;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lead-1 .ln{font-size:2.8rem}
+.ls{font-size:1.25rem;color:var(--muted);margin-top:.4rem}
+.lv{font-family:var(--head);font-weight:700;font-size:4.4rem;color:var(--gold);line-height:1;margin-top:1.4rem}
+.lead-1 .lv{font-size:5.4rem}
+.ll{font-size:1.2rem;color:var(--dim);margin-top:.4rem}
+
+/* breakout */
+.bo{display:grid;grid-template-columns:1.5fr 1fr;grid-gap:2.2rem;height:100%}
+.bo-main{background:linear-gradient(135deg,rgba(123,211,137,.18),rgba(26,8,3,.86));border:.08rem solid rgba(123,211,137,.4);border-radius:1.8rem;padding:2.8rem;display:flex;align-items:center}
+.bo-main .av{width:14rem;height:14rem;font-size:5rem;margin-right:2.6rem}
+.bo-x{font-family:var(--head);font-weight:700;font-size:9rem;line-height:.9;color:var(--good)}
+.bo-xl{font-size:1.6rem;color:var(--muted);margin-top:.6rem}
+.bo-nm{font-family:var(--head);font-weight:700;font-size:3rem;line-height:1.1;margin-top:1.4rem}
+.bo-meta{font-size:1.3rem;color:var(--muted);margin-top:.4rem}
+.bo-detail{font-size:1.2rem;color:var(--dim);margin-top:1rem;line-height:1.45}
+.bo-more{min-width:0}
+.bo-row{display:flex;align-items:center;background:var(--glass);border:.08rem solid var(--line);border-radius:1.2rem;padding:1.4rem 1.6rem;margin-bottom:1.2rem}
+.bo-row .av{width:5.4rem;height:5.4rem;font-size:2rem;margin-right:1.3rem;border-width:.2rem}
+.bo-row .n{flex:1 1 auto;min-width:0}
+.bo-row .n b{display:block;font-family:var(--head);font-size:1.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bo-row .n span{font-size:1.1rem;color:var(--muted)}
+.bo-row .x{font-family:var(--head);font-weight:700;font-size:2.8rem;color:var(--good);margin-left:1rem}
+
+/* post */
+.tp-q{font-size:3rem;line-height:1.4;font-weight:500;border-left:.5rem solid var(--saffron);padding-left:2.4rem;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.tp-by{display:flex;align-items:center;margin-top:2.2rem}
+.tp-by .av{width:6.4rem;height:6.4rem;font-size:2.3rem;margin-right:1.4rem;border-width:.22rem}
+.tp-by b{display:block;font-family:var(--head);font-size:2.4rem}
+.tp-by span{font-size:1.3rem;color:var(--muted)}
+.tp-v{margin-left:auto;text-align:right}
+.tp-v b{font-family:var(--head);font-size:4.6rem;color:var(--gold);line-height:1}
+.tp-v span{display:block;font-size:1.2rem;color:var(--dim)}
+
+/* map */
+.mapw{display:grid;grid-template-columns:1.25fr 1fr;grid-gap:2.4rem;height:100%}
+.map-svg{min-height:0;height:100%;display:flex;align-items:center;justify-content:center}
+.map-svg svg{height:100%;width:100%;max-height:100%}
+.map-svg path{stroke:rgba(20,6,2,.95);stroke-width:.05;transition:opacity .4s}
+.map-svg path.hl{stroke:#fff;stroke-width:.12}
+.map-svg.dimmed path{opacity:.42} .map-svg.dimmed path.hl{opacity:1}
+.map-side{min-width:0}
+.ms-row{display:flex;align-items:center;padding:.95rem 1.2rem;border-radius:1rem;margin-bottom:.4rem;transition:background .3s}
+.ms-row.hl{background:rgba(255,153,51,.16)}
+.ms-row .r{font-family:var(--head);font-weight:700;font-size:1.6rem;color:var(--dim);width:2.6rem}
+.ms-row .s{flex:1 1 auto;font-family:var(--head);font-weight:700;font-size:2.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ms-row .p{font-size:1.2rem;font-weight:700;padding:.2rem .7rem;border-radius:.4rem;margin:0 1rem;color:#fff}
+.ms-row .v{font-family:var(--head);font-weight:700;font-size:2rem}
+.legend{display:flex;flex-wrap:wrap;margin-top:1.4rem}
+.legend span{display:flex;align-items:center;font-size:1.15rem;color:var(--muted);margin:0 1.4rem .6rem 0}
+.legend i{width:1rem;height:1rem;border-radius:.25rem;margin-right:.5rem}
+
+/* facts */
+.facts{list-style:none;max-width:130rem}
+.facts li{display:flex;align-items:flex-start;font-size:2.6rem;line-height:1.35;margin-bottom:1.8rem}
+.facts li i{flex:0 0 auto;width:1rem;height:1rem;border-radius:50%;background:var(--saffron);margin:1.25rem 1.6rem 0 0}
+.facts li b{color:var(--gold);font-weight:700}
+
+/* personal: profile */
+.pf{display:grid;grid-template-columns:auto 1fr;grid-gap:3rem;align-items:center;height:100%}
+.pf-av .av{width:20rem;height:20rem;font-size:7rem;border-width:.45rem;box-shadow:0 0 0 .6rem rgba(255,153,51,.25),0 2rem 4rem rgba(0,0,0,.5)}
+.pf-nm{font-family:var(--head);font-weight:700;font-size:5rem;line-height:1.02}
+.pf-meta{display:flex;align-items:center;flex-wrap:wrap;font-size:1.6rem;color:var(--muted);margin-top:.8rem}
+.pf-meta > *{margin:0 1rem .4rem 0}
+.pf-meta .pt{font-weight:700;padding:.2rem .8rem;border-radius:.5rem;color:#fff}
+.pf-k{display:grid;grid-template-columns:repeat(4,1fr);grid-gap:1.2rem;margin-top:2rem}
+.pf-k div{background:rgba(0,0,0,.25);border:.08rem solid var(--line);border-radius:1.2rem;padding:1.3rem 1.5rem}
+.pf-k b{display:block;font-family:var(--head);font-weight:700;font-size:4rem;line-height:1}
+.pf-k span{font-size:1.2rem;color:var(--muted)}
+.pf-chips{margin-top:1.4rem;display:flex;flex-wrap:wrap}
+.pf-chips span{font-size:1.3rem;font-weight:700;padding:.5rem 1.1rem;border-radius:2rem;margin:0 1rem .6rem 0;background:rgba(255,255,255,.08)}
+.pf-chips .up{color:var(--good);background:rgba(123,211,137,.14)} .pf-chips .down{color:var(--amber);background:rgba(255,179,0,.14)}
+/* personal: rhythm */
+.rh{display:grid;grid-template-columns:1.6fr 1fr;grid-gap:2.4rem;height:100%}
+.rh h4{font-family:var(--head);font-size:1.8rem;color:var(--gold);margin-bottom:1.2rem}
+.hbars{display:flex;align-items:flex-end;height:22rem}
+.hbars div{flex:1 1 0;margin:0 .12rem;background:linear-gradient(180deg,#FFC857,#E65100);border-radius:.4rem .4rem 0 0;min-height:.2rem}
+.hlab{display:flex;justify-content:space-between;font-size:1.1rem;color:var(--dim);margin-top:.5rem}
+.dbars{display:flex;align-items:flex-end;height:22rem}
+.dbars div{flex:1 1 0;margin:0 .5rem;text-align:center;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.dbars i{display:block;background:linear-gradient(180deg,#FF9933,#9E3600);border-radius:.5rem .5rem 0 0;min-height:.2rem}
+.dbars b{font-family:var(--head);font-size:1.6rem;margin-bottom:.3rem}
+.dbars span{font-size:1.05rem;color:var(--dim);margin-top:.4rem}
+/* personal: ranks */
+.rk{display:grid;grid-template-columns:repeat(3,1fr);grid-gap:2rem;height:100%}
+.rk div{background:var(--glass);border:.08rem solid var(--line);border-radius:1.8rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
+.rk b{font-family:var(--head);font-weight:700;font-size:9rem;line-height:1;color:var(--gold)}
+.rk b small{font-size:.35em;color:var(--muted);margin-left:.3rem}
+.rk span{font-size:1.6rem;color:var(--muted);margin-top:.8rem}
+/* personal: rivals, colleagues, news */
+.rv{display:grid;grid-template-columns:repeat(2,1fr);grid-gap:1.4rem}
+.rv-c{background:var(--glass);border:.08rem solid var(--line);border-radius:1.4rem;padding:1.5rem 1.7rem;min-width:0}
+.rv-h{display:flex;align-items:center}
+.rv-h .av{width:5.4rem;height:5.4rem;font-size:2rem;margin-right:1.2rem;border-width:.2rem}
+.rv-h b{display:block;font-family:var(--head);font-size:2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rv-h span{font-size:1.15rem;color:var(--muted)}
+.rv-n{display:flex;margin-top:1rem}
+.rv-n div{margin-right:2.4rem} .rv-n b{font-family:var(--head);font-size:2.6rem;color:var(--gold)} .rv-n span{display:block;font-size:1.05rem;color:var(--dim)}
+.rv-q{font-size:1.3rem;color:var(--muted);margin-top:.8rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nw li{list-style:none;display:flex;align-items:flex-start;padding:1.1rem 0;border-bottom:.08rem solid var(--line)}
+.nw li:last-child{border-bottom:0}
+.nw .tk-tag{flex:0 0 auto;margin-top:.25rem}
+.nwg.two{display:grid;grid-template-columns:1fr 1fr;grid-gap:2.6rem}
+.nw p{font-size:1.75rem;line-height:1.35;min-width:0}
+.nw p em{font-style:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nw p span{display:block;font-size:1.15rem;color:var(--dim);margin-top:.3rem}
+.nw h4{font-family:var(--head);font-size:1.8rem;color:var(--gold);margin:0 0 .6rem}
+.empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.empty h3{font-family:var(--head);font-size:3.6rem}
+.empty p{font-size:1.6rem;color:var(--muted);margin-top:1rem;max-width:70rem;line-height:1.5}
+
+/* ---------- portrait / small screens ---------- */
+body.portrait #app,body.portrait #chooser{padding:1.2rem 1.4rem 1rem}
+body.portrait .top{height:auto;flex-wrap:wrap}
+body.portrait .wm{font-size:2.3rem} body.portrait .wm small,body.portrait .wm-sub{display:none}
+body.portrait .logo{width:3.4rem;height:3.4rem;margin-right:.8rem}
+body.portrait .right > *{margin-left:.6rem}
+body.portrait .clock{display:none}
+body.portrait .chip{height:2.6rem;font-size:1rem;padding:0 .9rem}
+body.portrait .tbtn{height:2.6rem;padding:0 .7rem;font-size:1rem}
+body.portrait .hero-side{display:none}
+body.portrait .hero-main{height:56%}
+body.portrait #stage{padding-top:1rem}
+body.portrait .st-title{font-size:3rem} body.portrait .st-count{display:none}
+body.portrait #scene{overflow-y:auto;-webkit-overflow-scrolling:touch}
+body.portrait .glass{padding:1.4rem 1.4rem}
+body.portrait .kpis{grid-template-columns:1fr 1fr;grid-gap:1rem}
+body.portrait .kpi{padding:1.3rem}
+body.portrait .kpi-v{font-size:4rem} body.portrait .kpi-v.txt{font-size:2.8rem}
+body.portrait .bar-row{grid-template-columns:8.5rem 1fr 8.5rem;margin-bottom:.9rem}
+body.portrait .bar-mid{padding:0 .8rem}
+body.portrait .bar-name{font-size:1.8rem} body.portrait .bar-val{font-size:1.9rem} body.portrait .bar-val small{display:none}
+body.portrait .nwg.two,body.portrait .leads,body.portrait .bo,body.portrait .rh,body.portrait .rk,body.portrait .rv,body.portrait .mapw,body.portrait .pf{grid-template-columns:1fr;grid-gap:1rem}
+body.portrait .lead,body.portrait .lead-1{flex-direction:row;text-align:left;padding:1.2rem 1.4rem}
+body.portrait .lead .av,body.portrait .lead-1 .av{width:6rem;height:6rem;font-size:2.2rem;margin-right:1.2rem}
+body.portrait .rank{display:none}
+body.portrait .ln,body.portrait .lead-1 .ln{font-size:1.9rem;margin-top:0}
+body.portrait .lv,body.portrait .lead-1 .lv{font-size:2.6rem;margin-top:.3rem}
+body.portrait .bo-main{flex-direction:column;align-items:flex-start;padding:1.6rem}
+body.portrait .bo-main .av{width:7rem;height:7rem;font-size:2.6rem;margin:0 0 1rem}
+body.portrait .bo-x{font-size:6rem}
+body.portrait .tp-q{font-size:2.2rem;padding-left:1.4rem}
+body.portrait .tp-by{flex-wrap:wrap} body.portrait .tp-v{margin:1rem 0 0;text-align:left;width:100%}
+body.portrait .mapw{grid-template-rows:1.3fr 1fr}
+body.portrait .facts li{font-size:1.9rem}
+body.portrait .pf-av .av{width:10rem;height:10rem;font-size:3.6rem}
+body.portrait .pf-nm{font-size:3.2rem}
+body.portrait .pf-k{grid-template-columns:1fr 1fr}
+body.portrait .rk b{font-size:6rem}
+body.portrait .hbars,body.portrait .dbars{height:12rem}
+body.portrait .honesty{white-space:normal;font-size:.95rem}
+body.portrait .ticker{height:3.6rem} body.portrait .tk-lbl{font-size:1.1rem;padding:0 .9rem}
+body.portrait .tk-item,body.portrait .tk-single{font-size:1.2rem} body.portrait .tk-single{line-height:3.6rem}
+body.portrait .ctl{bottom:5.6rem}
+body.portrait .ch-q h1{font-size:3rem} body.portrait .ch-q p{font-size:1.3rem}
+body.portrait .ch-cards{flex-direction:column;margin-top:1.2rem}
+body.portrait .ch-all,body.portrait .ch-one{width:auto;margin:0 0 1.2rem}
+body.portrait .ch-t{font-size:2.4rem}
+body.portrait .in-stage{width:38rem;height:38rem}
+body.portrait .in-wm b{font-size:5.4rem}
+body.portrait .in-stats{flex-direction:column}
+/* very short screens (a phone held sideways): smaller emblem, no numbers row */
+@media (max-height:520px){
+  .in-stage,body.portrait .in-stage{width:22rem;height:22rem}
+  .in-wm b,body.portrait .in-wm b{font-size:4.2rem}
+  .in-wm .nz{font-size:1.5rem} .in-wm i,.in-stats{display:none}
+}
+</style>
+</head>
+<body>
+<div id="sky"></div>
+<div id="hero" aria-hidden="true">
+  <div class="hero-floor"></div>
+  <div class="hero-side l2"><img id="heroL2" alt=""></div>
+  <div class="hero-side r2"><img id="heroR2" alt=""></div>
+  <div class="hero-side l"><img id="heroL" alt=""></div>
+  <div class="hero-side r"><img id="heroR" alt=""></div>
+  <div class="hero-main"><img id="heroM" alt=""></div>
+</div>
+
+<div id="intro" aria-hidden="true">
+  <div class="in-embers" id="inEmbers"></div>
+  <div class="in-stage">
+    <svg class="in-rays" viewBox="0 0 200 200"><defs><radialGradient id="inRayG" gradientUnits="userSpaceOnUse" cx="100" cy="100" r="100">
+      <stop offset="0" stop-color="#FFD27A" stop-opacity=".5"/><stop offset=".55" stop-color="#FF9933" stop-opacity=".12"/><stop offset="1" stop-color="#FF9933" stop-opacity="0"/></radialGradient></defs>
+      <g id="inRays" fill="url(#inRayG)"></g></svg>
+    <svg class="in-map" id="inMap" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="in-glow"></div>
+    <div class="in-spark"></div>
+    <div class="in-logo"><img id="inLogo" alt=""></div>
+    <svg class="in-ring" viewBox="0 0 40 40"><circle class="r2" cx="20" cy="20" r="19.9"/><circle class="r1" cx="20" cy="20" r="19" pathLength="1" transform="rotate(-90 20 20)"/></svg>
+    <!-- the lotus, in the proportions of the lotus in the official logo (viewBox = that lotus' box) -->
+    <svg class="in-lotus" viewBox="0 0 240 256">
+      <defs><linearGradient id="inPetal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".62" stop-color="#FFF5E6"/><stop offset="1" stop-color="#FFCF8F"/></linearGradient></defs>
+      <ellipse class="rip" cx="120" cy="236" rx="70" ry="11" style="animation-delay:1.65s"/>
+      <ellipse class="rip" cx="120" cy="236" rx="70" ry="11" style="animation-delay:2.05s"/>
+      <ellipse class="rip" cx="120" cy="236" rx="70" ry="11" style="animation-delay:2.45s"/>
+      <path class="wave" pathLength="1" d="M84 226 q9 -6 18 0 t18 0 t18 0 t18 0" style="animation-delay:1.55s"/>
+      <path class="wave" pathLength="1" d="M88 240 q8 -5 16 0 t16 0 t16 0 t16 0" style="animation-delay:1.7s"/>
+      <path class="wave" pathLength="1" d="M99 253 q7 -4 14 0 t14 0 t14 0" style="animation-delay:1.85s"/>
+      <g class="roots"><path pathLength="1" d="M119 214 C 112 220, 104 222, 97 223"/><path pathLength="1" d="M121 214 C 128 220, 136 222, 143 223"/></g>
+      <path class="stem" pathLength="1" d="M120 222 C 123 202, 114 186, 120 160"/>
+      <g class="bud">
+        <g class="pt o1"><path d="M120 150 C 90 120, 90 40, 120 -15 C 150 40, 150 120, 120 150 Z"/><path class="vein" d="M120 132 L120 10"/></g>
+        <g class="pt o2"><path d="M120 150 C 90 120, 90 40, 120 -15 C 150 40, 150 120, 120 150 Z"/><path class="vein" d="M120 132 L120 10"/></g>
+        <g class="pt i1"><path d="M120 150 C 94 118, 94 52, 120 12 C 146 52, 146 118, 120 150 Z"/><path class="vein" d="M120 132 L120 34"/></g>
+        <g class="pt i2"><path d="M120 150 C 94 118, 94 52, 120 12 C 146 52, 146 118, 120 150 Z"/><path class="vein" d="M120 132 L120 34"/></g>
+        <g class="pt c0"><path d="M120 150 C 86 118, 88 50, 120 10 C 152 50, 154 118, 120 150 Z"/><path class="vein" d="M120 134 L120 32"/></g>
+        <g class="pt l1"><path d="M120 150 C 97 132, 97 92, 120 62 C 143 92, 143 132, 120 150 Z"/></g>
+        <g class="pt l2"><path d="M120 150 C 97 132, 97 92, 120 62 C 143 92, 143 132, 120 150 Z"/></g>
+        <path class="bowl" d="M74 146 C 92 171, 148 171, 166 146 C 146 159, 94 159, 74 146 Z"/>
+        <ellipse class="bowl" cx="120" cy="160" rx="13" ry="8"/>
+      </g>
+    </svg>
+    <div class="in-burst" id="inBurst"></div>
+  </div>
+  <div class="in-wm"><div class="slot"><b>नज़र</b></div><span class="nz">NAZAR</span><div class="tri"></div><i id="inTag">देश की राजनीतिक नब्ज़ — हर पल</i></div>
+  <div class="in-stats" id="inStats"></div>
+  <div class="in-skip" id="inSkip">Press any key to skip</div>
+</div>
+
+<div id="chooser" class="hidden">
+  <div class="ch-top">
+    <div class="brand"><div class="logo" id="chLogo"></div><div><div class="wm">नज़र<small>NAZAR</small></div><div class="wm-sub" id="chSub"></div></div></div>
+    <div class="right"><button class="tbtn" id="chLang" type="button">हिंदी</button><button class="tbtn" id="chBack" type="button">&#8592; <span id="chBackTxt">Dashboard</span></button></div>
+  </div>
+  <div class="ch-q"><h1 id="chQ"></h1><p id="chQs"></p></div>
+  <div class="ch-cards">
+    <div class="ch-card ch-all" id="chAll" tabindex="0" role="button">
+      <div class="ch-k" id="chAllK"></div><div class="ch-t" id="chAllT"></div><div class="ch-d" id="chAllD"></div>
+      <div class="ch-st hidden" id="chSt"><div class="ch-st-k" id="chStK"></div><div class="ch-st-list" id="chStList"></div></div>
+      <div class="ch-go"><svg class="ch-ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" stroke="rgba(255,255,255,.15)"/><circle id="chRing" cx="18" cy="18" r="15" stroke="#FFC857" stroke-dasharray="94.25" stroke-dashoffset="0" transform="rotate(-90 18 18)"/></svg><span id="chGo"></span></div>
+    </div>
+    <div class="ch-card ch-one">
+      <div class="ch-k" id="chOneK"></div><div class="ch-t" id="chOneT"></div>
+      <div class="ch-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+        <input id="chInput" type="text" autocomplete="off" spellcheck="false"></div>
+      <div class="ch-list" id="chList"></div>
+      <div class="ch-recent" id="chRecent"></div>
+      <div class="ch-hint" id="chHint"></div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="top">
+    <div class="brand"><div class="logo" id="hdLogo"></div><div><div class="wm">नज़र<small>NAZAR</small></div><div class="wm-sub" id="brandSub"></div></div></div>
+    <div class="right">
+      <div class="chip stpill hidden" id="stPill"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg><span id="stPillTxt"></span></div>
+      <div class="chip lvl-nodata" id="chip"><i class="cd"></i><span id="chipTxt">…</span></div>
+      <div class="clock"><b id="clk">--:--</b><span id="cdate"></span></div>
+      <button class="tbtn" id="swBtn" type="button"></button>
+      <button class="tbtn" id="langBtn" type="button">हिंदी</button>
+      <button class="tbtn" id="backBtn" type="button">&#8592; <span id="backTxt">Dashboard</span></button>
+    </div>
+  </header>
+  <main id="stage" aria-live="polite">
+    <div class="st-head"><div><div class="st-title" id="stTitle"></div><div class="st-when" id="stWhen"></div></div><div class="st-count" id="stCount"></div></div>
+    <div id="scene"></div>
+  </main>
+  <div class="honesty" id="honesty"></div>
+  <div id="prog"><i></i></div>
+  <footer class="ticker" id="ticker"><div class="tk-lbl" id="tkLbl"></div><div class="tk-track" id="tkTrack"></div></footer>
+</div>
+<div class="ctl" id="ctl">
+  <button type="button" id="cPrev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+  <button type="button" id="cPlay" aria-label="Pause"><svg viewBox="0 0 24 24" fill="currentColor" id="cPlayIco"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
+  <button type="button" id="cNext" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+  <div class="dots" id="cDots"></div>
+  <div class="sep"></div>
+  <button type="button" id="cFull" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</div>
+<div class="banner hidden" id="banner"></div>
+<div class="overlay hidden" id="overlay"><div class="ov-box"><h2 id="ovTitle"></h2><p id="ovText"></p><span id="ovAct"></span></div></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------------ settings */
+  var Q = {};
+  location.search.replace(/^\?/, '').split('&').forEach(function (kv) {
+    if (!kv) return; var i = kv.indexOf('='), k = i < 0 ? kv : kv.slice(0, i);
+    try { Q[decodeURIComponent(k)] = i < 0 ? '' : decodeURIComponent(kv.slice(i + 1).replace(/\+/g, ' ')); } catch (e) {}
+  });
+  /* scope: 'all', 'up', or one state ('st:Bihar') -- a state scope makes every
+     screen, the leader search and the news about that state only */
+  var SCOPE = Q.scope === 'up' ? 'up' : (/^st:./.test(Q.scope || '') ? Q.scope : 'all');
+  var STATE = SCOPE === 'up' ? 'Uttar Pradesh' : (SCOPE.indexOf('st:') === 0 ? SCOPE.slice(3) : null);
+  var KIOSK = Q.kiosk === '1';
+  var DEMO = Q.demo === '1';
+  var ASOF = Q.asof || '';
+  /* standalone prototype: the server reads a recorded CSV export, not a live feed */
+  var PROTO = window.NAZAR_PROTO || null;
+  var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var REFRESH_MS = 60000, BACKOFF = [60000, 120000, 300000], SOFT_RELOAD_MS = 6 * 3600000, CHOOSER_AUTO_S = 20;
+  /* leader photos -- replace the files (same names) to change them; see live_assets/leaders/ATTRIBUTION.md */
+  var HERO = {
+    heroM: ['/live/img/leaders/modi-standing.webp', 'Narendra Modi'],
+    heroL: ['/live/img/leaders/amit-shah-standing.webp', 'Amit Shah'],
+    heroR: ['/live/img/leaders/yogi-standing-v2.webp', 'Yogi Adityanath'],
+    heroL2: ['/live/img/leaders/nitin-nabin-standing.webp?v=2', 'Nitin Nabin'],
+    heroR2: ['/live/img/leaders/rajnath-singh-standing.webp', 'Rajnath Singh']
+  };
+  var BJP_LOGO = '/live/img/p/BJP';
+  var LOTUS = '<svg viewBox="0 0 100 100"><g transform="translate(50,78)" fill="#fff"><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(-30) scale(.9)"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(30) scale(.9)"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(-60) scale(.75)"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(60) scale(.75)"/></g></svg>';
+
+  function store(k, v) { try { if (v === undefined) return window.localStorage.getItem(k); window.localStorage.setItem(k, v); } catch (e) { return null; } return null; }
+  var LANG = (Q.lang === 'hi' || Q.lang === 'en') ? Q.lang : (store('pulse_live_lang') === 'en' ? 'en' : (store('pulse_live_lang') === 'hi' ? 'hi' : 'hi'));
+
+  /* ----------------------------------------------------------- language */
+  var T = {
+    en: {
+      brandSub: SCOPE === 'up' ? 'Uttar Pradesh · Political Pulse · Live' : 'India Political Pulse · Live',
+      back: 'Dashboard', langBtn: 'हिंदी', sw: 'Change view', tag: 'The political pulse of India — every moment', skip: 'Press any key to skip',
+      live: 'LIVE', latest: 'Latest post', nodata: 'No data yet', offline: 'Offline',
+      tkLbl: 'Latest from media', tkLblP: 'In the news', tkBreaking: 'Breaking',
+      chQ: 'Whose view today?', chQs: 'Choose the whole country, or follow one leader closely.',
+      chAllK: 'Full picture', chAllT: SCOPE === 'up' ? 'Uttar Pradesh' : 'All India', chAllD: 'Every party, every state — who is posting, who is being seen, what the news says.',
+      chGo: 'Starts by itself in {n}s', chGoNow: 'Start now', chOneK: 'Personal channel', chOneT: 'One leader',
+      chPh: 'Type a name or @handle…', chHint: 'Use ↑ ↓ and Enter, or tap a name.', chNone: 'No leader found with that name.',
+      intro1: 'leaders tracked', intro2: 'states', intro3: 'posts analysed',
+      glance: 'At a glance', posts: 'Who is posting the most?', views: 'Whose posts are seen the most?',
+      trending: 'Trending in <em>{p}</em>', trendingSub: 'Most-viewed leaders',
+      breakout: 'Doing far better than usual', toppost: 'Most-viewed post',
+      map: 'Where are leaders posting from?', facts: 'In plain words', nodataT: 'Waiting for data',
+      kOrig: 'Original posts', kViews: 'Views on those posts', kParty: 'Most active party', kState: 'Most active state', kAcc: 'Active accounts',
+      ofPartyPosts: '{v}% of posts by party accounts', postsN: '{v} posts', vsPrev: '{v}% vs previous period',
+      scale: 'Tracking <b>{a}</b> political accounts · <b>{s}</b> states with activity · <b>{t}</b> posts analysed in total',
+      scaleUp: 'Tracking <b>{a}</b> political accounts in Uttar Pradesh · <b>{t}</b> posts analysed in total',
+      active: 'active', collected: 'collected', perAcc: 'posts per collected account', viewsPerAcc: 'views per collected account',
+      ltd: 'limited coverage', others: 'Others', othersSub: '{n} smaller parties',
+      notePosts: 'Original posts only (no reposts, no media accounts). Parties differ in how many of their accounts we collect, so the per-account figure is the fairer comparison.',
+      noteViews: 'Views counted on original posts only. Posts from the last few hours are still collecting views.',
+      viewsWord: 'views', rank: '#{n}',
+      boX: 'their usual views per post', boDetail: 'Typical post now: {r} views · usual: {b} (previous 14 days, {n} posts)',
+      postedAt: 'posted {d}', mapNote: 'Colour = party with the most original posts from that state (at least 20). It is not a vote share.',
+      fewPosts: 'Too few posts', when24: 'Last 24 hours · up to {d}', whenDay: '{d} · latest complete day',
+      hWindow24: '<b>Showing:</b> last 24 hours up to {d}', hWindowDay: '<b>Showing:</b> {d}, the latest complete day — newer data is incomplete',
+      hLatest: 'Latest post {d}', hEst: 'Counts are estimates from the accounts we collect',
+      hSource: 'Data source not reachable at last check ({d})', hIdle: 'No new data from the source at last check ({d})',
+      hSaved: 'Showing saved data from {d} — reconnecting', hDegraded: 'Server is showing its last good data from {d}',
+      hHist: 'Historical test view', ago: { m: '{n} min ago', h: '{n} h ago', d: '{n} days ago', now: 'just now' },
+      authT: 'Please sign in again', authP: 'Your session has ended. Sign in, then open Nazar again from the dashboard.', authA: 'Sign in',
+      forbT: 'No access', forbP: 'Your account cannot view this dashboard.', forbA: 'Go to my dashboard',
+      nfT: 'Leader not found', nfP: 'This leader is not in the list for this dashboard.', nfA: 'Choose again',
+      firstFailT: 'Cannot reach the server', firstFailP: 'Nazar will keep trying every few minutes.', retry: 'Try now',
+      demo: 'Demo — sample numbers, not real data', hist: 'Historical test · as of {d}', proto: 'Recorded data · {a} – {b}',
+      nodataP: 'There is no complete window of data yet. This screen updates by itself as soon as data arrives.',
+      fWindow: 'Tracked political accounts published <b>{posts}</b> original posts {when}.', fWhen24: 'in the last 24 hours', fWhenDay: 'on {d}',
+      fPer: 'On average, each collected <b>{a}</b> account posted <b>{ap}</b> times and each <b>{b}</b> account <b>{bp}</b> times.',
+      fState: '<b>{s}</b> had the most posts from leaders: <b>{n}</b>.', fTop: 'The most-viewed post, by <b>{n}</b>, reached <b>{v}</b> views.',
+      fBreak: 'Posts by <b>{n}</b> got <b>{x}×</b> their usual views.', fMedia: 'Media accounts we follow published <b>{n}</b> posts.',
+      fPrevUp: 'That is <b>{p}% more</b> original posts than the previous period.', fPrevDown: 'That is <b>{p}% fewer</b> original posts than the previous period.',
+      /* personal */
+      pProfile: 'Today with <em>{n}</em>', pRhythm: 'When did they post?', pTop: 'Their most-viewed post', pRank: 'Where they stand',
+      pRivalsC: 'Rivals in <em>{p}</em>', pRivalsS: 'Rival parties in <em>{p}</em>', pColl: '<em>{p}</em> colleagues in {s}', pNews: 'In the news', pFacts: 'In plain words',
+      pPosts: 'Original posts', pReposts: 'Reposts', pViews: 'Views', pLikes: 'Likes',
+      pVsUsual: '{x}× their usual posting', pViewsUsual: 'Views per post {x}× usual', pUsualDay: 'Usually ~{n} posts a day',
+      pHours: 'Posts by hour of day (IST)', pDays: 'Original posts, last 7 days', pLatest: 'Latest post',
+      pRankAll: 'by views, all India', pRankParty: 'by views, in {p}', pRankState: 'by views, in {s}', pOf: 'of {n}',
+      pNoPosts: 'No posts in this period', pNoPostsP: 'Their last post we collected was on {d}.', pNoPostsP2: 'We have no posts from this account yet.',
+      pRivNone: 'No rival-party accounts are tracked here.', pRivPosts: 'posts', pRivViews: 'views', pRivQuiet: 'No posts in this period',
+      pMentions: 'Media mentioning them', pLocal: 'News from their area',
+      fpPosts: '<b>{n}</b> published <b>{p}</b> original posts and <b>{r}</b> reposts {when}.',
+      fpUsual: 'That is <b>{x}×</b> their usual pace of about <b>{d}</b> posts a day.',
+      fpRankS: 'By views, they rank <b>#{r}</b> of {o} active leaders in <b>{s}</b>.', fpRankP: 'Within <b>{p}</b>, they rank <b>#{r}</b> of {o} by views.',
+      fpTop: 'Their most-viewed post reached <b>{v}</b> views.', fpRiv: '<b>{n}</b> rival-party accounts from <b>{p}</b> are tracked; <b>{b}</b> of them posted more.',
+      fpMent: 'Media accounts mentioned them <b>{n}</b> times.',
+      months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    },
+    hi: {
+      brandSub: SCOPE === 'up' ? 'उत्तर प्रदेश · पॉलिटिकल पल्स · लाइव' : 'इंडिया पॉलिटिकल पल्स · लाइव',
+      back: 'डैशबोर्ड', langBtn: 'English', sw: 'नज़र बदलें', tag: 'देश की राजनीतिक नब्ज़ — हर पल', skip: 'आगे बढ़ने के लिए कोई भी बटन दबाएँ',
+      live: 'लाइव', latest: 'ताज़ा पोस्ट', nodata: 'अभी डेटा नहीं', offline: 'ऑफ़लाइन',
+      tkLbl: 'मीडिया से ताज़ा', tkLblP: 'ख़बरों में', tkBreaking: 'ब्रेकिंग',
+      chQ: 'आज किसकी नज़र से देखें?', chQs: 'पूरा देश देखें, या किसी एक नेता पर नज़र रखें।',
+      chAllK: 'पूरी तस्वीर', chAllT: SCOPE === 'up' ? 'उत्तर प्रदेश' : 'पूरा भारत', chAllD: 'हर पार्टी, हर राज्य — कौन पोस्ट कर रहा है, किसे देखा जा रहा है, ख़बरें क्या कहती हैं।',
+      chGo: '{n} सेकंड में अपने आप शुरू', chGoNow: 'अभी शुरू करें', chOneK: 'निजी चैनल', chOneT: 'एक नेता',
+      chPh: 'नाम या @हैंडल लिखें…', chHint: '↑ ↓ और Enter दबाएँ, या नाम पर टैप करें।', chNone: 'इस नाम से कोई नेता नहीं मिला।',
+      intro1: 'नेताओं पर नज़र', intro2: 'राज्य', intro3: 'पोस्ट का विश्लेषण',
+      glance: 'एक नज़र में', posts: 'सबसे ज़्यादा कौन पोस्ट कर रहा है?', views: 'किसके पोस्ट सबसे ज़्यादा देखे गए?',
+      trending: '<em>{p}</em> में ट्रेंडिंग', trendingSub: 'सबसे ज़्यादा देखे गए नेता',
+      breakout: 'सामान्य से कहीं बेहतर', toppost: 'सबसे ज़्यादा देखा गया पोस्ट',
+      map: 'नेता कहाँ से पोस्ट कर रहे हैं?', facts: 'आसान शब्दों में', nodataT: 'डेटा का इंतज़ार',
+      kOrig: 'मूल पोस्ट', kViews: 'इन पोस्ट पर व्यूज़', kParty: 'सबसे सक्रिय पार्टी', kState: 'सबसे सक्रिय राज्य', kAcc: 'सक्रिय खाते',
+      ofPartyPosts: 'पार्टी खातों के पोस्ट का {v}%', postsN: '{v} पोस्ट', vsPrev: 'पिछली अवधि से {v}%',
+      scale: '<b>{a}</b> राजनीतिक खातों पर नज़र · <b>{s}</b> राज्यों से गतिविधि · कुल <b>{t}</b> पोस्ट का विश्लेषण',
+      scaleUp: 'उत्तर प्रदेश के <b>{a}</b> राजनीतिक खातों पर नज़र · कुल <b>{t}</b> पोस्ट का विश्लेषण',
+      active: 'सक्रिय', collected: 'संग्रहित', perAcc: 'पोस्ट प्रति संग्रहित खाता', viewsPerAcc: 'व्यूज़ प्रति संग्रहित खाता',
+      ltd: 'सीमित कवरेज', others: 'अन्य', othersSub: '{n} छोटी पार्टियाँ',
+      notePosts: 'केवल मूल पोस्ट (रीपोस्ट और मीडिया खाते शामिल नहीं)। हर पार्टी के कितने खाते हम संग्रहित करते हैं, यह अलग है — इसलिए प्रति खाता आँकड़ा ज़्यादा सही तुलना है।',
+      noteViews: 'व्यूज़ केवल मूल पोस्ट पर गिने गए। पिछले कुछ घंटों के पोस्ट पर व्यूज़ अभी बढ़ रहे हैं।',
+      viewsWord: 'व्यूज़', rank: '#{n}',
+      boX: 'प्रति पोस्ट सामान्य व्यूज़ का', boDetail: 'अभी आम पोस्ट: {r} व्यूज़ · सामान्य: {b} (पिछले 14 दिन, {n} पोस्ट)',
+      postedAt: '{d} को पोस्ट', mapNote: 'रंग = उस राज्य से सबसे ज़्यादा मूल पोस्ट वाली पार्टी (कम से कम 20)। यह वोट शेयर नहीं है।',
+      fewPosts: 'बहुत कम पोस्ट', when24: 'पिछले 24 घंटे · {d} तक', whenDay: '{d} · ताज़ा पूरा दिन',
+      hWindow24: '<b>दिखाया जा रहा है:</b> {d} तक पिछले 24 घंटे', hWindowDay: '<b>दिखाया जा रहा है:</b> {d}, ताज़ा पूरा दिन — नया डेटा अधूरा है',
+      hLatest: 'ताज़ा पोस्ट {d}', hEst: 'आँकड़े हमारे संग्रहित खातों पर आधारित अनुमान हैं',
+      hSource: 'पिछली जाँच में डेटा स्रोत तक पहुँच नहीं ({d})', hIdle: 'पिछली जाँच में स्रोत से नया डेटा नहीं ({d})',
+      hSaved: '{d} का सहेजा डेटा — दोबारा जुड़ रहे हैं', hDegraded: 'सर्वर {d} का आख़िरी सही डेटा दिखा रहा है',
+      hHist: 'पुराने समय का परीक्षण', ago: { m: '{n} मिनट पहले', h: '{n} घंटे पहले', d: '{n} दिन पहले', now: 'अभी' },
+      authT: 'कृपया दोबारा साइन इन करें', authP: 'आपका सत्र समाप्त हो गया है। साइन इन करें और डैशबोर्ड से नज़र फिर खोलें।', authA: 'साइन इन',
+      forbT: 'पहुँच नहीं', forbP: 'आपका खाता यह डैशबोर्ड नहीं देख सकता।', forbA: 'मेरे डैशबोर्ड पर जाएँ',
+      nfT: 'नेता नहीं मिला', nfP: 'यह नेता इस डैशबोर्ड की सूची में नहीं है।', nfA: 'फिर से चुनें',
+      firstFailT: 'सर्वर से संपर्क नहीं', firstFailP: 'नज़र हर कुछ मिनट में फिर कोशिश करेगा।', retry: 'अभी कोशिश करें',
+      demo: 'डेमो — नमूना आँकड़े, असली डेटा नहीं', hist: 'पुराने समय का परीक्षण · {d} तक', proto: 'रिकॉर्ड किया गया डेटा · {a} – {b}',
+      nodataP: 'अभी डेटा की कोई पूरी अवधि उपलब्ध नहीं है। डेटा आते ही यह स्क्रीन अपने आप अपडेट होगी।',
+      fWindow: 'ट्रैक किए गए राजनीतिक खातों ने {when} <b>{posts}</b> मूल पोस्ट किए।', fWhen24: 'पिछले 24 घंटों में', fWhenDay: '{d} को',
+      fPer: 'औसतन, <b>{a}</b> के हर संग्रहित खाते ने <b>{ap}</b> और <b>{b}</b> के हर खाते ने <b>{bp}</b> पोस्ट किए।',
+      fState: 'नेताओं के सबसे ज़्यादा पोस्ट <b>{s}</b> से आए: <b>{n}</b>।', fTop: 'सबसे ज़्यादा देखा गया पोस्ट <b>{n}</b> का था — <b>{v}</b> व्यूज़।',
+      fBreak: '<b>{n}</b> के पोस्ट को सामान्य से <b>{x} गुना</b> व्यूज़ मिले।', fMedia: 'हम जिन मीडिया खातों को देखते हैं, उन्होंने <b>{n}</b> पोस्ट किए।',
+      fPrevUp: 'यह पिछली अवधि से <b>{p}% ज़्यादा</b> मूल पोस्ट है।', fPrevDown: 'यह पिछली अवधि से <b>{p}% कम</b> मूल पोस्ट है।',
+      pProfile: '<em>{n}</em> की नज़र', pRhythm: 'कब पोस्ट किया?', pTop: 'उनका सबसे ज़्यादा देखा गया पोस्ट', pRank: 'वे कहाँ खड़े हैं',
+      pRivalsC: '<em>{p}</em> में विरोधी', pRivalsS: '<em>{p}</em> में विरोधी दल', pColl: '{s} में <em>{p}</em> के साथी', pNews: 'ख़बरों में', pFacts: 'आसान शब्दों में',
+      pPosts: 'मूल पोस्ट', pReposts: 'रीपोस्ट', pViews: 'व्यूज़', pLikes: 'लाइक्स',
+      pVsUsual: 'सामान्य से {x}× पोस्ट', pViewsUsual: 'प्रति पोस्ट व्यूज़ सामान्य से {x}×', pUsualDay: 'आम तौर पर रोज़ ~{n} पोस्ट',
+      pHours: 'दिन के घंटों के हिसाब से पोस्ट (IST)', pDays: 'पिछले 7 दिनों के मूल पोस्ट', pLatest: 'ताज़ा पोस्ट',
+      pRankAll: 'व्यूज़ से, पूरे भारत में', pRankParty: 'व्यूज़ से, {p} में', pRankState: 'व्यूज़ से, {s} में', pOf: '{n} में से',
+      pNoPosts: 'इस अवधि में कोई पोस्ट नहीं', pNoPostsP: 'हमारे पास उनका आख़िरी पोस्ट {d} का है।', pNoPostsP2: 'इस खाते का कोई पोस्ट अभी हमारे पास नहीं है।',
+      pRivNone: 'यहाँ किसी विरोधी दल के खाते ट्रैक नहीं होते।', pRivPosts: 'पोस्ट', pRivViews: 'व्यूज़', pRivQuiet: 'इस अवधि में कोई पोस्ट नहीं',
+      pMentions: 'उनका ज़िक्र करने वाला मीडिया', pLocal: 'उनके क्षेत्र की ख़बरें',
+      fpPosts: '<b>{n}</b> ने {when} <b>{p}</b> मूल पोस्ट और <b>{r}</b> रीपोस्ट किए।',
+      fpUsual: 'यह उनकी आम रफ़्तार (रोज़ लगभग <b>{d}</b> पोस्ट) का <b>{x}×</b> है।',
+      fpRankS: 'व्यूज़ के हिसाब से वे <b>{s}</b> के {o} सक्रिय नेताओं में <b>#{r}</b> हैं।', fpRankP: '<b>{p}</b> में वे व्यूज़ के हिसाब से {o} में <b>#{r}</b> हैं।',
+      fpTop: 'उनके सबसे ज़्यादा देखे गए पोस्ट को <b>{v}</b> व्यूज़ मिले।', fpRiv: '<b>{p}</b> के <b>{n}</b> विरोधी खाते ट्रैक होते हैं; इनमें से <b>{b}</b> ने ज़्यादा पोस्ट किए।',
+      fpMent: 'मीडिया खातों ने <b>{n}</b> बार उनका ज़िक्र किया।',
+      months: ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'],
+      days: ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार']
+    }
+  };
+  var STATE_HI = {
+    'Andhra Pradesh': 'आंध्र प्रदेश', 'Arunachal Pradesh': 'अरुणाचल प्रदेश', 'Assam': 'असम', 'Bihar': 'बिहार', 'Chhattisgarh': 'छत्तीसगढ़',
+    'Goa': 'गोवा', 'Gujarat': 'गुजरात', 'Haryana': 'हरियाणा', 'Himachal Pradesh': 'हिमाचल प्रदेश', 'Jharkhand': 'झारखंड', 'Karnataka': 'कर्नाटक',
+    'Kerala': 'केरल', 'Madhya Pradesh': 'मध्य प्रदेश', 'Maharashtra': 'महाराष्ट्र', 'Manipur': 'मणिपुर', 'Meghalaya': 'मेघालय', 'Mizoram': 'मिज़ोरम',
+    'Nagaland': 'नागालैंड', 'Odisha': 'ओडिशा', 'Punjab': 'पंजाब', 'Rajasthan': 'राजस्थान', 'Sikkim': 'सिक्किम', 'Tamil Nadu': 'तमिलनाडु',
+    'Telangana': 'तेलंगाना', 'Tripura': 'त्रिपुरा', 'Uttar Pradesh': 'उत्तर प्रदेश', 'Uttarakhand': 'उत्तराखंड', 'West Bengal': 'पश्चिम बंगाल',
+    'Delhi': 'दिल्ली', 'Jammu and Kashmir': 'जम्मू और कश्मीर', 'Ladakh': 'लद्दाख', 'Puducherry': 'पुदुचेरी', 'Chandigarh': 'चंडीगढ़',
+    'Andaman and Nicobar': 'अंडमान और निकोबार', 'Lakshadweep': 'लक्षद्वीप', 'Dadra and Nagar Haveli and Daman and Diu': 'दादरा नगर हवेली और दमन दीव'
+  };
+  T.en.stPick = 'Or follow one state'; T.hi.stPick = 'या एक राज्य पर नज़र रखें';
+  T.en.stMore = 'More states…'; T.hi.stMore = 'और राज्य…';
+  T.en.stAll = 'All India'; T.hi.stAll = 'पूरा भारत';
+  if (STATE) {
+    var stHi = STATE_HI[STATE] || STATE;
+    T.en.brandSub = STATE + ' · Political Pulse'; T.hi.brandSub = stHi + ' · पॉलिटिकल पल्स';
+    T.en.chAllK = 'Full picture of the state'; T.hi.chAllK = 'पूरे राज्य की तस्वीर';
+    T.en.chAllT = STATE; T.hi.chAllT = stHi;
+    T.en.chAllD = 'Every party in ' + STATE + ' — who is posting, who is being seen, what the news says.';
+    T.hi.chAllD = stHi + ' की हर पार्टी — कौन पोस्ट कर रहा है, किसे देखा जा रहा है, ख़बरें क्या कहती हैं।';
+    T.en.chOneT = 'One leader of ' + STATE; T.hi.chOneT = stHi + ' का एक नेता';
+    T.en.tag = 'The political pulse of ' + STATE + ' — every moment'; T.hi.tag = stHi + ' की राजनीतिक नब्ज़ — हर पल';
+    T.en.scaleUp = 'Tracking <b>{a}</b> political accounts in ' + STATE + ' · <b>{t}</b> posts analysed in total';
+    T.hi.scaleUp = stHi + ' के <b>{a}</b> राजनीतिक खातों पर नज़र · कुल <b>{t}</b> पोस्ट का विश्लेषण';
+  }
+  function t(k) { var v = T[LANG][k]; return v === undefined ? T.en[k] : v; }
+  function fill(s, o) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return o[k] === undefined ? m : o[k]; }); }
+  function stName(s) { return LANG === 'hi' && STATE_HI[s] ? STATE_HI[s] : s; }
+  function partyName(p) { return p === 'Others' ? t('others') : p; }
+
+  /* ------------------------------------------------------------- format */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function fmtInt(n) {
+    if (n === null || n === undefined || !isFinite(n)) return '–';
+    var s = String(Math.round(Math.abs(n))), out = '', head = s.length > 3 ? s.slice(0, -3) : '', tail = s.slice(-3);
+    while (head.length > 2) { out = ',' + head.slice(-2) + out; head = head.slice(0, -2); }
+    return (n < 0 ? '-' : '') + (head ? head + out + ',' : '') + tail;
+  }
+  function fmtShort(n) {
+    if (n === null || n === undefined || !isFinite(n)) return '–';
+    var a = Math.abs(n), v, u;
+    if (a >= 1e7) { v = n / 1e7; u = LANG === 'hi' ? ' करोड़' : ' Cr'; }
+    else if (a >= 1e5) { v = n / 1e5; u = LANG === 'hi' ? ' लाख' : ' L'; }
+    else if (a >= 1e3) { v = n / 1e3; u = LANG === 'hi' ? ' हज़ार' : 'K'; }
+    else return String(Math.round(n));
+    return (Math.abs(v) >= 100 ? String(Math.round(v)) : v.toFixed(1).replace(/\.0$/, '')) + u;
+  }
+  function fmtDec(n) { return n === null || n === undefined ? '–' : (Math.round(n * 100) / 100).toString(); }
+  function ip(s) { var m = /^(\d{4})-(\d\d)-(\d\d)[ T](\d\d):(\d\d)/.exec(String(s || '')); return m ? { y: +m[1], mo: +m[2], d: +m[3], h: +m[4], mi: +m[5] } : null; }
+  function dow(p) { return new Date(Date.UTC(p.y, p.mo - 1, p.d)).getUTCDay(); }
+  function fmtTime(p) {
+    if (LANG === 'hi') return (p.h < 10 ? '0' : '') + p.h + ':' + (p.mi < 10 ? '0' : '') + p.mi;
+    var h = p.h % 12 || 12; return h + ':' + (p.mi < 10 ? '0' : '') + p.mi + (p.h < 12 ? ' AM' : ' PM');
+  }
+  function fmtDay(s, withDow) { var p = ip(s); if (!p) return ''; var d = p.d + ' ' + t('months')[p.mo - 1]; return withDow ? t('days')[dow(p)] + ', ' + d : d; }
+  function fmtWhen(s) { var p = ip(s); return p ? fmtDay(s) + ', ' + fmtTime(p) : ''; }
+  function fmtAgo(min) {
+    var a = t('ago'); if (min === null || min === undefined) return '';
+    if (min < 2) return a.now; if (min < 60) return fill(a.m, { n: Math.round(min) });
+    if (min < 48 * 60) return fill(a.h, { n: Math.round(min / 60) }); return fill(a.d, { n: Math.round(min / 1440) });
+  }
+  function nowIstParts() { var d = new Date(Date.now() + 19800000); return { y: d.getUTCFullYear(), mo: d.getUTCMonth() + 1, d: d.getUTCDate(), h: d.getUTCHours(), mi: d.getUTCMinutes() }; }
+  function lighten(hex, k) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(hex || ''); if (!m) return '#ffe0b2';
+    var n = parseInt(m[1], 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    return 'rgb(' + Math.round(r + (255 - r) * k) + ',' + Math.round(g + (255 - g) * k) + ',' + Math.round(b + (255 - b) * k) + ')';
+  }
+  function initials(name) {
+    var w = String(name || '?').replace(/^@/, '').replace(/^(shri|smt|dr|sri|km|kumari|mr|mrs|ms)\.?\s+/i, '').split(/\s+/).filter(Boolean);
+    return ((w[0] || '?').charAt(0) + (w.length > 1 ? w[w.length - 1].charAt(0) : '')).toUpperCase();
+  }
+  function okImg(url) { return url && (/^https:\/\//.test(url) || /^\/live\/img\//.test(url)); }
+  function avatar(name, url, color) {
+    var c = color || '#7a3b12';
+    return '<div class="av" style="background:' + c + ';border-color:' + lighten(c, 0.35) + '"><span>' + esc(initials(name)) + '</span>'
+      + (okImg(url) ? '<img alt="" src="' + esc(url) + '" onerror="this.parentNode.removeChild(this)">' : '') + '</div>';
+  }
+  function plogo(url, color) {
+    return okImg(url) ? '<span class="pl"><img alt="" src="' + esc(url) + '" onerror="this.parentNode.className=\'dot\';this.parentNode.style.background=\'' + (color || '#888') + '\';this.parentNode.removeChild(this)"></span>'
+                      : '<i class="dot" style="background:' + (color || '#888') + '"></i>';
+  }
+  function partyOf(p) {
+    var s = state.all; if (!s || !s.parties) return null;
+    for (var i = 0; i < s.parties.length; i++) if (s.parties[i].party === p) return s.parties[i];
+    return null;
+  }
+  function colorOf(p) { var x = partyOf(p); return x ? x.color : ({ BJP: '#E65100', INC: '#1565C0', SP: '#E41E24', AAP: '#00838F', TMC: '#0D47A1' }[p] || '#7a3b12'); }
+  function logoOf(p) { var x = partyOf(p); return x ? x.logo : null; }
+
+  /* --------------------------------------------------------------- state */
+  var state = { mode: null, person: Q.h || '', all: null, psnap: null, snap: null, scenes: [], idx: -1, paused: false, timer: null,
+                raf: [], tmo: [], start: 0, dur: 0, remaining: 0, fails: 0, offline: false, savedAt: null, stopped: false,
+                geo: null, geoP: null, lastOk: 0, tickerKey: '', started: false };
+  var $ = function (id) { return document.getElementById(id); };
+  function setCls(el, cls, on) { var c = ' ' + el.className + ' ', k = ' ' + cls + ' '; if (on && c.indexOf(k) < 0) el.className = (el.className + ' ' + cls).trim(); if (!on) el.className = c.replace(k, ' ').trim(); }
+  function heroLevel(lv) { setCls(document.body, 'hero-hi', lv === 'hi'); setCls(document.body, 'hero-mid', lv === 'mid'); }
+
+  /* ------------------------------------------------------------- scaling */
+  function scale() {
+    var w = window.innerWidth, h = window.innerHeight, portrait = h > w * 1.05 || h < 520;
+    var k = portrait ? Math.min(w / 720, h / 1280) : Math.min(w / 1920, h / 1080);
+    document.documentElement.style.fontSize = Math.max(8, Math.round(16 * k * 100) / 100) + 'px';
+    setCls(document.body, 'portrait', portrait);
+    if (state.snap) renderTicker(true);
+  }
+
+  /* -------------------------------------------------------------- hero */
+  function setupHero() {
+    Object.keys(HERO).forEach(function (id) {
+      var el = $(id); el.onerror = function () { this.style.display = 'none'; };
+      el.alt = HERO[id][1]; el.src = HERO[id][0];
+    });
+    ['hdLogo', 'chLogo'].forEach(function (id) {
+      $(id).innerHTML = '<img alt="" src="' + BJP_LOGO + '" onerror="this.parentNode.innerHTML=window.__lotus">';
+    });
+    window.__lotus = LOTUS;
+    $('inLogo').src = BJP_LOGO; $('inLogo').onerror = function () { this.parentNode.innerHTML = LOTUS; };
+  }
+
+  /* ------------------------------------------------------------- header */
+  function renderClock() {
+    var p = nowIstParts(); $('clk').textContent = fmtTime(p);
+    $('cdate').textContent = fmtDay(p.y + '-' + (p.mo < 10 ? '0' : '') + p.mo + '-' + (p.d < 10 ? '0' : '') + p.d + ' 00:00', true);
+  }
+  function renderChip() {
+    var s = state.snap, el = $('chip'), txt, lvl = s && s.status ? s.status.level : 'nodata';
+    if (state.offline) lvl = 'offline';
+    el.className = 'chip lvl-' + lvl;
+    if (!s || !s.status || !s.status.newestPostAt) txt = state.offline ? t('offline') : t('nodata');
+    else if (lvl === 'live') txt = t('live');
+    else {
+      var ago = (DEMO || PROTO || s.mode === 'historical') ? null : s.status.newestAgeMin;
+      txt = t('latest') + ' · ' + (ago !== null && ago !== undefined ? fmtAgo(ago) : fmtWhen(s.status.newestPostAt));
+      if (state.offline) txt = t('offline') + ' · ' + txt;
+    }
+    $('chipTxt').textContent = txt;
+  }
+  function applyLang() {
+    document.documentElement.lang = LANG;
+    $('langBtn').textContent = t('langBtn'); $('chLang').textContent = t('langBtn');
+    $('backTxt').textContent = t('back'); $('chBackTxt').textContent = t('back');
+    $('brandSub').textContent = t('brandSub'); $('chSub').textContent = t('brandSub');
+    $('swBtn').textContent = t('sw'); $('inTag').textContent = t('tag'); $('inSkip').textContent = t('skip');
+    $('chQ').textContent = t('chQ'); $('chQs').textContent = t('chQs');
+    $('chAllK').textContent = t('chAllK'); $('chAllT').textContent = t('chAllT'); $('chAllD').textContent = t('chAllD');
+    $('chOneK').textContent = t('chOneK'); $('chOneT').textContent = t('chOneT'); $('chInput').placeholder = t('chPh'); $('chHint').textContent = t('chHint');
+    $('tkLbl').textContent = state.mode === 'person' ? t('tkLblP') : t('tkLbl');
+    if (DEMO) showBanner('demo', t('demo')); else if (ASOF) showBanner('hist', fill(t('hist'), { d: ASOF }));
+    else if (PROTO && PROTO.from) showBanner('proto', fill(t('proto'), { a: fmtWhen(PROTO.from), b: fmtWhen(PROTO.to) }));
+    if (STATE) { $('stPill').className = 'chip stpill'; $('stPillTxt').textContent = stName(STATE); }
+    if (stList) renderStates();
+    renderClock(); renderChip(); renderHonesty(); renderRecent();
+    if (state.snap) { renderTicker(true); rerender(); }
+  }
+  function showBanner(kind, txt) { var b = $('banner'); b.className = 'banner ' + kind; b.textContent = txt; }
+
+  /* --------------------------------------------------- honesty line */
+  function renderHonesty() {
+    var s = state.snap, parts = [];
+    if (!s) { $('honesty').innerHTML = ''; return; }
+    if (s.window) parts.push(s.window.mode === 'rolling' ? fill(t('hWindow24'), { d: esc(fmtWhen(s.window.to)) })
+                                                       : '<span class="warn">' + fill(t('hWindowDay'), { d: esc(fmtDay(s.window.from, true)) }) + '</span>');
+    if (s.status && s.status.newestPostAt) parts.push(fill(t('hLatest'), { d: esc(fmtWhen(s.status.newestPostAt)) }));
+    parts.push(t('hEst'));
+    var pl = s.status && s.status.pipeline;
+    if (pl && pl.state === 'source_unreachable') parts.push('<span class="warn">' + fill(t('hSource'), { d: esc(fmtWhen(pl.lastAttemptAt)) }) + '</span>');
+    else if (pl && pl.state === 'source_idle') parts.push('<span class="warn">' + fill(t('hIdle'), { d: esc(fmtWhen(pl.lastAttemptAt)) }) + '</span>');
+    if (s.degraded) parts.push('<span class="warn">' + fill(t('hDegraded'), { d: esc(fmtTimeIso(s.degraded.generatedAt)) }) + '</span>');
+    if (state.offline && state.savedAt) parts.push('<span class="warn">' + fill(t('hSaved'), { d: esc(fmtTimeIso(state.savedAt)) }) + '</span>');
+    if (s.mode === 'historical') parts.unshift('<span class="warn">' + t('hHist') + '</span>');
+    $('honesty').innerHTML = parts.join(' &nbsp;·&nbsp; ');
+  }
+  function fmtTimeIso(iso) { var ms = Date.parse(iso); if (!isFinite(ms)) return ''; var d = new Date(ms + 19800000); return fmtTime({ h: d.getUTCHours(), mi: d.getUTCMinutes() }); }
+
+  /* ------------------------------------------------------------- ticker */
+  var TK_SINGLE = null;
+  function tickerItems() {
+    if (state.mode === 'person' && state.psnap) {
+      var p = state.psnap, list = (p.mentions || []).concat(p.localNews || []);
+      if (list.length >= 3) return list;
+      return list.concat((state.all && state.all.ticker) || []);
+    }
+    return (state.all && state.all.ticker) || [];
+  }
+  function renderTicker(force) {
+    var s = state.snap, items = tickerItems(), track = $('tkTrack');
+    var key = state.mode + '|' + LANG + '|' + document.documentElement.style.fontSize + '|' + items.map(function (x) { return x.head; }).join('|');
+    if (!force && key === state.tickerKey) return;
+    state.tickerKey = key;
+    $('tkLbl').textContent = state.mode === 'person' ? t('tkLblP') : t('tkLbl');
+    if (TK_SINGLE) { clearInterval(TK_SINGLE); TK_SINGLE = null; }
+    if (!items.length) { $('ticker').style.display = 'none'; return; }
+    $('ticker').style.display = '';
+    var showBreaking = s && s.status && (s.status.level === 'live' || s.status.level === 'recent');
+    function one(x) {
+      var tag = (showBreaking && x.breaking) ? '<span class="tk-tag brk">' + esc(t('tkBreaking')) + '</span>' : (x.topic ? '<span class="tk-tag">' + esc(x.topic) + '</span>' : '');
+      return '<div class="tk-item">' + tag + '<span>' + esc(x.head) + '</span><span class="tk-src">— ' + esc(x.src || ('@' + x.handle)) + (x.date ? ' · ' + esc(fmtWhen(x.date)) : '') + '</span></div>';
+    }
+    if (REDUCED) {
+      var i = 0, show1 = function () { var x = items[i % items.length]; i++; track.innerHTML = '<div class="tk-single">' + one(x).replace(/^<div class="tk-item">|<\/div>$/g, '') + '</div>'; };
+      show1(); TK_SINGLE = setInterval(show1, 9000); return;
+    }
+    var html = items.map(one).join('');
+    track.innerHTML = '<div class="tk-inner" id="tkInner">' + html + html + '</div>';
+    var inner = $('tkInner'), rem = parseFloat(document.documentElement.style.fontSize) || 16;
+    inner.style.animationDuration = Math.max(40, (inner.scrollWidth / 2) / (rem * 5.5)) + 's';
+    inner.className = 'tk-inner run';
+  }
+
+  /* ============================================================ SCENES */
+  function whenText(s) {
+    if (!s || !s.window) return '';
+    return s.window.mode === 'rolling' ? fill(t('when24'), { d: fmtWhen(s.window.to) }) : fill(t('whenDay'), { d: fmtDay(s.window.from, true) });
+  }
+  function realParties(s) { return (s.parties || []).filter(function (p) { return p.party !== 'Others'; }); }
+  function numHtml(s) { var i = String(s).indexOf(' '); return i < 0 ? esc(s) : esc(s.slice(0, i)) + '<span class="u">' + esc(s.slice(i)) + '</span>'; }
+
+  /* ---------- All India ---------- */
+  function sGlance(s) {
+    var top = realParties(s)[0], st = (s.states || []).filter(function (x) { return !x.limited; })[0], cmp = '';
+    if (s.compare && s.compare.comparable && s.compare.prevPosts) {
+      var pct = Math.round(100 * (s.kpis.originalPosts - s.compare.prevPosts) / s.compare.prevPosts);
+      cmp = '<span class="' + (pct >= 0 ? 'up' : 'down') + '">' + (pct >= 0 ? '▲ ' : '▼ ') + esc(fill(t('vsPrev'), { v: Math.abs(pct) })) + '</span>';
+    }
+    var tiles = '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.originalPosts + '" data-f="int">0</div><div class="kpi-l">' + t('kOrig') + '</div><div class="kpi-s">' + cmp + '</div></div>'
+      + '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.views + '" data-f="short">0</div><div class="kpi-l">' + t('kViews') + '</div><div class="kpi-s"></div></div>'
+      + '<div class="kpi"><div class="kpi-v txt" style="color:' + (top ? lighten(top.color, 0.3) : '#fff') + '">' + (top ? plogo(top.logo, top.color) + ' ' : '') + esc(top ? top.party : '–') + '</div><div class="kpi-l">' + t('kParty') + '</div><div class="kpi-s">'
+      + (top && top.postShare !== null ? esc(fill(t('ofPartyPosts'), { v: top.postShare })) : '') + '</div></div>';
+    if (STATE || !st) tiles += '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.accounts + '" data-f="int">0</div><div class="kpi-l">' + t('kAcc') + '</div><div class="kpi-s"></div></div>';
+    else tiles += '<div class="kpi"><div class="kpi-v txt">' + esc(stName(st.state)) + '</div><div class="kpi-l">' + t('kState') + '</div><div class="kpi-s">' + esc(fill(t('postsN'), { v: fmtInt(st.posts) })) + '</div></div>';
+    var cs = s.coverageStats || {};
+    var scaleTxt = STATE ? fill(t('scaleUp'), { a: esc(fmtInt(cs.handlesMapped)), t: esc(fmtShort(cs.postsInDatabase)) })
+      : fill(t('scale'), { a: esc(fmtInt(cs.handlesMapped)), s: esc(String(s.kpis.statesCovered)), t: esc(fmtShort(cs.postsInDatabase)) });
+    return '<div class="glance"><div class="kpis">' + tiles + '</div>' + (cs.handlesMapped ? '<div class="scale">' + scaleTxt + '</div>' : '') + '</div>';
+  }
+  function sBars(s, metric) {
+    var list = (s.parties || []).slice(), real = list.filter(function (p) { return p.party !== 'Others'; });
+    var oth = list.filter(function (p) { return p.party === 'Others'; })[0];
+    real.sort(function (a, b) { return metric === 'posts' ? b.posts - a.posts : b.views - a.views; });
+    var rows = real.slice(0, 6); if (oth) rows.push(oth);
+    var max = 0; rows.forEach(function (p) { var v = metric === 'posts' ? p.posts : p.views; if (v > max) max = v; });
+    var html = rows.map(function (p) {
+      var v = metric === 'posts' ? p.posts : p.views, w = max ? Math.max(1.5, 100 * v / max) : 0, sub = '';
+      if (p.party === 'Others') sub = fill(t('othersSub'), { n: p.parts || '' });
+      else {
+        var a = p.accounts || {}, bits = [];
+        if (a.active !== null && a.active !== undefined) bits.push(fmtInt(a.active) + ' ' + t('active'));
+        if (a.collected) bits.push(fmtInt(a.collected) + ' ' + t('collected'));
+        if (metric === 'posts' && p.postsPerCollected !== null) bits.push(fmtDec(p.postsPerCollected) + ' ' + t('perAcc'));
+        if (metric === 'views' && p.viewsPerCollected !== null) bits.push(fmtShort(p.viewsPerCollected) + ' ' + t('viewsPerAcc'));
+        sub = esc(bits.join(' · ')) + (p.limited ? ' · <span class="ltd">' + esc(t('ltd')) + '</span>' : '');
+      }
+      var share = metric === 'posts' ? p.postShare : p.viewShare;
+      return '<div class="bar-row' + (p.party === 'Others' ? ' others' : '') + '"><div class="bar-name">' + (p.party === 'Others' ? '<i class="dot" style="background:' + p.color + '"></i>' : plogo(p.logo, p.color))
+        + esc(partyName(p.party)) + '</div><div class="bar-mid"><div class="bar-track"><div class="bar-fill" data-w="' + w.toFixed(1) + '" style="background:' + p.color + '"></div></div>'
+        + '<div class="bar-sub">' + sub + '</div></div><div class="bar-val">' + esc(metric === 'posts' ? fmtInt(v) : fmtShort(v))
+        + (share !== null && share !== undefined ? '<small>' + share + '%</small>' : '') + '</div></div>';
+    }).join('');
+    return '<div class="glass full"><div class="vc"><div>' + html + '</div><div class="note">' + esc(metric === 'posts' ? t('notePosts') : t('noteViews')) + '</div></div></div>';
+  }
+  function sTrending(s, party) {
+    var L = (s.leadersByParty || {})[party] || [], c = colorOf(party);
+    return '<div class="leads">' + L.map(function (l, i) {
+      return '<div class="lead' + (i === 0 ? ' lead-1' : '') + '"><div class="rank">' + esc(fill(t('rank'), { n: i + 1 })) + '</div>' + avatar(l.name, l.avatar, c)
+        + '<div><div class="ln">' + esc(l.name) + '</div><div class="ls">' + esc(l.state ? stName(l.state) : '') + '</div>'
+        + '<div class="lv">' + esc(fmtShort(l.views)) + '</div><div class="ll">' + esc(t('viewsWord') + ' · ' + fill(t('postsN'), { v: l.posts })) + '</div></div></div>';
+    }).join('') + '</div>';
+  }
+  function sBreakout(s) {
+    var b = s.breakout || [], m = b[0]; if (!m) return '';
+    var main = '<div class="bo-main">' + avatar(m.name, m.avatar, colorOf(m.party)) + '<div><div class="bo-x">' + esc(String(m.ratio)) + '×</div>'
+      + '<div class="bo-xl">' + esc(t('boX')) + '</div><div class="bo-nm">' + esc(m.name) + '</div>'
+      + '<div class="bo-meta">' + esc([m.party, m.state ? stName(m.state) : ''].filter(Boolean).join(' · ')) + '</div>'
+      + '<div class="bo-detail">' + esc(fill(t('boDetail'), { r: fmtShort(m.recentMedian), b: fmtShort(m.baseMedian), n: m.basePosts })) + '</div></div></div>';
+    var more = b.slice(1, 4).map(function (x) {
+      return '<div class="bo-row">' + avatar(x.name, x.avatar, colorOf(x.party)) + '<div class="n"><b>' + esc(x.name) + '</b><span>'
+        + esc([x.party, x.state ? stName(x.state) : ''].filter(Boolean).join(' · ')) + '</span></div><div class="x">' + esc(String(x.ratio)) + '×</div></div>';
+    }).join('');
+    return '<div class="bo">' + main + '<div class="bo-more vc"><div>' + more + '</div></div></div>';
+  }
+  function postCard(p, name, party, st, av) {
+    return '<div class="glass full"><div class="vc"><div><div class="tp-q">“' + esc(p.text) + '”</div><div class="tp-by">' + avatar(name, av, colorOf(party))
+      + '<div><b>' + esc(name) + '</b><span>' + esc([party, st ? stName(st) : '', fill(t('postedAt'), { d: fmtWhen(p.date) })].filter(Boolean).join(' · ')) + '</span></div>'
+      + '<div class="tp-v"><b>' + esc(fmtShort(p.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div></div></div></div></div>';
+  }
+  function sTopPost(s) { var p = s.topPost; return p ? postCard(p, p.name, p.party, p.state, null) : ''; }
+  function sMap(s) {
+    var g = state.geo, byState = {}, paths = '';
+    (s.states || []).forEach(function (x) { byState[x.state] = x; });
+    if (g) Object.keys(g.states).forEach(function (name) { var x = byState[name]; paths += '<path d="' + g.states[name] + '" fill="' + (x && x.color ? x.color : '#4a2a1c') + '" data-s="' + esc(name) + '"></path>'; });
+    var top = (s.states || []).filter(function (x) { return !x.limited; }).slice(0, 6);
+    var rows = top.map(function (x, i) {
+      return '<div class="ms-row" data-s="' + esc(x.state) + '"><span class="r">' + (i + 1) + '</span><span class="s">' + esc(stName(x.state)) + '</span>'
+        + '<span class="p" style="background:' + (x.color || '#546E7A') + '">' + esc(x.leadParty || '') + '</span><span class="v">' + esc(fmtInt(x.posts)) + '</span></div>';
+    }).join('');
+    var seen = {}, legend = '';
+    (s.states || []).forEach(function (x) { if (x.leadParty && !seen[x.leadParty]) { seen[x.leadParty] = 1; legend += '<span><i style="background:' + x.color + '"></i>' + esc(x.leadParty) + '</span>'; } });
+    legend += '<span><i style="background:#4a2a1c"></i>' + esc(t('fewPosts')) + '</span>';
+    return '<div class="glass full"><div class="mapw"><div class="map-svg" id="mapSvg">' + (g ? '<svg viewBox="' + g.viewBox + '" preserveAspectRatio="xMidYMid meet">' + paths + '</svg>' : '')
+      + '</div><div class="map-side vc"><div>' + rows + '</div><div class="legend">' + legend + '</div><div class="note">' + esc(t('mapNote')) + '</div></div></div></div>';
+  }
+  function afterMap(el) {
+    var rows = el.querySelectorAll('.ms-row'); if (!rows.length) return;
+    var svg = $('mapSvg'), i = 0;
+    function hl() {
+      [].forEach.call(rows, function (r) { setCls(r, 'hl', false); });
+      var r = rows[i % rows.length], name = r.getAttribute('data-s'); setCls(r, 'hl', true);
+      if (svg) { svg.className = 'map-svg dimmed'; [].forEach.call(svg.querySelectorAll('path'), function (p) { p.setAttribute('class', p.getAttribute('data-s') === name ? 'hl' : ''); }); }
+      i++;
+    }
+    hl(); if (!REDUCED) state.tmo.push(setInterval(hl, 2600));
+  }
+  function factList(items) {
+    return '<div class="glass full"><div class="vc"><ul class="facts">' + items.slice(0, 5).map(function (x) { return '<li><i></i><span>' + x + '</span></li>'; }).join('') + '</ul></div></div>';
+  }
+  function sFacts(s) {
+    var whenTxt = s.window.mode === 'rolling' ? t('fWhen24') : fill(t('fWhenDay'), { d: fmtDay(s.window.from) }), out = [];
+    (s.facts || []).forEach(function (f) {
+      var x = null;
+      if (f.type === 'window_posts') x = fill(t('fWindow'), { posts: esc(fmtInt(f.posts)), when: esc(whenTxt) });
+      else if (f.type === 'party_per_account') x = fill(t('fPer'), { a: esc(f.a), b: esc(f.b), ap: esc(fmtDec(f.aPer)), bp: esc(fmtDec(f.bPer)) });
+      else if (f.type === 'top_state') x = fill(t('fState'), { s: esc(stName(f.state)), n: esc(fmtInt(f.posts)) });
+      else if (f.type === 'top_post') x = fill(t('fTop'), { n: esc(f.name), v: esc(fmtShort(f.views)) });
+      else if (f.type === 'breakout') x = fill(t('fBreak'), { n: esc(f.name), x: esc(String(f.ratio)) });
+      else if (f.type === 'media_volume') x = fill(t('fMedia'), { n: esc(fmtInt(f.posts)) });
+      else if (f.type === 'vs_previous') x = fill(f.pct >= 0 ? t('fPrevUp') : t('fPrevDown'), { p: esc(String(Math.abs(f.pct))) });
+      if (x) out.push(x);
+    });
+    return factList(out);
+  }
+  function sEmpty() { return '<div class="glass full"><div class="empty"><h3>' + esc(t('nodataT')) + '</h3><p>' + esc(t('nodataP')) + '</p></div></div>'; }
+
+  function buildAllScenes(s) {
+    var L = [];
+    if (!s || !s.window || !s.kpis) { L.push({ id: 'empty', dur: 20000, hero: 'mid', title: function () { return esc(t('nodataT')); }, render: sEmpty }); return L; }
+    var real = realParties(s), trend = real.filter(function (p) { return ((s.leadersByParty || {})[p.party] || []).length; }).slice(0, 4);
+    function tr(p) {
+      return { id: 'trend-' + p.party, dur: 12000, sub: 'trendingSub',
+               title: function () { return fill(t('trending'), { p: esc(p.party) }) + (okImg(p.logo) ? '<span class="tl"><img alt="" src="' + esc(p.logo) + '"></span>' : ''); },
+               render: function (x) { return sTrending(x, p.party); } };
+    }
+    L.push({ id: 'glance', dur: 15000, hero: 'hi', title: function () { return esc(t('glance')); }, render: sGlance, after: countUp });
+    if (real.length >= 2) L.push({ id: 'posts', dur: 15000, title: function () { return esc(t('posts')); }, render: function (x) { return sBars(x, 'posts'); }, after: growBars });
+    if (trend[0]) L.push(tr(trend[0]));
+    if (real.length >= 2) L.push({ id: 'views', dur: 15000, title: function () { return esc(t('views')); }, render: function (x) { return sBars(x, 'views'); }, after: growBars });
+    if (trend[1]) L.push(tr(trend[1]));
+    if (s.breakout && s.breakout.length) L.push({ id: 'breakout', dur: 14000, title: function () { return esc(t('breakout')); }, render: sBreakout });
+    if (s.topPost && s.topPost.text) L.push({ id: 'toppost', dur: 15000, hero: 'mid', title: function () { return esc(t('toppost')); }, render: sTopPost });
+    if (trend[2]) L.push(tr(trend[2]));
+    if (!STATE && (s.states || []).filter(function (x) { return !x.limited; }).length >= 3) L.push({ id: 'map', dur: 17000, title: function () { return esc(t('map')); }, render: sMap, after: afterMap, needsGeo: true });
+    if (trend[3]) L.push(tr(trend[3]));
+    if (s.facts && s.facts.length >= 2) L.push({ id: 'facts', dur: 20000, title: function () { return esc(t('facts')); }, render: sFacts });
+    return L;
+  }
+
+  /* ---------- One leader ---------- */
+  function pName(p) { return p.person.name; }
+  function sPProfile(p) {
+    var me = p.person, k = p.kpis || {}, u = p.usual || {}, chips = [];
+    if (u.postsVsUsual !== null && u.postsVsUsual !== undefined && k.posts) chips.push('<span class="' + (u.postsVsUsual >= 1 ? 'up' : 'down') + '">' + esc(fill(t('pVsUsual'), { x: u.postsVsUsual })) + '</span>');
+    if (u.viewsVsUsual !== null && u.viewsVsUsual !== undefined) chips.push('<span class="' + (u.viewsVsUsual >= 1 ? 'up' : 'down') + '">' + esc(fill(t('pViewsUsual'), { x: u.viewsVsUsual })) + '</span>');
+    if (u.postsPerDay !== null && u.postsPerDay !== undefined) chips.push('<span>' + esc(fill(t('pUsualDay'), { n: u.postsPerDay })) + '</span>');
+    var meta = (me.party ? plogo(me.partyLogo, me.color) + '<span class="pt" style="background:' + me.color + '">' + esc(me.party) + '</span>' : '')
+      + (me.designation ? '<span>' + esc(me.designation) + '</span>' : '') + (me.state ? '<span>' + esc(stName(me.state)) + '</span>' : '') + (me.ac ? '<span>' + esc(me.ac) + '</span>' : '')
+      + '<span>@' + esc(me.handle) + '</span>';
+    var body = !k.posts && !k.reposts
+      ? '<div class="empty" style="height:auto;align-items:flex-start;text-align:left;margin-top:2rem"><h3>' + esc(t('pNoPosts')) + '</h3><p>' + esc(p.lastPostEver ? fill(t('pNoPostsP'), { d: fmtWhen(p.lastPostEver) }) : t('pNoPostsP2')) + '</p></div>'
+      : '<div class="pf-k"><div><b data-count="' + k.posts + '" data-f="int">0</b><span>' + t('pPosts') + '</span></div><div><b data-count="' + k.reposts + '" data-f="int">0</b><span>' + t('pReposts') + '</span></div>'
+        + '<div><b data-count="' + k.views + '" data-f="short">0</b><span>' + t('pViews') + '</span></div><div><b data-count="' + k.likes + '" data-f="short">0</b><span>' + t('pLikes') + '</span></div></div>'
+        + (chips.length ? '<div class="pf-chips">' + chips.join('') + '</div>' : '');
+    return '<div class="glass full"><div class="pf"><div class="pf-av">' + avatar(me.name, me.avatar, me.color) + '</div><div><div class="pf-nm">' + esc(me.name) + '</div><div class="pf-meta">' + meta + '</div>' + body + '</div></div></div>';
+  }
+  function sPRhythm(p) {
+    var hmax = Math.max.apply(null, p.hourly.concat([1])), dmax = 1;
+    p.daily.forEach(function (d) { if (d.posts > dmax) dmax = d.posts; });
+    var hb = p.hourly.map(function (v) { return '<div style="height:' + (100 * v / hmax).toFixed(1) + '%" title="' + v + '"></div>'; }).join('');
+    var db = p.daily.map(function (d) {
+      return '<div><b>' + d.posts + '</b><i style="height:' + (100 * d.posts / dmax).toFixed(1) + '%"></i><span>' + esc(fmtDay(d.day + ' 00:00')) + '</span></div>';
+    }).join('');
+    return '<div class="glass full"><div class="rh"><div><h4>' + esc(t('pHours')) + '</h4><div class="hbars">' + hb + '</div><div class="hlab"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div>'
+      + '<div><h4>' + esc(t('pDays')) + '</h4><div class="dbars">' + db + '</div></div></div></div>';
+  }
+  function sPTop(p) { var x = p.topPost || p.latestPost; return x ? postCard(x, p.person.name, p.person.party, p.person.state, p.person.avatar) : ''; }
+  function sPRank(p) {
+    var r = p.rank || {}, me = p.person, tiles = '';
+    function tile(x, lbl) { return x ? '<div><b>#' + x.rank + '<small>' + esc(fill(t('pOf'), { n: fmtInt(x.of) })) + '</small></b><span>' + esc(lbl) + '</span></div>' : ''; }
+    tiles += tile(r.party, fill(t('pRankParty'), { p: me.party || '' })) + tile(r.state, fill(t('pRankState'), { s: stName(me.state || '') })) + tile(r.all, t('pRankAll'));
+    return '<div class="rk">' + tiles + '</div>';
+  }
+  function sPRivals(p) {
+    var R = p.rivals || { list: [] };
+    if (!R.list.length) return '<div class="glass full"><div class="empty"><h3>' + esc(t('pRivNone')) + '</h3></div></div>';
+    return '<div class="rv">' + R.list.map(function (x) {
+      return '<div class="rv-c"><div class="rv-h">' + avatar(x.name, x.avatar, x.color) + '<div style="min-width:0"><b>' + esc(x.name) + '</b><span>' + esc(x.party || '') + ' · @' + esc(x.handle) + '</span></div></div>'
+        + '<div class="rv-n"><div><b>' + fmtInt(x.posts) + '</b><span>' + esc(t('pRivPosts')) + '</span></div><div><b>' + esc(fmtShort(x.views)) + '</b><span>' + esc(t('pRivViews')) + '</span></div></div>'
+        + '<div class="rv-q">' + (x.latest ? '“' + esc(x.latest.text) + '”' : esc(t('pRivQuiet'))) + '</div></div>';
+    }).join('') + '</div>';
+  }
+  function sPColl(p) {
+    var L = p.colleagues || [], c = p.person.color;
+    return '<div class="leads">' + L.map(function (l, i) {
+      return '<div class="lead' + (i === 0 ? ' lead-1' : '') + '">' + avatar(l.name, l.avatar, c) + '<div><div class="ln">' + esc(l.name) + '</div>'
+        + '<div class="lv">' + esc(fmtShort(l.views)) + '</div><div class="ll">' + esc(t('viewsWord') + ' · ' + fill(t('postsN'), { v: l.posts })) + '</div></div></div>';
+    }).join('') + '</div>';
+  }
+  function sPNews(p) {
+    function list(items, h) {
+      if (!items || !items.length) return '';
+      return '<div><h4>' + esc(h) + '</h4><ul class="nw">' + items.slice(0, 3).map(function (x) {
+        return '<li>' + (x.topic ? '<span class="tk-tag">' + esc(x.topic) + '</span>' : '') + '<p><em>' + esc(x.head) + '</em><span>' + esc((x.src || '') + (x.date ? ' · ' + fmtWhen(x.date) : '')) + '</span></p></li>';
+      }).join('') + '</ul></div>';
+    }
+    var a = list(p.mentions, t('pMentions')), b = list(p.localNews, t('pLocal'));
+    return '<div class="glass full"><div class="vc"><div class="nwg' + (a && b ? ' two' : '') + '">' + a + b + '</div></div></div>';
+  }
+  function sPFacts(p) {
+    var whenTxt = p.window.mode === 'rolling' ? t('fWhen24') : fill(t('fWhenDay'), { d: fmtDay(p.window.from) }), out = [], nm = esc(p.person.name);
+    (p.facts || []).forEach(function (f) {
+      var x = null;
+      if (f.type === 'p_posts') x = fill(t('fpPosts'), { n: nm, p: fmtInt(f.posts), r: fmtInt(f.reposts), when: esc(whenTxt) });
+      else if (f.type === 'p_vs_usual') x = fill(t('fpUsual'), { x: f.x, d: f.perDay });
+      else if (f.type === 'p_rank_state') x = fill(t('fpRankS'), { r: f.rank, o: fmtInt(f.of), s: esc(stName(f.state)) });
+      else if (f.type === 'p_rank_party') x = fill(t('fpRankP'), { r: f.rank, o: fmtInt(f.of), p: esc(f.party) });
+      else if (f.type === 'p_top') x = fill(t('fpTop'), { v: esc(fmtShort(f.views)) });
+      else if (f.type === 'p_rivals') x = fill(t('fpRiv'), { n: f.n, p: esc(f.place), b: f.busier });
+      else if (f.type === 'p_mentions') x = fill(t('fpMent'), { n: f.n });
+      if (x) out.push(x);
+    });
+    return factList(out);
+  }
+  function buildPersonScenes(p) {
+    var L = [];
+    if (!p || !p.window) { L.push({ id: 'empty', dur: 20000, hero: 'mid', title: function () { return esc(t('nodataT')); }, render: sEmpty }); return L; }
+    var me = p.person, active = p.kpis && (p.kpis.posts || p.kpis.reposts);
+    L.push({ id: 'p-profile', dur: 16000, hero: 'mid', title: function () { return fill(t('pProfile'), { n: esc(me.name) }); }, render: sPProfile, after: countUp });
+    if (active) L.push({ id: 'p-rhythm', dur: 14000, title: function () { return esc(t('pRhythm')); }, render: sPRhythm });
+    if (p.topPost || p.latestPost) L.push({ id: 'p-top', dur: 15000, hero: 'mid', title: function () { return esc(t('pTop')); }, render: sPTop });
+    if (p.rank && (p.rank.party || p.rank.state)) L.push({ id: 'p-rank', dur: 13000, hero: 'mid', title: function () { return esc(t('pRank')); }, render: sPRank });
+    if (p.rivals && p.rivals.mode !== 'none') L.push({ id: 'p-rivals', dur: 16000, title: function () {
+      return p.rivals.mode === 'constituency' ? fill(t('pRivalsC'), { p: esc(p.rivals.place) }) : fill(t('pRivalsS'), { p: esc(stName(p.rivals.place)) }); }, render: sPRivals });
+    if (p.colleagues && p.colleagues.length) L.push({ id: 'p-coll', dur: 12000, title: function () { return fill(t('pColl'), { p: esc(me.party), s: esc(stName(me.state || '')) }); }, render: sPColl });
+    if ((p.mentions && p.mentions.length) || (p.localNews && p.localNews.length)) L.push({ id: 'p-news', dur: 16000, title: function () { return esc(t('pNews')); }, render: sPNews });
+    if (p.facts && p.facts.length >= 2) L.push({ id: 'p-facts', dur: 18000, title: function () { return esc(t('pFacts')); }, render: sPFacts });
+    return L;
+  }
+
+  /* ------------------------------------------------- scene animation */
+  function countUp(el) {
+    [].forEach.call(el.querySelectorAll('[data-count]'), function (n) {
+      var to = +n.getAttribute('data-count'), f = n.getAttribute('data-f') === 'short' ? fmtShort : fmtInt;
+      if (REDUCED || !isFinite(to)) { n.innerHTML = numHtml(f(to)); return; }
+      /* progress follows the clock, not the frame count, and once the final value
+         is written nothing can overwrite it -- so a TV that drops frames still ends
+         on the right number */
+      var t0 = Date.now(), D = 1400, done = false;
+      var finish = function () { done = true; n.innerHTML = numHtml(f(to)); };
+      var step = function () {
+        if (done) return;
+        var k = Math.min(1, (Date.now() - t0) / D);
+        if (k >= 1) { finish(); return; }
+        n.innerHTML = numHtml(f(Math.round(to * (1 - Math.pow(1 - k, 3)))));
+        state.raf.push(requestAnimationFrame(step));
+      };
+      state.raf.push(requestAnimationFrame(step));
+      state.tmo.push(setTimeout(finish, D + 300));
+    });
+  }
+  function growBars(el) {
+    var bars = el.querySelectorAll('.bar-fill');
+    state.tmo.push(setTimeout(function () { [].forEach.call(bars, function (b) { b.style.width = b.getAttribute('data-w') + '%'; }); }, REDUCED ? 0 : 120));
+  }
+  function clearSceneWork() {
+    state.raf.forEach(function (id) { cancelAnimationFrame(id); }); state.raf = [];
+    state.tmo.forEach(function (id) { clearTimeout(id); clearInterval(id); }); state.tmo = [];
+  }
+
+  /* ---------------------------------------------------- scene engine */
+  function renderScene(sc) {
+    $('stTitle').innerHTML = sc.title();
+    $('stWhen').textContent = (sc.sub ? t(sc.sub) + ' · ' : '') + whenText(state.snap);
+    $('stCount').textContent = (state.idx + 1) + ' / ' + state.scenes.length;
+    heroLevel(sc.hero || 'lo');
+    var el = $('scene'); el.innerHTML = sc.render(state.snap);
+    if (sc.after) sc.after(el);
+    renderDots();
+  }
+  function rerender() { var sc = state.scenes[state.idx]; if (!sc) return; clearSceneWork(); renderScene(sc); }
+  function show(i) {
+    if (!state.scenes.length) return;
+    clearTimeout(state.timer); clearSceneWork();
+    state.idx = (i + state.scenes.length) % state.scenes.length;
+    var sc = state.scenes[state.idx], el = $('scene'), firstPaint = !el.innerHTML;
+    var go = function () {
+      if (sc.needsGeo && !state.geo) loadGeo().then(function () { if (state.scenes[state.idx] === sc) renderScene(sc); });
+      renderScene(sc); el.className = ''; startTimer(sc.dur);
+    };
+    if (REDUCED || firstPaint) { go(); return; }
+    el.className = 'out'; state.tmo.push(setTimeout(go, 420));
+  }
+  function startTimer(ms) {
+    state.start = Date.now(); state.dur = ms; state.remaining = ms;
+    var bar = $('prog').firstChild; bar.style.transition = 'none'; bar.style.width = '0%'; void bar.offsetWidth;
+    if (state.paused) return;
+    bar.style.transition = 'width ' + ms + 'ms linear'; bar.style.width = '100%';
+    state.timer = setTimeout(function () { show(state.idx + 1); }, ms);
+  }
+  function pause(on) {
+    var bar = $('prog').firstChild;
+    if (on && !state.paused) {
+      state.paused = true; clearTimeout(state.timer);
+      state.remaining = Math.max(0, state.dur - (Date.now() - state.start));
+      var w = bar.getBoundingClientRect().width, tw = $('prog').getBoundingClientRect().width;
+      bar.style.transition = 'none'; bar.style.width = (tw ? 100 * w / tw : 0) + '%';
+    } else if (!on && state.paused) {
+      state.paused = false; state.start = Date.now() - (state.dur - state.remaining);
+      bar.style.transition = 'width ' + state.remaining + 'ms linear'; bar.style.width = '100%';
+      state.timer = setTimeout(function () { show(state.idx + 1); }, state.remaining);
+    }
+    $('cPlayIco').innerHTML = state.paused ? '<polygon points="7 5 19 12 7 19 7 5"/>' : '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
+    $('cPlay').setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
+  }
+  function renderDots() { var h = ''; for (var i = 0; i < state.scenes.length; i++) h += '<i' + (i === state.idx ? ' class="on"' : '') + '></i>'; $('cDots').innerHTML = h; }
+
+  /* --------------------------------------------------------- map data */
+  function loadGeo() {
+    if (state.geo) return Promise.resolve(state.geo);
+    if (state.geoP) return state.geoP;
+    state.geoP = fetch('/live/india-states.json', { credentials: 'same-origin' })
+      .then(function (r) { if (!r.ok) throw new Error('geo'); return r.json(); })
+      .then(function (g) { state.geo = g; return g; }).catch(function () { state.geoP = null; return null; });
+    return state.geoP;
+  }
+
+  /* ============================================================ DATA */
+  function api(url) {
+    return fetch(url, { credentials: 'same-origin', cache: 'no-store' }).then(function (r) {
+      if (r.status === 401) { stop('auth'); return null; }
+      if (r.status === 403) { stop('forbidden'); return null; }
+      if (r.status === 404) return { __notfound: true };
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }
+  function q(extra) { return '?scope=' + SCOPE + (ASOF ? '&asof=' + encodeURIComponent(ASOF) : '') + (extra || ''); }
+  function onData(first) {
+    var s = state.snap;
+    var oldId = state.scenes[state.idx] && state.scenes[state.idx].id;
+    state.scenes = state.mode === 'person' ? buildPersonScenes(s) : buildAllScenes(s);
+    var keep = -1;
+    for (var i = 0; i < state.scenes.length; i++) if (state.scenes[i].id === oldId) keep = i;
+    renderChip(); renderHonesty(); renderTicker(false);
+    if (first || keep < 0) { state.idx = -1; $('scene').innerHTML = ''; show(0); }
+    else { state.idx = keep; renderDots(); $('stCount').textContent = (state.idx + 1) + ' / ' + state.scenes.length; }
+  }
+  var fetchTimer = null;
+  function schedule(ms) { clearTimeout(fetchTimer); if (!state.stopped) fetchTimer = setTimeout(fetchData, ms); }
+  function fetchData(first) {
+    if (state.stopped || !state.mode) return;
+    if (DEMO) { state.all = demoSnap(); state.snap = state.all; onData(first); return; }
+    var mode = state.mode, h = state.person;
+    var calls = [api('/api/live-snapshot' + q())];
+    if (mode === 'person') calls.push(api('/api/live-person' + q('&h=' + encodeURIComponent(h))));
+    Promise.all(calls).then(function (res) {
+      if (state.stopped || mode !== state.mode) return;
+      var all = res[0], per = res[1];
+      if (!all) return;
+      if (mode === 'person' && per && per.__notfound) {
+        overlay(t('nfT'), t('nfP'), '<button type="button" class="btn" id="ovAgain">' + esc(t('nfA')) + '</button>');
+        $('ovAgain').onclick = function () { hideOverlay(); openChooser(); }; return;
+      }
+      if (mode === 'person' && !per) return;
+      state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
+      state.all = all; state.psnap = per || null; state.snap = mode === 'person' ? per : all;
+      state.lastOk = Date.now();
+      if (mode === 'all' && !ASOF) { try { store('pulse_live_snap_' + SCOPE, JSON.stringify({ at: new Date().toISOString(), s: all })); } catch (e) {} }
+      if (!state.geo) loadGeo();
+      onData(first);
+      schedule(REFRESH_MS);
+    }).catch(function () {
+      if (state.stopped) return;
+      state.fails++; state.offline = true;
+      if (!state.snap) {
+        var saved = null; try { saved = JSON.parse(store('pulse_live_snap_' + SCOPE) || 'null'); } catch (e) { saved = null; }
+        if (saved && saved.s && !ASOF && state.mode === 'all') { state.savedAt = saved.at; state.all = saved.s; state.snap = saved.s; onData(true); }
+        else firstFail();
+      } else if (!state.savedAt) state.savedAt = new Date(state.lastOk || Date.now()).toISOString();
+      renderChip(); renderHonesty();
+      schedule(BACKOFF[Math.min(state.fails - 1, BACKOFF.length - 1)]);
+    });
+  }
+  function stop(kind) {
+    state.stopped = true; clearTimeout(fetchTimer); endIntro();
+    if (kind === 'auth') overlay(t('authT'), t('authP'), '<a class="btn" href="/login">' + esc(t('authA')) + '</a>');
+    else overlay(t('forbT'), t('forbP'), '<a class="btn" href="' + (SCOPE === 'up' ? '/up' : '/') + '">' + esc(t('forbA')) + '</a>');
+  }
+  function firstFail() {
+    overlay(t('firstFailT'), t('firstFailP'), '<button type="button" class="btn" id="ovRetry">' + esc(t('retry')) + '</button>');
+    var b = $('ovRetry'); if (b) b.onclick = function () { hideOverlay(); clearTimeout(fetchTimer); fetchData(true); };
+  }
+  function overlay(title, text, act) { $('ovTitle').textContent = title; $('ovText').textContent = text; $('ovAct').innerHTML = act || ''; $('overlay').className = 'overlay'; }
+  function hideOverlay() { $('overlay').className = 'overlay hidden'; }
+
+  /* ============================================================ MODES */
+  function startShow(mode, handle) {
+    stopChooser();
+    state.mode = mode; state.person = handle || ''; state.snap = null; state.psnap = null; state.tickerKey = '';
+    state.scenes = []; state.idx = -1; clearTimeout(state.timer); clearSceneWork(); $('scene').innerHTML = '';
+    var url = location.pathname + '?' + location.search.replace(/^\?/, '').split('&').filter(function (kv) { return kv && !/^(h|mode)=/.test(kv); })
+      .concat(mode === 'person' ? ['h=' + encodeURIComponent(handle)] : ['mode=all']).join('&');
+    try { history.replaceState(null, '', url); } catch (e) {}
+    if (mode === 'person') rememberRecent(handle);
+    $('chooser').className = 'hidden'; $('app').style.visibility = ''; setCls(document.body, 'choosing', false);
+    state.stopped = false; clearTimeout(fetchTimer); fetchData(true);
+  }
+
+  /* ------------------------------------------------------- start screen */
+  var chT = null, chLeft = 0, chSel = -1, chRes = [], chSearchT = null;
+  function openChooser() {
+    clearTimeout(state.timer); clearSceneWork(); clearTimeout(fetchTimer);
+    state.mode = null; $('app').style.visibility = 'hidden'; $('chooser').className = ''; setCls(document.body, 'choosing', true);
+    heroLevel('hi'); renderRecent(); loadStates(); $('chInput').value = ''; $('chList').innerHTML = '';
+    chLeft = CHOOSER_AUTO_S; tickChooser();
+    clearInterval(chT); chT = setInterval(tickChooser, 1000);
+    if (!('ontouchstart' in window)) setTimeout(function () { try { $('chInput').focus(); } catch (e) {} }, 300);
+  }
+  function tickChooser() {
+    if (chLeft <= 0) { startShow('all'); return; }
+    $('chGo').textContent = chLeft === null ? t('chGoNow') : fill(t('chGo'), { n: chLeft });
+    $('chRing').setAttribute('stroke-dashoffset', String(94.25 * (1 - (chLeft || 0) / CHOOSER_AUTO_S)));
+    if (chLeft !== null) chLeft--;
+  }
+  /* state picker: the busiest states as buttons, the rest in a list. Choosing one
+     reopens Nazar for that state (every screen, the search and the news). */
+  var stList = null, ST_TOP = 8;
+  function loadStates() {
+    if (stList || DEMO || state.stP) { if (stList) renderStates(); return; }
+    state.stP = fetch('/api/live-states', { credentials: 'same-origin', cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { state.stP = null; if (j && j.states && j.states.length) { stList = j.states; renderStates(); } })
+      .catch(function () { state.stP = null; });
+  }
+  function goScope(sc) {
+    var keep = location.search.replace(/^\?/, '').split('&').filter(function (kv) { return kv && !/^(scope|h|mode)=/.test(kv); });
+    location.href = location.pathname + '?' + keep.concat(sc === 'all' ? [] : ['scope=' + encodeURIComponent(sc)]).concat(['mode=all']).join('&');
+  }
+  function renderStates() {
+    if (!stList) return;
+    var top = stList.slice(0, ST_TOP), rest = stList.slice(ST_TOP);
+    if (STATE && !top.some(function (s) { return s.state === STATE; })) top.push({ state: STATE });
+    var h = (STATE ? '<button type="button" class="all" data-sc="all">' + esc(t('stAll')) + '</button>' : '')
+      + top.map(function (s) { return '<button type="button" data-sc="st:' + esc(s.state) + '"' + (s.state === STATE ? ' class="on"' : '') + '>' + esc(stName(s.state)) + '</button>'; }).join('');
+    if (rest.length) {
+      h += '<select id="chStSel"><option value="">' + esc(t('stMore')) + '</option>'
+        + rest.slice().sort(function (a, b) { return stName(a.state) < stName(b.state) ? -1 : 1; })
+            .map(function (s) { return '<option value="st:' + esc(s.state) + '">' + esc(stName(s.state)) + '</option>'; }).join('') + '</select>';
+    }
+    $('chStK').textContent = t('stPick'); $('chStList').innerHTML = h; $('chSt').className = 'ch-st';
+    function stopIt(e) { e.stopPropagation(); holdChooser(); }
+    [].forEach.call($('chStList').querySelectorAll('button'), function (b) {
+      b.onclick = function (e) { stopIt(e); var sc = b.getAttribute('data-sc'); if (sc === 'st:' + STATE) startShow('all'); else goScope(sc); };
+      b.onkeydown = function (e) { e.stopPropagation(); };
+    });
+    var sel = $('chStSel');
+    if (sel) {
+      sel.onclick = stopIt; sel.onkeydown = function (e) { e.stopPropagation(); holdChooser(); };
+      sel.onchange = function () { if (sel.value) goScope(sel.value); };
+    }
+  }
+  function holdChooser() { if (chLeft !== null) { chLeft = null; clearInterval(chT); $('chGo').textContent = t('chGoNow'); $('chRing').setAttribute('stroke-dashoffset', '0'); } }
+  function stopChooser() { clearInterval(chT); chT = null; }
+  function doSearch() {
+    var v = $('chInput').value.trim();
+    clearTimeout(chSearchT);
+    if (v.length < 2) { chRes = []; $('chList').innerHTML = ''; return; }
+    chSearchT = setTimeout(function () {
+      if (DEMO) { chRes = []; renderList(); return; }
+      fetch('/api/live-search' + q('&q=' + encodeURIComponent(v)), { credentials: 'same-origin', cache: 'no-store' })
+        .then(function (r) { if (r.status === 401) { stop('auth'); return null; } return r.ok ? r.json() : { results: [] }; })
+        .then(function (j) { if (!j) return; chRes = j.results || []; chSel = chRes.length ? 0 : -1; renderList(); })
+        .catch(function () {});
+    }, 180);
+  }
+  function renderList() {
+    if (!chRes.length) { $('chList').innerHTML = $('chInput').value.trim().length >= 2 ? '<div class="ch-hint">' + esc(t('chNone')) + '</div>' : ''; return; }
+    $('chList').innerHTML = chRes.map(function (p, i) {
+      return '<div class="ch-row' + (i === chSel ? ' on' : '') + '" data-i="' + i + '">' + avatar(p.name, p.avatar, p.color)
+        + '<div class="n"><b>' + esc(p.name) + '</b><span>@' + esc(p.handle) + ' · ' + esc([p.designation, p.state ? stName(p.state) : '', p.ac].filter(Boolean).join(' · ')) + '</span></div>'
+        + (p.party ? '<span class="pt" style="background:' + p.color + '">' + esc(p.party) + '</span>' : '') + '</div>';
+    }).join('');
+    [].forEach.call($('chList').querySelectorAll('.ch-row'), function (row) { row.onclick = function () { pick(+row.getAttribute('data-i')); }; });
+    var on = $('chList').querySelector('.ch-row.on'); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest' });
+  }
+  function pick(i) { var p = chRes[i]; if (p) startShow('person', p.handle); }
+  function recents() { try { return JSON.parse(store('nazar_recent_' + SCOPE) || '[]') || []; } catch (e) { return []; } }
+  function rememberRecent(h) { var r = recents().filter(function (x) { return x.toLowerCase() !== String(h).toLowerCase(); }); r.unshift(h); store('nazar_recent_' + SCOPE, JSON.stringify(r.slice(0, 6))); }
+  function renderRecent() {
+    var r = recents();
+    $('chRecent').innerHTML = r.map(function (h) { return '<button type="button" data-h="' + esc(h) + '">@' + esc(h) + '</button>'; }).join('');
+    [].forEach.call($('chRecent').querySelectorAll('button'), function (b) { b.onclick = function () { startShow('person', b.getAttribute('data-h')); }; });
+  }
+  $('chInput').addEventListener('input', function () { holdChooser(); doSearch(); });
+  $('chInput').addEventListener('keydown', function (e) {
+    holdChooser();
+    if (e.key === 'ArrowDown' || e.key === 'Down') { chSel = Math.min(chRes.length - 1, chSel + 1); renderList(); e.preventDefault(); }
+    else if (e.key === 'ArrowUp' || e.key === 'Up') { chSel = Math.max(0, chSel - 1); renderList(); e.preventDefault(); }
+    else if (e.key === 'Enter') { if (chSel >= 0) pick(chSel); e.preventDefault(); }
+    e.stopPropagation();
+  });
+  $('chAll').onclick = function () { startShow('all'); };
+  $('chAll').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { startShow('all'); e.preventDefault(); } };
+  $('chooser').addEventListener('mousemove', holdChooser);
+  $('chooser').addEventListener('touchstart', holdChooser, { passive: true });
+
+  /* --------------------------------------------------------------- intro */
+  var introDone = false, introCb = null;
+  /* the full intro plays on every open (it is the first impression); any key or click skips it */
+  function playIntro(cb) {
+    introCb = cb;
+    if (Q.intro === '0') { endIntro(); return; }
+    var i, h = '';
+    for (i = 0; i < 24; i++) h += '<polygon points="100,100 ' + rayPt(i * 15 - 2.2) + ' ' + rayPt(i * 15 + 2.2) + '"></polygon>';
+    $('inRays').innerHTML = h;
+    loadGeo().then(function (g) {
+      if (!g || introDone) return;
+      var vb = String(g.viewBox).split(/[\s,]+/).map(Number), y0 = vb[1], y1 = vb[1] + vb[3];
+      var p = '<defs><linearGradient id="inTri" gradientUnits="userSpaceOnUse" x1="0" y1="' + y0 + '" x2="0" y2="' + y1 + '">' +
+        '<stop offset="0" stop-color="#FF9933"/><stop offset=".3" stop-color="#FF9933"/><stop offset=".5" stop-color="#FFFFFF"/>' +
+        '<stop offset=".7" stop-color="#138808"/><stop offset="1" stop-color="#138808"/></linearGradient></defs>';
+      Object.keys(g.states).forEach(function (k) { p += '<path pathLength="1" d="' + g.states[k] + '"' + (k === STATE ? ' class="sel"' : '') + '></path>'; });
+      $('inMap').setAttribute('viewBox', g.viewBox); $('inMap').innerHTML = p;
+      /* the chosen state sits on top so its outline is not hidden by its neighbours */
+      var sel = $('inMap').querySelector('path.sel'); if (sel) sel.parentNode.appendChild(sel);
+      /* light spreads from the heart of India outward: each state starts by its distance from the centre */
+      var cx = vb[0] + vb[2] / 2, cy = vb[1] + vb[3] / 2, R = Math.sqrt(vb[2] * vb[2] + vb[3] * vb[3]) / 2;
+      [].forEach.call($('inMap').querySelectorAll('path'), function (el) {
+        var d = 0; try { var b = el.getBBox(), dx = b.x + b.width / 2 - cx, dy = b.y + b.height / 2 - cy; d = Math.sqrt(dx * dx + dy * dy) / R; } catch (e) {}
+        var at = REDUCED ? 0 : 0.3 + Math.min(1, d) * 1.3;
+        el.style.animationDelay = at.toFixed(2) + 's, 2.3s';
+      });
+    });
+    if (REDUCED) { state.tmo.push(setTimeout(introStats, 300)); setTimeout(endIntro, 3500); return; }
+    /* pollen: 18 sparks + 8 small petals thrown out of the flower when it opens */
+    h = '';
+    for (i = 0; i < 26; i++) {
+      var pe = i >= 18, a = (pe ? (i - 18) * 45 + 20 : i * 20) + Math.random() * 12, k = 0.55 + Math.random() * 0.6;
+      h += '<i style="-webkit-transform:rotate(' + a.toFixed(0) + 'deg) scale(' + k.toFixed(2) + ');transform:rotate(' + a.toFixed(0) + 'deg) scale(' + k.toFixed(2) + ')">' +
+        '<b class="' + (pe ? 'pe' : '') + '" style="animation-delay:' + (3.65 + Math.random() * 0.25).toFixed(2) + 's;animation-duration:' + (pe ? 2.4 : 1.5 + Math.random() * 0.5).toFixed(2) + 's"></b></i>';
+    }
+    $('inBurst').innerHTML = h;
+    /* embers drifting up behind everything once the flower has opened */
+    h = '';
+    for (i = 0; i < 18; i++) {
+      h += '<i style="left:' + (4 + Math.random() * 92).toFixed(1) + '%;animation-duration:' + (7 + Math.random() * 6).toFixed(1) + 's;animation-delay:' +
+        (3.4 + Math.random() * 4).toFixed(1) + 's;width:' + (0.25 + Math.random() * 0.4).toFixed(2) + 'rem;height:' + (0.25 + Math.random() * 0.4).toFixed(2) + 'rem"></i>';
+    }
+    $('inEmbers').innerHTML = h;
+    state.tmo.push(setTimeout(introStats, 6100));
+    setTimeout(endIntro, 9200);
+  }
+  function rayPt(deg) { var r = deg * Math.PI / 180; return (100 + 100 * Math.sin(r)).toFixed(2) + ',' + (100 - 100 * Math.cos(r)).toFixed(2); }
+  function introStats() {
+    if (introDone || !state.all) return;
+    var cs = state.all.coverageStats || {}, k = state.all.kpis || {};
+    var items = [[fmtInt(cs.handlesMapped), t('intro1')], [STATE ? '' : String(k.statesCovered || ''), t('intro2')], [fmtShort(cs.postsInDatabase), t('intro3')]]
+      .filter(function (x) { return x[0] && x[0] !== '–'; });
+    $('inStats').innerHTML = items.map(function (x, i) { return '<div class="in-stat" style="animation-delay:' + (i * 0.35) + 's"><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></div>'; }).join('');
+  }
+  function endIntro() {
+    if (introDone) return; introDone = true;
+    try { window.sessionStorage.setItem('nazar_intro', '1'); } catch (e) {}
+    $('intro').className = 'gone';
+    setTimeout(function () { $('intro').style.display = 'none'; }, 900);
+    var cb = introCb; introCb = null; if (cb && !state.stopped) cb();
+  }
+
+  /* -------------------------------------------------------- controls */
+  var idleT = null;
+  function wake() {
+    if (KIOSK) return;
+    setCls(document.body, 'idle', false);
+    if (state.mode) $('ctl').className = 'ctl on';
+    clearTimeout(idleT);
+    idleT = setTimeout(function () { $('ctl').className = 'ctl'; setCls(document.body, 'idle', true); }, 3000);
+  }
+  function fullscreen() {
+    var d = document, el = d.documentElement;
+    if (d.fullscreenElement || d.webkitFullscreenElement) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+    var f = el.requestFullscreen || el.webkitRequestFullscreen; if (f) { try { f.call(el); } catch (e) {} }
+  }
+  function goBack() {
+    var home = SCOPE === 'up' ? '/up' : '/', ref = document.referrer || '';
+    if (ref.indexOf(location.origin) === 0 && ref.indexOf('/live') < 0 && ref.indexOf('/tv') < 0 && history.length > 1) history.back(); else location.href = home;
+  }
+  function toggleLang() { LANG = LANG === 'en' ? 'hi' : 'en'; store('pulse_live_lang', LANG); applyLang(); if (chRes.length) renderList(); }
+
+  $('cPrev').onclick = function () { show(state.idx - 1); wake(); };
+  $('cNext').onclick = function () { show(state.idx + 1); wake(); };
+  $('cPlay').onclick = function () { pause(!state.paused); wake(); };
+  $('cFull').onclick = function () { fullscreen(); wake(); };
+  $('langBtn').onclick = toggleLang; $('chLang').onclick = function () { holdChooser(); toggleLang(); };
+  $('backBtn').onclick = goBack; $('chBack').onclick = goBack;
+  $('swBtn').onclick = function () { openChooser(); };
+  document.addEventListener('mousemove', wake);
+  var tx = null;
+  document.addEventListener('touchstart', function (e) { wake(); tx = e.touches && e.touches[0] ? e.touches[0].clientX : null; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (!state.mode || tx === null || !e.changedTouches || !e.changedTouches[0]) return;
+    var dx = e.changedTouches[0].clientX - tx; tx = null;
+    if (Math.abs(dx) > 60) show(state.idx + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+  document.addEventListener('keydown', function (e) {
+    if (!introDone) { endIntro(); return; }
+    if (!state.mode) return;
+    var k = e.key || '';
+    if (k === 'ArrowRight' || k === 'Right' || k === 'MediaTrackNext') show(state.idx + 1);
+    else if (k === 'ArrowLeft' || k === 'Left' || k === 'MediaTrackPrevious') show(state.idx - 1);
+    else if (k === ' ' || k === 'Spacebar' || k === 'MediaPlayPause' || k === 'Enter') { if (k === 'Enter' && e.target && e.target.tagName === 'BUTTON') return; pause(!state.paused); e.preventDefault(); }
+    else if (k === 'f' || k === 'F') fullscreen();
+    else if (k === 'l' || k === 'L') toggleLang();
+    else return;
+    wake();
+  });
+  $('intro').addEventListener('click', endIntro);
+
+  /* ---------------------------------------- run-for-days housekeeping */
+  var wakeLock = null;
+  function keepAwake() {
+    try { if (navigator.wakeLock && document.visibilityState === 'visible' && !wakeLock) navigator.wakeLock.request('screen').then(function (l) { wakeLock = l; l.addEventListener('release', function () { wakeLock = null; }); }).catch(function () {}); } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') { keepAwake(); if (state.mode && !state.stopped && Date.now() - state.lastOk > REFRESH_MS) { clearTimeout(fetchTimer); fetchData(); } }
+  });
+  function softReload() {
+    if (state.stopped) return;
+    if (!DEMO && Date.now() - state.lastOk > 3 * 60000) { setTimeout(softReload, 10 * 60000); return; }
+    if (!state.mode) { setTimeout(softReload, 10 * 60000); return; }      // never reload in the middle of a choice
+    location.reload();
+  }
+
+  /* ---------------------------------------------------------- demo */
+  function demoSnap() {
+    var P = [['BJP', '#E65100', 6100, 1.31e7, 1150, 1800], ['INC', '#1565C0', 820, 3.9e6, 230, 430], ['AAP', '#00838F', 240, 1.7e6, 80, 110], ['SP', '#E41E24', 170, 1.5e6, 50, 120], ['TDP', '#FF8F00', 230, 2.1e5, 80, 125]];
+    var parties = P.map(function (x) {
+      return { party: x[0], color: x[1], posts: x[2], views: x[3], postShare: Math.round(1000 * x[2] / 7560) / 10, viewShare: Math.round(1000 * x[3] / 2.05e7) / 10,
+               accounts: { mapped: null, collected: x[5], active: x[4] }, postsPerCollected: Math.round(100 * x[2] / x[5]) / 100, viewsPerCollected: Math.round(x[3] / x[5]), limited: false, logo: null };
+    });
+    parties.push({ party: 'Others', color: '#546E7A', posts: 900, views: 3.6e6, postShare: null, viewShare: null, accounts: {}, postsPerCollected: null, viewsPerCollected: null, parts: 24 });
+    var lead = {}; P.forEach(function (x) { lead[x[0]] = [1, 2, 3].map(function (n) { return { handle: 'sample' + n, name: 'Sample Leader ' + x[0] + ' ' + n, state: 'Uttar Pradesh', posts: 5 - n, views: 900000 / n, avatar: null }; }); });
+    return { scope: SCOPE, mode: 'demo', generatedAt: new Date().toISOString(),
+      status: { level: 'recent', label: 'latest', newestPostAt: '2026-10-18 23:59:00 IST', newestAgeMin: null, lastPushAt: null, pipeline: null },
+      window: { mode: 'lastFullDay', from: '2026-10-18 00:00:00 IST', to: '2026-10-18 23:59:59 IST', day: '2026-10-18' },
+      coverage: { estimated: true, ratio: 0.8 }, kpis: { originalPosts: 8460, views: 2.4e7, accounts: 1900, statesCovered: 26 },
+      excluded: { media: 4300, retweets: 6200, noParty: 80, noState: 380 }, parties: parties, leadersByParty: lead,
+      states: [['Uttar Pradesh', 1700, 'BJP', '#E65100'], ['Maharashtra', 900, 'BJP', '#E65100'], ['Gujarat', 630, 'BJP', '#E65100'], ['Punjab', 300, 'AAP', '#00838F'], ['Karnataka', 280, 'INC', '#1565C0'], ['Delhi', 240, 'AAP', '#00838F']]
+        .map(function (x) { return { state: x[0], posts: x[1], leadParty: x[2], color: x[3], limited: false }; }),
+      topPost: { name: 'Sample Leader BJP 1', party: 'BJP', state: 'Uttar Pradesh', views: 980000, date: '2026-10-18 09:12:00 IST', text: 'This is sample text for the demo view. It shows how the most-viewed post of the period will appear on screen.' },
+      breakout: [{ name: 'Sample Leader SP 1', party: 'SP', state: 'Uttar Pradesh', ratio: 4.5, recentMedian: 460000, baseMedian: 103000, basePosts: 104 }],
+      compare: { comparable: true, prevPosts: 9000 },
+      ticker: [{ head: 'Sample headline one for the demo ticker', src: 'Sample Channel', date: '2026-10-18 21:00:00 IST', topic: 'Politics' }, { head: 'Sample headline two, another media update', src: 'Sample News', date: '2026-10-18 20:10:00 IST', topic: 'Governance' }],
+      facts: [{ type: 'window_posts', posts: 8460, accounts: 1900 }, { type: 'top_state', state: 'Uttar Pradesh', posts: 1700 }],
+      coverageStats: { handlesMapped: 5200, postsInDatabase: 2778000 } };
+  }
+
+  /* ----------------------------------------------------------- start */
+  if (KIOSK) document.body.className += ' kiosk';
+  if (PROTO) document.body.className += ' proto';
+  if (REDUCED) document.body.className += ' reduced';
+  setupHero(); scale();
+  window.addEventListener('resize', function () { clearTimeout(scale.t); scale.t = setTimeout(scale, 150); });
+  var lastSize = innerWidth + 'x' + innerHeight;
+  setInterval(function () { var s = innerWidth + 'x' + innerHeight; if (s !== lastSize) { lastSize = s; scale(); } }, 2000);
+  applyLang(); renderClock(); setInterval(renderClock, 10000); keepAwake();
+  heroLevel('hi'); $('app').style.visibility = 'hidden';
+  /* the intro shows real numbers, so fetch the All-India snapshot while it plays */
+  if (!DEMO) api('/api/live-snapshot' + q()).then(function (j) { if (j && !j.__notfound) { state.all = j; introStats(); } }).catch(function () {});
+  else state.all = demoSnap();
+  playIntro(function () {
+    if (Q.h) startShow('person', Q.h);
+    else if (KIOSK || Q.mode === 'all' || DEMO) startShow('all');
+    else openChooser();
+  });
+  if (!DEMO) setTimeout(softReload, SOFT_RELOAD_MS);
+})();
+</script>
+</body>
+</html>
