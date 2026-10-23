@@ -45,6 +45,16 @@ The Pulse project is not touched by this folder.
   - `ATTACKS_WORKER=off` on a copy that should only display the labels, so that the laptop and Render do not both spend the Groq quota.
 - Code: `app/attack_lib.js` holds the rules, the prompt and the ranking; `attacks.js` holds the AI calls, the limits and the saving.
 
+## Leader photos
+- Nazar never contacts X while it runs. Photos are files in `app/live_assets/avatars/`, listed in `avatars_index.json`. A leader without a file shows initials.
+- After new data with new leaders, run:
+  ```
+  node fetch-photos.js
+  ```
+  - It downloads the missing photos (200x200) of every leader who posts in the CSVs in `data/`, most-viewed first, through the public fxtwitter API (no X login).
+  - It takes ~1.5 s per leader and is safe to stop and re-run.
+  - Then commit `app/live_assets` and push, so Render gets the photos.
+
 Useful links:
 
 | Link | What it shows |
