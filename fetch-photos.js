@@ -67,6 +67,20 @@ async function leaders() {
       var key = h.toLowerCase(); handle[key] = h; views[key] = (views[key] || 0) + (Number(r[VIEWS]) || 0) + 1;
     });
   }
+  /* also include all remaining political leaders from handle_master.json */
+  try {
+    var hmPath = path.join(__dirname, 'app', 'data', 'handle_master.json');
+    if (fs.existsSync(hmPath)) {
+      var hm = JSON.parse(fs.readFileSync(hmPath, 'utf8'));
+      Object.keys(hm).forEach(function (h) {
+        var key = h.toLowerCase();
+        if (!handle[key]) {
+          handle[key] = h;
+          views[key] = 0;
+        }
+      });
+    }
+  } catch (e) {}
   return Object.keys(views).sort(function (a, b) { return views[b] - views[a]; }).map(function (k) { return handle[k]; });
 }
 

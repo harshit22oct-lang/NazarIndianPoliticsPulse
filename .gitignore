@@ -3,3 +3,4 @@ node_modules/
 *.log
 data/*.csv
 data/attack_labels.json*
+GEMINI_HANDOFF.md

@@ -241,6 +241,123 @@ var imgIx = { avatars: {}, parties: {} };
 try { imgIx = JSON.parse(fs.readFileSync(path.join(ASSETS, 'avatars_index.json'), 'utf8')); } catch (e) {}
 function partySlug(p) { return String(p).replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, ''); }
 
+/* Live on-demand avatar scraper using x_config.json cookies */
+var inFlightScrapes = {};
+var GQL_URL = 'https://x.com/i/api/graphql/Yka-W8dz7RaEuQNkroPkYw/UserByScreenName';
+var BEARER = 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
+
+function getXCookies() {
+  var paths = [
+    path.join(__dirname, 'x_config.json'),
+    path.join(__dirname, '..', 'Political Pulse', 'DASHBOARD', 'x_config.json'),
+    'C:\\Users\\dell\\Desktop\\Political Pulse\\DASHBOARD\\x_config.json'
+  ];
+  for (var i = 0; i < paths.length; i++) {
+    try {
+      if (fs.existsSync(paths[i])) {
+        var j = JSON.parse(fs.readFileSync(paths[i], 'utf8'));
+        var a = String(j.auth_token || '').trim(), c = String(j.ct0 || '').trim(), t = String(j.twid || '').trim();
+        if (a && c && !/^PASTE/i.test(a)) {
+          return { cookie: 'auth_token=' + a + '; ct0=' + c + (t && !/^PASTE/i.test(t) ? '; twid=' + t : '') + '; lang=en', ct0: c };
+        }
+      }
+    } catch (e) {}
+  }
+  return null;
+}
+
+function fetchOnDemand(handle, cb) {
+  var k = String(handle || '').toLowerCase().trim();
+  if (!k) return cb(false);
+  var filePath = path.join(ASSETS, 'avatars', k + '.jpg');
+  if (fs.existsSync(filePath)) {
+    imgIx.avatars[k] = { file: 'avatars/' + k + '.jpg', handle: handle, at: Date.now() };
+    return cb(true, filePath);
+  }
+  if (inFlightScrapes[k]) {
+    inFlightScrapes[k].push(cb);
+    return;
+  }
+  inFlightScrapes[k] = [cb];
+
+  function done(ok, p) {
+    var cbs = inFlightScrapes[k] || [];
+    delete inFlightScrapes[k];
+    cbs.forEach(function (f) { try { f(ok, p); } catch (e) {} });
+  }
+
+  (async function () {
+    var ck = getXCookies();
+    var imgUrl = null, name = '';
+    if (ck) {
+      try {
+        var body = {
+          variables: { screen_name: handle, withSafetyModeUserFields: true },
+          features: { hidden_profile_likes_enabled: true, hidden_profile_subscriptions_enabled: true, rweb_tipjar_consumption_enabled: false,
+            responsive_web_graphql_exclude_directive_enabled: true, verified_phone_label_enabled: true,
+            subscriptions_verification_info_is_identity_verified_enabled: true, subscriptions_verification_info_verified_since_enabled: true,
+            highlights_tweets_tab_ui_enabled: true, responsive_web_twitter_article_notes_tab_enabled: true,
+            creator_subscriptions_tweet_preview_api_enabled: true, responsive_web_graphql_skip_user_profile_image_extensions_enabled: false,
+            responsive_web_graphql_timeline_navigation_enabled: true },
+          fieldToggles: { withAuxiliaryUserLabels: false }
+        };
+        var r = await fetch(GQL_URL, {
+          method: 'POST', body: JSON.stringify(body),
+          headers: {
+            authorization: BEARER, cookie: ck.cookie, 'content-type': 'application/json', 'x-csrf-token': ck.ct0,
+            'x-twitter-active-user': 'yes', 'x-twitter-auth-type': 'OAuth2Session', 'x-twitter-client-language': 'en',
+            referer: 'https://x.com/' + handle,
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          },
+          signal: AbortSignal.timeout(10000)
+        });
+        if (r.ok) {
+          var j = await r.json();
+          var leg = j && j.data && j.data.user && j.data.user.result && j.data.user.result.legacy;
+          if (leg && leg.profile_image_url_https && !/default_profile/.test(leg.profile_image_url_https)) {
+            imgUrl = leg.profile_image_url_https.replace(/_(normal|bigger|400x400)\./, '_200x200.');
+            name = leg.name || '';
+          }
+        }
+      } catch (e) {}
+    }
+    if (!imgUrl) {
+      try {
+        var fb = await fetch('https://api.fxtwitter.com/' + encodeURIComponent(handle), {
+          headers: { 'User-Agent': 'Mozilla/5.0' },
+          signal: AbortSignal.timeout(10000)
+        });
+        if (fb.ok) {
+          var fj = await fb.json();
+          var fu = fj && fj.user && (fj.user.avatar_url || fj.user.profile_image_url_https);
+          if (fu && !/default_profile/.test(fu)) {
+            imgUrl = fu.replace(/_(normal|bigger|400x400)\./, '_200x200.');
+            name = fj.user.name || '';
+          }
+        }
+      } catch (e) {}
+    }
+    if (!imgUrl) return done(false);
+
+    try {
+      var ir = await fetch(imgUrl, { signal: AbortSignal.timeout(10000) });
+      if (!ir.ok) return done(false);
+      var buf = Buffer.from(await ir.arrayBuffer());
+      if (buf.length < 500) return done(false);
+      fs.writeFileSync(filePath, buf);
+      imgIx.avatars[k] = { file: 'avatars/' + k + '.jpg', handle: handle, name: name, at: Date.now(), live: true };
+      try {
+        var idxPath = path.join(ASSETS, 'avatars_index.json');
+        fs.writeFile(idxPath, JSON.stringify(imgIx, null, 1), function () {});
+      } catch (e) {}
+      console.log('  [Live Scrape] Saved photo for @' + handle);
+      return done(true, filePath);
+    } catch (e) {
+      return done(false);
+    }
+  })().catch(function () { done(false); });
+}
+
 /* --------------------------------------------------------------- states */
 /* every state in the data with enough of its own posts to fill the screens */
 var STATE_MIN_POSTS = 200;
@@ -309,7 +426,11 @@ function makeService(rows) {
       var pk = Object.keys(imgIx.parties).filter(function (p) {
         return imgIx.parties[p].file && String(imgIx.parties[p].handle || '').toLowerCase() === k;
       })[0];
-      return pk ? '/live/img/p/' + partySlug(pk) : null;
+      if (pk) return '/live/img/p/' + partySlug(pk);
+      if (k && k.length >= 2 && !/^(media|journalist)/i.test(k)) {
+        return '/live/img/a/' + encodeURIComponent(k);
+      }
+      return null;
     },
     partyLogo: function (p) { var e = imgIx.parties[p]; return e && e.file ? '/live/img/p/' + partySlug(p) : null; },
     master: function () { return MAPL.load(); },
@@ -358,7 +479,9 @@ var svc = null, meta = null, page = { mtime: 0, body: '' }, attacks = null;
 var ATTACKS = require('./attacks.js');
 function avatarFor(h) {
   var k = String(h || '').toLowerCase(), e = imgIx.avatars[k];
-  return e && e.file ? '/live/img/a/' + encodeURIComponent(k) : null;
+  if (e && e.file) return '/live/img/a/' + encodeURIComponent(k);
+  if (k && k.length >= 2) return '/live/img/a/' + encodeURIComponent(k);
+  return null;
 }
 /* the snapshot plus the "biggest attacks" board for the same scope and window */
 function withAttacks(scope, snap) {
@@ -384,9 +507,19 @@ var server = http.createServer(function (req, res) {
   }
   if (p === '/live/india-states.json') return file(res, path.join(APP, 'live_india_states.json'));
   if ((m = /^\/live\/img\/a\/([^\/]+)$/.exec(p))) {
-    var e = imgIx.avatars[decodeURIComponent(m[1]).toLowerCase()];
-    if (!e || !/^avatars\/[^\/\\]+\.jpg$/.test(e.file || '')) return send(res, 404, 'text/plain', 'Not found');
-    return file(res, path.join(ASSETS, e.file));
+    var rawH = decodeURIComponent(m[1]).toLowerCase();
+    var e = imgIx.avatars[rawH];
+    if (e && e.file && /^avatars\/[^\/\\]+\.jpg$/.test(e.file) && fs.existsSync(path.join(ASSETS, e.file))) {
+      return file(res, path.join(ASSETS, e.file));
+    }
+    if (fs.existsSync(path.join(ASSETS, 'avatars', rawH + '.jpg'))) {
+      imgIx.avatars[rawH] = { file: 'avatars/' + rawH + '.jpg', handle: rawH, at: Date.now() };
+      return file(res, path.join(ASSETS, 'avatars', rawH + '.jpg'));
+    }
+    return fetchOnDemand(rawH, function (ok, fp) {
+      if (ok && fp) return file(res, fp);
+      send(res, 404, 'text/plain', 'Not found');
+    });
   }
   if ((m = /^\/live\/img\/p\/([A-Za-z0-9_]+)$/.exec(p))) {
     var hit = null;
