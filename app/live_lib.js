@@ -286,7 +286,8 @@ function computeMetrics(rows, win, opts) {
     }
     var hh = handle[h] || (handle[h] = {
       handle: r.Handle, name: r['Candidate Name'] || r.Handle, party: p, state: sn,
-      posts: 0, views: 0, mature: []
+      posts: 0, views: 0, mature: [],
+      org: /^(official page|party page)$/i.test(String(r.Category || '').trim())   // a party's own account, not a leader
     });
     hh.posts++; hh.views += views;
     var ts = parseIst(r['Tweet Date']);
@@ -340,7 +341,7 @@ function computeMetrics(rows, win, opts) {
   var leadersByParty = {};
   shown.forEach(function (x) {
     var arr = Object.keys(handle).map(function (k) { return handle[k]; })
-      .filter(function (hd) { return hd.party === x.party; })
+      .filter(function (hd) { return hd.party === x.party && !hd.org; })     // "trending leaders": people, not party pages
       .sort(function (a, b) { return b.views - a.views; })
       .slice(0, C.LEADERS_PER_PARTY);
     leadersByParty[x.party] = arr.map(function (hd) {

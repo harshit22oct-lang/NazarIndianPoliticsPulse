@@ -766,6 +766,8 @@ body.phone .ch-map svg{height:22rem}
 body.phone .ch-map-tip{font-size:1.15rem}
 body.phone .st-chip{height:3.6rem;font-size:1.3rem}
 body.phone .ch-go{font-size:1.3rem}
+body.phone #chHint{display:none}            /* keyboard hint; phones are touched */
+.honesty:empty{display:none}
 body.phone .ch-search input{height:4.4rem;font-size:1.5rem}
 body.phone .ch-row .n b{font-size:1.6rem} body.phone .ch-row .n span{font-size:1.05rem}
 body.phone .ch-row .av{width:4rem;height:4rem}
@@ -969,9 +971,9 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       ofPartyPosts: '{v}% of posts by party accounts', postsN: '{v} posts', vsPrev: '{v}% vs previous period',
       scale: 'Tracking <b>{a}</b> political accounts · <b>{s}</b> states with activity · <b>{t}</b> posts analysed in total',
       scaleUp: 'Tracking <b>{a}</b> political accounts in Uttar Pradesh · <b>{t}</b> posts analysed in total',
-      active: 'active', collected: 'collected', perAcc: 'posts per collected account', viewsPerAcc: 'views per collected account',
+      active: '{n} active', collected: '{n} tracked', perAcc: '{v} posts per account', viewsPerAcc: '{v} views per account',
       ltd: 'limited coverage', others: 'Others', othersSub: '{n} smaller parties',
-      notePosts: 'Original posts only (no reposts, no media accounts). Parties differ in how many of their accounts we collect, so the per-account figure is the fairer comparison.',
+      notePosts: 'Leaders\' own posts only (no reposts, no media). Parties have different numbers of tracked accounts, so "per account" is the fairer comparison.',
       noteViews: 'Views counted on original posts only. Posts from the last few hours are still collecting views.',
       viewsWord: 'views', rank: '#{n}',
       boX: 'their usual views per post', boDetail: 'Typical post now: {r} views · usual: {b} (previous {d} days, {n} posts)',
@@ -989,12 +991,12 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       demo: 'Demo — sample numbers, not real data', hist: 'Historical test · as of {d}', proto: 'Recorded data · {a} – {b}',
       nodataP: 'There is no complete window of data yet. This screen updates by itself as soon as data arrives.',
       fWindow: 'Tracked political accounts published <b>{posts}</b> original posts {when}.', fWhen24: 'in the last 24 hours', fWhenDay: 'on {d}',
-      fPer: 'On average, each collected <b>{a}</b> account posted <b>{ap}</b> times and each <b>{b}</b> account <b>{bp}</b> times.',
+      fPer: 'On average, each tracked <b>{a}</b> account posted <b>{ap}</b> times and each <b>{b}</b> account <b>{bp}</b> times.',
       fState: '<b>{s}</b> had the most posts from leaders: <b>{n}</b>.', fTop: 'The most-viewed post, by <b>{n}</b>, reached <b>{v}</b> views.',
       fBreak: 'Posts by <b>{n}</b> got <b>{x}×</b> their usual views.', fMedia: 'Media accounts we follow published <b>{n}</b> posts.',
       fPrevUp: 'That is <b>{p}% more</b> original posts than the previous period.', fPrevDown: 'That is <b>{p}% fewer</b> original posts than the previous period.',
       /* personal */
-      pProfile: 'Today with <em>{n}</em>', pRhythm: 'When did they post?', pTop: 'Their most-viewed post', pRank: 'Where they stand',
+      pProfile: '<em>{n}</em> · today', pRhythm: 'When did they post?', pTop: 'Their most-viewed post', pRank: 'Where they stand',
       pRivalsC: 'Rivals in <em>{p}</em>', pRivalsS: 'Rival parties in <em>{p}</em>', pColl: '<em>{p}</em> colleagues in {s}', pNews: 'In the news', pFacts: 'In plain words',
       pPosts: 'Original posts', pReposts: 'Reposts', pViews: 'Views', pLikes: 'Likes',
       pVsUsual: '{x}× their usual posting', pViewsUsual: 'Views per post {x}× usual', pUsualDay: 'Usually ~{n} posts a day',
@@ -1029,9 +1031,9 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       ofPartyPosts: 'पार्टी खातों के पोस्ट का {v}%', postsN: '{v} पोस्ट', vsPrev: 'पिछली अवधि से {v}%',
       scale: '<b>{a}</b> राजनीतिक खातों पर नज़र · <b>{s}</b> राज्यों से गतिविधि · कुल <b>{t}</b> पोस्ट का विश्लेषण',
       scaleUp: 'उत्तर प्रदेश के <b>{a}</b> राजनीतिक खातों पर नज़र · कुल <b>{t}</b> पोस्ट का विश्लेषण',
-      active: 'सक्रिय', collected: 'संग्रहित', perAcc: 'पोस्ट प्रति संग्रहित खाता', viewsPerAcc: 'व्यूज़ प्रति संग्रहित खाता',
+      active: '{n} सक्रिय', collected: '{n} ट्रैक', perAcc: 'प्रति खाता {v} पोस्ट', viewsPerAcc: 'प्रति खाता {v} व्यूज़',
       ltd: 'सीमित कवरेज', others: 'अन्य', othersSub: '{n} छोटी पार्टियाँ',
-      notePosts: 'केवल मूल पोस्ट (रीपोस्ट और मीडिया खाते शामिल नहीं)। हर पार्टी के कितने खाते हम संग्रहित करते हैं, यह अलग है — इसलिए प्रति खाता आँकड़ा ज़्यादा सही तुलना है।',
+      notePosts: 'केवल नेताओं के अपने पोस्ट (रीपोस्ट और मीडिया नहीं)। हर पार्टी के ट्रैक किए गए खाते अलग-अलग हैं, इसलिए "प्रति खाता" तुलना ज़्यादा सही है।',
       noteViews: 'व्यूज़ केवल मूल पोस्ट पर गिने गए। पिछले कुछ घंटों के पोस्ट पर व्यूज़ अभी बढ़ रहे हैं।',
       viewsWord: 'व्यूज़', rank: '#{n}',
       boX: 'प्रति पोस्ट सामान्य व्यूज़ का', boDetail: 'अभी आम पोस्ट: {r} व्यूज़ · सामान्य: {b} (पिछले {d} दिन, {n} पोस्ट)',
@@ -1049,11 +1051,11 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       demo: 'डेमो — नमूना आँकड़े, असली डेटा नहीं', hist: 'पुराने समय का परीक्षण · {d} तक', proto: 'रिकॉर्ड किया गया डेटा · {a} – {b}',
       nodataP: 'अभी डेटा की कोई पूरी अवधि उपलब्ध नहीं है। डेटा आते ही यह स्क्रीन अपने आप अपडेट होगी।',
       fWindow: 'ट्रैक किए गए राजनीतिक खातों ने {when} <b>{posts}</b> मूल पोस्ट किए।', fWhen24: 'पिछले 24 घंटों में', fWhenDay: '{d} को',
-      fPer: 'औसतन, <b>{a}</b> के हर संग्रहित खाते ने <b>{ap}</b> और <b>{b}</b> के हर खाते ने <b>{bp}</b> पोस्ट किए।',
+      fPer: 'औसतन, <b>{a}</b> के हर ट्रैक किए गए खाते ने <b>{ap}</b> और <b>{b}</b> के हर खाते ने <b>{bp}</b> पोस्ट किए।',
       fState: 'नेताओं के सबसे ज़्यादा पोस्ट <b>{s}</b> से आए: <b>{n}</b>।', fTop: 'सबसे ज़्यादा देखा गया पोस्ट <b>{n}</b> का था — <b>{v}</b> व्यूज़।',
       fBreak: '<b>{n}</b> के पोस्ट को सामान्य से <b>{x} गुना</b> व्यूज़ मिले।', fMedia: 'हम जिन मीडिया खातों को देखते हैं, उन्होंने <b>{n}</b> पोस्ट किए।',
       fPrevUp: 'यह पिछली अवधि से <b>{p}% ज़्यादा</b> मूल पोस्ट है।', fPrevDown: 'यह पिछली अवधि से <b>{p}% कम</b> मूल पोस्ट है।',
-      pProfile: '<em>{n}</em> की नज़र', pRhythm: 'कब पोस्ट किया?', pTop: 'उनका सबसे ज़्यादा देखा गया पोस्ट', pRank: 'वे कहाँ खड़े हैं',
+      pProfile: '<em>{n}</em> · आज का हाल', pRhythm: 'कब पोस्ट किया?', pTop: 'उनका सबसे ज़्यादा देखा गया पोस्ट', pRank: 'वे कहाँ खड़े हैं',
       pRivalsC: '<em>{p}</em> में विरोधी', pRivalsS: '<em>{p}</em> में विरोधी दल', pColl: '{s} में <em>{p}</em> के साथी', pNews: 'ख़बरों में', pFacts: 'आसान शब्दों में',
       pPosts: 'मूल पोस्ट', pReposts: 'रीपोस्ट', pViews: 'व्यूज़', pLikes: 'लाइक्स',
       pVsUsual: 'सामान्य से {x}× पोस्ट', pViewsUsual: 'प्रति पोस्ट व्यूज़ सामान्य से {x}×', pUsualDay: 'आम तौर पर रोज़ ~{n} पोस्ट',
@@ -1083,14 +1085,19 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   T.en.stPick = 'Or follow one state'; T.hi.stPick = 'या एक राज्य पर नज़र रखें';
   T.en.stMore = 'See all {n} states'; T.hi.stMore = 'सभी {n} राज्य देखें';
   T.en.atk = 'Biggest attacks on BJP and the government'; T.hi.atk = 'BJP और सरकार पर सबसे बड़े हमले';
-  T.en.atkSub = 'Picked by AI from the last 24 hours · read by {r}, checked by {c}'; T.hi.atkSub = 'पिछले 24 घंटे से AI द्वारा चुने गए · {r} ने पढ़ा, {c} ने जाँचा';
+  T.en.atkSub = 'Picked by AI'; T.hi.atkSub = 'AI द्वारा चुने गए';
   T.en.atkSev = 'severity'; T.hi.atkSev = 'गंभीरता';
   T.en.atkSum = 'AI summary:'; T.hi.atkSum = 'AI सार:';
   T.en.atkMore = 'Next in line'; T.hi.atkMore = 'इसके बाद';
   T.en.atkCentre = 'Union government'; T.hi.atkCentre = 'केंद्र सरकार';
   T.en.atkGovt = '{s} government'; T.hi.atkGovt = '{s} सरकार';
-  T.en.atkNote = 'Severity is an AI estimate; the words are the post\'s own. Counts attacks on BJP, the Union government and BJP / NDA state governments by tracked non-BJP leaders. The top two change only when a clearly bigger attack arrives.';
-  T.hi.atkNote = 'गंभीरता AI का अनुमान है; शब्द पोस्ट के अपने हैं। ट्रैक किए गए ग़ैर-BJP नेताओं के BJP, केंद्र सरकार और BJP/NDA राज्य सरकारों पर हमले। ऊपर के दो तभी बदलते हैं जब इनसे साफ़ बड़ा हमला आए।';
+  T.en.atkNote = 'Severity is an AI estimate · quotes are the leaders\' own words';
+  T.hi.atkNote = 'गंभीरता AI का अनुमान है · उद्धरण नेताओं के अपने शब्द हैं';
+  T.en.skipTouch = 'Tap to skip'; T.hi.skipTouch = 'आगे बढ़ने के लिए छुएँ';
+  if (PROTO) {                       // a recorded file is not "live"
+    T.en.brandSub = T.en.brandSub.replace(' · Live', ''); T.hi.brandSub = T.hi.brandSub.replace(' · लाइव', '');
+    T.en.proto = 'Data · {a} – {b}'; T.hi.proto = 'डेटा · {a} – {b}';
+  }
   var TOPIC_HI = { 'corruption': 'भ्रष्टाचार', 'farmers': 'किसान', 'jobs': 'रोज़गार', 'prices': 'महँगाई', 'law and order': 'क़ानून-व्यवस्था', 'women safety': 'महिला सुरक्षा',
     'elections': 'चुनाव', 'constitution': 'संविधान', 'communal': 'सांप्रदायिक', 'health': 'स्वास्थ्य', 'education': 'शिक्षा', 'foreign policy': 'विदेश नीति', 'other': 'अन्य' };
   T.en.sp_slow = 'Slow'; T.en.sp_normal = 'Normal'; T.en.sp_fast = 'Fast'; T.en.spTitle = 'How long each screen stays';
@@ -1252,7 +1259,8 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     $('chOneK').textContent = t('chOneK'); $('chOneT').textContent = t('chOneT'); $('chInput').placeholder = t('chPh'); $('chHint').textContent = t('chHint');
     $('tkLbl').textContent = state.mode === 'person' ? t('tkLblP') : t('tkLbl');
     if (DEMO) showBanner('demo', t('demo')); else if (ASOF) showBanner('hist', fill(t('hist'), { d: ASOF }));
-    else if (PROTO && PROTO.from) showBanner('proto', fill(t('proto'), { a: fmtWhen(PROTO.from), b: fmtWhen(PROTO.to) }));
+    else if (PROTO && PROTO.from) showBanner('proto', fill(t('proto'), { a: fmtDay(PROTO.from), b: fmtWhen(PROTO.to) }));
+    if (PHONE) $('inSkip').textContent = t('skipTouch');
     if (STATE) { $('stPill').className = 'chip stpill'; $('stPillTxt').textContent = stName(STATE); }
     if (typeof renderSpeed === 'function' && $('spd')) renderSpeed();
     if (stList) renderStates();
@@ -1262,13 +1270,13 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   function showBanner(kind, txt) { var b = $('banner'); b.className = 'banner ' + kind; b.textContent = txt; }
 
   /* --------------------------------------------------- honesty line */
+  /* The footer line speaks only when something is not normal (an older complete day is
+     shown, the source or the server has a problem, the screen is offline). The period
+     and the latest post are already in every screen's subtitle and in the header chip. */
   function renderHonesty() {
     var s = state.snap, parts = [];
     if (!s) { $('honesty').innerHTML = ''; return; }
-    if (s.window) parts.push(s.window.mode === 'rolling' ? fill(t('hWindow24'), { d: esc(fmtWhen(s.window.to)) })
-                                                       : '<span class="warn">' + fill(t('hWindowDay'), { d: esc(fmtDay(s.window.from, true)) }) + '</span>');
-    if (s.status && s.status.newestPostAt) parts.push(fill(t('hLatest'), { d: esc(fmtWhen(s.status.newestPostAt)) }));
-    parts.push(t('hEst'));
+    if (s.window && s.window.mode !== 'rolling') parts.push('<span class="warn">' + fill(t('hWindowDay'), { d: esc(fmtDay(s.window.from, true)) }) + '</span>');
     var pl = s.status && s.status.pipeline;
     if (pl && pl.state === 'source_unreachable') parts.push('<span class="warn">' + fill(t('hSource'), { d: esc(fmtWhen(pl.lastAttemptAt)) }) + '</span>');
     else if (pl && pl.state === 'source_idle') parts.push('<span class="warn">' + fill(t('hIdle'), { d: esc(fmtWhen(pl.lastAttemptAt)) }) + '</span>');
@@ -1319,6 +1327,15 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     if (!s || !s.window) return '';
     return s.window.mode === 'rolling' ? fill(t('when24'), { d: fmtWhen(s.window.to) }) : fill(t('whenDay'), { d: fmtDay(s.window.from, true) });
   }
+  /* "1 post" / "5 posts" */
+  function postsTxt(n) { return LANG === 'en' && +n === 1 ? '1 post' : fill(t('postsN'), { v: fmtInt(n) }); }
+  /* a quote cut by the server mid-word ends at a whole word with an ellipsis */
+  function clipQuote(s) {
+    s = String(s || '').trim();
+    if (s.length < 120 || /[.!?।”"')\u0964]$/.test(s)) return s;
+    var i = s.lastIndexOf(' ');
+    return (i > s.length - 40 ? s.slice(0, i) : s).replace(/[\s,;:–—-]+$/, '') + '…';
+  }
   function realParties(s) { return (s.parties || []).filter(function (p) { return p.party !== 'Others'; }); }
   function numHtml(s) { var i = String(s).indexOf(' '); return i < 0 ? esc(s) : esc(s.slice(0, i)) + '<span class="u">' + esc(s.slice(i)) + '</span>'; }
 
@@ -1334,7 +1351,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       + '<div class="kpi"><div class="kpi-v txt" style="color:' + (top ? lighten(top.color, 0.3) : '#fff') + '">' + (top ? plogo(top.logo, top.color) + ' ' : '') + esc(top ? top.party : '–') + '</div><div class="kpi-l">' + t('kParty') + '</div><div class="kpi-s">'
       + (top && top.postShare !== null ? esc(fill(t('ofPartyPosts'), { v: top.postShare })) : '') + '</div></div>';
     if (STATE || !st) tiles += '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.accounts + '" data-f="int">0</div><div class="kpi-l">' + t('kAcc') + '</div><div class="kpi-s"></div></div>';
-    else tiles += '<div class="kpi"><div class="kpi-v txt">' + esc(stName(st.state)) + '</div><div class="kpi-l">' + t('kState') + '</div><div class="kpi-s">' + esc(fill(t('postsN'), { v: fmtInt(st.posts) })) + '</div></div>';
+    else tiles += '<div class="kpi"><div class="kpi-v txt">' + esc(stName(st.state)) + '</div><div class="kpi-l">' + t('kState') + '</div><div class="kpi-s">' + esc(postsTxt(st.posts)) + '</div></div>';
     var cs = s.coverageStats || {};
     var scaleTxt = STATE ? fill(t('scaleUp'), { a: esc(fmtInt(cs.handlesMapped)), t: esc(fmtShort(cs.postsInDatabase)) })
       : fill(t('scale'), { a: esc(fmtInt(cs.handlesMapped)), s: esc(String(s.kpis.statesCovered)), t: esc(fmtShort(cs.postsInDatabase)) });
@@ -1351,10 +1368,10 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       if (p.party === 'Others') sub = fill(t('othersSub'), { n: p.parts || '' });
       else {
         var a = p.accounts || {}, bits = [];
-        if (a.active !== null && a.active !== undefined) bits.push(fmtInt(a.active) + ' ' + t('active'));
-        if (a.collected) bits.push(fmtInt(a.collected) + ' ' + t('collected'));
-        if (metric === 'posts' && p.postsPerCollected !== null) bits.push(fmtDec(p.postsPerCollected) + ' ' + t('perAcc'));
-        if (metric === 'views' && p.viewsPerCollected !== null) bits.push(fmtShort(p.viewsPerCollected) + ' ' + t('viewsPerAcc'));
+        if (a.active !== null && a.active !== undefined) bits.push(fill(t('active'), { n: fmtInt(a.active) }));
+        if (a.collected) bits.push(fill(t('collected'), { n: fmtInt(a.collected) }));
+        if (metric === 'posts' && p.postsPerCollected !== null) bits.push(fill(t('perAcc'), { v: fmtDec(p.postsPerCollected) }));
+        if (metric === 'views' && p.viewsPerCollected !== null) bits.push(fill(t('viewsPerAcc'), { v: fmtShort(p.viewsPerCollected) }));
         sub = esc(bits.join(' · ')) + (p.limited ? ' · <span class="ltd">' + esc(t('ltd')) + '</span>' : '');
       }
       var share = metric === 'posts' ? p.postShare : p.viewShare;
@@ -1370,7 +1387,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     return '<div class="leads">' + L.map(function (l, i) {
       return '<div class="lead' + (i === 0 ? ' lead-1' : '') + '"><div class="rank">' + esc(fill(t('rank'), { n: i + 1 })) + '</div>' + avatar(l.name, l.avatar, c)
         + '<div><div class="ln">' + esc(l.name) + '</div><div class="ls">' + esc(l.state ? stName(l.state) : '') + '</div>'
-        + '<div class="lv">' + esc(fmtShort(l.views)) + '</div><div class="ll">' + esc(t('viewsWord') + ' · ' + fill(t('postsN'), { v: l.posts })) + '</div></div></div>';
+        + '<div class="lv">' + esc(fmtShort(l.views)) + '</div><div class="ll">' + esc(t('viewsWord') + ' · ' + postsTxt(l.posts)) + '</div></div></div>';
     }).join('') + '</div>';
   }
   function sBreakout(s) {
@@ -1386,7 +1403,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     return '<div class="bo">' + main + '<div class="bo-more vc"><div>' + more + '</div></div></div>';
   }
   function postCard(p, name, party, st, av) {
-    return '<div class="glass full"><div class="vc"><div><div class="tp-q">“' + esc(p.text) + '”</div><div class="tp-by">' + avatar(name, av, colorOf(party))
+    return '<div class="glass full"><div class="vc"><div><div class="tp-q">“' + esc(clipQuote(p.text)) + '”</div><div class="tp-by">' + avatar(name, av, colorOf(party))
       + '<div><b>' + esc(name) + '</b><span>' + esc([party, st ? stName(st) : '', fill(t('postedAt'), { d: fmtWhen(p.date) })].filter(Boolean).join(' · ')) + '</span></div>'
       + '<div class="tp-v"><b>' + esc(fmtShort(p.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div></div></div></div></div>';
   }
@@ -1398,7 +1415,11 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     if (x.target === 'state') return fill(t('atkGovt'), { s: stName(x.targetState || '') });
     return 'BJP';
   }
-  function atkTopic(x) { var k = String(x.topic || '').toLowerCase(); return LANG === 'hi' && TOPIC_HI[k] ? TOPIC_HI[k] : (x.topic || ''); }
+  function atkTopic(x) {
+    var k = String(x.topic || '').toLowerCase();
+    if (LANG === 'hi' && TOPIC_HI[k]) return TOPIC_HI[k];
+    var tp = String(x.topic || ''); return tp.charAt(0).toUpperCase() + tp.slice(1);      // "Women safety"
+  }
   function atkWho(x) { return [x.party, x.state ? stName(x.state) : '', fmtWhen(x.date)].filter(Boolean).join(' · '); }
   function sAttacks(s) {
     var a = s.attacks || {}, top = a.top || [], list = a.list || [];
@@ -1408,7 +1429,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       return '<div class="atk-c" style="--sevc:' + sevColor(x.severity) + '"><div class="atk-h"><span class="atk-rk">#' + (i + 1) + '</span>'
         + '<span class="atk-sev">' + dots + '<b>' + esc(t('atkSev')) + ' ' + esc(String(x.severity)) + '/5</b></span>'
         + '<span class="atk-chip tg">' + esc(atkTarget(x)) + '</span>' + (x.topic ? '<span class="atk-chip">' + esc(atkTopic(x)) + '</span>' : '') + '</div>'
-        + '<div class="atk-q">“' + esc(x.text) + '”</div>'
+        + '<div class="atk-q">“' + esc(clipQuote(x.text)) + '”</div>'
         + (sum ? '<div class="atk-s"><em>' + esc(t('atkSum')) + '</em>' + esc(sum) + '</div>' : '')
         + '<div class="atk-by">' + avatar(x.name, x.avatar, x.color) + '<div class="n"><b>' + esc(x.name) + '</b><span>' + esc(atkWho(x)) + '</span></div>'
         + '<div class="v"><b>' + esc(fmtShort(x.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div></div></div>';
@@ -1541,7 +1562,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     var L = p.colleagues || [], c = p.person.color;
     return '<div class="leads">' + L.map(function (l, i) {
       return '<div class="lead' + (i === 0 ? ' lead-1' : '') + '">' + avatar(l.name, l.avatar, c) + '<div><div class="ln">' + esc(l.name) + '</div>'
-        + '<div class="lv">' + esc(fmtShort(l.views)) + '</div><div class="ll">' + esc(t('viewsWord') + ' · ' + fill(t('postsN'), { v: l.posts })) + '</div></div></div>';
+        + '<div class="lv">' + esc(fmtShort(l.views)) + '</div><div class="ll">' + esc(t('viewsWord') + ' · ' + postsTxt(l.posts)) + '</div></div></div>';
     }).join('') + '</div>';
   }
   function sPNews(p) {
