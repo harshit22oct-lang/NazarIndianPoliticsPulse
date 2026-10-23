@@ -439,6 +439,41 @@ body.reduced .bar-fill{transition:none}
 .bo-row .x{font-family:var(--head);font-weight:700;font-size:2.8rem;color:var(--good);margin-left:1rem}
 
 /* post */
+/* biggest attacks on BJP / the governments: two big cards (sticky top two) + the next ones */
+.atk{display:grid;grid-template-columns:1.6fr 1fr;grid-gap:1.6rem;height:100%}
+.atk-l{display:grid;grid-template-rows:1fr 1fr;grid-gap:1.4rem;min-height:0}
+.atk-c{position:relative;display:flex;flex-direction:column;min-height:0;padding:1.8rem 2.2rem;border-radius:1.6rem;background:var(--glass);border:.08rem solid var(--line);
+  box-shadow:0 1.6rem 3.4rem rgba(0,0,0,.35);overflow:hidden}
+.atk-c:before{content:'';position:absolute;left:0;top:0;bottom:0;width:.5rem;background:var(--sevc,#FF7043)}
+.atk-h{display:flex;align-items:center;flex-wrap:wrap}
+.atk-rk{font-family:var(--head);font-weight:700;font-size:2.6rem;line-height:1;color:var(--gold);margin-right:1.2rem}
+.atk-chip{display:inline-block;font-size:1.15rem;font-weight:700;padding:.35rem .9rem;border-radius:2rem;margin:0 .6rem .4rem 0;background:rgba(255,255,255,.08);color:var(--text);white-space:nowrap}
+.atk-chip.tg{background:rgba(255,61,0,.2);color:#FFB199;border:.08rem solid rgba(255,112,67,.45)}
+.atk-sev{display:inline-flex;align-items:center;margin:0 1rem .4rem 0;font-size:1.15rem;font-weight:700;color:var(--muted)}
+.atk-sev i{display:inline-block;width:1.1rem;height:1.1rem;border-radius:50%;margin-right:.3rem;background:rgba(255,255,255,.14)}
+.atk-sev i.on{background:var(--sevc,#FF7043);box-shadow:0 0 .6rem var(--sevc,#FF7043)}
+.atk-sev b{margin-left:.5rem;color:var(--text)}
+.atk-q{margin-top:.9rem;font-size:2.05rem;line-height:1.38;font-weight:500;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.atk-s{margin-top:.6rem;font-size:1.2rem;color:var(--dim);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.atk-s em{font-style:normal;color:var(--gold);font-weight:700;margin-right:.4rem}
+.atk-by{margin-top:auto;padding-top:1rem;display:flex;align-items:center}
+.atk-by .av{width:4.6rem;height:4.6rem;font-size:1.7rem;margin-right:1.1rem;border-width:.18rem;flex:0 0 auto}
+.atk-by .n{min-width:0}
+.atk-by b{display:block;font-family:var(--head);font-size:1.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.atk-by span{font-size:1.15rem;color:var(--muted)}
+.atk-by .v{margin-left:auto;text-align:right;padding-left:1rem}
+.atk-by .v b{font-size:2.6rem;color:var(--gold);line-height:1}
+.atk-r{display:flex;flex-direction:column;min-height:0}
+.atk-rh{font-family:var(--head);font-weight:700;font-size:1.3rem;letter-spacing:.14rem;text-transform:uppercase;color:var(--dim);margin-bottom:.8rem}
+.atk-row{display:flex;align-items:center;padding:1rem 1.2rem;margin-bottom:.8rem;border-radius:1.1rem;background:rgba(26,8,3,.7);border:.08rem solid var(--line)}
+.atk-row .r{font-family:var(--head);font-weight:700;font-size:1.7rem;color:var(--dim);width:2.4rem;flex:0 0 auto}
+.atk-row .av{width:3.8rem;height:3.8rem;font-size:1.4rem;margin-right:1rem;border-width:.15rem;flex:0 0 auto}
+.atk-row .n{flex:1 1 auto;min-width:0}
+.atk-row .n b{display:block;font-family:var(--head);font-size:1.6rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.atk-row .n span{display:block;font-size:1.1rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.atk-row .x{flex:0 0 auto;margin-left:.8rem;font-family:var(--head);font-weight:700;font-size:1.6rem;padding:.2rem .7rem;border-radius:.6rem;color:#fff;background:var(--sevc,#FF7043)}
+.atk-note{margin-top:auto;font-size:1.05rem;color:var(--dim);line-height:1.4}
+body.portrait .atk{grid-template-columns:1fr} body.portrait .atk-r{display:none}
 .tp-q{font-size:3rem;line-height:1.4;font-weight:500;border-left:.5rem solid var(--saffron);padding-left:2.4rem;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .tp-by{display:flex;align-items:center;margin-top:2.2rem}
 .tp-by .av{width:6.4rem;height:6.4rem;font-size:2.3rem;margin-right:1.4rem;border-width:.22rem}
@@ -864,6 +899,17 @@ body.portrait .in-stats{flex-direction:column}
   };
   T.en.stPick = 'Or follow one state'; T.hi.stPick = 'या एक राज्य पर नज़र रखें';
   T.en.stMore = 'See all {n} states'; T.hi.stMore = 'सभी {n} राज्य देखें';
+  T.en.atk = 'Biggest attacks on BJP and the government'; T.hi.atk = 'BJP और सरकार पर सबसे बड़े हमले';
+  T.en.atkSub = 'Picked by AI from the last 24 hours · read by {r}, checked by {c}'; T.hi.atkSub = 'पिछले 24 घंटे से AI द्वारा चुने गए · {r} ने पढ़ा, {c} ने जाँचा';
+  T.en.atkSev = 'severity'; T.hi.atkSev = 'गंभीरता';
+  T.en.atkSum = 'AI summary:'; T.hi.atkSum = 'AI सार:';
+  T.en.atkMore = 'Next in line'; T.hi.atkMore = 'इसके बाद';
+  T.en.atkCentre = 'Union government'; T.hi.atkCentre = 'केंद्र सरकार';
+  T.en.atkGovt = '{s} government'; T.hi.atkGovt = '{s} सरकार';
+  T.en.atkNote = 'Severity is an AI estimate; the words are the post\'s own. Counts attacks on BJP, the Union government and BJP / NDA state governments by tracked non-BJP leaders. The top two change only when a clearly bigger attack arrives.';
+  T.hi.atkNote = 'गंभीरता AI का अनुमान है; शब्द पोस्ट के अपने हैं। ट्रैक किए गए ग़ैर-BJP नेताओं के BJP, केंद्र सरकार और BJP/NDA राज्य सरकारों पर हमले। ऊपर के दो तभी बदलते हैं जब इनसे साफ़ बड़ा हमला आए।';
+  var TOPIC_HI = { 'corruption': 'भ्रष्टाचार', 'farmers': 'किसान', 'jobs': 'रोज़गार', 'prices': 'महँगाई', 'law and order': 'क़ानून-व्यवस्था', 'women safety': 'महिला सुरक्षा',
+    'elections': 'चुनाव', 'constitution': 'संविधान', 'communal': 'सांप्रदायिक', 'health': 'स्वास्थ्य', 'education': 'शिक्षा', 'foreign policy': 'विदेश नीति', 'other': 'अन्य' };
   T.en.stTitle = 'Choose a state'; T.hi.stTitle = 'राज्य चुनें';
   T.en.stSub = 'Nazar will show only this state — its parties, leaders, posts and news. Busiest first.';
   T.hi.stSub = 'नज़र सिर्फ़ इसी राज्य को दिखाएगा — इसकी पार्टियाँ, नेता, पोस्ट और ख़बरें। सबसे सक्रिय पहले।';
@@ -1147,6 +1193,36 @@ body.portrait .in-stats{flex-direction:column}
       + '<div class="tp-v"><b>' + esc(fmtShort(p.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div></div></div></div></div>';
   }
   function sTopPost(s) { var p = s.topPost; return p ? postCard(p, p.name, p.party, p.state, null) : ''; }
+  /* biggest attacks: the sticky top two as cards, the next ones as rows */
+  function sevColor(v) { return v >= 4.5 ? '#FF3D00' : v >= 3.5 ? '#FF7043' : '#FFB300'; }
+  function atkTarget(x) {
+    if (x.target === 'centre') return t('atkCentre');
+    if (x.target === 'state') return fill(t('atkGovt'), { s: stName(x.targetState || '') });
+    return 'BJP';
+  }
+  function atkTopic(x) { var k = String(x.topic || '').toLowerCase(); return LANG === 'hi' && TOPIC_HI[k] ? TOPIC_HI[k] : (x.topic || ''); }
+  function atkWho(x) { return [x.party, x.state ? stName(x.state) : '', fmtWhen(x.date)].filter(Boolean).join(' · '); }
+  function sAttacks(s) {
+    var a = s.attacks || {}, top = a.top || [], list = a.list || [];
+    var cards = top.map(function (x, i) {
+      var dots = ''; for (var d = 1; d <= 5; d++) dots += '<i' + (x.severity >= d - 0.25 ? ' class="on"' : '') + '></i>';
+      var sum = LANG === 'hi' ? x.summaryHi : x.summaryEn;
+      return '<div class="atk-c" style="--sevc:' + sevColor(x.severity) + '"><div class="atk-h"><span class="atk-rk">#' + (i + 1) + '</span>'
+        + '<span class="atk-sev">' + dots + '<b>' + esc(t('atkSev')) + ' ' + esc(String(x.severity)) + '/5</b></span>'
+        + '<span class="atk-chip tg">' + esc(atkTarget(x)) + '</span>' + (x.topic ? '<span class="atk-chip">' + esc(atkTopic(x)) + '</span>' : '') + '</div>'
+        + '<div class="atk-q">“' + esc(x.text) + '”</div>'
+        + (sum ? '<div class="atk-s"><em>' + esc(t('atkSum')) + '</em>' + esc(sum) + '</div>' : '')
+        + '<div class="atk-by">' + avatar(x.name, x.avatar, x.color) + '<div class="n"><b>' + esc(x.name) + '</b><span>' + esc(atkWho(x)) + '</span></div>'
+        + '<div class="v"><b>' + esc(fmtShort(x.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div></div></div>';
+    }).join('');
+    var rows = list.slice(0, 5).map(function (x, i) {
+      var sum = (LANG === 'hi' ? x.summaryHi : x.summaryEn) || x.text;
+      return '<div class="atk-row" style="--sevc:' + sevColor(x.severity) + '"><span class="r">' + (top.length + i + 1) + '</span>' + avatar(x.name, x.avatar, x.color)
+        + '<div class="n"><b>' + esc(x.name) + '</b><span>' + esc(atkTarget(x) + ' · ' + sum) + '</span></div><span class="x">' + esc(String(x.severity)) + '</span></div>';
+    }).join('');
+    return '<div class="atk"><div class="atk-l"' + (top.length < 2 ? ' style="grid-template-rows:1fr"' : '') + '>' + cards + '</div>'
+      + '<div class="atk-r">' + (rows ? '<div class="atk-rh">' + esc(t('atkMore')) + '</div>' + rows : '') + '<div class="atk-note">' + esc(t('atkNote')) + '</div></div></div>';
+  }
   function sMap(s) {
     var g = state.geo, byState = {}, paths = '';
     (s.states || []).forEach(function (x) { byState[x.state] = x; });
@@ -1209,6 +1285,8 @@ body.portrait .in-stats{flex-direction:column}
     if (trend[1]) L.push(tr(trend[1]));
     if (s.breakout && s.breakout.length) L.push({ id: 'breakout', dur: 14000, title: function () { return esc(t('breakout')); }, render: sBreakout });
     if (s.topPost && s.topPost.text) L.push({ id: 'toppost', dur: 15000, hero: 'mid', title: function () { return esc(t('toppost')); }, render: sTopPost });
+    if (s.attacks && s.attacks.top && s.attacks.top.length) L.push({ id: 'attacks', dur: 22000, hero: 'mid',
+      sub: function () { var m = ((state.snap || {}).attacks || {}).models || {}; return fill(t('atkSub'), { r: m.reader || 'Qwen 3.8', c: m.checker || 'GPT-OSS 120B' }); }, title: function () { return esc(t('atk')); }, render: sAttacks });
     if (trend[2]) L.push(tr(trend[2]));
     if (!STATE && (s.states || []).filter(function (x) { return !x.limited; }).length >= 3) L.push({ id: 'map', dur: 17000, title: function () { return esc(t('map')); }, render: sMap, after: afterMap, needsGeo: true });
     if (trend[3]) L.push(tr(trend[3]));
@@ -1340,7 +1418,7 @@ body.portrait .in-stats{flex-direction:column}
   /* ---------------------------------------------------- scene engine */
   function renderScene(sc) {
     $('stTitle').innerHTML = sc.title();
-    $('stWhen').textContent = (sc.sub ? t(sc.sub) + ' · ' : '') + whenText(state.snap);
+    $('stWhen').textContent = (sc.sub ? (typeof sc.sub === 'function' ? sc.sub() : t(sc.sub)) + ' · ' : '') + whenText(state.snap);
     $('stCount').textContent = (state.idx + 1) + ' / ' + state.scenes.length;
     heroLevel(sc.hero || 'lo');
     var el = $('scene'); el.innerHTML = sc.render(state.snap);

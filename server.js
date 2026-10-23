@@ -354,7 +354,18 @@ function file(res, p) {
   });
 }
 
-var svc = null, meta = null, page = { mtime: 0, body: '' };
+var svc = null, meta = null, page = { mtime: 0, body: '' }, attacks = null;
+var ATTACKS = require('./attacks.js');
+function avatarFor(h) {
+  var k = String(h || '').toLowerCase(), e = imgIx.avatars[k];
+  return e && e.file ? '/live/img/a/' + encodeURIComponent(k) : null;
+}
+/* the snapshot plus the "biggest attacks" board for the same scope and window */
+function withAttacks(scope, snap) {
+  var a = null;
+  try { a = attacks ? attacks.forScope(scope, snap, avatarFor) : null; } catch (e) { console.log('  [attacks] ' + e.message); }
+  return a ? Object.assign({}, snap, { attacks: a }) : snap;
+}
 function pageHtml() {
   var p = path.join(APP, 'nazar.html'), st = fs.statSync(p);
   if (st.mtimeMs !== page.mtime) page = { mtime: st.mtimeMs, body: fs.readFileSync(p, 'utf8') };
@@ -393,7 +404,7 @@ var server = http.createServer(function (req, res) {
     if (!svc) return json(res, 503, { error: 'Data is still loading.', code: 'server' });
     if (!validScope(scope)) return json(res, 400, { error: 'Unknown state.', code: 'scope' });
     var job;
-    if (p === '/api/live-snapshot') job = svc.get(scope, {});
+    if (p === '/api/live-snapshot') job = svc.get(scope, {}).then(function (s) { return withAttacks(scope, s); });
     else if (p === '/api/live-search') job = Promise.resolve({ results: svc.search(scope, String(q.q || '').slice(0, 60)) });
     else if (p === '/api/live-person') job = svc.person(scope, String(q.h || '').slice(0, 60), {}).then(function (r) {
       return r || { __status: 404, error: 'This leader is not in the list.', code: 'notfound' };
@@ -415,6 +426,8 @@ server.listen(PORT, HOST, function () {
     svc = makeService(rows);
     console.log('  ready -- ' + rows.length.toLocaleString('en-IN') + ' posts, ' + meta.from + ' to ' + meta.to + ' IST\n');
     svc.warm('all').then(function () { return svc.warm('up'); }).catch(function () {});
+    attacks = ATTACKS.createEngine({ rows: rows, svc: svc, master: function () { return MAPL.load(); }, dataDir: DATA });
+    attacks.start();
   }).catch(function (e) { console.log('\n  ERROR: ' + e.message + '\n'); process.exit(1); });
 });
 server.on('error', function (e) {

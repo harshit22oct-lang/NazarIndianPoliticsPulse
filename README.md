@@ -26,6 +26,25 @@ The Pulse project is not touched by this folder.
   2. Set environment variable: `MONGODB_URI`
   3. Start command: `npm start`
 
+## "BJP और सरकार पर सबसे बड़े हमले" (AI section)
+- **What it shows:** attacks by tracked non-BJP leaders on the BJP, the Union government, or a BJP / NDA state government.
+  - The state's ruling party comes from the Chief Minister records in `handle_master.json`.
+  - The window is the same 24 hours as the rest of Nazar, and the state filter applies.
+  - The top two are sticky: they change only when a new attack scores 15 % higher.
+- **How:**
+  1. A keyword filter picks the posts, without AI.
+  2. **Qwen 3.8 27B** (Groq, free) reads them, 5 posts per request. It labels each post: attack?, target, severity 1-5, topic, and a short summary.
+  3. **GPT-OSS 120B** (Groq, free) re-reads the leaders. A post is shown only if both models call it an attack, and their two severities are averaged.
+  4. Backup: GPT-OSS 20B on Groq, then the free Gemma on OpenRouter.
+  - The data's `Sentiment` column is not used, because it does not match the posts.
+- **Free-tier limits:** Groq allows 1,000 requests a day, 8,000 tokens a minute, and 1,000 output tokens a minute for Qwen. So Nazar sends one request a minute, which is about 300 posts an hour.
+  - Each post goes to the AI only once. Labels are saved in MongoDB (`attack_labels`), or in `data/attack_labels.json` without MongoDB.
+- **Settings in `.env` / Render:**
+  - `GROQ_API_KEY` (needed);
+  - `OPENROUTER_API_KEY` (backup);
+  - `ATTACKS_WORKER=off` on a copy that should only display the labels, so that the laptop and Render do not both spend the Groq quota.
+- Code: `app/attack_lib.js` holds the rules, the prompt and the ranking; `attacks.js` holds the AI calls, the limits and the saving.
+
 Useful links:
 
 | Link | What it shows |
