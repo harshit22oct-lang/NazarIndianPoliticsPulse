@@ -114,6 +114,13 @@ body.hero-mid{--heroMain:.55;--heroSide:.45}
 .tbtn{height:3rem;padding:0 1.2rem;border-radius:.8rem;border:.08rem solid var(--line);background:var(--glass);font-size:1.1rem;font-weight:700;cursor:pointer;white-space:nowrap}
 .tbtn:hover,.tbtn:focus{border-color:var(--gold);outline:none}
 body.kiosk .tbtn{display:none}
+/* screen speed: Slow / Normal / Fast (Normal = the timings the screens were designed for) */
+.spd{display:flex;height:3rem;border-radius:.8rem;border:.08rem solid var(--line);background:var(--glass);overflow:hidden;flex:0 0 auto}
+.spd button{border:0;background:transparent;padding:0 1.05rem;font-family:var(--deva);font-size:1.1rem;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
+.spd button + button{border-left:.08rem solid var(--line)}
+.spd button:hover,.spd button:focus{color:var(--text);background:rgba(255,153,51,.15);outline:none}
+.spd button.on{background:linear-gradient(135deg,#E65100,#FF9933);color:#fff}
+body.kiosk .spd{display:none}
 
 #stage{flex:1 1 auto;min-height:0;position:relative;display:flex;flex-direction:column;padding-top:1.4rem}
 .st-head{flex:0 0 auto;display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.4rem}
@@ -305,7 +312,17 @@ body.reduced .in-lotus,body.reduced .in-spark,body.reduced .in-burst,body.reduce
 .ch-st{margin-top:1.5rem;padding-top:1.3rem;border-top:.08rem solid rgba(255,200,87,.16)}
 .ch-st-k{display:flex;align-items:center;font-family:var(--head),var(--deva);font-weight:700;font-size:1.15rem;letter-spacing:.14rem;text-transform:uppercase;color:var(--gold);margin-bottom:.9rem}
 .ch-st-k svg{width:1.3rem;height:1.3rem;fill:var(--gold);margin-right:.6rem;flex:0 0 auto}
-.ch-st-list{display:grid;grid-template-columns:1fr 1fr;grid-gap:.6rem}
+.ch-st-list{display:grid;grid-template-columns:1fr 1fr;grid-gap:.6rem;align-content:start}
+/* a small India map next to the buttons: every state shaded by how active it is; click to choose */
+.ch-all{width:50rem} .ch-one{width:54rem}
+.ch-st-body{display:grid;grid-template-columns:16rem 1fr;grid-gap:1.4rem;align-items:start}
+.ch-map svg{display:block;width:100%;height:17rem}
+.ch-map path{stroke:rgba(255,214,140,.55);stroke-width:.7px;vector-effect:non-scaling-stroke;fill:rgba(255,255,255,.05);transition:fill .15s}
+.ch-map path.ok{cursor:pointer}
+.ch-map path.ok:hover,.ch-map path.hov{fill:#FFC857!important;stroke:#fff}
+.ch-map path.on{fill:#FF9933!important;stroke:#fff;stroke-width:1.4px}
+.ch-map-tip{margin-top:.5rem;min-height:1.6rem;font-size:1.1rem;font-weight:700;color:var(--gold);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.portrait .ch-st-body{grid-template-columns:1fr} body.portrait .ch-map svg{height:14rem}
 .st-chip{display:flex;align-items:center;justify-content:space-between;height:3.4rem;padding:0 1rem 0 1.15rem;border-radius:.9rem;
   border:.08rem solid rgba(255,200,87,.18);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
   color:var(--text);font-family:var(--deva);font-weight:700;font-size:1.25rem;text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;
@@ -445,16 +462,21 @@ body.reduced .bar-fill{transition:none}
 .atk-c{position:relative;display:flex;flex-direction:column;min-height:0;padding:1.8rem 2.2rem;border-radius:1.6rem;background:var(--glass);border:.08rem solid var(--line);
   box-shadow:0 1.6rem 3.4rem rgba(0,0,0,.35);overflow:hidden}
 .atk-c:before{content:'';position:absolute;left:0;top:0;bottom:0;width:.5rem;background:var(--sevc,#FF7043)}
-.atk-h{display:flex;align-items:center;flex-wrap:wrap}
+.atk-h{display:flex;align-items:center;flex-wrap:nowrap;overflow:hidden;flex:0 0 auto}
 .atk-rk{font-family:var(--head);font-weight:700;font-size:2.6rem;line-height:1;color:var(--gold);margin-right:1.2rem}
 .atk-chip{display:inline-block;font-size:1.15rem;font-weight:700;padding:.35rem .9rem;border-radius:2rem;margin:0 .6rem .4rem 0;background:rgba(255,255,255,.08);color:var(--text);white-space:nowrap}
 .atk-chip.tg{background:rgba(255,61,0,.2);color:#FFB199;border:.08rem solid rgba(255,112,67,.45)}
-.atk-sev{display:inline-flex;align-items:center;margin:0 1rem .4rem 0;font-size:1.15rem;font-weight:700;color:var(--muted)}
+.atk-sev{display:inline-flex;align-items:center;flex:0 0 auto;white-space:nowrap;margin:0 1rem .4rem 0;font-size:1.15rem;font-weight:700;color:var(--muted)}
 .atk-sev i{display:inline-block;width:1.1rem;height:1.1rem;border-radius:50%;margin-right:.3rem;background:rgba(255,255,255,.14)}
 .atk-sev i.on{background:var(--sevc,#FF7043);box-shadow:0 0 .6rem var(--sevc,#FF7043)}
 .atk-sev b{margin-left:.5rem;color:var(--text)}
-.atk-q{margin-top:.9rem;font-size:2.05rem;line-height:1.38;font-weight:500;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.atk-s{margin-top:.6rem;font-size:1.2rem;color:var(--dim);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+/* nothing in a card may shrink: the quote keeps whole lines (3 at most) and the
+   summary / speaker rows sit under it, never on top of it */
+.atk-q{flex:0 0 auto;margin-top:.8rem;font-size:1.95rem;line-height:1.36;max-height:5.32em;font-weight:500;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.atk-s{flex:0 0 auto;margin-top:.5rem;font-size:1.2rem;line-height:1.5;max-height:1.5em;color:var(--dim);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.atk-by{flex:0 0 auto}
+.atk-row .n span em{font-style:normal;font-weight:700}
+.atk-row .n span .to{color:#FFB199;font-weight:700}
 .atk-s em{font-style:normal;color:var(--gold);font-weight:700;margin-right:.4rem}
 .atk-by{margin-top:auto;padding-top:1rem;display:flex;align-items:center}
 .atk-by .av{width:4.6rem;height:4.6rem;font-size:1.7rem;margin-right:1.1rem;border-width:.18rem;flex:0 0 auto}
@@ -470,7 +492,7 @@ body.reduced .bar-fill{transition:none}
 .atk-row .av{width:3.8rem;height:3.8rem;font-size:1.4rem;margin-right:1rem;border-width:.15rem;flex:0 0 auto}
 .atk-row .n{flex:1 1 auto;min-width:0}
 .atk-row .n b{display:block;font-family:var(--head);font-size:1.6rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.atk-row .n span{display:block;font-size:1.1rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.atk-row .n > span{display:block;font-size:1.1rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .atk-row .x{flex:0 0 auto;margin-left:.8rem;font-family:var(--head);font-weight:700;font-size:1.6rem;padding:.2rem .7rem;border-radius:.6rem;color:#fff;background:var(--sevc,#FF7043)}
 .atk-note{margin-top:auto;font-size:1.05rem;color:var(--dim);line-height:1.4}
 body.portrait .atk{grid-template-columns:1fr} body.portrait .atk-r{display:none}
@@ -679,7 +701,7 @@ body.portrait .in-stats{flex-direction:column}
   <div class="ch-cards">
     <div class="ch-card ch-all" id="chAll" tabindex="0" role="button">
       <div class="ch-k" id="chAllK"></div><div class="ch-t" id="chAllT"></div><div class="ch-d" id="chAllD"></div>
-      <div class="ch-st hidden" id="chSt"><div class="ch-st-k"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg><span id="chStK"></span></div><div class="ch-st-list" id="chStList"></div></div>
+      <div class="ch-st hidden" id="chSt"><div class="ch-st-k"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg><span id="chStK"></span></div><div class="ch-st-body"><div class="ch-map"><div id="chMap"></div><div class="ch-map-tip" id="chMapTip"></div></div><div class="ch-st-list" id="chStList"></div></div></div>
       <div class="ch-go"><svg class="ch-ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" stroke="rgba(255,255,255,.15)"/><circle id="chRing" cx="18" cy="18" r="15" stroke="#FFC857" stroke-dasharray="94.25" stroke-dashoffset="0" transform="rotate(-90 18 18)"/></svg><span id="chGo"></span></div>
     </div>
     <div class="ch-card ch-one">
@@ -707,6 +729,7 @@ body.portrait .in-stats{flex-direction:column}
       <div class="chip stpill hidden" id="stPill"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg><span id="stPillTxt"></span></div>
       <div class="chip lvl-nodata" id="chip"><i class="cd"></i><span id="chipTxt">…</span></div>
       <div class="clock"><b id="clk">--:--</b><span id="cdate"></span></div>
+      <div class="spd" id="spd" role="group"><button type="button" data-s="slow"></button><button type="button" data-s="normal"></button><button type="button" data-s="fast"></button></div>
       <button class="tbtn" id="swBtn" type="button"></button>
       <button class="tbtn" id="langBtn" type="button">हिंदी</button>
       <button class="tbtn" id="backBtn" type="button">&#8592; <span id="backTxt">Dashboard</span></button>
@@ -910,6 +933,9 @@ body.portrait .in-stats{flex-direction:column}
   T.hi.atkNote = 'गंभीरता AI का अनुमान है; शब्द पोस्ट के अपने हैं। ट्रैक किए गए ग़ैर-BJP नेताओं के BJP, केंद्र सरकार और BJP/NDA राज्य सरकारों पर हमले। ऊपर के दो तभी बदलते हैं जब इनसे साफ़ बड़ा हमला आए।';
   var TOPIC_HI = { 'corruption': 'भ्रष्टाचार', 'farmers': 'किसान', 'jobs': 'रोज़गार', 'prices': 'महँगाई', 'law and order': 'क़ानून-व्यवस्था', 'women safety': 'महिला सुरक्षा',
     'elections': 'चुनाव', 'constitution': 'संविधान', 'communal': 'सांप्रदायिक', 'health': 'स्वास्थ्य', 'education': 'शिक्षा', 'foreign policy': 'विदेश नीति', 'other': 'अन्य' };
+  T.en.sp_slow = 'Slow'; T.en.sp_normal = 'Normal'; T.en.sp_fast = 'Fast'; T.en.spTitle = 'How long each screen stays';
+  T.hi.sp_slow = 'धीमा'; T.hi.sp_normal = 'सामान्य'; T.hi.sp_fast = 'तेज़'; T.hi.spTitle = 'हर स्क्रीन कितनी देर रहे';
+  T.en.stMapHint = 'Tap a state on the map'; T.hi.stMapHint = 'मानचित्र पर राज्य चुनें';
   T.en.stTitle = 'Choose a state'; T.hi.stTitle = 'राज्य चुनें';
   T.en.stSub = 'Nazar will show only this state — its parties, leaders, posts and news. Busiest first.';
   T.hi.stSub = 'नज़र सिर्फ़ इसी राज्य को दिखाएगा — इसकी पार्टियाँ, नेता, पोस्ट और ख़बरें। सबसे सक्रिय पहले।';
@@ -1057,6 +1083,7 @@ body.portrait .in-stats{flex-direction:column}
     if (DEMO) showBanner('demo', t('demo')); else if (ASOF) showBanner('hist', fill(t('hist'), { d: ASOF }));
     else if (PROTO && PROTO.from) showBanner('proto', fill(t('proto'), { a: fmtWhen(PROTO.from), b: fmtWhen(PROTO.to) }));
     if (STATE) { $('stPill').className = 'chip stpill'; $('stPillTxt').textContent = stName(STATE); }
+    if (typeof renderSpeed === 'function' && $('spd')) renderSpeed();
     if (stList) renderStates();
     renderClock(); renderChip(); renderHonesty(); renderRecent();
     if (state.snap) { renderTicker(true); rerender(); }
@@ -1217,8 +1244,10 @@ body.portrait .in-stats{flex-direction:column}
     }).join('');
     var rows = list.slice(0, 5).map(function (x, i) {
       var sum = (LANG === 'hi' ? x.summaryHi : x.summaryEn) || x.text;
+      /* "INC → Union government · summary": who attacks whom, then what */
       return '<div class="atk-row" style="--sevc:' + sevColor(x.severity) + '"><span class="r">' + (top.length + i + 1) + '</span>' + avatar(x.name, x.avatar, x.color)
-        + '<div class="n"><b>' + esc(x.name) + '</b><span>' + esc(atkTarget(x) + ' · ' + sum) + '</span></div><span class="x">' + esc(String(x.severity)) + '</span></div>';
+        + '<div class="n"><b>' + esc(x.name) + '</b><span>' + (x.party ? '<em style="color:' + lighten(x.color, 0.35) + '">' + esc(x.party) + '</em> → ' : '')
+        + '<span class="to">' + esc(atkTarget(x)) + '</span> · ' + esc(sum) + '</span></div><span class="x">' + esc(String(x.severity)) + '</span></div>';
     }).join('');
     return '<div class="atk"><div class="atk-l"' + (top.length < 2 ? ' style="grid-template-rows:1fr"' : '') + '>' + cards + '</div>'
       + '<div class="atk-r">' + (rows ? '<div class="atk-rh">' + esc(t('atkMore')) + '</div>' + rows : '') + '<div class="atk-note">' + esc(t('atkNote')) + '</div></div></div>';
@@ -1438,7 +1467,31 @@ body.portrait .in-stats{flex-direction:column}
     if (REDUCED || firstPaint) { go(); return; }
     el.className = 'out'; state.tmo.push(setTimeout(go, 420));
   }
+  /* speed: every screen's time x this factor; remembered on this device */
+  var SPEED_MUL = { slow: 1.6, normal: 1, fast: 0.6 };
+  var SPEED = SPEED_MUL[store('nazar_speed')] ? store('nazar_speed') : 'normal';
+  function renderSpeed() {
+    [].forEach.call($('spd').querySelectorAll('button'), function (b) {
+      var s = b.getAttribute('data-s'); b.textContent = t('sp_' + s); b.className = s === SPEED ? 'on' : ''; b.setAttribute('aria-pressed', s === SPEED ? 'true' : 'false');
+    });
+    $('spd').setAttribute('aria-label', t('spTitle')); $('spd').title = t('spTitle');
+  }
+  function setSpeed(s) {
+    if (!SPEED_MUL[s] || s === SPEED) return;
+    SPEED = s; store('nazar_speed', s); renderSpeed();
+    /* the screen on now keeps the share of its time already shown, at the new speed */
+    if (!state.mode || !state.base) return;
+    var newDur = state.base * SPEED_MUL[SPEED];
+    if (state.paused) { state.remaining = newDur * (state.dur ? state.remaining / state.dur : 1); state.dur = newDur; return; }
+    var frac = state.dur ? Math.min(1, (Date.now() - state.start) / state.dur) : 0;
+    clearTimeout(state.timer);
+    state.dur = newDur; state.start = Date.now() - frac * newDur; state.remaining = newDur * (1 - frac);
+    var bar = $('prog').firstChild; bar.style.transition = 'width ' + state.remaining + 'ms linear'; bar.style.width = '100%';
+    state.timer = setTimeout(function () { show(state.idx + 1); }, state.remaining);
+  }
+  [].forEach.call($('spd').querySelectorAll('button'), function (b) { b.onclick = function () { setSpeed(b.getAttribute('data-s')); wake(); }; });
   function startTimer(ms) {
+    state.base = ms; ms = Math.round(ms * SPEED_MUL[SPEED]);
     state.start = Date.now(); state.dur = ms; state.remaining = ms;
     var bar = $('prog').firstChild; bar.style.transition = 'none'; bar.style.width = '0%'; void bar.offsetWidth;
     if (state.paused) return;
@@ -1560,12 +1613,12 @@ body.portrait .in-stats{flex-direction:column}
     clearTimeout(state.timer); clearSceneWork(); clearTimeout(fetchTimer);
     state.mode = null; $('app').style.visibility = 'hidden'; $('chooser').className = ''; setCls(document.body, 'choosing', true);
     heroLevel('hi'); renderRecent(); loadStates(); $('chInput').value = ''; $('chList').innerHTML = '';
-    chLeft = CHOOSER_AUTO_S; tickChooser();
+    chLeft = CHOOSER_AUTO_S; tickChooser(); clearTimeout(chResumeT);
     clearInterval(chT); chT = setInterval(tickChooser, 1000);
     if (!('ontouchstart' in window)) setTimeout(function () { try { $('chInput').focus(); } catch (e) {} }, 300);
   }
   function tickChooser() {
-    if (chLeft <= 0) { startShow('all'); return; }
+    if (chLeft !== null && chLeft <= 0) { startShow('all'); return; }     // (null <= 0 is true in JS: a held countdown must never start the show)
     $('chGo').textContent = chLeft === null ? t('chGoNow') : fill(t('chGo'), { n: chLeft });
     $('chRing').setAttribute('stroke-dashoffset', String(94.25 * (1 - (chLeft || 0) / CHOOSER_AUTO_S)));
     if (chLeft !== null) chLeft--;
@@ -1597,6 +1650,7 @@ body.portrait .in-stats{flex-direction:column}
     }).join('');
     h += '<button type="button" class="st-chip more" id="chStMore"><span>' + esc(fill(t('stMore'), { n: stList.length })) + '</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
     $('chStK').textContent = t('stPick'); $('chStList').innerHTML = h; $('chSt').className = 'ch-st';
+    renderStateMap();
     [].forEach.call($('chStList').querySelectorAll('button'), function (b) {
       b.onclick = function (e) {
         e.stopPropagation(); holdChooser();
@@ -1605,6 +1659,27 @@ body.portrait .in-stats{flex-direction:column}
       b.onkeydown = function (e) { e.stopPropagation(); };          // Enter here must not start the All-India card
     });
     if ($('stPanel').className.indexOf('hidden') < 0) renderStateGrid();
+  }
+  function renderStateMap() {
+    if (!state.geo) { loadGeo().then(function (g) { if (g) renderStateMap(); }).catch(function () {}); return; }
+    var g = state.geo, by = {}, max = stList.length ? stList[0].posts : 1, p = '';
+    stList.forEach(function (s) { by[s.state] = s; });
+    Object.keys(g.states).forEach(function (name) {
+      var s = by[name], a = s ? (0.22 + 0.68 * Math.sqrt(s.posts / max)).toFixed(2) : null;
+      p += '<path d="' + g.states[name] + '" data-s="' + esc(name) + '" class="' + (s ? 'ok' : '') + (name === STATE ? ' on' : '') + '"'
+        + (a ? ' style="fill:rgba(255,153,51,' + a + ')"' : '') + '></path>';
+    });
+    $('chMap').innerHTML = '<svg viewBox="' + g.viewBox + '" preserveAspectRatio="xMidYMid meet" role="img" aria-label="' + esc(t('stTitle')) + '">' + p + '</svg>';
+    var tip = $('chMapTip');
+    function idle() { tip.textContent = STATE ? stName(STATE) : t('stMapHint'); }
+    idle();
+    [].forEach.call($('chMap').querySelectorAll('path.ok'), function (el) {
+      var name = el.getAttribute('data-s'), s = by[name];
+      el.addEventListener('mouseenter', function () { holdChooser(); tip.textContent = stName(name) + ' · ' + fill(t('stPosts'), { n: fmtInt(s.posts) }); });
+      el.addEventListener('mouseleave', idle);
+      el.addEventListener('click', function (e) { e.stopPropagation(); holdChooser(); pickScope('st:' + name); });
+    });
+    $('chMap').onclick = function (e) { e.stopPropagation(); holdChooser(); };      // a click on the sea is not "start All India"
   }
   function openStates() {
     if (!stList) return;
@@ -1648,8 +1723,20 @@ body.portrait .in-stats{flex-direction:column}
   });
   $('stClose').onclick = closeStates;
   $('stPanel').addEventListener('click', function (e) { if (e.target === $('stPanel')) closeStates(); });
-  function holdChooser() { if (chLeft !== null) { chLeft = null; clearInterval(chT); $('chGo').textContent = t('chGoNow'); $('chRing').setAttribute('stroke-dashoffset', '0'); } }
-  function stopChooser() { clearInterval(chT); chT = null; }
+  /* any touch, mouse move or typing pauses the countdown; after 15 s with nothing
+     happening (no search typed, no state panel open) it starts again, so a TV left
+     on the start screen always goes on to the show by itself */
+  var chResumeT = null, CHOOSER_IDLE_MS = 15000;
+  function holdChooser() {
+    if (chLeft !== null) { chLeft = null; clearInterval(chT); $('chGo').textContent = t('chGoNow'); $('chRing').setAttribute('stroke-dashoffset', '0'); }
+    clearTimeout(chResumeT); chResumeT = setTimeout(resumeChooser, CHOOSER_IDLE_MS);
+  }
+  function resumeChooser() {
+    if (state.mode || $('chooser').className.indexOf('hidden') >= 0) return;
+    if ($('chInput').value.trim() || $('stPanel').className.indexOf('hidden') < 0) { chResumeT = setTimeout(resumeChooser, CHOOSER_IDLE_MS); return; }
+    chLeft = CHOOSER_AUTO_S; tickChooser(); clearInterval(chT); chT = setInterval(tickChooser, 1000);
+  }
+  function stopChooser() { clearInterval(chT); chT = null; clearTimeout(chResumeT); }
   function doSearch() {
     var v = $('chInput').value.trim();
     clearTimeout(chSearchT);

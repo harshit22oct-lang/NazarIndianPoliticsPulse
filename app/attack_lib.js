@@ -158,6 +158,9 @@ function board(rows, labels, opts) {
     items.push({ key: k, row: r, lab: L.r, sev: sev, verified: verified, score: scoreOf(sev, r) });
   });
   items.sort(function (a, b) { return b.score - a.score; });
+  /* one place per leader: their strongest attack stands for them */
+  var seenH = {};
+  items = items.filter(function (x) { var h = String(x.row.Handle || '').toLowerCase(); if (seenH[h]) return false; seenH[h] = 1; return true; });
 
   /* sticky top two: keep last time's holders unless someone beats them clearly */
   var byKey = {}; items.forEach(function (x) { byKey[x.key] = x; });
