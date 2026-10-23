@@ -638,6 +638,166 @@ body.portrait .in-stats{flex-direction:column}
   .in-wm b,body.portrait .in-wm b{font-size:4.2rem}
   .in-wm .nz{font-size:1.5rem} .in-wm i,.in-stats{display:none}
 }
+
+/* ================= PHONE MODE (body.phone, set by scale()) =================
+   1 rem ~ 1/32 of the phone's width, so text stays readable. The TV layout fits
+   everything in one screen; on a phone the page SCROLLS instead: cards are stacked,
+   the news strip is fixed at the bottom, the header is compact. Nothing here affects
+   TVs, laptops or tablets. */
+body.phone,html.phone{height:auto;min-height:100%}
+body.phone{overflow-x:hidden;overflow-y:auto}
+body.phone #app{height:auto;min-height:100vh;display:block;padding:3rem 1.2rem 5.2rem;max-width:62rem;margin:0 auto}
+/* the "recorded data" strip: thin, full width, at the very top */
+body.phone .banner{top:0;left:0;right:0;-webkit-transform:none;transform:none;border-radius:0;padding:.45rem 1rem;font-size:1rem;letter-spacing:0;text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:0;border-right:0}
+/* header: logo + Change view / language in row 1, status chips and speed in row 2 */
+body.phone .top{position:relative;height:auto;flex-wrap:wrap;align-items:center;padding-right:0}
+body.phone .brand{min-height:3.4rem;padding-right:15rem}
+body.phone .logo{width:3.2rem;height:3.2rem;margin-right:.7rem}
+body.phone .wm{font-size:2.2rem}
+body.phone .right{width:100%;flex-wrap:wrap;justify-content:flex-start;margin-top:.6rem}
+body.phone .right > *{margin:0 .5rem .5rem 0}
+body.phone #swBtn,body.phone #langBtn{position:absolute;top:.3rem;margin:0}
+body.phone #langBtn{right:0} body.phone #swBtn{right:5.4rem}
+body.phone .chip,body.phone .tbtn,body.phone .spd{height:2.8rem;font-size:1.1rem}
+body.phone .chip{padding:0 .9rem} body.phone .tbtn{padding:0 .9rem}
+body.phone .spd button{padding:0 .8rem;font-size:1.1rem}
+body.phone .clock{display:none}
+/* screen title */
+body.phone #stage{display:block;padding-top:.6rem}
+body.phone .st-head{display:block;margin-bottom:1rem}
+body.phone .st-title{font-size:2.6rem;line-height:1.12}
+body.phone .st-title .tl{width:2.6rem;height:2.6rem;vertical-align:-.4rem;margin-left:.6rem}
+body.phone .st-when{font-size:1.1rem;line-height:1.4}
+/* screens grow with their content (the page scrolls) */
+body.phone #scene{overflow:visible;min-height:20rem}
+body.phone .glass{padding:1.4rem}
+body.phone .glass.full,body.phone .vc,body.phone .glance,body.phone .leads,body.phone .bo,body.phone .mapw,body.phone .pf,body.phone .rh,body.phone .rk,body.phone .atk,body.phone .atk-l,body.phone .empty{height:auto}
+body.phone .vc > :first-child{margin-top:0} body.phone .vc > :last-child{margin-bottom:0}
+body.phone .note{font-size:1.1rem}
+/* at a glance */
+body.phone .kpis{grid-template-columns:1fr 1fr;grid-gap:.8rem}
+body.phone .kpi{padding:1.2rem;border-radius:1.2rem}
+body.phone .kpi-v{font-size:3.3rem} body.phone .kpi-v.txt{font-size:2.2rem}
+body.phone .kpi-l{font-size:1.2rem;margin-top:.5rem} body.phone .kpi-s{font-size:1.05rem}
+body.phone .scale{font-size:1.2rem;margin-top:1rem} body.phone .scale b{font-size:1.5rem}
+/* party bars: name + value on one line, the bar under them */
+body.phone .bar-row{grid-template-columns:1fr auto;grid-template-areas:"n v" "m m";margin-bottom:1.2rem}
+body.phone .bar-name{grid-area:n;font-size:1.7rem} body.phone .bar-val{grid-area:v;font-size:1.8rem}
+body.phone .bar-val small{display:inline;font-size:1.05rem}
+body.phone .bar-mid{grid-area:m;padding:.4rem 0 0}
+body.phone .bar-track{height:1.2rem}
+body.phone .bar-sub{font-size:1rem}
+/* trending leaders: one row each */
+body.phone .leads{grid-gap:.8rem}
+body.phone .lead,body.phone .lead-1{padding:1.1rem 1.2rem;justify-content:flex-start}
+body.phone .lead .av,body.phone .lead-1 .av{width:5.6rem;height:5.6rem;font-size:2rem}
+body.phone .ln,body.phone .lead-1 .ln{font-size:1.7rem} body.phone .ls{font-size:1.1rem}
+body.phone .lv,body.phone .lead-1 .lv{font-size:2.4rem} body.phone .ll{font-size:1.05rem}
+/* doing better than usual */
+body.phone .bo{grid-gap:1rem}
+body.phone .bo-main{padding:1.4rem}
+body.phone .bo-main .av{width:6.4rem;height:6.4rem;font-size:2.3rem}
+body.phone .bo-x{font-size:5rem} body.phone .bo-xl{font-size:1.25rem} body.phone .bo-nm{font-size:2.2rem}
+body.phone .bo-meta,body.phone .bo-detail{font-size:1.1rem}
+body.phone .bo-row{padding:1rem 1.2rem;margin-bottom:.8rem}
+body.phone .bo-row .av{width:4.4rem;height:4.4rem;font-size:1.6rem}
+body.phone .bo-row .n b{font-size:1.6rem} body.phone .bo-row .x{font-size:2.2rem}
+/* most-viewed post */
+body.phone .tp-q{font-size:1.85rem;line-height:1.45;padding-left:1.2rem;border-left-width:.4rem;-webkit-line-clamp:9}
+body.phone .tp-by .av{width:4.8rem;height:4.8rem;font-size:1.7rem}
+body.phone .tp-by b{font-size:1.8rem} body.phone .tp-by span{font-size:1.1rem}
+body.phone .tp-v b{font-size:3rem}
+/* biggest attacks: cards stacked, the list under them (not hidden) */
+body.phone .atk{grid-template-columns:1fr;grid-gap:1rem}
+body.phone .atk-l{grid-template-rows:none;grid-gap:1rem}
+body.phone .atk-c{padding:1.3rem 1.3rem 1.3rem 1.6rem}
+body.phone .atk-h{flex-wrap:wrap;overflow:visible}
+body.phone .atk-rk{font-size:2.2rem}
+body.phone .atk-sev,body.phone .atk-chip{font-size:1.05rem}
+body.phone .atk-q{font-size:1.75rem;-webkit-line-clamp:6;max-height:none}
+body.phone .atk-s{font-size:1.1rem;-webkit-line-clamp:2;max-height:none}
+body.phone .atk-by b{font-size:1.65rem} body.phone .atk-by span{font-size:1.05rem}
+body.phone .atk-by .av{width:4.2rem;height:4.2rem}
+body.phone .atk-by .v b{font-size:2.2rem}
+body.phone .atk-r{display:flex}
+body.phone .atk-row{padding:.9rem 1rem}
+body.phone .atk-row .n b{font-size:1.5rem} body.phone .atk-row .n > span{font-size:1.05rem;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+body.phone .atk-note{margin-top:.6rem;font-size:1rem}
+/* map: the map, then the list */
+body.phone .mapw{grid-template-columns:1fr;grid-template-rows:none;grid-gap:1rem}
+body.phone .map-svg{height:30rem}
+body.phone .ms-row .s{font-size:1.6rem} body.phone .ms-row .v{font-size:1.5rem} body.phone .ms-row .r{font-size:1.3rem}
+body.phone .legend span{font-size:1.05rem}
+/* plain words */
+body.phone .facts li{font-size:1.6rem;margin-bottom:1.1rem}
+body.phone .facts li i{width:.8rem;height:.8rem;margin:.75rem 1rem 0 0}
+/* one leader */
+body.phone .pf{grid-template-columns:1fr;justify-items:start;grid-gap:1rem}
+body.phone .pf-av .av{width:8rem;height:8rem;font-size:2.8rem}
+body.phone .pf-nm{font-size:2.6rem} body.phone .pf-meta{font-size:1.2rem}
+body.phone .pf-k{grid-template-columns:1fr 1fr;grid-gap:.7rem}
+body.phone .pf-k b{font-size:2.6rem} body.phone .pf-k span{font-size:1.05rem}
+body.phone .pf-chips span{font-size:1.1rem}
+body.phone .rh{grid-template-columns:1fr} body.phone .hbars,body.phone .dbars{height:12rem}
+body.phone .rk{grid-template-columns:1fr 1fr 1fr;grid-gap:.6rem} body.phone .rk div{padding:1rem .6rem} body.phone .rk b{font-size:3.4rem} body.phone .rk span{font-size:1rem}
+body.phone .rv{grid-template-columns:1fr} body.phone .rv-h b{font-size:1.6rem}
+body.phone .empty h3{font-size:2.4rem} body.phone .empty p{font-size:1.3rem}
+/* footer: honesty line in the page; progress bar and news strip fixed at the bottom */
+body.phone .honesty{white-space:normal;font-size:1rem;margin-top:1rem}
+body.phone #prog{position:fixed;left:0;right:0;bottom:3.6rem;margin:0;border-radius:0;z-index:26;height:.25rem}
+body.phone .ticker{position:fixed;left:0;right:0;bottom:0;margin:0;height:3.6rem;border-radius:0;border-left:0;border-right:0;border-bottom:0;z-index:25}
+body.phone .tk-lbl{font-size:1.05rem;padding:0 .9rem;letter-spacing:.04rem}
+body.phone .tk-item,body.phone .tk-single{font-size:1.2rem} body.phone .tk-single{line-height:3.6rem}
+body.phone .ctl{bottom:4.6rem;padding:.4rem}
+body.phone .ctl button{width:3.6rem;height:3.6rem}
+body.phone .ctl .dots{display:none}
+body.phone .hero-main{height:52%;opacity:.35}
+/* start screen: scrolls; map first, buttons under it */
+body.phone #chooser{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:3rem 1.2rem 2rem;display:block}
+body.phone .ch-top .wm{font-size:2.2rem}
+body.phone .ch-q{margin-top:1rem} body.phone .ch-q h1{font-size:2.6rem} body.phone .ch-q p{font-size:1.2rem}
+body.phone .ch-cards{display:block;margin-top:1.2rem}
+body.phone .ch-card{padding:1.5rem 1.4rem;border-radius:1.5rem}
+body.phone .ch-all,body.phone .ch-one{width:auto;margin:0 0 1.2rem}
+body.phone .ch-k{font-size:1.1rem} body.phone .ch-t{font-size:2.4rem} body.phone .ch-d{font-size:1.2rem}
+body.phone .ch-st-body{grid-template-columns:1fr}
+body.phone .ch-map svg{height:22rem}
+body.phone .ch-map-tip{font-size:1.15rem}
+body.phone .st-chip{height:3.6rem;font-size:1.3rem}
+body.phone .ch-go{font-size:1.3rem}
+body.phone .ch-search input{height:4.4rem;font-size:1.5rem}
+body.phone .ch-row .n b{font-size:1.6rem} body.phone .ch-row .n span{font-size:1.05rem}
+body.phone .ch-row .av{width:4rem;height:4rem}
+/* tablets standing up get the same thin "recorded data" strip, so it never covers the header */
+body.portrait .banner{top:0;left:0;right:0;-webkit-transform:none;transform:none;border-radius:0;padding:.4rem 1rem;font-size:1rem;letter-spacing:0;
+  text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:0;border-right:0}
+body.portrait #app,body.portrait #chooser{padding-top:2.8rem}
+body.phone-land .top{flex-wrap:nowrap}
+body.phone-land .brand{padding-right:0;min-height:0}
+body.phone-land .right{width:auto;flex-wrap:nowrap;margin-top:0}
+body.phone-land .right > *{margin:0 0 0 .5rem}
+body.phone-land #swBtn,body.phone-land #langBtn{position:static}
+/* all-states panel: two columns, nearly full screen */
+body.phone .st-box{width:auto;max-width:none;margin:0 .8rem;max-height:92%;padding:1.4rem}
+body.phone .st-top h2{font-size:2.4rem}
+body.phone .st-find{height:4rem;font-size:1.4rem}
+body.phone .st-sub{font-size:1.1rem}
+body.phone .st-grid{grid-template-columns:1fr 1fr;grid-gap:.6rem}
+body.phone .st-item{padding:1rem 1.1rem 1.2rem} body.phone .st-item b{font-size:1.45rem} body.phone .st-item span{font-size:1rem}
+/* intro on a phone: the emblem must fit the width (28rem ~ 330px on a 375-wide phone) */
+body.phone .in-stage{width:28rem;height:28rem}
+body.phone .in-wm b{font-size:5rem} body.phone .in-wm .nz{font-size:1.6rem} body.phone .in-wm i{font-size:1.3rem}
+body.phone .in-stats{margin-top:1.2rem} body.phone .in-stat{margin:0 1rem .6rem} body.phone .in-stat b{font-size:3.2rem} body.phone .in-stat span{font-size:1.1rem}
+body.phone .in-skip{font-size:1rem;right:1.2rem;bottom:1.2rem}
+body.phone-land .in-stage{width:17rem;height:17rem}
+body.phone-land .in-wm b{font-size:3.6rem} body.phone-land .in-wm .nz{font-size:1.3rem}
+/* phone held sideways: same scrolling layout, two columns where it helps */
+body.phone-land .kpis{grid-template-columns:repeat(4,1fr)}
+body.phone-land .ch-st-body{grid-template-columns:18rem 1fr}
+body.phone-land .ch-map svg{height:18rem}
+body.phone-land .leads,body.phone-land .rv{grid-template-columns:1fr 1fr}
+body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
 </style>
 </head>
 <body>
@@ -713,9 +873,9 @@ body.portrait .in-stats{flex-direction:column}
       <div class="ch-hint" id="chHint"></div>
     </div>
   </div>
-  <div class="st-panel hidden" id="stPanel" role="dialog" aria-modal="true" aria-labelledby="stTitle">
+  <div class="st-panel hidden" id="stPanel" role="dialog" aria-modal="true" aria-labelledby="stpTitle">
     <div class="st-box">
-      <div class="st-top"><h2 id="stTitle"></h2><input class="st-find" id="stFind" type="text" autocomplete="off"><button class="st-x" id="stClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="st-top"><h2 id="stpTitle"></h2><input class="st-find" id="stFind" type="text" autocomplete="off"><button class="st-x" id="stClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="st-sub" id="stSub"></div>
       <div class="st-grid" id="stGrid"></div>
     </div>
@@ -814,7 +974,7 @@ body.portrait .in-stats{flex-direction:column}
       notePosts: 'Original posts only (no reposts, no media accounts). Parties differ in how many of their accounts we collect, so the per-account figure is the fairer comparison.',
       noteViews: 'Views counted on original posts only. Posts from the last few hours are still collecting views.',
       viewsWord: 'views', rank: '#{n}',
-      boX: 'their usual views per post', boDetail: 'Typical post now: {r} views · usual: {b} (previous 14 days, {n} posts)',
+      boX: 'their usual views per post', boDetail: 'Typical post now: {r} views · usual: {b} (previous {d} days, {n} posts)',
       postedAt: 'posted {d}', mapNote: 'Colour = party with the most original posts from that state (at least 20). It is not a vote share.',
       fewPosts: 'Too few posts', when24: 'Last 24 hours · up to {d}', whenDay: '{d} · latest complete day',
       hWindow24: '<b>Showing:</b> last 24 hours up to {d}', hWindowDay: '<b>Showing:</b> {d}, the latest complete day — newer data is incomplete',
@@ -874,7 +1034,7 @@ body.portrait .in-stats{flex-direction:column}
       notePosts: 'केवल मूल पोस्ट (रीपोस्ट और मीडिया खाते शामिल नहीं)। हर पार्टी के कितने खाते हम संग्रहित करते हैं, यह अलग है — इसलिए प्रति खाता आँकड़ा ज़्यादा सही तुलना है।',
       noteViews: 'व्यूज़ केवल मूल पोस्ट पर गिने गए। पिछले कुछ घंटों के पोस्ट पर व्यूज़ अभी बढ़ रहे हैं।',
       viewsWord: 'व्यूज़', rank: '#{n}',
-      boX: 'प्रति पोस्ट सामान्य व्यूज़ का', boDetail: 'अभी आम पोस्ट: {r} व्यूज़ · सामान्य: {b} (पिछले 14 दिन, {n} पोस्ट)',
+      boX: 'प्रति पोस्ट सामान्य व्यूज़ का', boDetail: 'अभी आम पोस्ट: {r} व्यूज़ · सामान्य: {b} (पिछले {d} दिन, {n} पोस्ट)',
       postedAt: '{d} को पोस्ट', mapNote: 'रंग = उस राज्य से सबसे ज़्यादा मूल पोस्ट वाली पार्टी (कम से कम 20)। यह वोट शेयर नहीं है।',
       fewPosts: 'बहुत कम पोस्ट', when24: 'पिछले 24 घंटे · {d} तक', whenDay: '{d} · ताज़ा पूरा दिन',
       hWindow24: '<b>दिखाया जा रहा है:</b> {d} तक पिछले 24 घंटे', hWindowDay: '<b>दिखाया जा रहा है:</b> {d}, ताज़ा पूरा दिन — नया डेटा अधूरा है',
@@ -1031,11 +1191,22 @@ body.portrait .in-stats{flex-direction:column}
   function heroLevel(lv) { setCls(document.body, 'hero-hi', lv === 'hi'); setCls(document.body, 'hero-mid', lv === 'mid'); }
 
   /* ------------------------------------------------------------- scaling */
+  /* TVs, laptops and tablets: the whole composition is fitted to the screen (rem follows
+     the screen size). Phones (either way round) get "phone mode" instead: text sized to the
+     phone's width so it stays readable, and a page that scrolls (cards stacked) -- see the
+     body.phone rules in the CSS. */
+  var PHONE = false;
   function scale() {
     var w = window.innerWidth, h = window.innerHeight, portrait = h > w * 1.05 || h < 520;
-    var k = portrait ? Math.min(w / 720, h / 1280) : Math.min(w / 1920, h / 1080);
-    document.documentElement.style.fontSize = Math.max(8, Math.round(16 * k * 100) / 100) + 'px';
-    setCls(document.body, 'portrait', portrait);
+    var phone = Math.min(w, h) < 520 || (h > w * 1.05 && w < 600);
+    var px;
+    if (phone) px = h > w ? w / 32 : Math.min(h / 30, w / 48);          // ~11.7px on a 375-wide phone
+    else px = 16 * (portrait ? Math.min(w / 720, h / 1280) : Math.min(w / 1920, h / 1080));
+    document.documentElement.style.fontSize = Math.max(phone ? 10 : 8, Math.min(phone ? 15 : 999, Math.round(px * 100) / 100)) + 'px';
+    setCls(document.body, 'portrait', portrait || phone);
+    setCls(document.body, 'phone', phone);
+    setCls(document.body, 'phone-land', phone && w > h);
+    PHONE = phone;
     if (state.snap) renderTicker(true);
   }
 
@@ -1207,7 +1378,7 @@ body.portrait .in-stats{flex-direction:column}
     var main = '<div class="bo-main">' + avatar(m.name, m.avatar, colorOf(m.party)) + '<div><div class="bo-x">' + esc(String(m.ratio)) + '×</div>'
       + '<div class="bo-xl">' + esc(t('boX')) + '</div><div class="bo-nm">' + esc(m.name) + '</div>'
       + '<div class="bo-meta">' + esc([m.party, m.state ? stName(m.state) : ''].filter(Boolean).join(' · ')) + '</div>'
-      + '<div class="bo-detail">' + esc(fill(t('boDetail'), { r: fmtShort(m.recentMedian), b: fmtShort(m.baseMedian), n: m.basePosts })) + '</div></div></div>';
+      + '<div class="bo-detail">' + esc(fill(t('boDetail'), { r: fmtShort(m.recentMedian), b: fmtShort(m.baseMedian), n: m.basePosts, d: s.breakBaseDays || 14 })) + '</div></div></div>';
     var more = b.slice(1, 4).map(function (x) {
       return '<div class="bo-row">' + avatar(x.name, x.avatar, colorOf(x.party)) + '<div class="n"><b>' + esc(x.name) + '</b><span>'
         + esc([x.party, x.state ? stName(x.state) : ''].filter(Boolean).join(' · ')) + '</span></div><div class="x">' + esc(String(x.ratio)) + '×</div></div>';
@@ -1463,6 +1634,9 @@ body.portrait .in-stats{flex-direction:column}
     var go = function () {
       if (sc.needsGeo && !state.geo) loadGeo().then(function () { if (state.scenes[state.idx] === sc) renderScene(sc); });
       renderScene(sc); el.className = ''; startTimer(sc.dur);
+      if (PHONE && window.pageYOffset > 0) {                    // a new screen starts at its top (this scroll is not "someone reading")
+        state.selfScroll = Date.now(); window.scrollTo(0, 0);
+      }
     };
     if (REDUCED || firstPaint) { go(); return; }
     el.className = 'out'; state.tmo.push(setTimeout(go, 420));
@@ -1487,16 +1661,28 @@ body.portrait .in-stats{flex-direction:column}
     clearTimeout(state.timer);
     state.dur = newDur; state.start = Date.now() - frac * newDur; state.remaining = newDur * (1 - frac);
     var bar = $('prog').firstChild; bar.style.transition = 'width ' + state.remaining + 'ms linear'; bar.style.width = '100%';
-    state.timer = setTimeout(function () { show(state.idx + 1); }, state.remaining);
+    state.timer = setTimeout(function () { advance(); }, state.remaining);
   }
   [].forEach.call($('spd').querySelectorAll('button'), function (b) { b.onclick = function () { setSpeed(b.getAttribute('data-s')); wake(); }; });
+  /* next screen -- but on a phone, not while someone is reading: a touch or a scroll
+     holds the current screen for 20 s */
+  function advance() {
+    var wait = (state.holdUntil || 0) - Date.now();
+    if (wait > 0) { state.timer = setTimeout(advance, wait); return; }
+    show(state.idx + 1);
+  }
+  function holdForReading(e) {
+    if (!PHONE || !state.mode) return;
+    if (e && e.type === 'scroll' && Date.now() - (state.selfScroll || 0) < 600) return;
+    state.holdUntil = Date.now() + 20000;
+  }
   function startTimer(ms) {
     state.base = ms; ms = Math.round(ms * SPEED_MUL[SPEED]);
     state.start = Date.now(); state.dur = ms; state.remaining = ms;
     var bar = $('prog').firstChild; bar.style.transition = 'none'; bar.style.width = '0%'; void bar.offsetWidth;
     if (state.paused) return;
     bar.style.transition = 'width ' + ms + 'ms linear'; bar.style.width = '100%';
-    state.timer = setTimeout(function () { show(state.idx + 1); }, ms);
+    state.timer = setTimeout(function () { advance(); }, ms);
   }
   function pause(on) {
     var bar = $('prog').firstChild;
@@ -1508,7 +1694,7 @@ body.portrait .in-stats{flex-direction:column}
     } else if (!on && state.paused) {
       state.paused = false; state.start = Date.now() - (state.dur - state.remaining);
       bar.style.transition = 'width ' + state.remaining + 'ms linear'; bar.style.width = '100%';
-      state.timer = setTimeout(function () { show(state.idx + 1); }, state.remaining);
+      state.timer = setTimeout(function () { advance(); }, state.remaining);
     }
     $('cPlayIco').innerHTML = state.paused ? '<polygon points="7 5 19 12 7 19 7 5"/>' : '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
     $('cPlay').setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
@@ -1543,7 +1729,11 @@ body.portrait .in-stats{flex-direction:column}
     var keep = -1;
     for (var i = 0; i < state.scenes.length; i++) if (state.scenes[i].id === oldId) keep = i;
     renderChip(); renderHonesty(); renderTicker(false);
-    if (first || keep < 0) { state.idx = -1; $('scene').innerHTML = ''; show(0); }
+    /* ?scene=<id> (e.g. attacks, glance, map, toppost, facts, p-profile) opens on that screen once,
+       then the show rotates as usual -- for links to one screen, and for testing layouts */
+    var start = 0;
+    if (first && Q.scene && !state.sceneUsed) { state.sceneUsed = true; for (var j = 0; j < state.scenes.length; j++) if (state.scenes[j].id === Q.scene) start = j; }
+    if (first || keep < 0) { state.idx = -1; $('scene').innerHTML = ''; show(start); }
     else { state.idx = keep; renderDots(); $('stCount').textContent = (state.idx + 1) + ' / ' + state.scenes.length; }
   }
   var fetchTimer = null;
@@ -1615,7 +1805,9 @@ body.portrait .in-stats{flex-direction:column}
     heroLevel('hi'); renderRecent(); loadStates(); $('chInput').value = ''; $('chList').innerHTML = '';
     chLeft = CHOOSER_AUTO_S; tickChooser(); clearTimeout(chResumeT);
     clearInterval(chT); chT = setInterval(tickChooser, 1000);
-    if (!('ontouchstart' in window)) setTimeout(function () { try { $('chInput').focus(); } catch (e) {} }, 300);
+    /* not on phones: focusing would open the keyboard and scroll the page */
+    if (!('ontouchstart' in window) && !PHONE) setTimeout(function () { try { $('chInput').focus(); } catch (e) {} }, 300);
+    if (PHONE) $('chooser').scrollTop = 0;
   }
   function tickChooser() {
     if (chLeft !== null && chLeft <= 0) { startShow('all'); return; }     // (null <= 0 is true in JS: a held countdown must never start the show)
@@ -1684,14 +1876,14 @@ body.portrait .in-stats{flex-direction:column}
   function openStates() {
     if (!stList) return;
     holdChooser();
-    $('stTitle').textContent = t('stTitle'); $('stSub').textContent = t('stSub');
+    $('stpTitle').textContent = t('stTitle'); $('stSub').textContent = t('stSub');
     $('stFind').placeholder = t('stFind'); $('stFind').value = '';
     $('stPanel').className = 'st-panel'; renderStateGrid();
     setTimeout(function () { try { $('stFind').focus(); } catch (e) {} }, 50);
   }
   function closeStates() { $('stPanel').className = 'st-panel hidden'; }
   function renderStateGrid() {
-    $('stTitle').textContent = t('stTitle'); $('stSub').textContent = t('stSub'); $('stFind').placeholder = t('stFind');
+    $('stpTitle').textContent = t('stTitle'); $('stSub').textContent = t('stSub'); $('stFind').placeholder = t('stFind');
     var v = $('stFind').value.trim().toLowerCase(), max = stList.length ? stList[0].posts : 1;
     var list = stList.filter(function (s) { return !v || s.state.toLowerCase().indexOf(v) >= 0 || (STATE_HI[s.state] || '').indexOf(v) >= 0; });
     var h = (STATE && !v ? '<button type="button" class="st-item all" data-sc="all"><b>' + esc(t('stAll')) + '</b><span>' + esc(t('stAllSub')) + '</span></button>' : '')
@@ -1871,7 +2063,8 @@ body.portrait .in-stats{flex-direction:column}
   $('swBtn').onclick = function () { openChooser(); };
   document.addEventListener('mousemove', wake);
   var tx = null;
-  document.addEventListener('touchstart', function (e) { wake(); tx = e.touches && e.touches[0] ? e.touches[0].clientX : null; }, { passive: true });
+  document.addEventListener('touchstart', function (e) { wake(); holdForReading(e); tx = e.touches && e.touches[0] ? e.touches[0].clientX : null; }, { passive: true });
+  window.addEventListener('scroll', holdForReading, { passive: true });
   document.addEventListener('touchend', function (e) {
     if (!state.mode || tx === null || !e.changedTouches || !e.changedTouches[0]) return;
     var dx = e.changedTouches[0].clientX - tx; tx = null;

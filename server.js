@@ -487,7 +487,8 @@ function avatarFor(h) {
 function withAttacks(scope, snap) {
   var a = null;
   try { a = attacks ? attacks.forScope(scope, snap, avatarFor) : null; } catch (e) { console.log('  [attacks] ' + e.message); }
-  return a ? Object.assign({}, snap, { attacks: a }) : snap;
+  /* breakBaseDays: how many earlier days the "usual" level of a leader uses (the page shows it) */
+  return Object.assign({}, snap, a ? { attacks: a } : {}, { breakBaseDays: LIVE.C.BREAK_BASE_DAYS });
 }
 function pageHtml() {
   var p = path.join(APP, 'nazar.html'), st = fs.statSync(p);
