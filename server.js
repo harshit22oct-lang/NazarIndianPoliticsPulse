@@ -488,7 +488,9 @@ function withAttacks(scope, snap) {
   var a = null;
   try { a = attacks ? attacks.forScope(scope, snap, avatarFor) : null; } catch (e) { console.log('  [attacks] ' + e.message); }
   /* breakBaseDays: how many earlier days the "usual" level of a leader uses (the page shows it) */
-  return Object.assign({}, snap, a ? { attacks: a } : {}, { breakBaseDays: LIVE.C.BREAK_BASE_DAYS });
+  var extra = { breakBaseDays: LIVE.C.BREAK_BASE_DAYS };
+  if (snap && snap.topPost) extra.topPost = Object.assign({}, snap.topPost, { avatar: avatarFor(snap.topPost.handle) });   // the photo for the "most-viewed post" card
+  return Object.assign({}, snap, a ? { attacks: a } : {}, extra);
 }
 function pageHtml() {
   var p = path.join(APP, 'nazar.html'), st = fs.statSync(p);

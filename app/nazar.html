@@ -1214,7 +1214,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     setCls(document.body, 'phone', phone);
     setCls(document.body, 'phone-land', phone && w > h);
     PHONE = phone;
-    if (state.snap) renderTicker(true);
+    if (state.snap) { renderTicker(true); rerender(); }      // screens that measure themselves (attack cards) fit the new size
   }
 
   /* -------------------------------------------------------------- hero */
@@ -1407,7 +1407,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       + '<div><b>' + esc(name) + '</b><span>' + esc([party, st ? stName(st) : '', fill(t('postedAt'), { d: fmtWhen(p.date) })].filter(Boolean).join(' · ')) + '</span></div>'
       + '<div class="tp-v"><b>' + esc(fmtShort(p.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div></div></div></div></div>';
   }
-  function sTopPost(s) { var p = s.topPost; return p ? postCard(p, p.name, p.party, p.state, null) : ''; }
+  function sTopPost(s) { var p = s.topPost; return p ? postCard(p, p.name, p.party, p.state, p.avatar || null) : ''; }
   /* biggest attacks: the sticky top two as cards, the next ones as rows */
   function sevColor(v) { return v >= 4.5 ? '#FF3D00' : v >= 3.5 ? '#FF7043' : '#FFB300'; }
   function atkTarget(x) {
@@ -1507,7 +1507,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     if (s.breakout && s.breakout.length) L.push({ id: 'breakout', dur: 14000, title: function () { return esc(t('breakout')); }, render: sBreakout });
     if (s.topPost && s.topPost.text) L.push({ id: 'toppost', dur: 15000, hero: 'mid', title: function () { return esc(t('toppost')); }, render: sTopPost });
     if (s.attacks && s.attacks.top && s.attacks.top.length) L.push({ id: 'attacks', dur: 22000, hero: 'mid',
-      sub: function () { var m = ((state.snap || {}).attacks || {}).models || {}; return fill(t('atkSub'), { r: m.reader || 'Qwen 3.8', c: m.checker || 'GPT-OSS 120B' }); }, title: function () { return esc(t('atk')); }, render: sAttacks });
+      sub: 'atkSub', title: function () { return esc(t('atk')); }, render: sAttacks, after: fitAttackCards });
     if (trend[2]) L.push(tr(trend[2]));
     if (!STATE && (s.states || []).filter(function (x) { return !x.limited; }).length >= 3) L.push({ id: 'map', dur: 17000, title: function () { return esc(t('map')); }, render: sMap, after: afterMap, needsGeo: true });
     if (trend[3]) L.push(tr(trend[3]));
@@ -1607,6 +1607,22 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   }
 
   /* ------------------------------------------------- scene animation */
+  /* A card must always show who said it. On a shorter screen the quote gives up
+     lines first (3 -> 2 -> 1), then the AI summary goes; the speaker row stays. */
+  function fitAttackCards(el, again) {
+    if (PHONE) return;                                        // phone cards grow with their text
+    /* web fonts can arrive after the first paint and make text taller: measure again then */
+    if (!again) {
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitAttackCards(el, true); });
+      state.tmo.push(setTimeout(function () { fitAttackCards(el, true); }, 700));
+    }
+    [].forEach.call(el.querySelectorAll('.atk-c'), function (c) {
+      var q = c.querySelector('.atk-q'), s = c.querySelector('.atk-s');
+      function over() { return c.scrollHeight > c.clientHeight + 1; }
+      for (var n = 3; n > 1 && over(); n--) { q.style.webkitLineClamp = String(n - 1); q.style.maxHeight = (1.36 * (n - 1)) + 'em'; }
+      if (over() && s) s.style.display = 'none';
+    });
+  }
   function countUp(el) {
     [].forEach.call(el.querySelectorAll('[data-count]'), function (n) {
       var to = +n.getAttribute('data-count'), f = n.getAttribute('data-f') === 'short' ? fmtShort : fmtInt;
