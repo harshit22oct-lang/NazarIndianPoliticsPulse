@@ -15,7 +15,8 @@ The Pulse project is not touched by this folder.
 ## MongoDB & Cloud Deployment
 - **MongoDB Atlas Integration**: Data is stored in MongoDB Atlas (`nazar.tweets`).
 - When running without local CSV files (e.g., deployed to **Railway**, **Render**, or **Vercel**), `server.js` automatically connects to MongoDB Atlas.
-- Configure `.env` with:
+- The connection string is read **only** from `.env` locally, or from the hosting site's environment variables. Never write it in a `.js` file, because those go to GitHub. `.env` is in `.gitignore`.
+- Configure `.env` (copy `.env.example`) with:
   ```env
   MONGODB_URI=your_mongodb_connection_string
   USE_MONGO=true
@@ -29,7 +30,8 @@ Useful links:
 
 | Link | What it shows |
 |---|---|
-| `/live` | Start screen: choose All India or one leader |
+| `/live` | Start screen: choose All India, one state, or one leader |
+| `/live?scope=st:Bihar` | A state show: every screen, the leader search and the news are about that state only |
 | `/live?mode=all` | Goes straight to the All-India show |
 | `/live?h=myogiadityanath` | A leader's personal channel (any handle) |
 | `/live?kiosk=1` | Hides the buttons (for a TV that just plays) |
@@ -52,13 +54,24 @@ Keys: ← → change screen · Space pauses · F goes full screen · L switches 
 
 ## What is in the folder
 - `server.js` is the small web server. It loads the CSVs into memory and answers the page's three data calls.
-- `app/nazar.html` is the Nazar page. It is a copy of `DASHBOARD/live_monitor.html` with three small additions:
-  - the recorded-data banner;
+- `app/nazar.html` is the Nazar page. It started as a copy of `DASHBOARD/live_monitor.html`. It has these additions:
+  - the recorded-data banner (search for `PROTO`);
   - no "Back to dashboard" button;
-  - the latest-post time shown as a date.
-- `app/live_lib.js`, `ha_lib.js`, `news_lib.js` and `mapping_lib.js` are copied unchanged from Pulse. All the counting rules are the same as in Pulse.
+  - the latest-post time shown as a date;
+  - the **state filter** (search for `STATE`):
+    - the state picker on the start screen and the all-states panel with search;
+    - the state label in the header;
+    - the state glowing on the intro map;
+    - state wording in the titles;
+  - brighter leader photos on the start screen.
+- `app/ha_lib.js`, `news_lib.js` and `mapping_lib.js` are copied unchanged from Pulse.
+  - `app/live_lib.js` is the same as Pulse, except that any state can be a scope (`st:<State>`), and the "most active state" sentence is skipped inside a state.
+  - All the counting rules are the same as in Pulse.
+- In `server.js`:
+  - `/api/live-states` lists the states that have at least 200 posts in the data;
+  - a state's news ticker shows that state's own media posts first, then national ones.
 - `app/data/handle_master.json` is the leader list. Search, party, constituency and rivals come from it.
 - `app/live_assets/` holds the photos and party logos. See `leaders/ATTRIBUTION.md`.
   - Several leader photos were supplied by the project owner. Their usage rights must be confirmed before any public showing.
 
-Copied from Pulse on 22 Oct 2026. If Nazar changes in Pulse, copy `live_monitor.html` again as `app/nazar.html` and re-apply the three additions. Search for `PROTO` in the page.
+Copied from Pulse on 22 Oct 2026. If Nazar changes in Pulse, do not overwrite `app/nazar.html`. Copy over only the change you need; the prototype's own additions are listed above.

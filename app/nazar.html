@@ -64,12 +64,14 @@ button,input{font-family:inherit;color:inherit}
    back Nitin Nabin ji (far left) and Rajnath Singh ji (far right). Positions are the
    centre of each figure; heights keep faces of one row the same size. Nitin ji's photo
    is a half-length shot, so it is smaller and raised, fading out at the waist. */
+/* no brightness dimming and full opacity on the start / glance screens: a see-through
+   or darkened photo over the maroon sky turns faces and clothes brown */
 .hero-side{bottom:2%;z-index:4;opacity:var(--heroSide);
-  -webkit-filter:brightness(.95) drop-shadow(0 0 2rem rgba(255,153,51,.35));filter:brightness(.95) drop-shadow(0 0 2rem rgba(255,153,51,.35))}
+  -webkit-filter:drop-shadow(0 0 2rem rgba(255,153,51,.3));filter:drop-shadow(0 0 2rem rgba(255,153,51,.3))}
 .hero-side img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 14%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 14%)}
 .hero-side.l{height:82%;left:26%}
 .hero-side.r{height:82%;left:74%}
-.hero-side.l2,.hero-side.r2{z-index:3;-webkit-filter:brightness(.86) drop-shadow(0 0 1.6rem rgba(255,153,51,.3));filter:brightness(.86) drop-shadow(0 0 1.6rem rgba(255,153,51,.3))}
+.hero-side.l2,.hero-side.r2{z-index:3;-webkit-filter:drop-shadow(0 0 1.6rem rgba(255,153,51,.26));filter:drop-shadow(0 0 1.6rem rgba(255,153,51,.26))}
 .hero-side.l2{height:44%;bottom:31%;left:10%}
 .hero-side.l2 img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 22%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 22%)}
 .hero-side.r2{height:73%;left:90%}
@@ -82,7 +84,7 @@ body.choosing .hero-side.r2{height:60%}
 .hero-main,.hero-side{transition:opacity 1.2s ease,height .8s ease,bottom .8s ease}
 /* screens narrower than 3:2 (4:3 TVs, tablets): only the front and middle rows fit */
 @media (max-aspect-ratio:3/2){.hero-side.l2,.hero-side.r2{display:none}.hero-side.l{left:18%}.hero-side.r{left:82%}}
-body.hero-hi{--heroMain:.97;--heroSide:.88}
+body.hero-hi{--heroMain:1;--heroSide:1}
 body.hero-mid{--heroMain:.55;--heroSide:.45}
 
 /* ---------- frame ---------- */
@@ -300,15 +302,50 @@ body.reduced .in-lotus,body.reduced .in-spark,body.reduced .in-burst,body.reduce
 .ch-all:hover,.ch-all:focus{border-color:var(--gold);outline:none;-webkit-transform:translateY(-.3rem);transform:translateY(-.3rem)}
 .ch-one{width:62rem}
 /* state picker (inside the "full picture" card) + the state pill in the header */
-.ch-st{margin-top:1.3rem}
-.ch-st-k{font-size:1.15rem;font-weight:700;letter-spacing:.05rem;color:var(--dim);margin-bottom:.7rem}
-.ch-st-list{display:flex;flex-wrap:wrap;align-items:center}
-.ch-st-list button,.ch-st-list select{margin:0 .6rem .6rem 0;height:3rem;padding:0 1.1rem;border-radius:2rem;border:.08rem solid var(--line);background:rgba(255,255,255,.06);
-  font-family:var(--deva);font-size:1.2rem;font-weight:700;cursor:pointer;color:var(--text)}
-.ch-st-list select{background:#2a0a03;padding-right:.6rem}
-.ch-st-list button:hover,.ch-st-list button:focus,.ch-st-list select:focus{border-color:var(--gold);outline:none;background-color:rgba(255,153,51,.2)}
-.ch-st-list button.on{background:linear-gradient(135deg,#E65100,#FF9933);border-color:transparent}
-.ch-st-list button.all{border-color:rgba(255,200,87,.55);color:var(--gold)}
+.ch-st{margin-top:1.5rem;padding-top:1.3rem;border-top:.08rem solid rgba(255,200,87,.16)}
+.ch-st-k{display:flex;align-items:center;font-family:var(--head),var(--deva);font-weight:700;font-size:1.15rem;letter-spacing:.14rem;text-transform:uppercase;color:var(--gold);margin-bottom:.9rem}
+.ch-st-k svg{width:1.3rem;height:1.3rem;fill:var(--gold);margin-right:.6rem;flex:0 0 auto}
+.ch-st-list{display:grid;grid-template-columns:1fr 1fr;grid-gap:.6rem}
+.st-chip{display:flex;align-items:center;justify-content:space-between;height:3.4rem;padding:0 1rem 0 1.15rem;border-radius:.9rem;
+  border:.08rem solid rgba(255,200,87,.18);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  color:var(--text);font-family:var(--deva);font-weight:700;font-size:1.25rem;text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;
+  transition:border-color .15s,background-color .15s,-webkit-transform .15s;transition:border-color .15s,background-color .15s,transform .15s}
+.st-chip span{overflow:hidden;text-overflow:ellipsis}
+.st-chip small{flex:0 0 auto;font-family:var(--head);font-size:1.05rem;font-weight:600;color:var(--dim);margin-left:.6rem}
+.st-chip:hover,.st-chip:focus{border-color:var(--gold);background-color:rgba(255,153,51,.18);outline:none;-webkit-transform:translateY(-.1rem);transform:translateY(-.1rem)}
+.st-chip.on{background:linear-gradient(135deg,#E65100,#FF9933);border-color:transparent}
+.st-chip.on small{color:rgba(255,255,255,.85)}
+.st-chip.all{color:var(--gold)}
+.st-chip.more{grid-column:1 / -1;justify-content:center;border-style:dashed;border-color:rgba(255,200,87,.45);color:var(--gold);background:rgba(255,153,51,.08)}
+.st-chip.more svg{width:1.3rem;height:1.3rem;margin-left:.6rem;fill:none;stroke:var(--gold);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+/* all-states panel (replaces the browser's own drop-down, which TVs and Windows draw white-on-white) */
+.st-panel{position:fixed;top:0;left:0;right:0;bottom:0;z-index:45;background:rgba(14,4,2,.8);display:flex;align-items:center;justify-content:center}
+.st-box{width:100rem;max-width:94%;max-height:86%;display:flex;flex-direction:column;padding:2.4rem 2.6rem 2.6rem;border-radius:2rem;
+  background:linear-gradient(180deg,#3d1407 0%,#220904 100%);border:.1rem solid rgba(255,200,87,.35);box-shadow:0 3rem 8rem rgba(0,0,0,.65),inset 0 .1rem 0 rgba(255,200,87,.2)}
+.st-top{display:flex;align-items:center;margin-bottom:.6rem}
+.st-top h2{flex:1 1 auto;font-family:var(--deva);font-weight:800;font-size:3rem;line-height:1.1}
+.st-sub{font-size:1.25rem;color:var(--muted);margin-bottom:1.6rem}
+.st-find{width:30rem;height:4.2rem;border-radius:1.1rem;border:.1rem solid var(--line);background:rgba(0,0,0,.35);padding:0 1.3rem;font-size:1.5rem;color:var(--text);outline:none;margin-right:1rem}
+.st-find:focus{border-color:var(--gold)}
+.st-x{width:4.2rem;height:4.2rem;border-radius:50%;border:.1rem solid var(--line);background:rgba(255,255,255,.06);cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.st-x svg{width:1.8rem;height:1.8rem;fill:none;stroke:var(--text);stroke-width:2.4;stroke-linecap:round}
+.st-x:hover,.st-x:focus{border-color:var(--gold);outline:none}
+/* rows never shrink below their content (an overflow:hidden item may otherwise collapse when the list is long) */
+.st-grid{flex:1 1 auto;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:max-content;align-content:start;grid-gap:.9rem;padding:.2rem .4rem .2rem .2rem}
+.st-item{position:relative;overflow:hidden;text-align:left;padding:1.15rem 1.3rem 1.4rem;border-radius:1.1rem;cursor:pointer;color:var(--text);
+  border:.08rem solid rgba(255,200,87,.16);background:rgba(255,255,255,.05);transition:border-color .15s,background-color .15s}
+.st-item b{display:block;font-family:var(--deva);font-weight:700;font-size:1.55rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.st-item span{display:block;font-size:1.05rem;color:var(--dim);margin-top:.25rem}
+.st-item i{position:absolute;left:0;bottom:0;height:.3rem;background:linear-gradient(90deg,#E65100,#FFC857)}
+.st-item:hover,.st-item:focus{border-color:var(--gold);background-color:rgba(255,153,51,.16);outline:none}
+.st-item.on{border-color:var(--gold);background-color:rgba(255,153,51,.26)}
+.st-item.all b{color:var(--gold)}
+.st-grid::-webkit-scrollbar{width:.6rem}
+.st-grid::-webkit-scrollbar-track{background:rgba(255,255,255,.04);border-radius:.6rem}
+.st-grid::-webkit-scrollbar-thumb{background:rgba(255,200,87,.45);border-radius:.6rem}
+.st-empty{grid-column:1 / -1;font-size:1.4rem;color:var(--dim);padding:1rem 0}
+body.portrait .st-grid{grid-template-columns:1fr 1fr} body.portrait .st-find{width:auto;flex:1 1 auto;min-width:0}
+body.portrait .st-top{flex-wrap:wrap} body.portrait .st-top h2{width:100%;margin-bottom:1rem}
 .stpill{border-color:rgba(255,200,87,.6);background:rgba(255,153,51,.22);color:#FFE3A3}
 .stpill svg{width:1.4rem;height:1.4rem;margin-right:.6rem;fill:var(--gold);flex:0 0 auto}
 .ch-k{font-family:var(--head);font-weight:700;font-size:1.3rem;letter-spacing:.2rem;text-transform:uppercase;color:var(--gold)}
@@ -607,7 +644,7 @@ body.portrait .in-stats{flex-direction:column}
   <div class="ch-cards">
     <div class="ch-card ch-all" id="chAll" tabindex="0" role="button">
       <div class="ch-k" id="chAllK"></div><div class="ch-t" id="chAllT"></div><div class="ch-d" id="chAllD"></div>
-      <div class="ch-st hidden" id="chSt"><div class="ch-st-k" id="chStK"></div><div class="ch-st-list" id="chStList"></div></div>
+      <div class="ch-st hidden" id="chSt"><div class="ch-st-k"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg><span id="chStK"></span></div><div class="ch-st-list" id="chStList"></div></div>
       <div class="ch-go"><svg class="ch-ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" stroke="rgba(255,255,255,.15)"/><circle id="chRing" cx="18" cy="18" r="15" stroke="#FFC857" stroke-dasharray="94.25" stroke-dashoffset="0" transform="rotate(-90 18 18)"/></svg><span id="chGo"></span></div>
     </div>
     <div class="ch-card ch-one">
@@ -617,6 +654,13 @@ body.portrait .in-stats{flex-direction:column}
       <div class="ch-list" id="chList"></div>
       <div class="ch-recent" id="chRecent"></div>
       <div class="ch-hint" id="chHint"></div>
+    </div>
+  </div>
+  <div class="st-panel hidden" id="stPanel" role="dialog" aria-modal="true" aria-labelledby="stTitle">
+    <div class="st-box">
+      <div class="st-top"><h2 id="stTitle"></h2><input class="st-find" id="stFind" type="text" autocomplete="off"><button class="st-x" id="stClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="st-sub" id="stSub"></div>
+      <div class="st-grid" id="stGrid"></div>
     </div>
   </div>
 </div>
@@ -677,9 +721,9 @@ body.portrait .in-stats{flex-direction:column}
   var HERO = {
     heroM: ['/live/img/leaders/modi-standing.webp', 'Narendra Modi'],
     heroL: ['/live/img/leaders/amit-shah-standing.webp', 'Amit Shah'],
-    heroR: ['/live/img/leaders/yogi-standing-v2.webp', 'Yogi Adityanath'],
+    heroR: ['/live/img/leaders/yogi-standing-v2.webp?v=3', 'Yogi Adityanath'],
     heroL2: ['/live/img/leaders/nitin-nabin-standing.webp?v=2', 'Nitin Nabin'],
-    heroR2: ['/live/img/leaders/rajnath-singh-standing.webp', 'Rajnath Singh']
+    heroR2: ['/live/img/leaders/rajnath-singh-standing.webp?v=3', 'Rajnath Singh']
   };
   var BJP_LOGO = '/live/img/p/BJP';
   var LOTUS = '<svg viewBox="0 0 100 100"><g transform="translate(50,78)" fill="#fff"><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(-30) scale(.9)"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(30) scale(.9)"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(-60) scale(.75)"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(60) scale(.75)"/></g></svg>';
@@ -819,7 +863,14 @@ body.portrait .in-stats{flex-direction:column}
     'Andaman and Nicobar': 'अंडमान और निकोबार', 'Lakshadweep': 'लक्षद्वीप', 'Dadra and Nagar Haveli and Daman and Diu': 'दादरा नगर हवेली और दमन दीव'
   };
   T.en.stPick = 'Or follow one state'; T.hi.stPick = 'या एक राज्य पर नज़र रखें';
-  T.en.stMore = 'More states…'; T.hi.stMore = 'और राज्य…';
+  T.en.stMore = 'See all {n} states'; T.hi.stMore = 'सभी {n} राज्य देखें';
+  T.en.stTitle = 'Choose a state'; T.hi.stTitle = 'राज्य चुनें';
+  T.en.stSub = 'Nazar will show only this state — its parties, leaders, posts and news. Busiest first.';
+  T.hi.stSub = 'नज़र सिर्फ़ इसी राज्य को दिखाएगा — इसकी पार्टियाँ, नेता, पोस्ट और ख़बरें। सबसे सक्रिय पहले।';
+  T.en.stFind = 'Search a state…'; T.hi.stFind = 'राज्य खोजें…';
+  T.en.stPosts = '{n} posts in the data'; T.hi.stPosts = 'डेटा में {n} पोस्ट';
+  T.en.stNone = 'No state with that name in this data.'; T.hi.stNone = 'इस डेटा में इस नाम का कोई राज्य नहीं।';
+  T.en.stAllSub = 'Back to the whole country'; T.hi.stAllSub = 'पूरे देश पर वापस';
   T.en.stAll = 'All India'; T.hi.stAll = 'पूरा भारत';
   if (STATE) {
     var stHi = STATE_HI[STATE] || STATE;
@@ -1441,9 +1492,10 @@ body.portrait .in-stats{flex-direction:column}
     $('chRing').setAttribute('stroke-dashoffset', String(94.25 * (1 - (chLeft || 0) / CHOOSER_AUTO_S)));
     if (chLeft !== null) chLeft--;
   }
-  /* state picker: the busiest states as buttons, the rest in a list. Choosing one
-     reopens Nazar for that state (every screen, the search and the news). */
-  var stList = null, ST_TOP = 8;
+  /* state picker: the six busiest states on the card, every state in a panel with
+     search. Choosing one reopens Nazar for that state (every screen, the search and
+     the news). No native <select>: its pop-up list ignores the page's colours. */
+  var stList = null, ST_TOP = 6;
   function loadStates() {
     if (stList || DEMO || state.stP) { if (stList) renderStates(); return; }
     state.stP = fetch('/api/live-states', { credentials: 'same-origin', cache: 'no-store' })
@@ -1455,29 +1507,69 @@ body.portrait .in-stats{flex-direction:column}
     var keep = location.search.replace(/^\?/, '').split('&').filter(function (kv) { return kv && !/^(scope|h|mode)=/.test(kv); });
     location.href = location.pathname + '?' + keep.concat(sc === 'all' ? [] : ['scope=' + encodeURIComponent(sc)]).concat(['mode=all']).join('&');
   }
+  function pickScope(sc) { if (sc === 'st:' + STATE) { closeStates(); startShow('all'); } else goScope(sc); }
   function renderStates() {
     if (!stList) return;
-    var top = stList.slice(0, ST_TOP), rest = stList.slice(ST_TOP);
-    if (STATE && !top.some(function (s) { return s.state === STATE; })) top.push({ state: STATE });
-    var h = (STATE ? '<button type="button" class="all" data-sc="all">' + esc(t('stAll')) + '</button>' : '')
-      + top.map(function (s) { return '<button type="button" data-sc="st:' + esc(s.state) + '"' + (s.state === STATE ? ' class="on"' : '') + '>' + esc(stName(s.state)) + '</button>'; }).join('');
-    if (rest.length) {
-      h += '<select id="chStSel"><option value="">' + esc(t('stMore')) + '</option>'
-        + rest.slice().sort(function (a, b) { return stName(a.state) < stName(b.state) ? -1 : 1; })
-            .map(function (s) { return '<option value="st:' + esc(s.state) + '">' + esc(stName(s.state)) + '</option>'; }).join('') + '</select>';
-    }
+    var top = stList.slice(0, ST_TOP);
+    if (STATE && !top.some(function (s) { return s.state === STATE; })) top = top.slice(0, ST_TOP - 1).concat(stList.filter(function (s) { return s.state === STATE; }));
+    if (STATE) top = [{ all: true }].concat(top.slice(0, ST_TOP - 1));
+    var h = top.map(function (s) {
+      if (s.all) return '<button type="button" class="st-chip all" data-sc="all"><span>' + esc(t('stAll')) + '</span></button>';
+      return '<button type="button" class="st-chip' + (s.state === STATE ? ' on' : '') + '" data-sc="st:' + esc(s.state) + '"><span>' + esc(stName(s.state)) + '</span><small>' + esc(fmtShort(s.posts)) + '</small></button>';
+    }).join('');
+    h += '<button type="button" class="st-chip more" id="chStMore"><span>' + esc(fill(t('stMore'), { n: stList.length })) + '</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>';
     $('chStK').textContent = t('stPick'); $('chStList').innerHTML = h; $('chSt').className = 'ch-st';
-    function stopIt(e) { e.stopPropagation(); holdChooser(); }
     [].forEach.call($('chStList').querySelectorAll('button'), function (b) {
-      b.onclick = function (e) { stopIt(e); var sc = b.getAttribute('data-sc'); if (sc === 'st:' + STATE) startShow('all'); else goScope(sc); };
-      b.onkeydown = function (e) { e.stopPropagation(); };
+      b.onclick = function (e) {
+        e.stopPropagation(); holdChooser();
+        if (b.id === 'chStMore') openStates(); else pickScope(b.getAttribute('data-sc'));
+      };
+      b.onkeydown = function (e) { e.stopPropagation(); };          // Enter here must not start the All-India card
     });
-    var sel = $('chStSel');
-    if (sel) {
-      sel.onclick = stopIt; sel.onkeydown = function (e) { e.stopPropagation(); holdChooser(); };
-      sel.onchange = function () { if (sel.value) goScope(sel.value); };
-    }
+    if ($('stPanel').className.indexOf('hidden') < 0) renderStateGrid();
   }
+  function openStates() {
+    if (!stList) return;
+    holdChooser();
+    $('stTitle').textContent = t('stTitle'); $('stSub').textContent = t('stSub');
+    $('stFind').placeholder = t('stFind'); $('stFind').value = '';
+    $('stPanel').className = 'st-panel'; renderStateGrid();
+    setTimeout(function () { try { $('stFind').focus(); } catch (e) {} }, 50);
+  }
+  function closeStates() { $('stPanel').className = 'st-panel hidden'; }
+  function renderStateGrid() {
+    $('stTitle').textContent = t('stTitle'); $('stSub').textContent = t('stSub'); $('stFind').placeholder = t('stFind');
+    var v = $('stFind').value.trim().toLowerCase(), max = stList.length ? stList[0].posts : 1;
+    var list = stList.filter(function (s) { return !v || s.state.toLowerCase().indexOf(v) >= 0 || (STATE_HI[s.state] || '').indexOf(v) >= 0; });
+    var h = (STATE && !v ? '<button type="button" class="st-item all" data-sc="all"><b>' + esc(t('stAll')) + '</b><span>' + esc(t('stAllSub')) + '</span></button>' : '')
+      + list.map(function (s) {
+        return '<button type="button" class="st-item' + (s.state === STATE ? ' on' : '') + '" data-sc="st:' + esc(s.state) + '"><b>' + esc(stName(s.state)) + '</b>'
+          + '<span>' + esc(fill(t('stPosts'), { n: fmtInt(s.posts) })) + '</span><i style="width:' + Math.max(3, Math.round(100 * s.posts / max)) + '%"></i></button>';
+      }).join('');
+    $('stGrid').innerHTML = h || '<div class="st-empty">' + esc(t('stNone')) + '</div>';
+    [].forEach.call($('stGrid').querySelectorAll('.st-item'), function (b) { b.onclick = function () { pickScope(b.getAttribute('data-sc')); }; });
+  }
+  $('stFind').addEventListener('input', renderStateGrid);
+  $('stFind').addEventListener('keydown', function (e) {
+    e.stopPropagation();
+    if (e.key === 'Escape' || e.key === 'Esc') closeStates();
+    else if (e.key === 'Enter') { var f = $('stGrid').querySelector('.st-item'); if (f) f.click(); }
+    else if (e.key === 'ArrowDown' || e.key === 'Down') { var g = $('stGrid').querySelector('.st-item'); if (g) { g.focus(); e.preventDefault(); } }
+  });
+  /* arrow keys move through the grid (TV remotes), Escape closes */
+  $('stGrid').addEventListener('keydown', function (e) {
+    var items = [].slice.call($('stGrid').querySelectorAll('.st-item')), i = items.indexOf(document.activeElement);
+    if (e.key === 'Escape' || e.key === 'Esc') { closeStates(); return; }
+    if (i < 0) return;
+    var cols = document.body.className.indexOf('portrait') >= 0 ? 2 : 4, k = e.key, j = i;
+    if (k === 'ArrowRight' || k === 'Right') j = i + 1; else if (k === 'ArrowLeft' || k === 'Left') j = i - 1;
+    else if (k === 'ArrowDown' || k === 'Down') j = i + cols; else if (k === 'ArrowUp' || k === 'Up') j = i - cols; else return;
+    e.preventDefault();
+    if (j < 0) { $('stFind').focus(); return; }
+    if (items[Math.min(j, items.length - 1)]) items[Math.min(j, items.length - 1)].focus();
+  });
+  $('stClose').onclick = closeStates;
+  $('stPanel').addEventListener('click', function (e) { if (e.target === $('stPanel')) closeStates(); });
   function holdChooser() { if (chLeft !== null) { chLeft = null; clearInterval(chT); $('chGo').textContent = t('chGoNow'); $('chRing').setAttribute('stroke-dashoffset', '0'); } }
   function stopChooser() { clearInterval(chT); chT = null; }
   function doSearch() {

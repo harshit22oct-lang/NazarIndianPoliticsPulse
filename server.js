@@ -53,13 +53,11 @@ LIVE.C.BASE_DAYS = 7;
 LIVE.C.BASE_MIN_DAYS = 3;
 LIVE.C.BREAK_BASE_DAYS = 6;
 
-var MONGO_URI = process.env.MONGODB_URI || 'mongodb+srv://harshit22oct_db_user:harshit22oct5094@cluster0.hjn4toa.mongodb.net/';
+/* The connection string (with its password) comes ONLY from .env or the host's
+   environment variables -- never from this file, which goes to GitHub. */
+var MONGO_URI = process.env.MONGODB_URI || '';
 var DB_NAME = process.env.DB_NAME || 'nazar';
 var COLL_NAME = process.env.COLL_NAME || 'tweets';
-
-if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-}
 
 /* ------------------------------------------------------------ Data loading (Mongo / CSV) */
 var KEEP = ['Handle', 'Tweet URL', 'Tweet ID', 'Tweet Date', 'Tweet Text', 'Total Comments', 'Total Likes',
@@ -92,6 +90,7 @@ function readCsv(file, onRow) {
 }
 
 async function loadFromMongo() {
+  if (!MONGO_URI) throw new Error('MONGODB_URI is not set -- put it in .env (see .env.example) or in the host\'s environment variables');
   var { MongoClient } = require('mongodb');
   console.log('  Connecting to MongoDB Atlas (' + DB_NAME + '.' + COLL_NAME + ')...');
   var client = new MongoClient(MONGO_URI);
@@ -112,7 +111,7 @@ async function loadFromMongo() {
     var doc = await cursor.next();
     // Memory optimization: retweets only need 'RT' marker as their text is never displayed
     if (doc['Tweet Text'] && doc['Tweet Text'].startsWith('RT @')) {
-      doc['Tweet Text'] = 'RT';
+      doc['Tweet Text'] = 'RT @';      // must still start with "RT @": that is how live_lib (HA.isRetweet) tells a re-post from an original
     }
     var cs = LIVE.stateOf(doc.State);
     if (cs) doc.State = cs;

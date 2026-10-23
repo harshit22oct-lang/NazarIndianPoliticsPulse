@@ -1,7 +1,6 @@
 // import-csv-to-mongo.js
 // CSV data ko MongoDB Atlas mein import karta hai
 'use strict';
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // SSL cert bypass
 
 var fs = require('fs');
 var path = require('path');
@@ -24,7 +23,9 @@ try {
   }
 } catch (e) {}
 
-var MONGO_URI = process.env.MONGODB_URI || 'mongodb+srv://harshit22oct_db_user:harshit22oct5094@cluster0.hjn4toa.mongodb.net/';
+// password sirf .env se aata hai -- is file me kabhi mat likho (ye GitHub par jaati hai)
+var MONGO_URI = process.env.MONGODB_URI || '';
+if (!MONGO_URI) { console.error('MONGODB_URI .env me nahi mila -- .env.example dekho.'); process.exit(1); }
 var DB_NAME   = process.env.DB_NAME || 'nazar';
 var COLL_NAME = process.env.COLL_NAME || 'tweets';
 var DATA      = path.join(__dirname, 'data');
