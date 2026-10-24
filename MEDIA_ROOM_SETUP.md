@@ -16,7 +16,7 @@ Legend: ✅ checked live today · ⚠️ works with a caveat · ❓ you need to 
 | [ ] | India Today | ✅ [home](https://www.indiatoday.in/rss/home), [india](https://www.indiatoday.in/rss/1206578) | ✅ [channel](https://www.youtube.com/channel/UCYPvAwZP8pZhSMW8qs7cVCw) | ✅ [@IndiaToday](https://x.com/IndiaToday) |
 | [ ] | NDTV | ✅ [top](https://feeds.feedburner.com/ndtvnews-top-stories), [india](https://feeds.feedburner.com/ndtvnews-india-news) | ✅ [channel](https://www.youtube.com/channel/UCZFMm1mMw0F81Z37aaEzTUA) | ✅ [@ndtv](https://x.com/ndtv) |
 | [ ] | NDTV India | none | ✅ [channel](https://www.youtube.com/channel/UC9CYT9gSNLevX5ey2_6CK0Q) | [@ndtvindia](https://x.com/ndtvindia) |
-| [ ] | ABP News | ✅ [feed](https://news.abplive.com/home/feed) | ❓ **CONFIRM:** send me the channel link | ❓ **CONFIRM** [@abpnewstv](https://x.com/abpnewstv) |
+| [ ] | ABP News | ✅ [feed](https://news.abplive.com/home/feed) | ❓ **CONFIRM:** send me the channel link | ✅ [@ABPNews](https://x.com/ABPNews) (the earlier @abpnewstv does not exist) |
 | [ ] | Zee News | ✅ [feed](https://zeenews.india.com/rss/india-national-news.xml) | ✅ [channel](https://www.youtube.com/channel/UCIvaYmXn910QMdemBG3v1pQ) | [@ZeeNews](https://x.com/ZeeNews) |
 | [ ] | News18 | ✅ [politics](https://www.news18.com/commonfeeds/v1/eng/rss/politics.xml) | ✅ [channel](https://www.youtube.com/channel/UCPP3etACgdUWvizcES1dJ8Q) | [@News18India](https://x.com/News18India) |
 | [ ] | ANI | none | ✅ [channel](https://www.youtube.com/channel/UCtFQDgA8J8_iiwc5-KoAQlg) | ✅ [@ANI](https://x.com/ANI) |

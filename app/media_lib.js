@@ -133,9 +133,32 @@ function statesIn(s) { var out = []; STATE_TEST.forEach(function (x) { if (x[1](
 
 /* topics: every narrative in the config (on or off -- the page decides what to show).
    "politics" also covers items tagged elections / party / legislature / students. */
-var POLITICS_TOO = ['elections', 'party', 'legislature', 'students'];
+var POLITICS_TOO = ['elections', 'party', 'legislature', 'students', 'opprift'];
+
+/* "Opposition: alliance & infighting" is not one word list but a rule (the lists are in the
+   config; opposition names are grouped by party, so Akhilesh + सपा is ONE party):
+     two opposition parties + a rift or a seat word        Congress asks SP for 200 seats
+     two opposition parties + alliance talk or a jab,      Owaisi hits out at Congress, SP
+       and no BJP / NDA name in the headline               ("SP and Congress attack BJP" is not)
+     the alliance + a rift word, no BJP / NDA name         rift in the INDIA bloc
+     one opposition party + rebels / factions, no BJP name  बगावत, गुटबाज़ी */
+function oppositionRift(n) {
+  var opp = n.opposition || {}, parties = Object.keys(opp).map(function (k) { return anyRe(opp[k]); });
+  var alliance = anyRe(n.alliance), ruling = anyRe(n.ruling), rift = anyRe(n.rift), seats = anyRe(n.seats), soft = anyRe(n.soft), internal = anyRe(n.internal);
+  return function (s) {
+    var p = 0; parties.forEach(function (f) { if (f(s)) p++; });
+    var al = alliance(s); if (!p && !al) return false;
+    var r = ruling(s);
+    if (p >= 2 && (rift(s) || seats(s))) return true;
+    if (p >= 2 && !r && (soft(s) || al)) return true;
+    if (al && !r && rift(s)) return true;
+    return p === 1 && !r && internal(s);
+  };
+}
+var RULES = { opposition_rift: oppositionRift };
+
 function makeTagger(cfg) {
-  var tests = (cfg.narratives || []).map(function (n) { return { id: n.id, test: anyRe(n.words) }; });
+  var tests = (cfg.narratives || []).map(function (n) { return { id: n.id, test: n.rule && RULES[n.rule] ? RULES[n.rule](n) : anyRe(n.words) }; });
   var groupOf = {}; (cfg.sources || []).forEach(function (s) { groupOf[s.id] = s.group; });
   return function (title, srcId) {
     var tags = [];

@@ -11398,6 +11398,111 @@
    "name": "News18 India",
    "at": 1792821075954,
    "live": true
+  },
+  "ndtvindia": {
+   "file": "avatars/ndtvindia.jpg",
+   "handle": "ndtvindia",
+   "name": "NDTV India",
+   "at": 1792822407377,
+   "live": true
+  },
+  "ani": {
+   "file": "avatars/ani.jpg",
+   "handle": "ani",
+   "name": "ANI",
+   "at": 1792822412493,
+   "live": true
+  },
+  "abvpvoice": {
+   "file": "avatars/abvpvoice.jpg",
+   "handle": "abvpvoice",
+   "name": "ABVP",
+   "at": 1792822412889,
+   "live": true
+  },
+  "sfi_cec": {
+   "file": "avatars/sfi_cec.jpg",
+   "handle": "sfi_cec",
+   "name": "SFI",
+   "at": 1792822413270,
+   "live": true
+  },
+  "nsui": {
+   "file": "avatars/nsui.jpg",
+   "handle": "nsui",
+   "name": "NSUI",
+   "at": 1792822413879,
+   "live": true
+  },
+  "aisfofficial": {
+   "file": "avatars/aisfofficial.jpg",
+   "handle": "aisfofficial",
+   "name": "AISF",
+   "at": 1792822414245,
+   "live": true
+  },
+  "aisa_tweets": {
+   "file": "avatars/aisa_tweets.jpg",
+   "handle": "aisa_tweets",
+   "name": "AISA",
+   "at": 1792822414759,
+   "live": true
+  },
+  "bjym": {
+   "file": "avatars/bjym.jpg",
+   "handle": "bjym",
+   "name": "BJYM",
+   "at": 1792822415198,
+   "live": true
+  },
+  "abpnews": {
+   "file": "avatars/abpnews.jpg",
+   "handle": "abpnews",
+   "name": "ABP News",
+   "at": 1792822523941,
+   "live": true
+  },
+  "punjabkesari": {
+   "file": "avatars/punjabkesari.jpg",
+   "handle": "punjabkesari",
+   "name": "Punjab Kesari",
+   "at": 1792822524375,
+   "live": true
+  },
+  "live_hindustan": {
+   "file": "avatars/live_hindustan.jpg",
+   "handle": "live_hindustan",
+   "name": "Hindustan",
+   "at": 1792822524871,
+   "live": true
+  },
+  "tv9bharatvarsh": {
+   "file": "avatars/tv9bharatvarsh.jpg",
+   "handle": "tv9bharatvarsh",
+   "name": "TV9 Bharatvarsh",
+   "at": 1792822525268,
+   "live": true
+  },
+  "navbharattimes": {
+   "file": "avatars/navbharattimes.jpg",
+   "handle": "navbharattimes",
+   "name": "NBT Hindi News",
+   "at": 1792822525656,
+   "live": true
+  },
+  "abplive": {
+   "file": "avatars/abplive.jpg",
+   "handle": "abplive",
+   "name": "ABP LIVE",
+   "at": 1792822526079,
+   "live": true
+  },
+  "lokmat": {
+   "file": "avatars/lokmat.jpg",
+   "handle": "lokmat",
+   "name": "Lokmat",
+   "at": 1792822526486,
+   "live": true
   }
  },
  "parties": {

@@ -124,7 +124,12 @@ function createMediaRoom(opts) {
   var log = opts.log || console.log, store = makeStore(opts.dataDir);
   var cfg = JSON.parse(fs.readFileSync(CFG_FILE, 'utf8')), tagger = ML.makeTagger(cfg), NAT = nationalFeeds(cfg);
   var items = {}, status = {}, nextAt = {}, watch = {}, watchSaved = {}, cache = {}, busy = false, worker = false, firstPass = true, lastRun = 0;
-  var topics = cfg.narratives.slice().map(function (n, i) { return { id: n.id, en: n.en, hi: n.hi, on: n.on !== false, priority: n.priority || 9, i: i }; })
+  /* weight: how much longer a topic's screen stays up (important ones longer); from the
+     config, otherwise by priority */
+  var topics = cfg.narratives.slice().map(function (n, i) {
+    var p = n.priority || 9;
+    return { id: n.id, en: n.en, hi: n.hi, on: n.on !== false, priority: p, weight: n.weight || (p === 1 ? 1.25 : p === 2 ? 1.1 : 1), i: i };
+  })
     .sort(function (a, b) { return a.priority - b.priority || a.i - b.i; });
   var BLOCK = {}; (cfg.block_publishers || []).forEach(function (p) { BLOCK[String(p).toLowerCase()] = 1; });   // copy-paste sites
   var SRC = cfg.sources.map(function (s) { return { id: s.id, name: s.en, nameHi: s.hi, kind: s.type, group: s.group, direct: !!((s.rss && s.rss.length) || s.youtube) }; });
@@ -151,8 +156,16 @@ function createMediaRoom(opts) {
   var XOF = {}, XBYNAME = {}, NAMEOF = {};
   cfg.sources.forEach(function (s) { NAMEOF[s.id] = s.en; });
   cfg.sources.forEach(function (s) { if (s.x) { XOF[s.id] = s.x.toLowerCase(); XBYNAME[s.en.toLowerCase()] = s.x.toLowerCase(); } });
+  /* other publishers: the config's publisher_x list (by website, sub-domains included, or by
+     name) gives an X handle -- sharper than a website icon; the icon is the last resort */
+  var PUBX = {}; Object.keys(cfg.publisher_x || {}).forEach(function (k) { PUBX[k.toLowerCase()] = String(cfg.publisher_x[k]).toLowerCase(); });
+  function pubHandle(it) {
+    var d = String(it.dom || '');
+    while (d && d.indexOf('.') > 0) { if (PUBX[d]) return PUBX[d]; d = d.slice(d.indexOf('.') + 1); }   // up.punjabkesari.in -> punjabkesari.in
+    return PUBX[String(it.srcName || '').toLowerCase()] || null;
+  }
   function logoOf(it) {
-    var x = it.via !== 'gnews' ? XOF[it.src] : XBYNAME[String(it.srcName || '').toLowerCase()];
+    var x = it.via !== 'gnews' ? XOF[it.src] : (XBYNAME[String(it.srcName || '').toLowerCase()] || pubHandle(it));
     if (x) return '/live/img/a/' + encodeURIComponent(x);
     return it.dom ? '/live/img/src/' + encodeURIComponent(it.dom) : null;
   }
@@ -228,6 +241,7 @@ function createMediaRoom(opts) {
     if (cache[key] && Date.now() - cache[key].at < 10 * 60000) return cache[key].v;
     var all = Object.keys(items).map(function (k) { return items[k]; }), st = key === 'all' ? null : key.slice(3);
     all.forEach(function (x) {
+      x.tags = tagger(x.title, x.src);                                        // today's rules, also for headlines saved before a rule changed
       if (x.via !== 'gnews' && NAMEOF[x.src]) x.srcName = NAMEOF[x.src];     // a source renamed in the config
       if (!/\s/.test(x.title) && /-/.test(x.title)) x.title = x.title.replace(/-+/g, ' ').replace(/^./, function (c) { return c.toUpperCase(); });   // saved before the slug fix
     });

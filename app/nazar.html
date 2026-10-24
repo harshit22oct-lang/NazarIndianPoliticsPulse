@@ -629,7 +629,8 @@ body.reduced .mr-dot{animation:none}
 .mr-vid svg{width:1.3em;height:1.3em;margin-right:.35rem;fill:currentColor}
 /* the topic title carries the area as a pill, like the state pill in the header */
 .mr-area{display:inline-flex;align-items:center;vertical-align:.7rem;margin-left:1.4rem;padding:.4rem 1.3rem .4rem 1rem;border-radius:3rem;font-family:var(--deva);font-size:1.55rem;font-weight:700;
-  line-height:1.3;background:rgba(255,153,51,.18);border:.08rem solid rgba(255,200,87,.5);color:#FFE3A3;text-shadow:none}
+  line-height:1.3;background:linear-gradient(135deg,rgba(90,30,6,.96),rgba(40,12,4,.96));border:.08rem solid rgba(255,200,87,.6);color:#FFE3A3;text-shadow:none;
+  box-shadow:0 .4rem 1.2rem rgba(0,0,0,.35)}            /* solid: it often sits over the bright leader photo */
 .mr-area svg{width:1.5rem;height:1.5rem;fill:var(--gold);margin-right:.5rem}
 /* "Up next" where the screen counter normally is */
 .st-count.nx{font-family:var(--deva);font-size:1.45rem;color:var(--muted);max-width:44rem;overflow:hidden;text-overflow:ellipsis}
@@ -2101,6 +2102,18 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     }).join('') + '</div>';
   }
   function mrMsg(h, p) { return '<div class="glass full"><div class="empty"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p></div></div>'; }
+  /* how long a screen stays: enough to read its headlines (about 8 s + 45 ms a character,
+     13-30 s), times the topic's weight (hot and opposition 1.5, priority-1 topics 1.25);
+     at most 45 s. A thin screen (one or two short headlines) moves on quickly. */
+  function mrWeight(m, tp) {
+    if (tp === 'hot') return 1.5;
+    var x = ((m && m.topics) || []).filter(function (z) { return z.id === tp; })[0];
+    return x && x.weight ? x.weight : 1;
+  }
+  function mrDur(list, w) {
+    var ch = 0; list.slice(0, 5).forEach(function (c) { ch += String(c.t || '').length; });
+    return Math.round(Math.min(45000, Math.min(30000, Math.max(13000, 8000 + ch * 45)) * (w || 1)));
+  }
   function buildMediaScenes(m) {
     var L = [], areas = mrAreas();
     if (m && m.all) mrLoop(m).forEach(function (tp) {
@@ -2117,13 +2130,21 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
           return;
         }
         var list = v.lists[tp]; if (!list || !list.length) return;
-        L.push({ id: 'mr-' + a + '-' + tp, dur: 20000,
+        var w = mrWeight(m, tp);
+        L.push({ id: 'mr-' + a + '-' + tp, dur: mrDur(list, w), imp: w >= 1.5,
           title: function () { return esc(mrTopicName(tp)) + '<span class="mr-area">' + MR_PIN + esc(mrAreaName(a)) + '</span>'; },
           label: function () { return mrTopicName(tp) + ' · ' + mrAreaName(a); },
           sub: function () { return [t(tp === 'hot' ? 'mrSubHot' : tp === 'official' ? 'mrSubOff' : 'mrSubNew'), mrUpdated()].filter(Boolean).join(' · '); },
           render: function () { return mrCards(list); } });
       });
     });
+    /* a long loop shows the important screens (hot, opposition) a second time half-way round */
+    if (L.length > 8) {
+      var again = L.filter(function (s) { return s.imp; }).map(function (s) {
+        var c = {}; for (var k in s) c[k] = s[k]; c.id = s.id + '-2'; return c;
+      });
+      if (again.length) L.splice.apply(L, [Math.floor(L.length / 2), 0].concat(again));
+    }
     if (!L.length) {
       var wait = !m || (m.collecting && !m.lastRun);
       L.push({ id: 'mr-none', dur: 20000, hero: 'mid', title: function () { return esc(t(wait ? 'mrWaitT' : 'mrNoneT')); },
