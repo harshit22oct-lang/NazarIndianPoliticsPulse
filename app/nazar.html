@@ -582,6 +582,106 @@ body.portrait .atk{grid-template-columns:1fr} body.portrait .atk-r{display:none}
 .empty h3{font-family:var(--head);font-size:3.6rem}
 .empty p{font-size:1.6rem;color:var(--muted);margin-top:1rem;max-width:70rem;line-height:1.5}
 
+/* ---------- Media Room: news cards, latest per source, the "what to show" panel ---------- */
+/* the news wall: one lead story down the left, up to four more beside it */
+.mr-w{display:grid;grid-template-columns:1.45fr 1fr 1fr;grid-template-rows:1fr 1fr;grid-gap:1.4rem;height:100%}
+.mr-w .mr-c:first-child{grid-column:1;grid-row:1 / 3}
+.mr-w.n1{grid-template-columns:1fr;grid-template-rows:1fr}
+.mr-w.n2,.mr-w.n3{grid-template-columns:1.45fr 1fr}
+.mr-w.n2 .mr-c:nth-child(2){grid-row:1 / 3}
+.mr-w.n4 .mr-c:nth-child(2){grid-column:2;grid-row:1} .mr-w.n4 .mr-c:nth-child(3){grid-column:2;grid-row:2} .mr-w.n4 .mr-c:nth-child(4){grid-column:3;grid-row:1 / 3}
+.mr-c{position:relative;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;padding:1.6rem 1.8rem 1.4rem;border-radius:1.6rem;color:var(--text);text-decoration:none;
+  background:linear-gradient(180deg,rgba(42,13,4,.92),rgba(24,7,2,.92));border:.08rem solid rgba(255,153,51,.2);box-shadow:0 1.6rem 3.4rem rgba(0,0,0,.4),inset 0 .08rem 0 rgba(255,200,87,.1)}
+.mr-c.mr-lead{padding:2.4rem 2.6rem 2rem;border-color:rgba(255,200,87,.4);
+  background:linear-gradient(160deg,rgba(255,153,51,.2) 0%,rgba(46,14,4,.94) 34%,rgba(24,7,2,.94) 100%)}
+.mr-c.off{border-color:rgba(255,200,87,.6)}
+.mr-c.off:after{content:'';position:absolute;top:0;left:0;right:0;height:.32rem;background:linear-gradient(90deg,#FFC857,#FF9933)}
+.mr-h{display:flex;align-items:center;flex:0 0 auto;min-width:0}
+.mr-lg{position:relative;flex:0 0 auto;width:3.4rem;height:3.4rem;border-radius:.8rem;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-right:1rem;
+  box-shadow:0 0 0 .1rem rgba(255,255,255,.2)}
+.mr-lg i{font-style:normal;font-family:var(--head),var(--deva);font-weight:700;font-size:1.3rem;color:#fff;letter-spacing:.03rem}
+.mr-lg img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;background:#fff}
+.mr-lead .mr-h .mr-lg{width:4.8rem;height:4.8rem;border-radius:1.1rem;margin-right:1.3rem} .mr-lead .mr-h .mr-lg i{font-size:1.8rem}
+.mr-who{flex:1 1 auto;min-width:0}
+.mr-who b{display:block;font-family:var(--head),var(--deva);font-weight:700;font-size:1.65rem;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mr-lead .mr-who b{font-size:2.1rem}
+.mr-who small{display:block;font-size:1.05rem;color:var(--dim);margin-top:.2rem;white-space:nowrap}
+.off .mr-who small{color:var(--gold);font-weight:700}
+.mr-when{flex:0 0 auto;margin-left:1rem;display:flex;align-items:center;font-size:1.2rem;color:var(--muted);white-space:nowrap}
+.mr-lead .mr-when{font-size:1.4rem}
+.mr-when.fresh{color:#FFAB91;font-weight:700}
+.mr-dot{display:inline-block;width:.75rem;height:.75rem;border-radius:50%;background:var(--live);margin-right:.55rem;animation:pulse 1.6s ease-out infinite}
+body.reduced .mr-dot{animation:none}
+.mr-t{flex:0 1 auto;margin-top:1.2rem;font-size:2.2rem;line-height:1.38;font-weight:500;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* the lead headline sits in the middle of the space left between the source row and the footer */
+.mr-lead .mr-h{margin-bottom:2rem}
+.mr-lead .mr-t{margin:auto 0;font-size:3.6rem;line-height:1.3;font-weight:600;-webkit-line-clamp:6}
+.mr-w.n1 .mr-lead .mr-t{font-size:4.2rem}
+.mr-w.n2 .mr-c:nth-child(2) .mr-t,.mr-w.n4 .mr-c:nth-child(4) .mr-t{-webkit-line-clamp:6}
+.mr-f{flex:0 0 auto;margin-top:auto;padding-top:1rem;display:flex;align-items:center;min-width:0;font-size:1.1rem;color:var(--dim);white-space:nowrap;overflow:hidden}
+.mr-lead .mr-f{margin-top:2rem;font-size:1.3rem;padding-top:1.4rem;border-top:.08rem solid rgba(255,200,87,.14)}
+.mr-also{display:flex;align-items:center;min-width:0}
+.mr-also .mr-lg{width:2.3rem;height:2.3rem;border-radius:.55rem;margin:0 0 0 -.6rem;box-shadow:0 0 0 .16rem #1f0803}
+.mr-also .mr-lg:first-child{margin-left:0} .mr-also .mr-lg i{font-size:.85rem}
+.mr-lead .mr-also .mr-lg{width:2.9rem;height:2.9rem} .mr-lead .mr-also .mr-lg i{font-size:1.05rem}
+.mr-also > span{margin-left:.8rem;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.mr-vid{flex:0 0 auto;margin-left:auto;padding-left:1rem;display:flex;align-items:center;color:var(--muted)}
+.mr-vid svg{width:1.3em;height:1.3em;margin-right:.35rem;fill:currentColor}
+/* the topic title carries the area as a pill, like the state pill in the header */
+.mr-area{display:inline-flex;align-items:center;vertical-align:.7rem;margin-left:1.4rem;padding:.4rem 1.3rem .4rem 1rem;border-radius:3rem;font-family:var(--deva);font-size:1.55rem;font-weight:700;
+  line-height:1.3;background:rgba(255,153,51,.18);border:.08rem solid rgba(255,200,87,.5);color:#FFE3A3;text-shadow:none}
+.mr-area svg{width:1.5rem;height:1.5rem;fill:var(--gold);margin-right:.5rem}
+/* "Up next" where the screen counter normally is */
+.st-count.nx{font-family:var(--deva);font-size:1.45rem;color:var(--muted);max-width:44rem;overflow:hidden;text-overflow:ellipsis}
+.st-count.nx b{font-family:var(--head);font-size:1.15rem;letter-spacing:.16rem;text-transform:uppercase;color:var(--gold);margin-right:.7rem}
+/* latest by source: a column per source, its logo on top */
+.mr-sg{display:grid;grid-gap:1.4rem;height:100%}
+.mr-s{display:flex;flex-direction:column;min-height:0;min-width:0;padding:1.7rem 1.9rem;border-radius:1.6rem;overflow:hidden;
+  background:linear-gradient(180deg,rgba(42,13,4,.92),rgba(24,7,2,.92));border:.08rem solid rgba(255,153,51,.2);box-shadow:0 1.6rem 3.4rem rgba(0,0,0,.4)}
+.mr-sh{display:flex;align-items:center;margin-bottom:1rem;white-space:nowrap;min-width:0}
+.mr-sh .mr-lg{width:4.2rem;height:4.2rem;border-radius:1rem;margin-right:1.2rem}
+.mr-sh b{display:block;font-family:var(--head),var(--deva);font-size:2.2rem;line-height:1.1;color:var(--text);overflow:hidden;text-overflow:ellipsis}
+.mr-sh small{display:block;font-size:1.05rem;color:var(--dim);margin-top:.2rem}
+.mr-sh.off small{color:var(--gold);font-weight:700}
+.mr-sh > div{min-width:0}
+.mr-s ol{list-style:none;min-height:0;overflow:hidden}
+.mr-s li{display:flex;padding:.75rem 0;border-top:.08rem solid rgba(255,153,51,.16)}
+.mr-s li > i{flex:0 0 auto;width:2.2rem;font-style:normal;font-family:var(--head);font-weight:700;font-size:1.6rem;color:var(--gold);line-height:1.3}
+.mr-s li > div{min-width:0}
+.mr-s li a{color:var(--text);text-decoration:none;font-size:1.5rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mr-s li small{display:block;font-size:1.05rem;color:var(--dim);margin-top:.2rem}
+.mr-s li small b{color:#fff;background:var(--live);padding:0 .4rem;border-radius:.3rem;margin-right:.4rem;font-size:.9rem}
+.mr-empty{font-size:1.5rem;color:var(--muted)}
+/* the panel: opens when the show is paused (or "Topics" in the header); changes apply at once */
+.mrp{position:fixed;top:8.6rem;right:3.4rem;z-index:30;width:52rem;max-height:calc(100% - 18rem);overflow-y:auto;padding:1.8rem 2rem 1.6rem;border-radius:1.6rem;
+  background:rgba(32,10,3,.97);border:.1rem solid rgba(255,200,87,.45);box-shadow:0 2rem 5rem rgba(0,0,0,.6)}
+.mrp-h{display:flex;align-items:center;justify-content:space-between}
+.mrp-h b{font-family:var(--deva);font-weight:800;font-size:2.1rem}
+.mrp-k{font-family:var(--head),var(--deva);font-weight:700;font-size:1.1rem;letter-spacing:.14rem;text-transform:uppercase;color:var(--gold);margin:1.3rem 0 .7rem}
+.mrp-row{display:flex;flex-wrap:wrap}
+.mrp button.o{margin:0 .6rem .6rem 0;height:3.4rem;padding:0 1.2rem;border-radius:2rem;border:.08rem solid rgba(255,200,87,.25);background:rgba(255,255,255,.06);
+  font-family:var(--deva);font-size:1.25rem;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--text)}
+.mrp button.o:hover,.mrp button.o:focus{border-color:var(--gold);outline:none;background-color:rgba(255,153,51,.18)}
+.mrp button.o:focus{box-shadow:0 0 0 .2rem var(--gold)}
+.mrp button.o.on{background:linear-gradient(135deg,#E65100,#FF9933);border-color:transparent;color:#fff}
+.mrp button.o.dim{opacity:.5}
+.mrp-states{display:grid;grid-template-columns:repeat(3,1fr);grid-gap:.5rem;max-height:19rem;overflow-y:auto;margin-bottom:.4rem}
+.mrp-states button.o{margin:0;width:100%;border-radius:.8rem;text-align:left;overflow:hidden;text-overflow:ellipsis}
+.mrp-x{height:3.4rem;padding:0 1.5rem;border-radius:2rem;border:0;background:var(--green);color:#fff;font-weight:700;font-size:1.25rem;cursor:pointer;font-family:var(--deva)}
+.mrp-x:focus{outline:none;box-shadow:0 0 0 .2rem #fff}
+.mrp-hint{margin-top:.9rem;font-size:1.05rem;color:var(--dim);line-height:1.4}
+body.mr .banner.proto{display:none}          /* the recorded-data strip is about the CSV, not the live news */
+/* start screen: the Media Room strip under the two cards */
+/* (the start screen is a little tighter so the strip fits under the cards on a 16:9 screen) */
+#chooser{padding-bottom:1.6rem} .ch-q{margin-top:.6rem} .ch-q h1{font-size:4rem}
+.ch-media{display:flex;align-items:center;margin:1rem auto 0;width:106.4rem;max-width:100%;padding:.9rem 2.2rem;border-radius:1.6rem;background:var(--glass);
+  border:.12rem solid var(--line);cursor:pointer;box-shadow:0 1.6rem 4rem rgba(0,0,0,.4);transition:border-color .2s}
+.ch-media:hover,.ch-media:focus{border-color:var(--gold);outline:none}
+.ch-media svg{width:3.6rem;height:3.6rem;flex:0 0 auto;margin-right:1.6rem;fill:none;stroke:var(--gold);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ch-media b{display:block;font-family:var(--deva);font-weight:800;font-size:1.9rem;line-height:1.2}
+.ch-media span{display:block;font-size:1.2rem;color:var(--muted);margin-top:.1rem;line-height:1.4}
+.ch-media i{margin-left:auto;padding-left:1.6rem;font-style:normal;font-weight:700;font-size:1.4rem;color:var(--gold);white-space:nowrap}
+
 /* ---------- portrait / small screens ---------- */
 body.portrait #app,body.portrait #chooser{padding:1.2rem 1.4rem 1rem}
 body.portrait .top{height:auto;flex-wrap:wrap}
@@ -800,6 +900,31 @@ body.phone-land .ch-st-body{grid-template-columns:18rem 1fr}
 body.phone-land .ch-map svg{height:18rem}
 body.phone-land .leads,body.phone-land .rv{grid-template-columns:1fr 1fr}
 body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
+/* Media Room on tablets standing up and phones: cards in one or two columns, the page scrolls */
+body.portrait .mr-w{grid-template-columns:1fr 1fr!important;grid-template-rows:none}
+body.portrait .mr-w .mr-c{grid-column:auto!important;grid-row:auto!important}
+body.portrait .mr-w .mr-c.mr-lead{grid-column:1 / 3!important}
+body.portrait .mr-sg{grid-template-columns:1fr!important}
+body.portrait .ch-media{width:auto;margin:0 0 1.2rem}
+body.phone .mr-w,body.phone .mr-sg{grid-template-columns:1fr!important;grid-template-rows:none;height:auto;grid-gap:.9rem}
+body.phone .mr-w .mr-c,body.phone .mr-w .mr-c.mr-lead{grid-column:auto!important;grid-row:auto!important}
+body.phone .mr-c{padding:1.3rem 1.4rem 1.2rem}
+body.phone .mr-c.mr-lead{padding:1.6rem 1.6rem 1.4rem}
+body.phone .mr-t{font-size:1.75rem;-webkit-line-clamp:5!important;margin-top:.9rem}
+body.phone .mr-lead .mr-t,body.phone .mr-w.n1 .mr-lead .mr-t{font-size:2.3rem;-webkit-line-clamp:7!important;margin-top:1.2rem}
+body.phone .mr-who b{font-size:1.45rem} body.phone .mr-lead .mr-who b{font-size:1.7rem}
+body.phone .mr-lead .mr-h .mr-lg{width:3.8rem;height:3.8rem}
+body.phone .mr-when,body.phone .mr-lead .mr-when{font-size:1.1rem}
+body.phone .mr-h{flex-wrap:wrap}                                  /* the time goes under the source, so the name is never cut */
+body.phone .mr-when{-webkit-box-flex:0;flex:0 0 100%;margin:.7rem 0 0}
+body.phone .mr-f,body.phone .mr-lead .mr-f{font-size:1.05rem}
+body.phone .mr-area{font-size:1.2rem;vertical-align:.3rem;margin-left:.6rem;padding:.25rem .9rem .25rem .7rem}
+body.phone .st-count.nx{display:block;margin:.4rem 0 0;font-size:1.1rem;max-width:none}
+body.phone .mr-s li a{font-size:1.4rem}
+body.phone .mrp{top:auto;bottom:0;left:0;right:0;width:auto;max-height:78%;border-radius:1.4rem 1.4rem 0 0;padding:1.4rem 1.2rem}
+body.phone .mrp-states{grid-template-columns:1fr 1fr}
+body.phone .ch-media{display:flex;padding:1.3rem 1.4rem}
+body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1rem} body.phone .ch-media i{display:none}
 </style>
 </head>
 <body>
@@ -875,6 +1000,10 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       <div class="ch-hint" id="chHint"></div>
     </div>
   </div>
+  <div class="ch-media" id="chMedia" tabindex="0" role="button">
+    <svg viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="13" rx="2"/><path d="M8 21h8M12 17.5V21"/><path d="M6.5 9h7M6.5 12.5h11"/></svg>
+    <div><b id="chMediaT"></b><span id="chMediaD"></span></div><i id="chMediaGo"></i>
+  </div>
   <div class="st-panel hidden" id="stPanel" role="dialog" aria-modal="true" aria-labelledby="stpTitle">
     <div class="st-box">
       <div class="st-top"><h2 id="stpTitle"></h2><input class="st-find" id="stFind" type="text" autocomplete="off"><button class="st-x" id="stClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
@@ -892,6 +1021,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
       <div class="chip lvl-nodata" id="chip"><i class="cd"></i><span id="chipTxt">…</span></div>
       <div class="clock"><b id="clk">--:--</b><span id="cdate"></span></div>
       <div class="spd" id="spd" role="group"><button type="button" data-s="slow"></button><button type="button" data-s="normal"></button><button type="button" data-s="fast"></button></div>
+      <button class="tbtn hidden" id="mrBtn" type="button"></button>
       <button class="tbtn" id="swBtn" type="button"></button>
       <button class="tbtn" id="langBtn" type="button">हिंदी</button>
       <button class="tbtn" id="backBtn" type="button">&#8592; <span id="backTxt">Dashboard</span></button>
@@ -912,6 +1042,13 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   <div class="dots" id="cDots"></div>
   <div class="sep"></div>
   <button type="button" id="cFull" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</div>
+<div class="mrp hidden" id="mrp" role="dialog" aria-labelledby="mrpT">
+  <div class="mrp-h"><b id="mrpT"></b><button type="button" class="mrp-x" id="mrpX"></button></div>
+  <div class="mrp-k" id="mrpAreaK"></div><div class="mrp-row" id="mrpArea"></div>
+  <div class="mrp-states hidden" id="mrpStates"></div>
+  <div class="mrp-k" id="mrpTopK"></div><div class="mrp-row" id="mrpTop"></div>
+  <div class="mrp-hint" id="mrpHint"></div>
 </div>
 <div class="banner hidden" id="banner"></div>
 <div class="overlay hidden" id="overlay"><div class="ov-box"><h2 id="ovTitle"></h2><p id="ovText"></p><span id="ovAct"></span></div></div>
@@ -1094,6 +1231,54 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   T.en.atkNote = 'Severity is an AI estimate · quotes are the leaders\' own words';
   T.hi.atkNote = 'गंभीरता AI का अनुमान है · उद्धरण नेताओं के अपने शब्द हैं';
   T.en.skipTouch = 'Tap to skip'; T.hi.skipTouch = 'आगे बढ़ने के लिए छुएँ';
+  /* Media Room */
+  T.en.mrBrand = 'Media Room · latest news'; T.hi.mrBrand = 'मीडिया रूम · ताज़ा ख़बरें';
+  T.en.mrChT = 'Media Room'; T.hi.mrChT = 'मीडिया रूम';
+  T.en.mrChD = 'Latest news from TV channels, newspapers, PIB and student & youth organisations — topic by topic, for India and your state. New news every 15 minutes.';
+  T.hi.mrChD = 'टीवी चैनल, अख़बार, PIB और छात्र-युवा संगठनों की ताज़ा ख़बरें — विषय के हिसाब से, पूरे भारत और आपके राज्य की। हर 15 मिनट में नई ख़बरें।';
+  T.en.mrChGo = 'Open'; T.hi.mrChGo = 'खोलें';
+  T.en.mrBtn = 'Topics'; T.hi.mrBtn = 'विषय चुनें';
+  T.en.mrTk = 'Latest headlines'; T.hi.mrTk = 'ताज़ा सुर्ख़ियाँ';
+  T.en.mrMix = 'Mix — everything'; T.hi.mrMix = 'मिक्स — सब कुछ';
+  T.en.mrHot = 'Hot right now'; T.hi.mrHot = 'अभी सबसे ज़्यादा चर्चा';
+  T.en.mrOfficial = 'Official statements'; T.hi.mrOfficial = 'आधिकारिक बयान';
+  T.en.mrBySource = 'Latest by source'; T.hi.mrBySource = 'स्रोत के हिसाब से ताज़ा';
+  T.en.mrSubNew = 'Newest first'; T.hi.mrSubNew = 'सबसे नई पहले';
+  T.en.mrSubHot = 'Stories carried by the most sources in the last 6 hours'; T.hi.mrSubHot = 'पिछले 6 घंटों में सबसे ज़्यादा स्रोतों में आई ख़बरें';
+  T.en.mrSubOff = 'From the organisations\' own channels'; T.hi.mrSubOff = 'संगठनों के अपने चैनलों से';
+  T.en.mrSubSrc = 'The 5 newest from each source, newest on top'; T.hi.mrSubSrc = 'हर स्रोत की 5 सबसे नई ख़बरें, नई सबसे ऊपर';
+  T.en.mrUpd = 'updated {a}'; T.hi.mrUpd = 'अपडेट {a}';
+  T.en.mrChipUpd = 'News updated {a}'; T.hi.mrChipUpd = 'ख़बरें अपडेट {a}';
+  T.en.mrCollecting = 'Collecting news…'; T.hi.mrCollecting = 'ख़बरें जुट रही हैं…';
+  T.en.mrNew = 'New'; T.hi.mrNew = 'नई';
+  T.en.mrVideo = 'Video'; T.hi.mrVideo = 'वीडियो';
+  T.en.mrJust = 'Just in'; T.hi.mrJust = 'अभी आई';
+  T.en.mrFound = 'found {a}'; T.hi.mrFound = '{a} मिली';
+  T.en.mrOffLong = 'Official statement'; T.hi.mrOffLong = 'आधिकारिक बयान';
+  T.en.mrMedLong = 'News media'; T.hi.mrMedLong = 'समाचार माध्यम';
+  T.en.mrAlso = 'Also on {s}'; T.hi.mrAlso = '{s} पर भी';
+  T.en.mrAlsoN = 'Also on {s} +{n}'; T.hi.mrAlsoN = '{s} +{n} पर भी';
+  T.en.mrNext = 'Up next'; T.hi.mrNext = 'आगे';
+  T.en.mrWaitT = 'Collecting the first news'; T.hi.mrWaitT = 'पहली ख़बरें जुट रही हैं';
+  T.en.mrWaitP = 'Nazar is reading every source for the first time. This takes about 3 minutes — this screen fills in by itself.';
+  T.hi.mrWaitP = 'नज़र पहली बार हर स्रोत पढ़ रहा है। इसमें लगभग 3 मिनट लगते हैं — यह स्क्रीन अपने आप भर जाएगी।';
+  T.en.mrNoneT = 'No news for this choice'; T.hi.mrNoneT = 'इस चुनाव के लिए कोई ख़बर नहीं';
+  T.en.mrNoneP = 'Nothing in the last 24 hours for these topics. Pause (or press Topics) to choose others.';
+  T.hi.mrNoneP = 'इन विषयों पर पिछले 24 घंटों में कुछ नहीं। दूसरे विषय चुनने के लिए रोकें (या "विषय चुनें" दबाएँ)।';
+  T.en.mrDown = 'Not answering: {s}'; T.hi.mrDown = 'जवाब नहीं दे रहे: {s}';
+  T.en.mrStale = 'No new headline for 6 h or more: {s}'; T.hi.mrStale = '6 घंटे या ज़्यादा से कोई नई ख़बर नहीं: {s}';
+  T.en.mrPaused = 'News collection has stopped — last update {a}'; T.hi.mrPaused = 'ख़बरें जुटना रुका है — आख़िरी अपडेट {a}';
+  T.en.mrpT = 'What to show?'; T.hi.mrpT = 'क्या दिखाएँ?';
+  T.en.mrpGo = '✓ Continue'; T.hi.mrpGo = '✓ आगे चलाएँ';
+  T.en.mrpArea = 'Area'; T.hi.mrpArea = 'क्षेत्र';
+  T.en.mrpTopic = 'Topics — choose one or more'; T.hi.mrpTopic = 'विषय — एक या ज़्यादा चुनें';
+  T.en.mrpBoth = 'Both'; T.hi.mrpBoth = 'दोनों';
+  T.en.mrpPickSt = 'State…'; T.hi.mrpPickSt = 'राज्य…';
+  T.en.mrpChange = 'Change state'; T.hi.mrpChange = 'राज्य बदलें';
+  T.en.mrpAuto = '{s} (this page)'; T.hi.mrpAuto = '{s} (यही पेज)';
+  T.en.mrpHint = 'Changes show at once. Arrows to move, OK to choose, Back to continue the show.';
+  T.hi.mrpHint = 'बदलाव तुरंत दिखते हैं। तीर से चलें, OK से चुनें, Back से शो फिर चलाएँ।';
+  T.en.mrpHintTouch = 'Changes show at once. Tap Continue when done.'; T.hi.mrpHintTouch = 'बदलाव तुरंत दिखते हैं। हो जाए तो "आगे चलाएँ" दबाएँ।';
   if (PROTO) {                       // a recorded file is not "live"
     T.en.brandSub = T.en.brandSub.replace(' · Live', ''); T.hi.brandSub = T.hi.brandSub.replace(' · लाइव', '');
     T.en.proto = 'Data · {a} – {b}'; T.hi.proto = 'डेटा · {a} – {b}';
@@ -1236,6 +1421,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     $('cdate').textContent = fmtDay(p.y + '-' + (p.mo < 10 ? '0' : '') + p.mo + '-' + (p.d < 10 ? '0' : '') + p.d + ' 00:00', true);
   }
   function renderChip() {
+    if (state.mode === 'media') { mrChip(); return; }
     var s = state.snap, el = $('chip'), txt, lvl = s && s.status ? s.status.level : 'nodata';
     if (state.offline) lvl = 'offline';
     el.className = 'chip lvl-' + lvl;
@@ -1252,12 +1438,15 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     document.documentElement.lang = LANG;
     $('langBtn').textContent = t('langBtn'); $('chLang').textContent = t('langBtn');
     $('backTxt').textContent = t('back'); $('chBackTxt').textContent = t('back');
-    $('brandSub').textContent = t('brandSub'); $('chSub').textContent = t('brandSub');
+    $('brandSub').textContent = state.mode === 'media' ? t('mrBrand') : t('brandSub'); $('chSub').textContent = t('brandSub');
+    $('mrBtn').textContent = t('mrBtn');
+    $('chMediaT').textContent = t('mrChT'); $('chMediaD').textContent = t('mrChD'); $('chMediaGo').textContent = t('mrChGo') + ' →';
+    if (MR.open) renderMrPanel();
     $('swBtn').textContent = t('sw'); $('inTag').textContent = t('tag'); $('inSkip').textContent = t('skip');
     $('chQ').textContent = t('chQ'); $('chQs').textContent = t('chQs');
     $('chAllK').textContent = t('chAllK'); $('chAllT').textContent = t('chAllT'); $('chAllD').textContent = t('chAllD');
     $('chOneK').textContent = t('chOneK'); $('chOneT').textContent = t('chOneT'); $('chInput').placeholder = t('chPh'); $('chHint').textContent = t('chHint');
-    $('tkLbl').textContent = state.mode === 'person' ? t('tkLblP') : t('tkLbl');
+    $('tkLbl').textContent = tkLabel();
     if (DEMO) showBanner('demo', t('demo')); else if (ASOF) showBanner('hist', fill(t('hist'), { d: ASOF }));
     else if (PROTO && PROTO.from) showBanner('proto', fill(t('proto'), { a: fmtDay(PROTO.from), b: fmtWhen(PROTO.to) }));
     if (PHONE) $('inSkip').textContent = t('skipTouch');
@@ -1274,6 +1463,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
      shown, the source or the server has a problem, the screen is offline). The period
      and the latest post are already in every screen's subtitle and in the header chip. */
   function renderHonesty() {
+    if (state.mode === 'media') { $('honesty').innerHTML = mrHonesty(); return; }
     var s = state.snap, parts = [];
     if (!s) { $('honesty').innerHTML = ''; return; }
     if (s.window && s.window.mode !== 'rolling') parts.push('<span class="warn">' + fill(t('hWindowDay'), { d: esc(fmtDay(s.window.from, true)) }) + '</span>');
@@ -1289,7 +1479,9 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
 
   /* ------------------------------------------------------------- ticker */
   var TK_SINGLE = null;
+  function tkLabel() { return state.mode === 'person' ? t('tkLblP') : state.mode === 'media' ? t('mrTk') : t('tkLbl'); }
   function tickerItems() {
+    if (state.mode === 'media') return mrTicker();
     if (state.mode === 'person' && state.psnap) {
       var p = state.psnap, list = (p.mentions || []).concat(p.localNews || []);
       if (list.length >= 3) return list;
@@ -1302,7 +1494,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     var key = state.mode + '|' + LANG + '|' + document.documentElement.style.fontSize + '|' + items.map(function (x) { return x.head; }).join('|');
     if (!force && key === state.tickerKey) return;
     state.tickerKey = key;
-    $('tkLbl').textContent = state.mode === 'person' ? t('tkLblP') : t('tkLbl');
+    $('tkLbl').textContent = tkLabel();
     if (TK_SINGLE) { clearInterval(TK_SINGLE); TK_SINGLE = null; }
     if (!items.length) { $('ticker').style.display = 'none'; return; }
     $('ticker').style.display = '';
@@ -1655,12 +1847,19 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   /* ---------------------------------------------------- scene engine */
   function renderScene(sc) {
     $('stTitle').innerHTML = sc.title();
-    $('stWhen').textContent = (sc.sub ? (typeof sc.sub === 'function' ? sc.sub() : t(sc.sub)) + ' · ' : '') + whenText(state.snap);
-    $('stCount').textContent = (state.idx + 1) + ' / ' + state.scenes.length;
+    $('stWhen').textContent = [sc.sub ? (typeof sc.sub === 'function' ? sc.sub() : t(sc.sub)) : '', whenText(state.snap)].filter(Boolean).join(' · ');
+    renderCount();
     heroLevel(sc.hero || 'lo');
     var el = $('scene'); el.innerHTML = sc.render(state.snap);
     if (sc.after) sc.after(el);
     renderDots();
+  }
+  /* "3 / 12" -- in the Media Room "Up next: Elections · Uttar Pradesh" instead (a TV viewer
+     sees what is coming, not a number) */
+  function renderCount() {
+    var el = $('stCount'), n = state.scenes.length, nx = n > 1 ? state.scenes[(state.idx + 1) % n] : null;
+    if (state.mode === 'media') { el.className = 'st-count nx'; el.innerHTML = nx && nx.label ? '<b>' + esc(t('mrNext')) + '</b>' + esc(nx.label()) : ''; return; }
+    el.className = 'st-count'; el.textContent = (state.idx + 1) + ' / ' + n;
   }
   function rerender() { var sc = state.scenes[state.idx]; if (!sc) return; clearSceneWork(); renderScene(sc); }
   function show(i) {
@@ -1735,6 +1934,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     }
     $('cPlayIco').innerHTML = state.paused ? '<polygon points="7 5 19 12 7 19 7 5"/>' : '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
     $('cPlay').setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
+    if (state.mode === 'media') mrPanel(state.paused);        // Media Room: pausing opens "what to show"
   }
   function renderDots() { var h = ''; for (var i = 0; i < state.scenes.length; i++) h += '<i' + (i === state.idx ? ' class="on"' : '') + '></i>'; $('cDots').innerHTML = h; }
 
@@ -1762,7 +1962,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   function onData(first) {
     var s = state.snap;
     var oldId = state.scenes[state.idx] && state.scenes[state.idx].id;
-    state.scenes = state.mode === 'person' ? buildPersonScenes(s) : buildAllScenes(s);
+    state.scenes = state.mode === 'person' ? buildPersonScenes(s) : state.mode === 'media' ? buildMediaScenes(s) : buildAllScenes(s);
     var keep = -1;
     for (var i = 0; i < state.scenes.length; i++) if (state.scenes[i].id === oldId) keep = i;
     renderChip(); renderHonesty(); renderTicker(false);
@@ -1771,12 +1971,13 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     var start = 0;
     if (first && Q.scene && !state.sceneUsed) { state.sceneUsed = true; for (var j = 0; j < state.scenes.length; j++) if (state.scenes[j].id === Q.scene) start = j; }
     if (first || keep < 0) { state.idx = -1; $('scene').innerHTML = ''; show(start); }
-    else { state.idx = keep; renderDots(); $('stCount').textContent = (state.idx + 1) + ' / ' + state.scenes.length; }
+    else { state.idx = keep; renderDots(); renderCount(); }
   }
   var fetchTimer = null;
   function schedule(ms) { clearTimeout(fetchTimer); if (!state.stopped) fetchTimer = setTimeout(fetchData, ms); }
   function fetchData(first) {
     if (state.stopped || !state.mode) return;
+    if (state.mode === 'media') { fetchMedia(first); return; }
     if (DEMO) { state.all = demoSnap(); state.snap = state.all; onData(first); return; }
     var mode = state.mode, h = state.person;
     var calls = [api('/api/live-snapshot' + q())];
@@ -1821,15 +2022,260 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   function overlay(title, text, act) { $('ovTitle').textContent = title; $('ovText').textContent = text; $('ovAct').innerHTML = act || ''; $('overlay').className = 'overlay'; }
   function hideOverlay() { $('overlay').className = 'overlay hidden'; }
 
+  /* ======================================================= MEDIA ROOM */
+  /* Live news from free feeds (server: media_room.js). Two choices, kept on this screen
+     and also settable by link (?mode=media&area=all|state|both&t=hot,elections&mrstate=Bihar):
+       area   All India, the state (the page's own state, or one picked here), or both
+       topics Mix (hot + every narrative switched on + official) or any set of topics
+     Each (topic x area) with news in the last 24 hours is one screen of the loop. */
+  var MR_NO_FEED = { 'Andaman and Nicobar': 1, 'Lakshadweep': 1, 'Dadra and Nagar Haveli and Daman and Diu': 1 };
+  var MR_AREA_OK = /^(all|state|both)$/;
+  var MR = { open: false, idleT: null, statesOpen: false, pending: null,
+    area: MR_AREA_OK.test(Q.area || '') ? Q.area : (MR_AREA_OK.test(store('nazar_mr_area') || '') ? store('nazar_mr_area') : (STATE ? 'both' : 'all')),
+    topics: String(Q.t || store('nazar_mr_topics') || 'mix').split(',').filter(Boolean),
+    pick: Q.mrstate || store('nazar_mr_state') || '' };
+  function mrState() { return STATE || (STATE_HI[MR.pick] && !MR_NO_FEED[MR.pick] ? MR.pick : null); }
+  function mrAreas() { var st = mrState(); if (!st || MR.area === 'all') return ['all']; return MR.area === 'state' ? ['local'] : ['all', 'local']; }
+  function mrUrl() { var st = mrState(); return '/api/media-room' + q(st && st !== STATE && MR.area !== 'all' ? '&state=' + encodeURIComponent(st) : ''); }
+  function mrIsMix() { return !MR.topics.length || MR.topics.indexOf('mix') >= 0; }
+  function mrAllTopics(m) { return ['hot'].concat(((m && m.topics) || []).map(function (x) { return x.id; })).concat(['official', 'bysource']); }
+  function mrLoop(m) {
+    if (mrIsMix()) return ['hot'].concat(((m && m.topics) || []).filter(function (x) { return x.on; }).map(function (x) { return x.id; })).concat(['official']);
+    return mrAllTopics(m).filter(function (id) { return MR.topics.indexOf(id) >= 0; });
+  }
+  function mrTopicName(id) {
+    var b = { mix: 'mrMix', hot: 'mrHot', official: 'mrOfficial', bysource: 'mrBySource' }[id]; if (b) return t(b);
+    var m = state.snap, x = m && m.topics ? m.topics.filter(function (z) { return z.id === id; })[0] : null;
+    return x ? (LANG === 'hi' ? x.hi : x.en) : id;
+  }
+  function mrAreaName(a) { return a === 'all' ? t('stAll') : stName(mrState() || ''); }
+  function mrAgo(ms) { return fmtAgo(Math.max(0, (Date.now() - ms) / 60000)); }
+  /* NEW = we first saw it in the last 30 minutes AND it was published in the last 90
+     (a first collection, or a slow feed, finds older stories -- those are not "new") */
+  function mrNew(f, p) { var now = Date.now(); return !!f && now - f < 30 * 60000 && now - p < 90 * 60000; }
+  function mrUpdated() { var m = state.snap; return m && m.lastRun ? fill(t('mrUpd'), { a: mrAgo(m.lastRun) }) : ''; }
+  function mrSrcName(s) { return LANG === 'hi' && s.nameHi ? s.nameHi : s.name; }
+
+  /* a source's logo (its X photo or website icon); while it loads, or if there is none,
+     its initials on a colour of its own */
+  var MR_PAL = ['#B23A12', '#1E5AA8', '#7A2E8A', '#0F7A5A', '#9C4A12', '#2F4F8F', '#8B1E3F', '#7A6000'];
+  function mrLogo(name, url) {
+    var s = String(name || '?'), h = 0, i;
+    for (i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9973;
+    var w = s.replace(/^(the|www\.)\s*/i, '').split(/[\s.\-]+/).filter(Boolean);
+    var ini = /^[A-Z0-9]{2,4}$/.test(w[0] || '') ? w[0] : ((w[0] || '?').charAt(0) + (w.length > 1 ? w[1].charAt(0) : '')).toUpperCase();   // ABP News -> ABP, not AN
+    return '<span class="mr-lg" style="background:' + MR_PAL[h % MR_PAL.length] + '"><i>' + esc(ini) + '</i>'
+      + (okImg(url) ? '<img alt="" src="' + esc(url) + '" onerror="this.parentNode.removeChild(this)">' : '') + '</span>';
+  }
+  var MR_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>';
+  var MR_PIN = '<svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg>';
+  /* one story: who (logo, name, official or media), when, the headline, who else carried it */
+  function mrCard(c, lead) {
+    /* a feed without publish times (PIB): we only know when we found it -- say so, and never "just in" */
+    var fresh = !c.nd && mrNew(c.f, c.p), off = c.k === 'official', o = c.o || [];
+    var when = c.nd ? esc(fill(t('mrFound'), { a: mrAgo(c.p) }))
+      : (fresh ? '<i class="mr-dot"></i>' + esc(t('mrJust')) + ' · ' : '') + esc(mrAgo(c.p)) + (lead ? ' · ' + esc(fmtTime(ip(c.d) || { h: 0, mi: 0 })) : '');
+    var also = c.n ? '<span class="mr-also">' + o.map(function (x) { return mrLogo(x.n, x.l); }).join('')
+      + '<span>' + esc(fill(t(c.n > o.length ? 'mrAlsoN' : 'mrAlso'), { s: o.map(function (x) { return x.n; }).join(', '), n: c.n - o.length })) + '</span></span>' : '';
+    return '<a class="mr-c' + (lead ? ' mr-lead' : '') + (off ? ' off' : '') + '" href="' + esc(c.u) + '" target="_blank" rel="noopener noreferrer">'
+      + '<div class="mr-h">' + mrLogo(c.s, c.lg) + '<div class="mr-who"><b>' + esc(c.s) + '</b><small>' + esc(t(off ? 'mrOffLong' : 'mrMedLong')) + '</small></div>'
+      + '<span class="mr-when' + (fresh ? ' fresh' : '') + '">' + when + '</span></div>'
+      + '<div class="mr-t">' + esc(c.t) + '</div>'
+      + (also || c.v ? '<div class="mr-f">' + also + (c.v ? '<span class="mr-vid">' + MR_PLAY + esc(t('mrVideo')) + '</span>' : '') + '</div>' : '')
+      + '</a>';
+  }
+  /* the wall: the newest (or, on "hot", the most-carried) story large on the left, four more beside it */
+  function mrCards(list) {
+    var l = list.slice(0, 5);
+    return '<div class="mr-w n' + l.length + '">' + l.map(function (c, i) { return mrCard(c, i === 0); }).join('') + '</div>';
+  }
+  /* latest by source: a numbered stack of the 5 newest per source */
+  function mrSources(chunk) {
+    return '<div class="mr-sg" style="grid-template-columns:repeat(' + Math.max(1, chunk.length) + ',1fr)">' + chunk.map(function (s) {
+      var off = s.kind === 'official';
+      return '<div class="mr-s"><div class="mr-sh' + (off ? ' off' : '') + '">' + mrLogo(s.name, s.lg) + '<div><b>' + esc(mrSrcName(s)) + '</b><small>' + esc(t(off ? 'mrOffLong' : 'mrMedLong')) + '</small></div></div><ol>'
+        + s.latest.map(function (x, i) {
+          return '<li><i>' + (i + 1) + '</i><div><a href="' + esc(x.u) + '" target="_blank" rel="noopener noreferrer">' + esc(x.t) + '</a><small>'
+            + (mrNew(x.f, x.p) ? '<b>' + esc(t('mrNew')) + '</b>' : '') + esc(mrAgo(x.p) + ' · ' + fmtWhen(x.d)) + (x.v ? ' · ' + esc(t('mrVideo')) : '') + '</small></div></li>';
+        }).join('') + '</ol></div>';
+    }).join('') + '</div>';
+  }
+  function mrMsg(h, p) { return '<div class="glass full"><div class="empty"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p></div></div>'; }
+  function buildMediaScenes(m) {
+    var L = [], areas = mrAreas();
+    if (m && m.all) mrLoop(m).forEach(function (tp) {
+      areas.forEach(function (a) {
+        var v = a === 'all' ? m.all : m.local; if (!v) return;
+        if (tp === 'bysource') {
+          if (a !== 'all' || !v.bySource || !v.bySource.length) return;
+          var pages = Math.ceil(v.bySource.length / 3);
+          for (var i = 0; i < v.bySource.length; i += 3) (function (chunk, k) {
+            L.push({ id: 'mr-src-' + k, dur: 22000, title: function () { return esc(t('mrBySource')) + ' <em>· ' + (k + 1) + '/' + pages + '</em>'; },
+                     label: function () { return t('mrBySource') + (pages > 1 ? ' ' + (k + 1) + '/' + pages : ''); },
+                     sub: function () { return [t('mrSubSrc'), mrUpdated()].filter(Boolean).join(' · '); }, render: function () { return mrSources(chunk); } });
+          })(v.bySource.slice(i, i + 3), i / 3);
+          return;
+        }
+        var list = v.lists[tp]; if (!list || !list.length) return;
+        L.push({ id: 'mr-' + a + '-' + tp, dur: 20000,
+          title: function () { return esc(mrTopicName(tp)) + '<span class="mr-area">' + MR_PIN + esc(mrAreaName(a)) + '</span>'; },
+          label: function () { return mrTopicName(tp) + ' · ' + mrAreaName(a); },
+          sub: function () { return [t(tp === 'hot' ? 'mrSubHot' : tp === 'official' ? 'mrSubOff' : 'mrSubNew'), mrUpdated()].filter(Boolean).join(' · '); },
+          render: function () { return mrCards(list); } });
+      });
+    });
+    if (!L.length) {
+      var wait = !m || (m.collecting && !m.lastRun);
+      L.push({ id: 'mr-none', dur: 20000, hero: 'mid', title: function () { return esc(t(wait ? 'mrWaitT' : 'mrNoneT')); },
+               render: function () { return mrMsg(t(wait ? 'mrWaitT' : 'mrNoneT'), t(wait ? 'mrWaitP' : 'mrNoneP')); } });
+    }
+    return L;
+  }
+  function mrTicker() {
+    var m = state.snap; if (!m || !m.all) return [];
+    var ar = mrAreas(), a = ar.indexOf('all') >= 0 ? m.all.ticker || [] : [], b = ar.indexOf('local') >= 0 && m.local ? m.local.ticker || [] : [], out = [], seen = {};
+    for (var i = 0; i < Math.max(a.length, b.length); i++) [b[i], a[i]].forEach(function (c) { if (c && !seen[c.u]) { seen[c.u] = 1; out.push({ head: c.t, src: c.s, date: c.d }); } });
+    return out.slice(0, 24);
+  }
+  /* header chip: when the news was last collected (green under 20 min, amber under an hour) */
+  function mrChip() {
+    var m = state.snap, lvl, txt;
+    if (!m || (!m.lastRun && m.collecting)) { lvl = 'delayed'; txt = t('mrCollecting'); }
+    else if (!m.lastRun) { lvl = 'nodata'; txt = t('nodata'); }
+    else { var age = (Date.now() - m.lastRun) / 60000; lvl = age < 20 ? 'recent' : age < 60 ? 'delayed' : 'stale'; txt = fill(t('mrChipUpd'), { a: fmtAgo(age) }); }
+    if (state.offline) { lvl = 'offline'; txt = t('offline') + ' · ' + txt; }
+    $('chip').className = 'chip lvl-' + lvl; $('chipTxt').textContent = txt;
+  }
+  /* footer: only what is not normal -- sources not answering or gone quiet, collection stopped */
+  function mrHonesty() {
+    var m = state.snap, parts = [], now = Date.now();
+    if (!m) return '';
+    function list(a) { return a.slice(0, 4).join(', ') + (a.length > 4 ? ' +' + (a.length - 4) : ''); }
+    var down = (m.sources || []).filter(function (s) { return !s.ok; }).map(mrSrcName);
+    if (down.length) parts.push('<span class="warn">' + esc(fill(t('mrDown'), { s: list(down) })) + '</span>');
+    var quiet = (m.sources || []).filter(function (s) { return s.ok && s.kind === 'media' && s.newest && now - s.newest > 6 * 3600000; }).map(mrSrcName);
+    if (quiet.length) parts.push('<span class="warn">' + esc(fill(t('mrStale'), { s: list(quiet) })) + '</span>');
+    if (m.lastRun && now - m.lastRun > 45 * 60000) parts.push('<span class="warn">' + esc(fill(t('mrPaused'), { a: fmtAgo((now - m.lastRun) / 60000) })) + '</span>');
+    if (state.offline && state.savedAt) parts.push('<span class="warn">' + fill(t('hSaved'), { d: esc(fmtTimeIso(state.savedAt)) }) + '</span>');
+    return parts.join(' &nbsp;·&nbsp; ');
+  }
+  function fetchMedia(first) {
+    api(mrUrl()).then(function (m) {
+      if (state.stopped || state.mode !== 'media' || !m || m.__notfound) return;
+      state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
+      state.snap = m; state.lastOk = Date.now();
+      try { store('nazar_mr_snap', JSON.stringify({ at: new Date().toISOString(), s: m })); } catch (e) {}
+      onData(first); if (MR.open) renderMrPanel();
+      schedule(m.collecting && !m.lastRun ? 20000 : REFRESH_MS);             // first collection: look again soon
+    }).catch(function () {
+      if (state.stopped) return;
+      state.fails++; state.offline = true;
+      if (!state.snap) {
+        var saved = null; try { saved = JSON.parse(store('nazar_mr_snap') || 'null'); } catch (e) { saved = null; }
+        if (saved && saved.s) { state.savedAt = saved.at; state.snap = saved.s; onData(true); } else firstFail();
+      } else if (!state.savedAt) state.savedAt = new Date(state.lastOk || Date.now()).toISOString();
+      renderChip(); renderHonesty();
+      schedule(BACKOFF[Math.min(state.fails - 1, BACKOFF.length - 1)]);
+    });
+  }
+
+  /* ---- the "what to show" panel (opens on pause; changes apply at once) ---- */
+  function mrPanel(open) {
+    if (!open) { MR.open = false; MR.statesOpen = false; MR.pending = null; clearTimeout(MR.idleT); $('mrp').className = 'mrp hidden'; return; }
+    var was = MR.open; MR.open = true; $('mrp').className = 'mrp'; renderMrPanel(); mrIdle();
+    if (!was && !PHONE) setTimeout(function () { var b = $('mrp').querySelector('button.o.on') || $('mrp').querySelector('button.o'); if (b) { try { b.focus(); } catch (e) {} } }, 30);
+  }
+  /* a TV left paused carries on by itself after 2 minutes without a key or a touch */
+  function mrIdle() { clearTimeout(MR.idleT); MR.idleT = setTimeout(function () { if (MR.open && state.paused) pause(false); }, 120000); }
+  function mrOpt(k, label, on, dim) { return '<button type="button" class="o' + (on ? ' on' : '') + (dim ? ' dim' : '') + '" data-k="' + esc(k) + '">' + esc(label) + '</button>'; }
+  function renderMrPanel() {
+    var st = mrState(), m = state.snap, ae = document.activeElement, focusK = ae && ae.getAttribute ? ae.getAttribute('data-k') : null;
+    $('mrpT').textContent = t('mrpT'); $('mrpX').textContent = t('mrpGo'); $('mrpAreaK').textContent = t('mrpArea'); $('mrpTopK').textContent = t('mrpTopic');
+    $('mrpHint').textContent = PHONE ? t('mrpHintTouch') : t('mrpHint');
+    var area = st ? MR.area : 'all';
+    $('mrpArea').innerHTML = mrOpt('a:all', t('stAll'), area === 'all')
+      + mrOpt('a:state', st ? (STATE ? fill(t('mrpAuto'), { s: stName(st) }) : stName(st)) : t('mrpPickSt'), area === 'state')
+      + mrOpt('a:both', t('mrpBoth') + (st ? ' · ' + t('stAll') + ' + ' + stName(st) : ''), area === 'both')
+      + (!STATE && st ? mrOpt('a:pick', t('mrpChange'), MR.statesOpen) : '');
+    if (MR.statesOpen) {
+      var names = Object.keys(STATE_HI).filter(function (s) { return !MR_NO_FEED[s]; }).sort(function (a, b) { return stName(a).localeCompare(stName(b), LANG === 'hi' ? 'hi' : 'en'); });
+      $('mrpStates').innerHTML = names.map(function (s) { return mrOpt('s:' + s, stName(s), s === st); }).join('');
+      $('mrpStates').className = 'mrp-states';
+    } else $('mrpStates').className = 'mrp-states hidden';
+    var ar = mrAreas(), mix = mrIsMix();
+    function has(id) {
+      if (!m || !m.all) return true;
+      return ar.some(function (a) { var v = a === 'all' ? m.all : m.local; if (!v) return false; return id === 'bysource' ? !!(v.bySource && v.bySource.length) : !!(v.lists[id] && v.lists[id].length); });
+    }
+    $('mrpTop').innerHTML = mrOpt('t:mix', t('mrMix'), mix) + mrAllTopics(m).map(function (id) { return mrOpt('t:' + id, mrTopicName(id), !mix && MR.topics.indexOf(id) >= 0, !has(id)); }).join('');
+    [].forEach.call($('mrp').querySelectorAll('button.o'), function (b) { b.onclick = function () { mrChoose(b.getAttribute('data-k')); }; });
+    if (focusK) { var f = null; [].forEach.call($('mrp').querySelectorAll('button.o'), function (b) { if (b.getAttribute('data-k') === focusK) f = b; }); if (f) { try { f.focus(); } catch (e) {} } }
+  }
+  function mrChoose(k) {
+    mrIdle();
+    var kind = k.slice(0, 2), v = k.slice(2), refetch = false;
+    if (kind === 'a:') {
+      if (v === 'pick') { MR.statesOpen = !MR.statesOpen; renderMrPanel(); return; }
+      if (v !== 'all' && !mrState()) { MR.pending = v; MR.statesOpen = true; renderMrPanel(); return; }   // "State" with no state yet: pick one first
+      MR.area = v; store('nazar_mr_area', v); MR.statesOpen = false;
+      refetch = v !== 'all' && (!state.snap || state.snap.state !== mrState());
+    } else if (kind === 's:') {
+      MR.pick = v; store('nazar_mr_state', v); MR.statesOpen = false;
+      if (MR.pending) { MR.area = MR.pending; MR.pending = null; } else if (MR.area === 'all') MR.area = 'state';
+      store('nazar_mr_area', MR.area); refetch = true;
+    } else if (kind === 't:') {
+      if (v === 'mix') MR.topics = ['mix'];
+      else {
+        var cur = mrIsMix() ? [] : MR.topics.slice(), i = cur.indexOf(v);
+        if (i >= 0) cur.splice(i, 1); else cur.push(v);
+        MR.topics = cur.length ? cur : ['mix'];
+      }
+      store('nazar_mr_topics', MR.topics.join(','));
+    }
+    renderMrPanel();
+    if (refetch) { clearTimeout(fetchTimer); fetchData(true); } else if (state.snap) { onData(true); renderTicker(false); }
+  }
+  /* remote / keyboard inside the panel: arrows move (up/down to the nearest button in the
+     row above/below), OK chooses, Back (or Escape, M, Play/Pause) closes and the show goes on */
+  function mrKey(e) {
+    var k = e.key || '', bs = [].slice.call($('mrp').querySelectorAll('button')).filter(function (b) { return b.offsetParent !== null; });
+    var i = bs.indexOf(document.activeElement), j = null;
+    mrIdle();
+    if (k === 'Escape' || k === 'Esc' || k === 'Backspace' || k === 'GoBack' || k === 'BrowserBack' || k === 'm' || k === 'M' || k === 'MediaPlayPause') { pause(false); e.preventDefault(); return; }
+    if (k === 'ArrowRight' || k === 'Right') j = i + 1;
+    else if (k === 'ArrowLeft' || k === 'Left') j = i - 1;
+    else if (k === 'ArrowDown' || k === 'Down' || k === 'ArrowUp' || k === 'Up') {
+      var down = k === 'ArrowDown' || k === 'Down', cur = bs[i];
+      if (!cur) j = 0;
+      else {
+        var r = cur.getBoundingClientRect(), cx = r.left + r.width / 2, bd = 1e9; j = i;
+        bs.forEach(function (b, n) {
+          var o = b.getBoundingClientRect(), dy = down ? o.top - r.top : r.top - o.top; if (dy <= 4) return;
+          var d = dy * 3 + Math.abs(o.left + o.width / 2 - cx); if (d < bd) { bd = d; j = n; }
+        });
+      }
+    }
+    else if ((k === ' ' || k === 'Spacebar') && i >= 0) { bs[i].click(); e.preventDefault(); return; }
+    else if (k === 'Enter' && i < 0) { pause(false); e.preventDefault(); return; }
+    else return;                                                  // Enter on a button: the browser clicks it
+    e.preventDefault();
+    if (bs.length) { try { bs[(j + bs.length) % bs.length].focus(); } catch (x) {} }
+  }
+
   /* ============================================================ MODES */
   function startShow(mode, handle) {
     stopChooser();
     state.mode = mode; state.person = handle || ''; state.snap = null; state.psnap = null; state.tickerKey = '';
     state.scenes = []; state.idx = -1; clearTimeout(state.timer); clearSceneWork(); $('scene').innerHTML = '';
     var url = location.pathname + '?' + location.search.replace(/^\?/, '').split('&').filter(function (kv) { return kv && !/^(h|mode)=/.test(kv); })
-      .concat(mode === 'person' ? ['h=' + encodeURIComponent(handle)] : ['mode=all']).join('&');
+      .concat(mode === 'person' ? ['h=' + encodeURIComponent(handle)] : ['mode=' + mode]).join('&');
     try { history.replaceState(null, '', url); } catch (e) {}
     if (mode === 'person') rememberRecent(handle);
+    if (state.paused) pause(false);
+    if (mode !== 'media') mrPanel(false);
+    setCls(document.body, 'mr', mode === 'media');
+    $('mrBtn').className = mode === 'media' && !KIOSK ? 'tbtn' : 'tbtn hidden';
+    $('brandSub').textContent = mode === 'media' ? t('mrBrand') : t('brandSub');
     $('chooser').className = 'hidden'; $('app').style.visibility = ''; setCls(document.body, 'choosing', false);
     state.stopped = false; clearTimeout(fetchTimer); fetchData(true);
   }
@@ -1839,6 +2285,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   function openChooser() {
     clearTimeout(state.timer); clearSceneWork(); clearTimeout(fetchTimer);
     state.mode = null; $('app').style.visibility = 'hidden'; $('chooser').className = ''; setCls(document.body, 'choosing', true);
+    mrPanel(false); setCls(document.body, 'mr', false); $('mrBtn').className = 'tbtn hidden';
     heroLevel('hi'); renderRecent(); loadStates(); $('chInput').value = ''; $('chList').innerHTML = '';
     chLeft = CHOOSER_AUTO_S; tickChooser(); clearTimeout(chResumeT);
     clearInterval(chT); chT = setInterval(tickChooser, 1000);
@@ -2004,6 +2451,8 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
     else if (e.key === 'Enter') { if (chSel >= 0) pick(chSel); e.preventDefault(); }
     e.stopPropagation();
   });
+  $('chMedia').onclick = function () { startShow('media'); };
+  $('chMedia').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { startShow('media'); e.preventDefault(); } e.stopPropagation(); };
   $('chAll').onclick = function () { startShow('all'); };
   $('chAll').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { startShow('all'); e.preventDefault(); } };
   $('chooser').addEventListener('mousemove', holdChooser);
@@ -2098,20 +2547,24 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   $('langBtn').onclick = toggleLang; $('chLang').onclick = function () { holdChooser(); toggleLang(); };
   $('backBtn').onclick = goBack; $('chBack').onclick = goBack;
   $('swBtn').onclick = function () { openChooser(); };
+  $('mrBtn').onclick = function () { if (state.mode === 'media') pause(!MR.open); wake(); };
+  $('mrpX').onclick = function () { pause(false); };
   document.addEventListener('mousemove', wake);
   var tx = null;
   document.addEventListener('touchstart', function (e) { wake(); holdForReading(e); tx = e.touches && e.touches[0] ? e.touches[0].clientX : null; }, { passive: true });
   window.addEventListener('scroll', holdForReading, { passive: true });
   document.addEventListener('touchend', function (e) {
-    if (!state.mode || tx === null || !e.changedTouches || !e.changedTouches[0]) return;
+    if (!state.mode || MR.open || tx === null || !e.changedTouches || !e.changedTouches[0]) return;
     var dx = e.changedTouches[0].clientX - tx; tx = null;
     if (Math.abs(dx) > 60) show(state.idx + (dx < 0 ? 1 : -1));
   }, { passive: true });
   document.addEventListener('keydown', function (e) {
     if (!introDone) { endIntro(); return; }
     if (!state.mode) return;
+    if (MR.open) { mrKey(e); return; }
     var k = e.key || '';
-    if (k === 'ArrowRight' || k === 'Right' || k === 'MediaTrackNext') show(state.idx + 1);
+    if ((k === 'm' || k === 'M') && state.mode === 'media') pause(true);
+    else if (k === 'ArrowRight' || k === 'Right' || k === 'MediaTrackNext') show(state.idx + 1);
     else if (k === 'ArrowLeft' || k === 'Left' || k === 'MediaTrackPrevious') show(state.idx - 1);
     else if (k === ' ' || k === 'Spacebar' || k === 'MediaPlayPause' || k === 'Enter') { if (k === 'Enter' && e.target && e.target.tagName === 'BUTTON') return; pause(!state.paused); e.preventDefault(); }
     else if (k === 'f' || k === 'F') fullscreen();
@@ -2175,6 +2628,7 @@ body.phone-land .mapw{grid-template-columns:1.2fr 1fr}
   else state.all = demoSnap();
   playIntro(function () {
     if (Q.h) startShow('person', Q.h);
+    else if (Q.mode === 'media') startShow('media');
     else if (KIOSK || Q.mode === 'all' || DEMO) startShow('all');
     else openChooser();
   });

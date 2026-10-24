@@ -11314,6 +11314,90 @@
    "name": "Nahid Hasan",
    "at": 1792752761433,
    "live": true
+  },
+  "the_hindu": {
+   "file": "avatars/the_hindu.jpg",
+   "handle": "the_hindu",
+   "name": "The Hindu",
+   "at": 1792820791349,
+   "live": true
+  },
+  "indiatoday": {
+   "file": "avatars/indiatoday.jpg",
+   "handle": "indiatoday",
+   "name": "IndiaToday",
+   "at": 1792820791366,
+   "live": true
+  },
+  "timesofindia": {
+   "file": "avatars/timesofindia.jpg",
+   "handle": "timesofindia",
+   "name": "The Times Of India",
+   "at": 1792820791377,
+   "live": true
+  },
+  "httweets": {
+   "file": "avatars/httweets.jpg",
+   "handle": "httweets",
+   "name": "Hindustan Times",
+   "at": 1792820791384,
+   "live": true
+  },
+  "ndtv": {
+   "file": "avatars/ndtv.jpg",
+   "handle": "ndtv",
+   "name": "NDTV",
+   "at": 1792820791486,
+   "live": true
+  },
+  "aajtak": {
+   "file": "avatars/aajtak.jpg",
+   "handle": "aajtak",
+   "name": "AajTak",
+   "at": 1792820791837,
+   "live": true
+  },
+  "indianexpress": {
+   "file": "avatars/indianexpress.jpg",
+   "handle": "indianexpress",
+   "name": "The Indian Express",
+   "at": 1792820791852,
+   "live": true
+  },
+  "dainikbhaskar": {
+   "file": "avatars/dainikbhaskar.jpg",
+   "handle": "dainikbhaskar",
+   "name": "Dainik Bhaskar",
+   "at": 1792820791861,
+   "live": true
+  },
+  "pib_india": {
+   "file": "avatars/pib_india.jpg",
+   "handle": "pib_india",
+   "name": "PIB India",
+   "at": 1792820803758,
+   "live": true
+  },
+  "amarujalanews": {
+   "file": "avatars/amarujalanews.jpg",
+   "handle": "amarujalanews",
+   "name": "Amar Ujala",
+   "at": 1792820876756,
+   "live": true
+  },
+  "zeenews": {
+   "file": "avatars/zeenews.jpg",
+   "handle": "zeenews",
+   "name": "Zee News",
+   "at": 1792820878885,
+   "live": true
+  },
+  "news18india": {
+   "file": "avatars/news18india.jpg",
+   "handle": "news18india",
+   "name": "News18 India",
+   "at": 1792821075954,
+   "live": true
   }
  },
  "parties": {

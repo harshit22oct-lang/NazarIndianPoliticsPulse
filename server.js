@@ -358,6 +358,29 @@ function fetchOnDemand(handle, cb) {
   })().catch(function () { done(false); });
 }
 
+/* -------------------------------------------- publisher icons (Media Room) */
+/* A publisher found through Google News gets its website icon from Google's public
+   icon service, once; it is kept in live_assets/sources. Icons smaller than 32 px look
+   blurred on a TV, so they count as "no icon" and the page draws the initials. */
+var SRC_DIR = path.join(ASSETS, 'sources'), iconMiss = {}, iconWait = {};
+function siteIcon(dom, cb) {
+  var exts = ['.png', '.jpg', '.webp', '.ico'];
+  for (var i = 0; i < exts.length; i++) { var fp0 = path.join(SRC_DIR, dom + exts[i]); if (fs.existsSync(fp0)) return cb(fp0); }
+  if (iconMiss[dom] && Date.now() - iconMiss[dom] < 86400000) return cb(null);
+  if (iconWait[dom]) { iconWait[dom].push(cb); return; }
+  iconWait[dom] = [cb];
+  function done(fp) { var l = iconWait[dom] || []; delete iconWait[dom]; if (!fp) iconMiss[dom] = Date.now(); l.forEach(function (f) { try { f(fp); } catch (e) {} }); }
+  fetch('https://www.google.com/s2/favicons?domain=' + encodeURIComponent(dom) + '&sz=128', { signal: AbortSignal.timeout(10000) })
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); var ct = r.headers.get('content-type') || ''; return r.arrayBuffer().then(function (a) { return { b: Buffer.from(a), ct: ct }; }); })
+    .then(function (x) {
+      var b = x.b, ext = /png/.test(x.ct) ? '.png' : /jpe?g/.test(x.ct) ? '.jpg' : /webp/.test(x.ct) ? '.webp' : /icon/.test(x.ct) ? '.ico' : null;
+      if (!ext || b.length < 600) return done(null);
+      if (ext === '.png' && b.length > 24 && b.readUInt32BE(16) < 32) return done(null);      // a 16 px icon
+      try { fs.mkdirSync(SRC_DIR, { recursive: true }); } catch (e) {}
+      var fp = path.join(SRC_DIR, dom + ext); fs.writeFileSync(fp, b); done(fp);
+    }).catch(function () { done(null); });
+}
+
 /* --------------------------------------------------------------- states */
 /* every state in the data with enough of its own posts to fill the screens */
 var STATE_MIN_POSTS = 200;
@@ -457,7 +480,7 @@ function makeService(rows) {
 }
 
 /* ------------------------------------------------------------------ http */
-var TYPES = { '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.json': 'application/json' };
+var TYPES = { '.jpg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.ico': 'image/x-icon', '.json': 'application/json' };
 function send(res, code, type, body, extra) {
   var h = {
     'Content-Type': type,
@@ -477,6 +500,8 @@ function file(res, p) {
 
 var svc = null, meta = null, page = { mtime: 0, body: '' }, attacks = null;
 var ATTACKS = require('./attacks.js');
+/* Media Room: live news from free feeds, independent of the CSV (starts with the server) */
+var mediaRoom = require('./media_room.js').createMediaRoom({ dataDir: DATA });
 function avatarFor(h) {
   var k = String(h || '').toLowerCase(), e = imgIx.avatars[k];
   if (e && e.file) return '/live/img/a/' + encodeURIComponent(k);
@@ -531,6 +556,15 @@ var server = http.createServer(function (req, res) {
     return file(res, path.join(ASSETS, hit));
   }
   if ((m = /^\/live\/img\/leaders\/([a-z0-9-]+\.(jpg|png|webp))$/.exec(p))) return file(res, path.join(ASSETS, 'leaders', m[1]));
+  if ((m = /^\/live\/img\/src\/([a-z0-9.-]+\.[a-z]{2,})$/.exec(p))) {       // a news publisher's website icon (Media Room)
+    return siteIcon(m[1], function (fp) { if (fp) return file(res, fp); send(res, 404, 'text/plain', 'Not found'); });
+  }
+  if (p === '/api/media-room') {
+    /* ?state=<name> (the Media Room's own pick) wins over the page's scope */
+    var mrSt = q.state ? String(q.state).slice(0, 60) : LIVE.stateOfScope(String(q.scope || 'all'));
+    try { return json(res, 200, mediaRoom.get(mrSt || null)); }
+    catch (err) { console.log('  [media] ' + err.message); return json(res, 500, { error: 'News is not available right now.', code: 'server' }); }
+  }
   if (p === '/api/live-states') {
     if (!svc) return json(res, 503, { error: 'Data is still loading.', code: 'server' });
     return json(res, 200, { states: STATES });
@@ -556,6 +590,7 @@ server.listen(PORT, HOST, function () {
   console.log('\n  NAZAR prototype');
   console.log('  open:  http://localhost:' + PORT + '/live' + (HOST === '0.0.0.0' ? '   (also from other devices on this network)' : ''));
   console.log('  loading data from ' + DATA + ' ...');
+  mediaRoom.start().catch(function (e) { console.log('  [media] ' + e.message); });
   loadData().then(function (rows) {
     meta = { from: rows.length ? rows[0]['Tweet Date'].slice(0, 16) : null, to: rows.length ? rows[rows.length - 1]['Tweet Date'].slice(0, 16) : null, posts: rows.length };
     STATES = stateList(rows); STATE_SET = {}; STATES.forEach(function (s) { STATE_SET[s.state] = 1; });
