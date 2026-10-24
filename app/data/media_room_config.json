@@ -66,6 +66,12 @@
     { "en": "X official API", "why": "no usable free reading tier (pay per read); Nazar uses the X data Pulse already collects" }
   ],
   "block_publishers": ["Head Topics"],
+  "_bjp_side": "the AI's 'attack on BJP' / 'good news for BJP' counts only when the headline also names BJP's side (a check against the model's mistakes)",
+  "bjp_side": ["BJP", "NDA", "Modi", "Yogi", "Amit Shah", "Nadda", "Nitin Nabin", "Rajnath", "Sitharaman", "Fadnavis", "Shivraj", "Dhami", "Himanta", "Bhupendra Patel", "Mohan Yadav",
+               "Bhajanlal", "Nayab Saini", "Rekha Gupta", "Vishnu Deo Sai", "Majhi", "Keshav Maurya", "Brajesh Pathak", "Centre", "central government", "Union government", "Union minister",
+               "govt", "government", "double engine",
+               "भाजपा", "बीजेपी", "मोदी", "योगी", "शाह", "नड्डा", "राजनाथ", "सीतारमण", "फडणवीस", "धामी", "हिमंत", "मोहन यादव", "भजनलाल", "सैनी", "रेखा गुप्ता", "केशव मौर्य", "ब्रजेश पाठक",
+               "सरकार", "केंद्र", "केंद्रीय मंत्री", "एनडीए", "प्रधानमंत्री", "डबल इंजन"],
   "_publisher_x": "logo for a publisher found through Google News: its X profile photo (sharper than a website icon). Keys with a dot are website domains (sub-domains match too), others are the publisher's name as Google News writes it. Handles checked 24 Oct 2026.",
   "publisher_x": {
     "abplive.com": "ABPNews", "news.abplive.com": "abplive", "navbharattimes.indiatimes.com": "NavbharatTimes", "punjabkesari.in": "punjabkesari",
@@ -104,6 +110,10 @@
                "हमला", "निशाना", "तंज", "पलटवार", "बयानबाज़ी", "बयानबाजी", "बनाम", "जवाब", "घेरा", "आरोप", "पूछा", "पूछे"],
       "internal": ["rebel", "rebels", "rebellion", "infighting", "factionalism", "dissidents", "dissident", "गुटबाज़ी", "गुटबाजी", "बगावत", "बागी", "अंदरूनी कलह", "आंतरिक कलह", "कलह", "पार्टी में फूट", "भितरघात"],
       "ruling": ["BJP", "NDA", "Modi", "Yogi", "Amit Shah", "भाजपा", "बीजेपी", "मोदी", "योगी", "शाह", "एनडीए"] },
+    { "id": "atk", "en": "Attacks on BJP & the government", "hi": "BJP और सरकार पर हमले", "on": true, "priority": 1, "weight": 1.5, "rule": "ai",
+      "_note": "set by the AI step only: opposition attacks and critical media reports; the page says which" },
+    { "id": "pro", "en": "Good news for BJP", "hi": "BJP के पक्ष में", "on": true, "priority": 2, "weight": 1.1, "rule": "ai",
+      "_note": "set by the AI step only: praise, achievements, wins, people joining BJP" },
     { "id": "politics", "en": "Politics", "hi": "राजनीति", "on": true, "priority": 1,
       "words": ["BJP", "Congress", "Samajwadi", "BSP", "AAP", "TMC", "RJD", "JDU", "JD(U)", "DMK", "NCP", "Shiv Sena", "CPI(M)", "Modi", "Rahul Gandhi", "Yogi", "Akhilesh", "Mamata", "Kejriwal", "Amit Shah", "Nitish", "Tejashwi", "minister", "MLA", "MLAs", "CM", "opposition", "politics", "political",
                 "भाजपा", "बीजेपी", "कांग्रेस", "सपा", "बसपा", "टीएमसी", "राजद", "जदयू", "मोदी", "राहुल", "योगी", "अखिलेश", "ममता", "केजरीवाल", "अमित शाह", "नीतीश", "तेजस्वी", "मंत्री", "मुख्यमंत्री", "विधायक", "सांसद", "विपक्ष", "राजनीति", "सियासत", "सियासी", "पार्टी"] },

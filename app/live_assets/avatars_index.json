@@ -11503,6 +11503,13 @@
    "name": "Lokmat",
    "at": 1792822526486,
    "live": true
+  },
+  "jagrannews": {
+   "file": "avatars/jagrannews.jpg",
+   "handle": "jagrannews",
+   "name": "Dainik Jagran",
+   "at": 1792823603191,
+   "live": true
   }
  },
  "parties": {

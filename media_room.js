@@ -20,6 +20,7 @@
 var fs = require('fs');
 var path = require('path');
 var ML = require('./app/media_lib.js');
+var MAI = require('./media_ai.js');
 
 var CFG_FILE = path.join(__dirname, 'app', 'data', 'media_room_config.json');
 var UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36';
@@ -67,7 +68,7 @@ async function fetchFeed(f) {
 }
 
 /* ------------------------------------------------------------- storage */
-function makeStore(dataDir) {
+function makeStore(dataDir, aiUsage) {
   var uri = process.env.MONGODB_URI || '', db = null, file = path.join(dataDir, 'media_room.json');
   async function conn() {
     if (db) return db;
@@ -87,11 +88,23 @@ function makeStore(dataDir) {
       if (uri) {
         var d = await conn();
         var docs = await d.collection('media_items').find({ pub: { $gte: since } }, { projection: { at: 0 } }).toArray();
-        var meta = await d.collection('media_meta').findOne({ _id: 'status' });
-        return { items: docs, status: (meta && meta.status) || {} };
+        var meta = await d.collection('media_meta').findOne({ _id: 'status' }), au = await d.collection('media_meta').findOne({ _id: 'ai_usage' });
+        return { items: docs, status: (meta && meta.status) || {}, aiUsage: au && au.usage };
       }
-      try { var j = JSON.parse(fs.readFileSync(file, 'utf8')); return { items: (j.items || []).filter(function (x) { return x.pub >= since; }), status: j.status || {} }; }
+      try { var j = JSON.parse(fs.readFileSync(file, 'utf8')); return { items: (j.items || []).filter(function (x) { return x.pub >= since; }), status: j.status || {}, aiUsage: j.aiUsage }; }
       catch (e) { return { items: [], status: {} }; }
+    },
+    /* AI labels go with their headlines; today's AI use is kept so a restart does not reset the cap */
+    saveAi: async function (all, labelled, usage, status) {
+      if (uri) {
+        var d = await conn(), ops = labelled.map(function (x) { return { updateOne: { filter: { _id: x._id }, update: { $set: { ai: x.ai } } } }; });
+        if (ops.length) await d.collection('media_items').bulkWrite(ops, { ordered: false });
+        await d.collection('media_meta').updateOne({ _id: 'ai_usage' }, { $set: { usage: usage, at: new Date() } }, { upsert: true });
+        return;
+      }
+      var tmp = file + '.tmp';
+      fs.writeFileSync(tmp, JSON.stringify({ items: all, status: status, aiUsage: usage }));
+      fs.renameSync(tmp, file);
     },
     save: async function (all, fresh, changed, status) {
       if (uri) {
@@ -102,7 +115,7 @@ function makeStore(dataDir) {
         return;
       }
       var tmp = file + '.tmp';
-      fs.writeFileSync(tmp, JSON.stringify({ items: all, status: status }));
+      fs.writeFileSync(tmp, JSON.stringify({ items: all, status: status, aiUsage: aiUsage ? aiUsage() : undefined }));
       fs.renameSync(tmp, file);
     },
     /* which states display-only copies are showing, so the collecting copy fetches them */
@@ -121,7 +134,7 @@ function makeStore(dataDir) {
 
 /* ------------------------------------------------------------- the engine */
 function createMediaRoom(opts) {
-  var log = opts.log || console.log, store = makeStore(opts.dataDir);
+  var log = opts.log || console.log, AI = MAI.createLabeller({ log: log }), store = makeStore(opts.dataDir, AI.usage);
   var cfg = JSON.parse(fs.readFileSync(CFG_FILE, 'utf8')), tagger = ML.makeTagger(cfg), NAT = nationalFeeds(cfg);
   var items = {}, status = {}, nextAt = {}, watch = {}, watchSaved = {}, cache = {}, busy = false, worker = false, firstPass = true, lastRun = 0;
   /* weight: how much longer a topic's screen stays up (important ones longer); from the
@@ -131,6 +144,7 @@ function createMediaRoom(opts) {
     return { id: n.id, en: n.en, hi: n.hi, on: n.on !== false, priority: p, weight: n.weight || (p === 1 ? 1.25 : p === 2 ? 1.1 : 1), i: i };
   })
     .sort(function (a, b) { return a.priority - b.priority || a.i - b.i; });
+  var BJPSIDE = ML.anyRe(cfg.bjp_side || []);
   var BLOCK = {}; (cfg.block_publishers || []).forEach(function (p) { BLOCK[String(p).toLowerCase()] = 1; });   // copy-paste sites
   var SRC = cfg.sources.map(function (s) { return { id: s.id, name: s.en, nameHi: s.hi, kind: s.type, group: s.group, direct: !!((s.rss && s.rss.length) || s.youtube) }; });
 
@@ -223,7 +237,32 @@ function createMediaRoom(opts) {
     var s = await store.load(); items = {}; s.items.forEach(function (x) { items[x._id] = x; }); status = s.status || {};
     var newest = 0; Object.keys(status).forEach(function (k) { if ((status[k].lastTry || 0) > newest) newest = status[k].lastTry; });
     if (newest) { lastRun = newest; firstPass = false; }
+    AI.restore(s.aiUsage);
     cache = {};
+  }
+
+  /* the AI step, once a minute: the newest political headlines without a label, one per
+     story (the newest headline of a story speaks for all its copies), 20 per request */
+  var aiBusy = false;
+  async function aiStep() {
+    if (aiBusy || !AI.on) return; aiBusy = true;
+    try {
+      var since = Date.now() - 24 * 3600000, all = Object.keys(items).map(function (k) { return items[k]; });
+      var cands = all.filter(function (x) { return x.pub >= since && !x.ai; });
+      cands.forEach(function (x) { x.tags = tagger(x.title, x.src); });
+      /* not worth a token: news bulletins ("Top Headlines | BJP | Rahul | ...") and #shorts clips */
+      cands = cands.filter(function (x) { return x.tags.length && !/#shorts|top headlines|morning brief|evening brief|news bulletin/i.test(x.title) && (x.title.split('|').length < 4); });
+      if (!cands.length) return;
+      var groups = ML.cluster(cands).map(function (g) { return g.items.slice().sort(function (a, b) { return b.pub - a.pub; }); })
+        .sort(function (a, b) { return b[0].pub - a[0].pub; });
+      var callsBefore = AI.usage().calls;
+      var labels = await AI.step(groups.map(function (g) { return g[0]; })), done = [];
+      groups.forEach(function (g) { var L = labels[g[0]._id]; if (L) g.forEach(function (x) { x.ai = L; done.push(x); }); });
+      if (done.length) cache = {};
+      if (AI.usage().calls !== callsBefore) {
+        try { await store.saveAi(all, done, AI.usage(), status); } catch (e) { log('  [media-ai] could not save: ' + e.message); }
+      }
+    } finally { aiBusy = false; }
   }
 
   /* per source: is it answering, and when was its newest headline (for the honest footer) */
@@ -242,12 +281,30 @@ function createMediaRoom(opts) {
     var all = Object.keys(items).map(function (k) { return items[k]; }), st = key === 'all' ? null : key.slice(3);
     all.forEach(function (x) {
       x.tags = tagger(x.title, x.src);                                        // today's rules, also for headlines saved before a rule changed
+      if (x.ai) {                                                             // the AI's reading, where there is one
+        /* the AI's "against / for BJP" counts only when the headline names BJP's side (a small
+           model sometimes reads any scandal or success as BJP's); "good news" is others reporting
+           it -- a government's own release is already on "official statements" */
+        var side = BJPSIDE(x.title);
+        if (x.ai.s === 'a' && side) x.tags.push('atk'); else if (x.ai.s === 'f' && side && x.kind !== 'official') x.tags.push('pro');
+        var r = x.tags.indexOf('opprift');                                    // and it has the last word on "opposition"
+        if (x.ai.o && r < 0) x.tags.push('opprift'); else if (!x.ai.o && r >= 0) x.tags.splice(r, 1);
+        if ((x.ai.s !== 'n' || x.ai.o) && x.tags.indexOf('politics') < 0) x.tags.push('politics');
+      }
       if (x.via !== 'gnews' && NAMEOF[x.src]) x.srcName = NAMEOF[x.src];     // a source renamed in the config
       if (!/\s/.test(x.title) && /-/.test(x.title)) x.title = x.title.replace(/-+/g, ' ').replace(/^./, function (c) { return c.toUpperCase(); });   // saved before the slug fix
     });
     var mine = all.filter(function (x) { return st ? x.states.indexOf(st) >= 0 : x.nat; });
     cache[key] = { at: Date.now(), v: ML.buildView({ items: mine, topics: topics.map(function (t) { return t.id; }), sources: SRC, bySource: !st, logoOf: logoOf, now: Date.now() }) };
     return cache[key].v;
+  }
+  /* for the page: is the AI working, and how much of the last 24 hours it has read. A
+     display-only copy has no labeller of its own: it reports what the stored labels show. */
+  function aiInfo() {
+    var since = Date.now() - 24 * 3600000, n = 0, last = 0;
+    Object.keys(items).forEach(function (k) { var x = items[k]; if (x.ai && x.pub >= since) { n++; if (x.ai.at > last) last = x.ai.at; } });
+    var s = AI.status();
+    return { state: worker ? s.state : (n ? 'ok' : 'off'), labelled: n, last: last || null, until: s.until, used: worker ? Math.round(100 * s.tokens / s.cap) : null };
   }
   function touch(st) {
     var now = Date.now(), isNew = !watch[st] || now - watch[st] > WATCH_MS;
@@ -267,6 +324,8 @@ function createMediaRoom(opts) {
       }
       setTimeout(function () { run().catch(function (e) { log('  [media] ' + e.message); }); }, 3000);
       setInterval(function () { run().catch(function (e) { log('  [media] ' + e.message); }); }, TICK_MS).unref();
+      log('  [media-ai] ' + (AI.on ? 'on -- ' + AI.status().model + ', at most ' + AI.status().cap + ' tokens a day' : 'off (no GROQ_API_KEY)'));
+      if (AI.on) setInterval(function () { aiStep().catch(function (e) { log('  [media-ai] ' + e.message); }); }, 60000).unref();
     },
     /* everything the page needs: All India, plus one state (the page's scope, or the
        state picked in the Media Room's own bar) when st is given */
@@ -276,7 +335,7 @@ function createMediaRoom(opts) {
       return {
         generatedAt: new Date().toISOString(), lastRun: lastRun || null, collecting: firstPass, worker: worker,
         everyMin: EVERY / 60000, topics: topics, state: st || null,
-        all: view('all'), local: st ? view('st:' + st) : null, sources: sourceStatus()
+        all: view('all'), local: st ? view('st:' + st) : null, sources: sourceStatus(), ai: aiInfo()
       };
     },
     states: Object.keys(ML.STATE_HI)

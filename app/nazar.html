@@ -32,7 +32,12 @@
   --heroMain:.26; --heroSide:.2;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{font-size:16px;height:100%;background:#160602}
+html{font-size:16px;height:100%;background:#160602;-webkit-text-size-adjust:100%;text-size-adjust:100%}   /* no Android / iOS text inflation */
+/* a laptop browser window (wide and short, set by scale()): slimmer frame, more height for the screens */
+body.wide #app{padding:1rem 3.4rem 1rem} body.wide .top{height:4.8rem} body.wide #stage{padding-top:.8rem}
+body.wide .st-head{margin-bottom:1rem} body.wide .st-title{font-size:3.8rem} body.wide .ticker{height:3.9rem;margin-top:.7rem} body.wide .tk-single{line-height:3.9rem}
+body.wide #chooser{padding:1.2rem 3.4rem 1.2rem;overflow-y:auto} body.wide .ch-q{margin-top:0} body.wide .ch-q h1{font-size:3.2rem} body.wide .ch-q p{font-size:1.4rem;margin-top:.3rem}
+body.wide .ch-cards{margin-top:1.2rem}
 body{height:100%;overflow:hidden;background:#160602;color:var(--text);font-family:var(--body);-webkit-font-smoothing:antialiased}
 body.idle,body.kiosk{cursor:none}
 button,input{font-family:inherit;color:inherit}
@@ -456,46 +461,58 @@ body.reduced .bar-fill{transition:none}
 .bo-row .x{font-family:var(--head);font-weight:700;font-size:2.8rem;color:var(--good);margin-left:1rem}
 
 /* post */
-/* biggest attacks on BJP / the governments: two big cards (sticky top two) + the next ones */
-.atk{display:grid;grid-template-columns:1.6fr 1fr;grid-gap:1.6rem;height:100%}
-.atk-l{display:grid;grid-template-rows:1fr 1fr;grid-gap:1.4rem;min-height:0}
-.atk-c{position:relative;display:flex;flex-direction:column;min-height:0;padding:1.8rem 2.2rem;border-radius:1.6rem;background:var(--glass);border:.08rem solid var(--line);
-  box-shadow:0 1.6rem 3.4rem rgba(0,0,0,.35);overflow:hidden}
-.atk-c:before{content:'';position:absolute;left:0;top:0;bottom:0;width:.5rem;background:var(--sevc,#FF7043)}
-.atk-h{display:flex;align-items:center;flex-wrap:nowrap;overflow:hidden;flex:0 0 auto}
-.atk-rk{font-family:var(--head);font-weight:700;font-size:2.6rem;line-height:1;color:var(--gold);margin-right:1.2rem}
-.atk-chip{display:inline-block;font-size:1.15rem;font-weight:700;padding:.35rem .9rem;border-radius:2rem;margin:0 .6rem .4rem 0;background:rgba(255,255,255,.08);color:var(--text);white-space:nowrap}
-.atk-chip.tg{background:rgba(255,61,0,.2);color:#FFB199;border:.08rem solid rgba(255,112,67,.45)}
-.atk-sev{display:inline-flex;align-items:center;flex:0 0 auto;white-space:nowrap;margin:0 1rem .4rem 0;font-size:1.15rem;font-weight:700;color:var(--muted)}
-.atk-sev i{display:inline-block;width:1.1rem;height:1.1rem;border-radius:50%;margin-right:.3rem;background:rgba(255,255,255,.14)}
-.atk-sev i.on{background:var(--sevc,#FF7043);box-shadow:0 0 .6rem var(--sevc,#FF7043)}
-.atk-sev b{margin-left:.5rem;color:var(--text)}
-/* nothing in a card may shrink: the quote keeps whole lines (3 at most) and the
-   summary / speaker rows sit under it, never on top of it */
-.atk-q{flex:0 0 auto;margin-top:.8rem;font-size:1.95rem;line-height:1.36;max-height:5.32em;font-weight:500;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.atk-s{flex:0 0 auto;margin-top:.5rem;font-size:1.2rem;line-height:1.5;max-height:1.5em;color:var(--dim);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-.atk-by{flex:0 0 auto}
-.atk-row .n span em{font-style:normal;font-weight:700}
-.atk-row .n span .to{color:#FFB199;font-weight:700}
-.atk-s em{font-style:normal;color:var(--gold);font-weight:700;margin-right:.4rem}
-.atk-by{margin-top:auto;padding-top:1rem;display:flex;align-items:center}
-.atk-by .av{width:4.6rem;height:4.6rem;font-size:1.7rem;margin-right:1.1rem;border-width:.18rem;flex:0 0 auto}
-.atk-by .n{min-width:0}
-.atk-by b{display:block;font-family:var(--head);font-size:1.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.atk-by span{font-size:1.15rem;color:var(--muted)}
-.atk-by .v{margin-left:auto;text-align:right;padding-left:1rem}
-.atk-by .v b{font-size:2.6rem;color:var(--gold);line-height:1}
-.atk-r{display:flex;flex-direction:column;min-height:0}
-.atk-rh{font-family:var(--head);font-weight:700;font-size:1.3rem;letter-spacing:.14rem;text-transform:uppercase;color:var(--dim);margin-bottom:.8rem}
-.atk-row{display:flex;align-items:center;padding:1rem 1.2rem;margin-bottom:.8rem;border-radius:1.1rem;background:rgba(26,8,3,.7);border:.08rem solid var(--line)}
-.atk-row .r{font-family:var(--head);font-weight:700;font-size:1.7rem;color:var(--dim);width:2.4rem;flex:0 0 auto}
-.atk-row .av{width:3.8rem;height:3.8rem;font-size:1.4rem;margin-right:1rem;border-width:.15rem;flex:0 0 auto}
-.atk-row .n{flex:1 1 auto;min-width:0}
-.atk-row .n b{display:block;font-family:var(--head);font-size:1.6rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.atk-row .n > span{display:block;font-size:1.1rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.atk-row .x{flex:0 0 auto;margin-left:.8rem;font-family:var(--head);font-weight:700;font-size:1.6rem;padding:.2rem .7rem;border-radius:.6rem;color:#fff;background:var(--sevc,#FF7043)}
-.atk-note{margin-top:auto;font-size:1.05rem;color:var(--dim);line-height:1.4}
-body.portrait .atk{grid-template-columns:1fr} body.portrait .atk-r{display:none}
+/* biggest attacks on BJP / the governments -- a threat board: #1 down the left like a lead
+   story (who attacked, how hard, whom, their words, the AI's one-line summary), #2 top right,
+   the next ones as a list under it. Severity is a coloured badge: 5 red, 4 orange, 3 amber. */
+.ak{display:grid;grid-template-columns:1.25fr 1fr;grid-gap:1.6rem;height:100%}
+.ak-r{display:flex;flex-direction:column;min-height:0;min-width:0}
+.ak-c{position:relative;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;padding:1.8rem 2rem 1.6rem;border-radius:1.6rem;
+  background:linear-gradient(180deg,rgba(42,13,4,.94),rgba(24,7,2,.94));border:.08rem solid rgba(255,153,51,.22);box-shadow:0 1.6rem 3.4rem rgba(0,0,0,.4),inset 0 .08rem 0 rgba(255,200,87,.1)}
+.ak-c:after{content:'';position:absolute;top:0;left:0;right:0;height:.35rem;background:var(--sevc,#FF7043)}
+.ak-c.ak-lead{padding:2.4rem 2.6rem 2.2rem;background:linear-gradient(160deg,rgba(255,61,0,.16) 0%,rgba(46,14,4,.95) 36%,rgba(24,7,2,.95) 100%);border-color:rgba(255,138,101,.4)}
+.ak-r .ak-c{flex:0 1 auto;margin-bottom:1.4rem}
+.ak-top{display:flex;align-items:center;flex-wrap:wrap;flex:0 0 auto}
+.ak-top > *{margin:0 .7rem .5rem 0}
+.ak-rk{font-family:var(--head);font-weight:700;font-size:2.3rem;line-height:1;color:var(--gold)}
+.ak-sev{display:inline-flex;align-items:baseline;padding:.35rem .9rem .3rem;border-radius:.7rem;background:var(--sevc,#FF7043);color:#fff;font-family:var(--head);font-weight:700;white-space:nowrap;
+  box-shadow:0 .3rem 1rem rgba(0,0,0,.3)}
+.ak-sev b{font-size:1.8rem;line-height:1} .ak-sev small{font-family:var(--deva);font-size:1.05rem;margin-left:.35rem;opacity:.92}
+.ak-tg,.ak-tp{display:inline-block;font-size:1.2rem;font-weight:700;padding:.4rem 1rem;border-radius:2rem;white-space:nowrap;font-family:var(--deva)}
+.ak-tg{background:rgba(255,61,0,.18);color:#FFB199;border:.08rem solid rgba(255,112,67,.5)}
+.ak-tp{background:rgba(255,255,255,.08);color:var(--muted)}
+.ak-who{display:flex;align-items:center;margin-top:1.2rem;flex:0 0 auto;min-width:0}
+.ak-who .av{width:4.8rem;height:4.8rem;font-size:1.8rem;margin-right:1.2rem;border-width:.18rem}
+.ak-lead .ak-who{margin-top:1.8rem} .ak-lead .ak-who .av{width:7rem;height:7rem;font-size:2.6rem;border-width:.25rem;margin-right:1.6rem}
+.ak-who .n{flex:1 1 auto;min-width:0}
+.ak-who b{display:block;font-family:var(--head),var(--deva);font-size:2.1rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ak-lead .ak-who b{font-size:2.9rem}
+.ak-who .n > span{display:flex;align-items:center;margin-top:.35rem;font-size:1.2rem;color:var(--muted);white-space:nowrap;overflow:hidden}
+.ak-pt{display:inline-block;flex:0 0 auto;font-style:normal;font-size:1.05rem;font-weight:700;padding:.15rem .6rem;border-radius:.4rem;color:#fff;margin-right:.6rem;font-family:var(--head)}
+.ak-who .v{flex:0 0 auto;margin-left:1rem;text-align:right}
+.ak-who .v b{font-family:var(--head);font-size:2.4rem;color:var(--gold);line-height:1}
+.ak-lead .ak-who .v b{font-size:3.4rem}
+.ak-who .v span{display:block;font-size:1.05rem;color:var(--dim);margin-top:.2rem}
+/* the quote keeps whole lines (fitAttackCards gives lines up when space is short) */
+.ak-q{flex:0 0 auto;margin-top:1.2rem;font-size:2rem;line-height:1.4;font-weight:500;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ak-lead .ak-q{margin-top:2rem;font-size:2.9rem;line-height:1.36;font-weight:600;-webkit-line-clamp:5}
+.ak-s{flex:0 0 auto;margin-top:auto;padding-top:1.2rem}
+.ak-s div{padding:.9rem 1.2rem;border-radius:1rem;background:rgba(255,255,255,.05);border:.08rem solid rgba(255,200,87,.14);font-size:1.25rem;line-height:1.45;color:var(--muted);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ak-lead .ak-s div{font-size:1.45rem}
+.ak-s em{font-style:normal;color:var(--gold);font-weight:700;margin-right:.4rem}
+.ak-l{flex:1 1 auto;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.ak-lh{flex:0 0 auto;font-family:var(--head),var(--deva);font-weight:700;font-size:1.2rem;letter-spacing:.14rem;text-transform:uppercase;color:var(--gold);margin-bottom:.7rem}
+.ak-row{flex:0 0 auto;display:flex;align-items:center;padding:.9rem 1.1rem;margin-bottom:.7rem;border-radius:1.1rem;background:rgba(26,8,3,.86);border:.08rem solid rgba(255,153,51,.2)}
+.ak-row .r{font-family:var(--head);font-weight:700;font-size:1.6rem;color:var(--dim);width:2.4rem;flex:0 0 auto}
+.ak-row .av{width:4rem;height:4rem;font-size:1.5rem;margin-right:1rem;border-width:.15rem;flex:0 0 auto}
+.ak-row .n{flex:1 1 auto;min-width:0}
+.ak-row .n b{display:flex;align-items:center;font-family:var(--head),var(--deva);font-size:1.65rem;line-height:1.2;white-space:nowrap;overflow:hidden}
+.ak-row .n b .ak-pt{margin:0 0 0 .6rem}
+.ak-row .n > span{display:block;font-size:1.2rem;line-height:1.35;color:var(--muted);margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ak-row .n > span em{font-style:normal;font-weight:700;color:#FFB199}
+.ak-row .x{flex:0 0 auto;margin-left:.9rem;min-width:3rem;text-align:center;font-family:var(--head);font-weight:700;font-size:1.7rem;padding:.25rem .6rem;border-radius:.6rem;color:#fff;background:var(--sevc,#FF7043)}
+.ak-note{flex:0 0 auto;margin-top:auto;padding-top:.4rem;font-size:1.05rem;color:var(--dim);line-height:1.4}
+body.portrait .ak{grid-template-columns:1fr;grid-template-rows:auto 1fr}
 .tp-q{font-size:3rem;line-height:1.4;font-weight:500;border-left:.5rem solid var(--saffron);padding-left:2.4rem;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .tp-by{display:flex;align-items:center;margin-top:2.2rem}
 .tp-by .av{width:6.4rem;height:6.4rem;font-size:2.3rem;margin-right:1.4rem;border-width:.22rem}
@@ -607,6 +624,8 @@ body.portrait .atk{grid-template-columns:1fr} body.portrait .atk-r{display:none}
 .mr-lead .mr-who b{font-size:2.1rem}
 .mr-who small{display:block;font-size:1.05rem;color:var(--dim);margin-top:.2rem;white-space:nowrap}
 .off .mr-who small{color:var(--gold);font-weight:700}
+.mr-who small.mr-by{font-weight:700;letter-spacing:.02rem}
+.mr-who small.mr-by.atk{color:#FF8A65} .mr-who small.mr-by.pro{color:var(--good)}
 .mr-when{flex:0 0 auto;margin-left:1rem;display:flex;align-items:center;font-size:1.2rem;color:var(--muted);white-space:nowrap}
 .mr-lead .mr-when{font-size:1.4rem}
 .mr-when.fresh{color:#FFAB91;font-weight:700}
@@ -773,7 +792,7 @@ body.phone .st-when{font-size:1.1rem;line-height:1.4}
 /* screens grow with their content (the page scrolls) */
 body.phone #scene{overflow:visible;min-height:20rem}
 body.phone .glass{padding:1.4rem}
-body.phone .glass.full,body.phone .vc,body.phone .glance,body.phone .leads,body.phone .bo,body.phone .mapw,body.phone .pf,body.phone .rh,body.phone .rk,body.phone .atk,body.phone .atk-l,body.phone .empty{height:auto}
+body.phone .glass.full,body.phone .vc,body.phone .glance,body.phone .leads,body.phone .bo,body.phone .mapw,body.phone .pf,body.phone .rh,body.phone .rk,body.phone .ak,body.phone .ak-r,body.phone .ak-l,body.phone .empty{height:auto}
 body.phone .vc > :first-child{margin-top:0} body.phone .vc > :last-child{margin-bottom:0}
 body.phone .note{font-size:1.1rem}
 /* at a glance */
@@ -810,21 +829,21 @@ body.phone .tp-by .av{width:4.8rem;height:4.8rem;font-size:1.7rem}
 body.phone .tp-by b{font-size:1.8rem} body.phone .tp-by span{font-size:1.1rem}
 body.phone .tp-v b{font-size:3rem}
 /* biggest attacks: cards stacked, the list under them (not hidden) */
-body.phone .atk{grid-template-columns:1fr;grid-gap:1rem}
-body.phone .atk-l{grid-template-rows:none;grid-gap:1rem}
-body.phone .atk-c{padding:1.3rem 1.3rem 1.3rem 1.6rem}
-body.phone .atk-h{flex-wrap:wrap;overflow:visible}
-body.phone .atk-rk{font-size:2.2rem}
-body.phone .atk-sev,body.phone .atk-chip{font-size:1.05rem}
-body.phone .atk-q{font-size:1.75rem;-webkit-line-clamp:6;max-height:none}
-body.phone .atk-s{font-size:1.1rem;-webkit-line-clamp:2;max-height:none}
-body.phone .atk-by b{font-size:1.65rem} body.phone .atk-by span{font-size:1.05rem}
-body.phone .atk-by .av{width:4.2rem;height:4.2rem}
-body.phone .atk-by .v b{font-size:2.2rem}
-body.phone .atk-r{display:flex}
-body.phone .atk-row{padding:.9rem 1rem}
-body.phone .atk-row .n b{font-size:1.5rem} body.phone .atk-row .n > span{font-size:1.05rem;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-body.phone .atk-note{margin-top:.6rem;font-size:1rem}
+/* biggest attacks: #1, #2, then the list, stacked; nothing clipped, the page scrolls */
+body.phone .ak{grid-template-columns:1fr;grid-template-rows:none;grid-gap:1rem}
+body.phone .ak-r .ak-c{margin-bottom:1rem}
+body.phone .ak-c,body.phone .ak-c.ak-lead{padding:1.5rem 1.5rem 1.4rem}
+body.phone .ak-rk{font-size:2rem} body.phone .ak-sev b{font-size:1.5rem} body.phone .ak-tg,body.phone .ak-tp{font-size:1.05rem;padding:.3rem .8rem}
+body.phone .ak-who .av,body.phone .ak-lead .ak-who .av{width:4.6rem;height:4.6rem;font-size:1.7rem;margin-right:1rem}
+body.phone .ak-who b,body.phone .ak-lead .ak-who b{font-size:1.8rem} body.phone .ak-who .n > span{font-size:1.05rem}
+body.phone .ak-who .v b,body.phone .ak-lead .ak-who .v b{font-size:2.2rem}
+body.phone .ak-q,body.phone .ak-lead .ak-q{font-size:1.8rem;line-height:1.42;-webkit-line-clamp:8!important;margin-top:1.1rem}
+body.phone .ak-lead .ak-q{font-size:2rem}
+body.phone .ak-s div,body.phone .ak-lead .ak-s div{font-size:1.15rem;-webkit-line-clamp:4!important}
+body.phone .ak-l{overflow:visible}
+body.phone .ak-row{display:flex!important;padding:.9rem 1rem}
+body.phone .ak-row .n b{font-size:1.5rem} body.phone .ak-row .n > span{font-size:1.1rem;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+body.phone .ak-note{margin-top:.6rem;font-size:1rem}
 /* map: the map, then the list */
 body.phone .mapw{grid-template-columns:1fr;grid-template-rows:none;grid-gap:1rem}
 body.phone .map-svg{height:30rem}
@@ -1254,6 +1273,15 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   T.en.mrNew = 'New'; T.hi.mrNew = 'नई';
   T.en.mrVideo = 'Video'; T.hi.mrVideo = 'वीडियो';
   T.en.mrJust = 'Just in'; T.hi.mrJust = 'अभी आई';
+  T.en.mrSubAtk = 'Chosen by AI from the headlines · opposition attacks and critical reports'; T.hi.mrSubAtk = 'AI द्वारा चुनी गईं · विपक्ष के हमले और आलोचनात्मक रिपोर्ट';
+  T.en.mrSubPro = 'Chosen by AI from the headlines · positive reports, not the government\'s own releases'; T.hi.mrSubPro = 'AI द्वारा चुनी गईं · सकारात्मक ख़बरें, सरकार की अपनी विज्ञप्तियाँ नहीं';
+  T.en.mrSubOpp = 'Alliances, seat-sharing and fights inside the opposition'; T.hi.mrSubOpp = 'विपक्ष के गठबंधन, सीट बंटवारा और आपसी झगड़े';
+  T.en.mrByOppAtk = 'Opposition attack'; T.hi.mrByOppAtk = 'विपक्ष का हमला';
+  T.en.mrByOpp = 'From the opposition'; T.hi.mrByOpp = 'विपक्ष की ओर से';
+  T.en.mrByMedia = 'Media report'; T.hi.mrByMedia = 'मीडिया रिपोर्ट';
+  T.en.mrByGovt = 'Government / BJP'; T.hi.mrByGovt = 'सरकार / BJP';
+  T.en.mrByOther = 'Other voice'; T.hi.mrByOther = 'अन्य स्रोत';
+  T.en.mrAiPaused = 'AI reading paused for today (free limit) — attack and good-news screens resume tomorrow'; T.hi.mrAiPaused = 'AI जाँच आज के लिए रुकी (मुफ़्त सीमा) — हमले और अच्छी ख़बरों की स्क्रीन कल फिर';
   T.en.mrFound = 'found {a}'; T.hi.mrFound = '{a} मिली';
   T.en.mrOffLong = 'Official statement'; T.hi.mrOffLong = 'आधिकारिक बयान';
   T.en.mrMedLong = 'News media'; T.hi.mrMedLong = 'समाचार माध्यम';
@@ -1389,16 +1417,34 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
      phone's width so it stays readable, and a page that scrolls (cards stacked) -- see the
      body.phone rules in the CSS. */
   var PHONE = false;
-  function scale() {
+  /* A phone is a phone even when its browser pretends to be a desktop ("Desktop site" gives
+     a 980-px page): a touch screen whose real screen is under 600 px gets phone mode too. */
+  var TOUCH = ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0;
+  function smallTouchDevice() { return TOUCH && Math.min(screen.width || 9999, screen.height || 9999) < 600; }
+  var lastScaled = '';
+  function scale(force) {
     var w = window.innerWidth, h = window.innerHeight, portrait = h > w * 1.05 || h < 520;
-    var phone = Math.min(w, h) < 520 || (h > w * 1.05 && w < 600);
+    var phone = Math.min(w, h) < 520 || (h > w * 1.05 && w < 600) || smallTouchDevice();
+    /* On a phone the address bar slides in and out while scrolling, which changes only the
+       height: that is not a new screen (redrawing then made the page jump and restart).
+       Only a new width or turning the phone counts. */
+    var key = phone ? w + '|' + (w > h ? 'L' : 'P') : w + 'x' + h;
+    if (!force && key === lastScaled) return;
+    lastScaled = key;
+    /* a laptop browser window is wide and short: header, title and news strip get slimmer
+       (body.wide) so the fitted size can follow a shorter design height */
+    var wide = !phone && !portrait && w / h >= 1.9;
     var px;
     if (phone) px = h > w ? w / 32 : Math.min(h / 30, w / 48);          // ~11.7px on a 375-wide phone
-    else px = 16 * (portrait ? Math.min(w / 720, h / 1280) : Math.min(w / 1920, h / 1080));
-    document.documentElement.style.fontSize = Math.max(phone ? 10 : 8, Math.min(phone ? 15 : 999, Math.round(px * 100) / 100)) + 'px';
+    else if (portrait) px = 16 * Math.min(w / 720, h / 1280);
+    else px = 16 * Math.min(w / 1920, h / (wide ? 1015 : 1080));
+    /* a phone page wider than 600 px ("Desktop site") is shrunk by the browser to fit: no upper cap there */
+    var maxPx = phone ? (w > 600 ? 999 : 15) : 999;
+    document.documentElement.style.fontSize = Math.max(phone ? 10 : 8, Math.min(maxPx, Math.round(px * 100) / 100)) + 'px';
     setCls(document.body, 'portrait', portrait || phone);
     setCls(document.body, 'phone', phone);
     setCls(document.body, 'phone-land', phone && w > h);
+    setCls(document.body, 'wide', wide);
     PHONE = phone;
     if (state.snap) { renderTicker(true); rerender(); }      // screens that measure themselves (attack cards) fit the new size
   }
@@ -1614,28 +1660,36 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var tp = String(x.topic || ''); return tp.charAt(0).toUpperCase() + tp.slice(1);      // "Women safety"
   }
   function atkWho(x) { return [x.party, x.state ? stName(x.state) : '', fmtWhen(x.date)].filter(Boolean).join(' · '); }
+  /* one attack as a card: rank, severity badge, whom it targets and the topic; then who
+     attacked (photo, name, party, state, when, views); their words; the AI's one-line summary */
+  function akCard(x, i, lead) {
+    var sum = LANG === 'hi' ? x.summaryHi : x.summaryEn;
+    return '<div class="ak-c' + (lead ? ' ak-lead' : '') + '" style="--sevc:' + sevColor(x.severity) + '">'
+      + '<div class="ak-top"><span class="ak-rk">#' + (i + 1) + '</span>'
+      + '<span class="ak-sev"><b>' + esc(String(x.severity)) + '</b><small>/5 ' + esc(t('atkSev')) + '</small></span>'
+      + '<span class="ak-tg">→ ' + esc(atkTarget(x)) + '</span>' + (x.topic ? '<span class="ak-tp">' + esc(atkTopic(x)) + '</span>' : '') + '</div>'
+      + '<div class="ak-who">' + avatar(x.name, x.avatar, x.color) + '<div class="n"><b>' + esc(x.name) + '</b><span>'
+      + (x.party ? '<i class="ak-pt" style="background:' + (x.color || '#7a3b12') + '">' + esc(x.party) + '</i>' : '')
+      + esc([x.state ? stName(x.state) : '', fmtWhen(x.date)].filter(Boolean).join(' · ')) + '</span></div>'
+      + '<div class="v"><b>' + esc(fmtShort(x.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div></div>'
+      + '<div class="ak-q">“' + esc(clipQuote(x.text)) + '”</div>'
+      + (sum ? '<div class="ak-s"><div><em>' + esc(t('atkSum')) + '</em>' + esc(sum) + '</div></div>' : '')
+      + '</div>';
+  }
+  /* the board: #1 on the left; on the right #2 as a smaller card, then the next ones as rows
+     ("INC → Union government · summary": who attacks whom, then what) */
   function sAttacks(s) {
     var a = s.attacks || {}, top = a.top || [], list = a.list || [];
-    var cards = top.map(function (x, i) {
-      var dots = ''; for (var d = 1; d <= 5; d++) dots += '<i' + (x.severity >= d - 0.25 ? ' class="on"' : '') + '></i>';
-      var sum = LANG === 'hi' ? x.summaryHi : x.summaryEn;
-      return '<div class="atk-c" style="--sevc:' + sevColor(x.severity) + '"><div class="atk-h"><span class="atk-rk">#' + (i + 1) + '</span>'
-        + '<span class="atk-sev">' + dots + '<b>' + esc(t('atkSev')) + ' ' + esc(String(x.severity)) + '/5</b></span>'
-        + '<span class="atk-chip tg">' + esc(atkTarget(x)) + '</span>' + (x.topic ? '<span class="atk-chip">' + esc(atkTopic(x)) + '</span>' : '') + '</div>'
-        + '<div class="atk-q">“' + esc(clipQuote(x.text)) + '”</div>'
-        + (sum ? '<div class="atk-s"><em>' + esc(t('atkSum')) + '</em>' + esc(sum) + '</div>' : '')
-        + '<div class="atk-by">' + avatar(x.name, x.avatar, x.color) + '<div class="n"><b>' + esc(x.name) + '</b><span>' + esc(atkWho(x)) + '</span></div>'
-        + '<div class="v"><b>' + esc(fmtShort(x.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div></div></div>';
-    }).join('');
-    var rows = list.slice(0, 5).map(function (x, i) {
+    var rows = list.slice(0, 6).map(function (x, i) {
       var sum = (LANG === 'hi' ? x.summaryHi : x.summaryEn) || x.text;
-      /* "INC → Union government · summary": who attacks whom, then what */
-      return '<div class="atk-row" style="--sevc:' + sevColor(x.severity) + '"><span class="r">' + (top.length + i + 1) + '</span>' + avatar(x.name, x.avatar, x.color)
-        + '<div class="n"><b>' + esc(x.name) + '</b><span>' + (x.party ? '<em style="color:' + lighten(x.color, 0.35) + '">' + esc(x.party) + '</em> → ' : '')
-        + '<span class="to">' + esc(atkTarget(x)) + '</span> · ' + esc(sum) + '</span></div><span class="x">' + esc(String(x.severity)) + '</span></div>';
+      return '<div class="ak-row" style="--sevc:' + sevColor(x.severity) + '"><span class="r">' + (top.length + i + 1) + '</span>' + avatar(x.name, x.avatar, x.color)
+        + '<div class="n"><b><span style="overflow:hidden;text-overflow:ellipsis">' + esc(x.name) + '</span>'
+        + (x.party ? '<i class="ak-pt" style="background:' + (x.color || '#7a3b12') + '">' + esc(x.party) + '</i>' : '') + '</b>'
+        + '<span><em>→ ' + esc(atkTarget(x)) + '</em> · ' + esc(sum) + '</span></div><span class="x">' + esc(String(x.severity)) + '</span></div>';
     }).join('');
-    return '<div class="atk"><div class="atk-l"' + (top.length < 2 ? ' style="grid-template-rows:1fr"' : '') + '>' + cards + '</div>'
-      + '<div class="atk-r">' + (rows ? '<div class="atk-rh">' + esc(t('atkMore')) + '</div>' + rows : '') + '<div class="atk-note">' + esc(t('atkNote')) + '</div></div></div>';
+    var right = (top[1] ? akCard(top[1], 1, false) : '')
+      + '<div class="ak-l">' + (rows ? '<div class="ak-lh">' + esc(t('atkMore')) + '</div>' + rows : '') + '<div class="ak-note">' + esc(t('atkNote')) + '</div></div>';
+    return '<div class="ak">' + (top[0] ? akCard(top[0], 0, true) : '') + '<div class="ak-r">' + right + '</div></div>';
   }
   function sMap(s) {
     var g = state.geo, byState = {}, paths = '';
@@ -1800,21 +1854,28 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   }
 
   /* ------------------------------------------------- scene animation */
-  /* A card must always show who said it. On a shorter screen the quote gives up
-     lines first (3 -> 2 -> 1), then the AI summary goes; the speaker row stays. */
+  /* Nothing on the board is ever cut in half. A card keeps its speaker row: when space is
+     short the quote gives up whole lines (5 -> 2 on #1, 3 -> 2 on #2), then the AI summary
+     goes. The list shows only the rows that fit completely. */
   function fitAttackCards(el, again) {
-    if (PHONE) return;                                        // phone cards grow with their text
+    if (PHONE) return;                                        // phone: everything stacks and the page scrolls
     /* web fonts can arrive after the first paint and make text taller: measure again then */
     if (!again) {
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fitAttackCards(el, true); });
       state.tmo.push(setTimeout(function () { fitAttackCards(el, true); }, 700));
     }
-    [].forEach.call(el.querySelectorAll('.atk-c'), function (c) {
-      var q = c.querySelector('.atk-q'), s = c.querySelector('.atk-s');
+    [].forEach.call(el.querySelectorAll('.ak-c'), function (c) {
+      var q = c.querySelector('.ak-q'), s = c.querySelector('.ak-s'), lead = c.className.indexOf('ak-lead') >= 0;
+      q.style.webkitLineClamp = ''; if (s) s.style.display = '';
       function over() { return c.scrollHeight > c.clientHeight + 1; }
-      for (var n = 3; n > 1 && over(); n--) { q.style.webkitLineClamp = String(n - 1); q.style.maxHeight = (1.36 * (n - 1)) + 'em'; }
+      for (var n = lead ? 5 : 3; n > 2 && over(); n--) q.style.webkitLineClamp = String(n - 1);
       if (over() && s) s.style.display = 'none';
     });
+    var L = el.querySelector('.ak-l'); if (!L) return;
+    var rows = L.querySelectorAll('.ak-row'), note = L.querySelector('.ak-note');
+    [].forEach.call(rows, function (r) { r.style.display = ''; });
+    var limit = L.getBoundingClientRect().bottom - (note ? note.offsetHeight : 0);
+    [].forEach.call(rows, function (r) { if (r.getBoundingClientRect().bottom > limit + 1) r.style.display = 'none'; });
   }
   function countUp(el) {
     [].forEach.call(el.querySelectorAll('[data-count]'), function (n) {
@@ -2071,24 +2132,28 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   var MR_PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>';
   var MR_PIN = '<svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg>';
   /* one story: who (logo, name, official or media), when, the headline, who else carried it */
-  function mrCard(c, lead) {
+  /* on the attack / good-news screens the line under the source says whose voice it is
+     (as the AI read it): an opposition attack, the outlet's own report, ... */
+  var MR_BY = { atk: { o: 'mrByOppAtk', m: 'mrByMedia', g: 'mrByGovt', x: 'mrByOther' }, pro: { o: 'mrByOpp', m: 'mrByMedia', g: 'mrByGovt', x: 'mrByOther' } };
+  function mrCard(c, lead, tp) {
     /* a feed without publish times (PIB): we only know when we found it -- say so, and never "just in" */
     var fresh = !c.nd && mrNew(c.f, c.p), off = c.k === 'official', o = c.o || [];
+    var by = MR_BY[tp] && c.ab ? '<small class="mr-by ' + tp + '">' + esc(t(MR_BY[tp][c.ab])) + '</small>' : '<small>' + esc(t(off ? 'mrOffLong' : 'mrMedLong')) + '</small>';
     var when = c.nd ? esc(fill(t('mrFound'), { a: mrAgo(c.p) }))
       : (fresh ? '<i class="mr-dot"></i>' + esc(t('mrJust')) + ' · ' : '') + esc(mrAgo(c.p)) + (lead ? ' · ' + esc(fmtTime(ip(c.d) || { h: 0, mi: 0 })) : '');
     var also = c.n ? '<span class="mr-also">' + o.map(function (x) { return mrLogo(x.n, x.l); }).join('')
       + '<span>' + esc(fill(t(c.n > o.length ? 'mrAlsoN' : 'mrAlso'), { s: o.map(function (x) { return x.n; }).join(', '), n: c.n - o.length })) + '</span></span>' : '';
     return '<a class="mr-c' + (lead ? ' mr-lead' : '') + (off ? ' off' : '') + '" href="' + esc(c.u) + '" target="_blank" rel="noopener noreferrer">'
-      + '<div class="mr-h">' + mrLogo(c.s, c.lg) + '<div class="mr-who"><b>' + esc(c.s) + '</b><small>' + esc(t(off ? 'mrOffLong' : 'mrMedLong')) + '</small></div>'
+      + '<div class="mr-h">' + mrLogo(c.s, c.lg) + '<div class="mr-who"><b>' + esc(c.s) + '</b>' + by + '</div>'
       + '<span class="mr-when' + (fresh ? ' fresh' : '') + '">' + when + '</span></div>'
       + '<div class="mr-t">' + esc(c.t) + '</div>'
       + (also || c.v ? '<div class="mr-f">' + also + (c.v ? '<span class="mr-vid">' + MR_PLAY + esc(t('mrVideo')) + '</span>' : '') + '</div>' : '')
       + '</a>';
   }
   /* the wall: the newest (or, on "hot", the most-carried) story large on the left, four more beside it */
-  function mrCards(list) {
+  function mrCards(list, tp) {
     var l = list.slice(0, 5);
-    return '<div class="mr-w n' + l.length + '">' + l.map(function (c, i) { return mrCard(c, i === 0); }).join('') + '</div>';
+    return '<div class="mr-w n' + l.length + '">' + l.map(function (c, i) { return mrCard(c, i === 0, tp); }).join('') + '</div>';
   }
   /* latest by source: a numbered stack of the 5 newest per source */
   function mrSources(chunk) {
@@ -2114,6 +2179,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var ch = 0; list.slice(0, 5).forEach(function (c) { ch += String(c.t || '').length; });
     return Math.round(Math.min(45000, Math.min(30000, Math.max(13000, 8000 + ch * 45)) * (w || 1)));
   }
+  var MR_SUB = { hot: 'mrSubHot', official: 'mrSubOff', atk: 'mrSubAtk', pro: 'mrSubPro', opprift: 'mrSubOpp' };
   function buildMediaScenes(m) {
     var L = [], areas = mrAreas();
     if (m && m.all) mrLoop(m).forEach(function (tp) {
@@ -2134,8 +2200,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
         L.push({ id: 'mr-' + a + '-' + tp, dur: mrDur(list, w), imp: w >= 1.5,
           title: function () { return esc(mrTopicName(tp)) + '<span class="mr-area">' + MR_PIN + esc(mrAreaName(a)) + '</span>'; },
           label: function () { return mrTopicName(tp) + ' · ' + mrAreaName(a); },
-          sub: function () { return [t(tp === 'hot' ? 'mrSubHot' : tp === 'official' ? 'mrSubOff' : 'mrSubNew'), mrUpdated()].filter(Boolean).join(' · '); },
-          render: function () { return mrCards(list); } });
+          sub: function () { return [t(MR_SUB[tp] || 'mrSubNew'), mrUpdated()].filter(Boolean).join(' · '); },
+          render: function () { return mrCards(list, tp); } });
       });
     });
     /* a long loop shows the important screens (hot, opposition) a second time half-way round */
@@ -2176,6 +2242,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (down.length) parts.push('<span class="warn">' + esc(fill(t('mrDown'), { s: list(down) })) + '</span>');
     var quiet = (m.sources || []).filter(function (s) { return s.ok && s.kind === 'media' && s.newest && now - s.newest > 6 * 3600000; }).map(mrSrcName);
     if (quiet.length) parts.push('<span class="warn">' + esc(fill(t('mrStale'), { s: list(quiet) })) + '</span>');
+    if (m.ai && m.ai.state === 'paused') parts.push('<span class="warn">' + esc(t('mrAiPaused')) + '</span>');
     if (m.lastRun && now - m.lastRun > 45 * 60000) parts.push('<span class="warn">' + esc(fill(t('mrPaused'), { a: fmtAgo((now - m.lastRun) / 60000) })) + '</span>');
     if (state.offline && state.savedAt) parts.push('<span class="warn">' + fill(t('hSaved'), { d: esc(fmtTimeIso(state.savedAt)) }) + '</span>');
     return parts.join(' &nbsp;·&nbsp; ');
@@ -2640,8 +2707,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   if (REDUCED) document.body.className += ' reduced';
   setupHero(); scale();
   window.addEventListener('resize', function () { clearTimeout(scale.t); scale.t = setTimeout(scale, 150); });
-  var lastSize = innerWidth + 'x' + innerHeight;
-  setInterval(function () { var s = innerWidth + 'x' + innerHeight; if (s !== lastSize) { lastSize = s; scale(); } }, 2000);
+  /* some TVs never fire "resize": look every 2 s (scale() does nothing when the size is the same) */
+  setInterval(function () { scale(); }, 2000);
+  window.addEventListener('orientationchange', function () { setTimeout(function () { scale(true); }, 300); });
   applyLang(); renderClock(); setInterval(renderClock, 10000); keepAwake();
   heroLevel('hi'); $('app').style.visibility = 'hidden';
   /* the intro shows real numbers, so fetch the All-India snapshot while it plays */

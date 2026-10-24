@@ -26,7 +26,8 @@ var GROQ = 'https://api.groq.com/openai/v1/chat/completions';
 var OPENR = 'https://openrouter.ai/api/v1/chat/completions';
 var READERS = [
   { name: 'Qwen 3.8 27B', url: GROQ, key: 'GROQ_API_KEY', model: 'qwen/qwen3.8-27b', extra: { reasoning_effort: 'none' }, dayTokens: 180000 },
-  { name: 'GPT-OSS 20B', url: GROQ, key: 'GROQ_API_KEY', model: 'openai/gpt-oss-20b', extra: { reasoning_effort: 'low' }, dayTokens: 180000 },
+  /* 130K, not 180K: the Media Room's AI step uses this model too (60K a day), and the free tier is 200K a day for both */
+  { name: 'GPT-OSS 20B', url: GROQ, key: 'GROQ_API_KEY', model: 'openai/gpt-oss-20b', extra: { reasoning_effort: 'low' }, dayTokens: 130000 },
   { name: 'Gemma 4 31B', url: OPENR, key: 'OPENROUTER_API_KEY', model: 'google/gemma-4-31b-it:free', extra: {}, dayTokens: 400000 }
 ];
 var CHECKERS = [

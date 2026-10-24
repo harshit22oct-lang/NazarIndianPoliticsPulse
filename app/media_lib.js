@@ -155,7 +155,8 @@ function oppositionRift(n) {
     return p === 1 && !r && internal(s);
   };
 }
-var RULES = { opposition_rift: oppositionRift };
+/* topics only the AI step can give (stance toward BJP): keywords never set them */
+var RULES = { opposition_rift: oppositionRift, ai: function () { return function () { return false; }; } };
 
 function makeTagger(cfg) {
   var tests = (cfg.narratives || []).map(function (n) { return { id: n.id, test: n.rule && RULES[n.rule] ? RULES[n.rule](n) : anyRe(n.words) }; });
@@ -188,7 +189,9 @@ function cluster(items) {
   var list = items.slice().sort(function (a, b) { return a.pub - b.pub; });
   var groups = [], index = {}, WIN = 18 * 3600000;
   list.forEach(function (it) {
-    var tk = tokens(it.title), hits = {}, best = null, bestN = 0;
+    /* the AI's English words for the event (if any) join the headline's own words, so the
+       Hindi and the English report of one event share enough words to become one story */
+    var tk = tokens(it.title + (it.ai && it.ai.k ? ' ' + it.ai.k : '')), hits = {}, best = null, bestN = 0;
     tk.forEach(function (w) { (index[w] || []).forEach(function (gi) { hits[gi] = (hits[gi] || 0) + 1; }); });
     Object.keys(hits).forEach(function (gi) {
       var g = groups[gi], n = hits[gi];
@@ -208,13 +211,17 @@ function cluster(items) {
 
 /* ------------------------------------------------------------------- views */
 /* logoOf(item) -> image URL or null (the page then draws the source's initials) */
-function card(g, logoOf) {
+/* tag: on a topic screen the headline shown is one that carries that topic (an attack
+   screen shows the copy the AI read as an attack, not a neutral copy of the same story) */
+function card(g, logoOf, tag) {
   var its = g.items.slice().sort(function (a, b) { return b.pub - a.pub; });
-  var off = its.filter(function (x) { return x.kind === 'official'; })[0];
-  var top = off || its[0], names = {}, others = [];
+  var pool = tag ? its.filter(function (x) { return x.tags && x.tags.indexOf(tag) >= 0; }) : its; if (!pool.length) pool = its;
+  var off = pool.filter(function (x) { return x.kind === 'official'; })[0];
+  var top = off || pool[0], names = {}, others = [];
   its.forEach(function (x) { if (x.srcName !== top.srcName && !names[x.srcName]) { names[x.srcName] = 1; others.push({ n: x.srcName, l: logoOf(x) }); } });
   return { t: top.title, u: top.url, s: top.srcName, lg: logoOf(top), k: top.kind, p: top.pub, d: istStr(top.pub), v: !!top.video, nd: !!top.noDate,
-           n: others.length, o: others.slice(0, 3), f: top.seen };          // f = first seen: the page shows NEW for 30 minutes
+           n: others.length, o: others.slice(0, 3), f: top.seen,           // f = first seen: the page shows NEW for 30 minutes
+           as: top.ai ? top.ai.s : null, ab: top.ai ? top.ai.b : null };   // the AI's stance and whose voice (for the attack / good-news screens)
 }
 function distinctSources(g) { var o = {}; g.items.forEach(function (x) { o[x.srcName] = 1; }); return Object.keys(o).length; }
 
@@ -227,7 +234,7 @@ function buildView(opts) {
   var groups = cluster(items).sort(function (a, b) { return b.last - a.last; });
   var lists = {};
   opts.topics.forEach(function (id) {
-    lists[id] = groups.filter(function (g) { return g.items.some(function (x) { return x.tags.indexOf(id) >= 0; }); }).slice(0, 6).map(cardOf);
+    lists[id] = groups.filter(function (g) { return g.items.some(function (x) { return x.tags.indexOf(id) >= 0; }); }).slice(0, 6).map(function (g) { return card(g, lo, id); });
   });
   lists.official = groups.filter(function (g) { return g.items.some(function (x) { return x.kind === 'official'; }); }).slice(0, 6).map(cardOf);
   /* hot: carried by 2+ different sources in the last 6 hours, and about one of the topics (no cricket or gadgets) */
