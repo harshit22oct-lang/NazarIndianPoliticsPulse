@@ -26,8 +26,11 @@
 'use strict';
 var GROQ = 'https://api.groq.com/openai/v1/chat/completions';
 var MODEL = process.env.MEDIA_AI_MODEL || 'openai/gpt-oss-20b';
-var DAY_TOKENS = Number(process.env.MEDIA_AI_DAY_TOKENS) || 60000;
+var DAY_TOKENS = Number(process.env.MEDIA_AI_DAY_TOKENS) || 70000;   // with Attacks' 120K reserve on this model: 190K of the free 200K
 var DAY_CALLS = 200;
+/* VER 2: the AI also picks the topics (c); headlines read under VER 1 are read again once */
+var VER = 2;
+var TOPICS = ['elections', 'party', 'students', 'protests', 'controversy', 'governance', 'lawandorder', 'legislature', 'economy', 'international'];
 var BATCH = 30;              // the instructions are paid once per request: more headlines per request, fewer tokens per headline
 var MAX_OUT = 3200;
 
@@ -40,7 +43,11 @@ function nextIstMidnight(ms) { var d = new Date(ms + 19800000); d.setUTCHours(24
    model read every "attack" headline as one. */
 var SYSTEM = [
   'You read Indian news headlines (Hindi or English) for a BJP monitoring desk.',
-  'For EVERY numbered headline return {"i":<number>,"t":"b|o|g|x","p":"+|-|0","v":"o|m|g|x","o":0|1,"k":"<3-6 lowercase english words>"}.',
+  'For EVERY numbered headline return {"i":<number>,"t":"b|o|g|x","p":"+|-|0","v":"o|m|g|x","o":0|1,"c":[...],"k":"<3-6 lowercase english words>"}.',
+  'c = 0 to 2 topics the headline is REALLY about, from: "elections" (polls, voting, voter lists, seat-sharing, candidates), "party" (a political party appoints, inducts, expels or announces something),',
+  '  "students" (student unions, campus politics, youth wings), "protests" (protest, dharna, agitation, strike), "controversy" (scandal, allegation, corruption, investigation of politicians),',
+  '  "governance" (government schemes, decisions, administration), "lawandorder" (crime, police, riots), "legislature" (parliament / assembly business, bills), "economy" (prices, jobs, budget, business policy), "international" (foreign affairs, defence).',
+  '  Use [] for sport, film, business deals, gadgets, accidents or anything not political. A word like "joins" or "appointed" does not make it "party" unless a political party is involved.',
   't = WHO the headline mainly judges (criticises, accuses, praises, credits):',
   '  "b" BJP, NDA, the Modi government, a BJP-run state government, or a BJP/NDA leader;',
   '  "o" an opposition party or leader (Congress, SP, TMC, AAP, RJD, DMK, BSP, AIMIM, Left ...);',
@@ -91,7 +98,8 @@ function createLabeller(opts) {
       var x = list[(a && a.i) - 1]; if (!x) return;
       var tg = /^[bogx]$/.test(a.t) ? a.t : 'x', p = a.p === '+' || a.p === '-' ? a.p : '0', b = /^[omgx]$/.test(a.v) ? a.v : 'x';
       var s = tg === 'b' && p === '-' ? 'a' : tg === 'b' && p === '+' ? 'f' : 'n';      // against / for BJP only when BJP is the one judged
-      out[x._id] = { s: s, b: b, t: tg, p: p, o: a.o === 1 || a.o === '1' ? 1 : 0, k: String(a.k || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60), m: MODEL, at: Date.now() };
+      var c = (Array.isArray(a.c) ? a.c : []).filter(function (z) { return TOPICS.indexOf(z) >= 0; }).slice(0, 2);
+      out[x._id] = { ver: VER, s: s, b: b, t: tg, p: p, c: c, o: a.o === 1 || a.o === '1' ? 1 : 0, k: String(a.k || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60), m: MODEL, at: Date.now() };
     });
     return { labels: out, tokens: used };
   }
@@ -113,4 +121,4 @@ function createLabeller(opts) {
   };
 }
 
-module.exports = { createLabeller: createLabeller };
+module.exports = { createLabeller: createLabeller, VER: VER };

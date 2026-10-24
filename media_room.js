@@ -248,7 +248,7 @@ function createMediaRoom(opts) {
     if (aiBusy || !AI.on) return; aiBusy = true;
     try {
       var since = Date.now() - 24 * 3600000, all = Object.keys(items).map(function (k) { return items[k]; });
-      var cands = all.filter(function (x) { return x.pub >= since && !x.ai; });
+      var cands = all.filter(function (x) { return x.pub >= since && (!x.ai || x.ai.ver !== MAI.VER); });   // unread, or read before the AI chose topics
       cands.forEach(function (x) { x.tags = tagger(x.title, x.src); });
       /* not worth a token: news bulletins ("Top Headlines | BJP | Rahul | ...") and #shorts clips */
       cands = cands.filter(function (x) { return x.tags.length && !/#shorts|top headlines|morning brief|evening brief|news bulletin/i.test(x.title) && (x.title.split('|').length < 4); });
@@ -281,6 +281,9 @@ function createMediaRoom(opts) {
     var all = Object.keys(items).map(function (k) { return items[k]; }), st = key === 'all' ? null : key.slice(3);
     all.forEach(function (x) {
       x.tags = tagger(x.title, x.src);                                        // today's rules, also for headlines saved before a rule changed
+      /* the AI picks the topics once it has read a headline (keywords alone put a Jio deal under
+         "party announcements" for the word "joins"); keywords only until then */
+      if (x.ai && x.ai.c) x.tags = x.ai.c.slice();
       if (x.ai) {                                                             // the AI's reading, where there is one
         /* the AI's "against / for BJP" counts only when the headline names BJP's side (a small
            model sometimes reads any scandal or success as BJP's); "good news" is others reporting
@@ -289,12 +292,14 @@ function createMediaRoom(opts) {
         if (x.ai.s === 'a' && side) x.tags.push('atk'); else if (x.ai.s === 'f' && side && x.kind !== 'official') x.tags.push('pro');
         var r = x.tags.indexOf('opprift');                                    // and it has the last word on "opposition"
         if (x.ai.o && r < 0) x.tags.push('opprift'); else if (!x.ai.o && r >= 0) x.tags.splice(r, 1);
-        if ((x.ai.s !== 'n' || x.ai.o) && x.tags.indexOf('politics') < 0) x.tags.push('politics');
+        var pol = x.ai.s !== 'n' || x.ai.o || (x.ai.c || []).some(function (c) { return /^(elections|party|students|legislature|controversy|protests)$/.test(c); });
+        if (pol && x.tags.indexOf('politics') < 0) x.tags.push('politics');
       }
       if (x.via !== 'gnews' && NAMEOF[x.src]) x.srcName = NAMEOF[x.src];     // a source renamed in the config
       if (!/\s/.test(x.title) && /-/.test(x.title)) x.title = x.title.replace(/-+/g, ' ').replace(/^./, function (c) { return c.toUpperCase(); });   // saved before the slug fix
     });
-    var mine = all.filter(function (x) { return st ? x.states.indexOf(st) >= 0 : x.nat; });
+    /* social-media clips ("... #shorts #viralvideo") are not news for this room */
+    var mine = all.filter(function (x) { return (st ? x.states.indexOf(st) >= 0 : x.nat) && !/#shorts|#viral/i.test(x.title); });
     cache[key] = { at: Date.now(), v: ML.buildView({ items: mine, topics: topics.map(function (t) { return t.id; }), sources: SRC, bySource: !st, logoOf: logoOf, now: Date.now() }) };
     return cache[key].v;
   }
