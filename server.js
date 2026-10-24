@@ -502,6 +502,25 @@ var svc = null, meta = null, page = { mtime: 0, body: '' }, attacks = null;
 var ATTACKS = require('./attacks.js');
 /* Media Room: live news from free feeds, independent of the CSV (starts with the server) */
 var mediaRoom = require('./media_room.js').createMediaRoom({ dataDir: DATA });
+/* the last good screens: served at once after a restart while the posts load (snap_cache.js) */
+var snapCache = require('./snap_cache.js').createSnapCache(DATA);
+function cachedSnap(scope) {
+  var c = snapCache.get('snap:' + scope); if (!c) return null;
+  /* "degraded" makes the page's footer say it is showing saved data from that time */
+  return Object.assign({}, c.v, { degraded: { generatedAt: new Date(c.at).toISOString() } });
+}
+/* shown only when there is not even a saved copy (the very first start) */
+var LOADING_PAGE = '<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+  + '<meta name="robots" content="noindex, nofollow"><meta http-equiv="refresh" content="5"><title>Nazar · India Political Pulse</title>'
+  + '<style>html,body{height:100%;margin:0}body{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#FFF7EE;'
+  + 'font-family:"Noto Sans Devanagari","Segoe UI",sans-serif;background:radial-gradient(ellipse 60% 55% at 50% 45%,#5a1a05 0%,#2a0a03 55%,#140502 100%)}'
+  + '.lg{width:120px;height:120px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 4px rgba(255,200,87,.8),0 0 60px rgba(255,153,51,.6);background:#E65100}'
+  + '.lg img{width:100%;height:100%;object-fit:cover;display:block}h1{font-size:44px;margin:26px 0 4px;font-weight:800}'
+  + 'p{margin:6px 0;color:rgba(255,247,238,.75);font-size:18px}.bar{width:220px;height:4px;border-radius:4px;margin:26px auto 0;overflow:hidden;background:rgba(255,255,255,.12)}'
+  + '.bar i{display:block;width:40%;height:100%;background:linear-gradient(90deg,#E65100,#FFC857);animation:m 1.4s ease-in-out infinite}'
+  + '@keyframes m{0%{margin-left:-40%}100%{margin-left:100%}}</style></head><body>'
+  + '<div class="lg"><img src="/live/img/p/BJP" alt="" onerror="this.remove()"></div><h1>नज़र</h1>'
+  + '<p>तैयार हो रहा है — कुछ ही पलों में शुरू</p><p style="font-size:15px">Nazar is getting ready — starting in a moment</p><div class="bar"><i></i></div></body></html>';
 function avatarFor(h) {
   var k = String(h || '').toLowerCase(), e = imgIx.avatars[k];
   if (e && e.file) return '/live/img/a/' + encodeURIComponent(k);
@@ -517,11 +536,11 @@ function withAttacks(scope, snap) {
   if (snap && snap.topPost) extra.topPost = Object.assign({}, snap.topPost, { avatar: avatarFor(snap.topPost.handle) });   // the photo for the "most-viewed post" card
   return Object.assign({}, snap, a ? { attacks: a } : {}, extra);
 }
-function pageHtml() {
+function pageHtml(m) {
   var p = path.join(APP, 'nazar.html'), st = fs.statSync(p);
   if (st.mtimeMs !== page.mtime) page = { mtime: st.mtimeMs, body: fs.readFileSync(p, 'utf8') };
   /* tell the page it is showing a recorded file, not a live feed */
-  return page.body.replace('<script>', '<script>window.NAZAR_PROTO=' + JSON.stringify(meta).replace(/</g, '\\u003c') + ';</script>\n<script>');
+  return page.body.replace('<script>', '<script>window.NAZAR_PROTO=' + JSON.stringify(m || meta).replace(/</g, '\\u003c') + ';</script>\n<script>');
 }
 
 var server = http.createServer(function (req, res) {
@@ -529,9 +548,15 @@ var server = http.createServer(function (req, res) {
   if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'text/plain', 'GET only');
   if (p === '/robots.txt') return send(res, 200, 'text/plain; charset=utf-8', 'User-agent: *\nDisallow: /\n');
   if (p === '/' || p === '/up') { res.writeHead(302, { Location: '/live' + (p === '/up' ? '?scope=up' : '') }); return res.end(); }
+  /* for Render's health check: "ready" only once the posts are loaded, so a deploy switches
+     over to the new server only then (Settings -> Health Check Path: /healthz) */
+  if (p === '/healthz') return svc ? send(res, 200, 'text/plain', 'ok') : send(res, 503, 'text/plain', 'loading');
   if (p === '/live' || p === '/tv') {
-    if (!svc) return send(res, 503, 'text/html; charset=utf-8', '<meta http-equiv="refresh" content="3"><body style="background:#160602;color:#FFC857;font:24px sans-serif;padding:40px">Nazar is loading the data file... this page reloads by itself.</body>');
-    return send(res, 200, 'text/html; charset=utf-8', pageHtml());
+    if (svc) return send(res, 200, 'text/html; charset=utf-8', pageHtml());
+    /* still loading the posts: the full page from the saved screens if there are any, else the branded wait */
+    var cm = snapCache.get('meta');
+    if (cm && snapCache.get('snap:all')) return send(res, 200, 'text/html; charset=utf-8', pageHtml(cm.v));
+    return send(res, 503, 'text/html; charset=utf-8', LOADING_PAGE, { 'Retry-After': '5' });
   }
   if (p === '/live/india-states.json') return file(res, path.join(APP, 'live_india_states.json'));
   if ((m = /^\/live\/img\/a\/([^\/]+)$/.exec(p))) {
@@ -566,15 +591,19 @@ var server = http.createServer(function (req, res) {
     catch (err) { console.log('  [media] ' + err.message); return json(res, 500, { error: 'News is not available right now.', code: 'server' }); }
   }
   if (p === '/api/live-states') {
-    if (!svc) return json(res, 503, { error: 'Data is still loading.', code: 'server' });
+    if (!svc) { var cs = snapCache.get('states'); return cs ? json(res, 200, { states: cs.v }) : json(res, 503, { error: 'Data is still loading.', code: 'server' }); }
     return json(res, 200, { states: STATES });
   }
   if (/^\/api\/live-/.test(p)) {
     var scope = String(q.scope || 'all');
-    if (!svc) return json(res, 503, { error: 'Data is still loading.', code: 'server' });
+    if (!svc) {
+      /* while loading: the saved snapshot for this scope; the page fetches again every minute and gets the fresh one when ready */
+      var cached = p === '/api/live-snapshot' ? cachedSnap(scope) : null;
+      return cached ? json(res, 200, cached) : json(res, 503, { error: 'Data is still loading.', code: 'server' });
+    }
     if (!validScope(scope)) return json(res, 400, { error: 'Unknown state.', code: 'scope' });
     var job;
-    if (p === '/api/live-snapshot') job = svc.get(scope, {}).then(function (s) { return withAttacks(scope, s); });
+    if (p === '/api/live-snapshot') job = svc.get(scope, {}).then(function (s) { var r = withAttacks(scope, s); snapCache.put('snap:' + scope, r); return r; });
     else if (p === '/api/live-search') job = Promise.resolve({ results: svc.search(scope, String(q.q || '').slice(0, 60)) });
     else if (p === '/api/live-person') job = svc.person(scope, String(q.h || '').slice(0, 60), {}).then(function (r) {
       return r || { __status: 404, error: 'This leader is not in the list.', code: 'notfound' };
@@ -591,6 +620,9 @@ server.listen(PORT, HOST, function () {
   console.log('  open:  http://localhost:' + PORT + '/live' + (HOST === '0.0.0.0' ? '   (also from other devices on this network)' : ''));
   console.log('  loading data from ' + DATA + ' ...');
   mediaRoom.start().catch(function (e) { console.log('  [media] ' + e.message); });
+  /* the saved screens first (seconds), so the page works while the posts load (minutes) */
+  snapCache.load().then(function (n) { console.log('  [snap-cache] ' + n + ' saved screens ready for the loading time (' + snapCache.kind + ')'); })
+    .catch(function (e) { console.log('  [snap-cache] none: ' + e.message); });
   loadData().then(function (rows) {
     meta = { from: rows.length ? rows[0]['Tweet Date'].slice(0, 16) : null, to: rows.length ? rows[rows.length - 1]['Tweet Date'].slice(0, 16) : null, posts: rows.length };
     STATES = stateList(rows); STATE_SET = {}; STATES.forEach(function (s) { STATE_SET[s.state] = 1; });
@@ -598,7 +630,13 @@ server.listen(PORT, HOST, function () {
     console.log('  ready -- ' + rows.length.toLocaleString('en-IN') + ' posts, ' + meta.from + ' to ' + meta.to + ' IST\n');
     svc.warm('all').then(function () { return svc.warm('up'); }).catch(function () {});
     attacks = ATTACKS.createEngine({ rows: rows, svc: svc, master: function () { return MAPL.load(); }, dataDir: DATA });
-    attacks.start();
+    /* keep the saved screens fresh even when nobody is watching: All India and UP every 10 minutes
+       (other states are saved when someone opens them) */
+    function saveMain() {
+      snapCache.put('meta', meta); snapCache.put('states', STATES);
+      ['all', 'up'].forEach(function (sc) { svc.get(sc, {}).then(function (s) { snapCache.put('snap:' + sc, withAttacks(sc, s)); }).catch(function () {}); });
+    }
+    Promise.resolve(attacks.start()).catch(function () {}).then(function () { saveMain(); setInterval(saveMain, 10 * 60000).unref(); });
   }).catch(function (e) { console.log('\n  ERROR: ' + e.message + '\n'); process.exit(1); });
 });
 server.on('error', function (e) {

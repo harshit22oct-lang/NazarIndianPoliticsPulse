@@ -6,3 +6,4 @@ data/attack_labels.json*
 GEMINI_HANDOFF.md
 data/media_room.json*
 app/live_assets/sources/
+data/snap_cache.json
