@@ -1137,6 +1137,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       postedAt: 'posted {d}', mapNote: 'Colour = party with the most original posts from that state (at least 20). It is not a vote share.',
       fewPosts: 'Too few posts', when24: 'Last 24 hours · up to {d}', whenDay: '{d} · latest complete day',
       hWindow24: '<b>Showing:</b> last 24 hours up to {d}', hWindowDay: '<b>Showing:</b> {d}, the latest complete day — newer data is incomplete',
+      hWindowThin: '<b>Showing:</b> last 24 hours up to {d} — fewer posts than usual came in, data may be incomplete',
       hLatest: 'Latest post {d}', hEst: 'Counts are estimates from the accounts we collect',
       hSource: 'Data source not reachable at last check ({d})', hIdle: 'No new data from the source at last check ({d})',
       hSaved: 'Showing saved data from {d} — reconnecting', hDegraded: 'Server is showing its last good data from {d}',
@@ -1197,6 +1198,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       postedAt: '{d} को पोस्ट', mapNote: 'रंग = उस राज्य से सबसे ज़्यादा मूल पोस्ट वाली पार्टी (कम से कम 20)। यह वोट शेयर नहीं है।',
       fewPosts: 'बहुत कम पोस्ट', when24: 'पिछले 24 घंटे · {d} तक', whenDay: '{d} · ताज़ा पूरा दिन',
       hWindow24: '<b>दिखाया जा रहा है:</b> {d} तक पिछले 24 घंटे', hWindowDay: '<b>दिखाया जा रहा है:</b> {d}, ताज़ा पूरा दिन — नया डेटा अधूरा है',
+      hWindowThin: '<b>दिखाया जा रहा है:</b> {d} तक पिछले 24 घंटे — आम दिनों से कम पोस्ट आए, डेटा अधूरा हो सकता है',
       hLatest: 'ताज़ा पोस्ट {d}', hEst: 'आँकड़े हमारे संग्रहित खातों पर आधारित अनुमान हैं',
       hSource: 'पिछली जाँच में डेटा स्रोत तक पहुँच नहीं ({d})', hIdle: 'पिछली जाँच में स्रोत से नया डेटा नहीं ({d})',
       hSaved: '{d} का सहेजा डेटा — दोबारा जुड़ रहे हैं', hDegraded: 'सर्वर {d} का आख़िरी सही डेटा दिखा रहा है',
@@ -1513,7 +1515,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (state.mode === 'media') { $('honesty').innerHTML = mrHonesty(); return; }
     var s = state.snap, parts = [];
     if (!s) { $('honesty').innerHTML = ''; return; }
-    if (s.window && s.window.mode !== 'rolling') parts.push('<span class="warn">' + fill(t('hWindowDay'), { d: esc(fmtDay(s.window.from, true)) }) + '</span>');
+    if (s.window && s.window.thin) parts.push('<span class="warn">' + fill(t('hWindowThin'), { d: esc(fmtWhen(s.window.to)) }) + '</span>');
+    else if (s.window && s.window.mode !== 'rolling') parts.push('<span class="warn">' + fill(t('hWindowDay'), { d: esc(fmtDay(s.window.from, true)) }) + '</span>');
     var pl = s.status && s.status.pipeline;
     if (pl && pl.state === 'source_unreachable') parts.push('<span class="warn">' + fill(t('hSource'), { d: esc(fmtWhen(pl.lastAttemptAt)) }) + '</span>');
     else if (pl && pl.state === 'source_idle') parts.push('<span class="warn">' + fill(t('hIdle'), { d: esc(fmtWhen(pl.lastAttemptAt)) }) + '</span>');

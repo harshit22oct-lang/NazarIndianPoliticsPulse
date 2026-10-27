@@ -66,6 +66,9 @@ if (!USE_PULSE) {
   LIVE.C.BASE_DAYS = 7;
   LIVE.C.BASE_MIN_DAYS = 3;
 }
+/* show the latest 24 h even when fewer posts than usual came in (marked on screen),
+   instead of jumping back to an older complete day; below 20 % of a usual day it does jump */
+LIVE.C.LATEST_MIN = 0.2;
 LIVE.C.BREAK_BASE_DAYS = 6;        // raw posts in memory: Nazar's own history + Pulse's window
 var KEEP_RAW_DAYS = 35;            // older raw posts are dropped from memory (counts come from nazar_daily)
 

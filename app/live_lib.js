@@ -164,9 +164,12 @@ function planWindow(o) {
   if (base.value === null || base.value <= 0) return res;
 
   var cov = o.rollingCur / base.value;
-  if (cov >= C.COVER_MIN) {
+  /* C.LATEST_MIN (optional): keep the latest 24 h even below COVER_MIN, marked thin,
+     as long as it holds at least this share of a usual day */
+  var thin = cov < C.COVER_MIN && typeof C.LATEST_MIN === 'number' && cov >= C.LATEST_MIN;
+  if (cov >= C.COVER_MIN || thin) {
     var toMs = o.newestMs, fromMs = toMs - C.WIN_H * 3600000 + 1000;
-    res.mode = 'rolling'; res.coverage = cov;
+    res.mode = 'rolling'; res.coverage = cov; res.thin = thin;
     res.window = { from: fmtIst(fromMs), to: fmtIst(toMs), fromMs: fromMs, toMs: toMs };
     var pTo = fromMs - 1000, pFrom = pTo - C.WIN_H * 3600000 + 1000;
     res.prev = { from: fmtIst(pFrom), to: fmtIst(pTo), fromMs: pFrom, toMs: pTo };
@@ -740,7 +743,7 @@ function createService(env) {
     var counts = await Promise.all([rangeCount(coll, scopeQ, rollFrom, rollTo), rangeCount(coll, scopeQ, rollPFrom, rollPTo)]);
     var plan = planWindow({ newestMs: newestMs, dayCounts: dayCounts, rollingCur: counts[0], rollingPrev: counts[1] });
 
-    var partial = plan.mode === 'lastFullDay' || plan.mode === 'none' ||
+    var partial = plan.mode === 'lastFullDay' || plan.mode === 'none' || plan.thin ||
                   (pipe && (pipe.state === 'source_unreachable' || pipe.state === 'log_stale'));
     var rr = plan.rollingCoverage !== undefined ? plan.rollingCoverage : plan.coverage;
     out.coverage = { estimated: true, ratio: plan.coverage === null ? null : round(plan.coverage, 2),
@@ -749,8 +752,9 @@ function createService(env) {
                      mode: plan.mode, partial: !!partial,
                      partialReason: plan.mode === 'lastFullDay' ? 'rolling-window-incomplete'
                        : plan.mode === 'none' ? 'no-complete-window'
+                       : plan.thin ? 'rolling-window-thin'
                        : (partial ? 'pipeline-' + pipe.state : null) };
-    out.window = plan.window ? { mode: plan.mode, from: plan.window.from, to: plan.window.to, day: plan.window.day || null } : null;
+    out.window = plan.window ? { mode: plan.mode, from: plan.window.from, to: plan.window.to, day: plan.window.day || null, thin: !!plan.thin } : null;
     out.prevWindow = plan.prev ? { from: plan.prev.from, to: plan.prev.to, comparable: !!plan.prevComparable } : null;
     if (!plan.window) { out.facts = []; return out; }
 
