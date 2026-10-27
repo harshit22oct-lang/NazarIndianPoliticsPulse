@@ -802,8 +802,11 @@ server.listen(PORT, HOST, function () {
           var saved = await loadRaw(LIVE.addDays(LIVE.istDay(Date.now()), -KEEP_RAW_DAYS));
           if (saved.length) {
             var urls = {}; saved.forEach(function (r) { if (r['Tweet URL']) urls[r['Tweet URL']] = 1; });
-            var own = rows.filter(function (r) { return !r['Tweet URL'] || !urls[r['Tweet URL']]; });
-            rows.length = 0; Array.prototype.push.apply(rows, own); Array.prototype.push.apply(rows, saved);
+            /* in place, one by one (a 1.5-lakh-item push.apply overflows the stack) */
+            var w = 0;
+            for (var i = 0; i < rows.length; i++) if (!rows[i]['Tweet URL'] || !urls[rows[i]['Tweet URL']]) rows[w++] = rows[i];
+            rows.length = w;
+            for (var j = 0; j < saved.length; j++) rows.push(saved[j]);
             rows.sort(function (a, b) { return a['Tweet Date'] < b['Tweet Date'] ? -1 : a['Tweet Date'] > b['Tweet Date'] ? 1 : 0; });
           }
         } catch (e) { console.log('  [pulse] saved posts not loaded: ' + String(e && e.message || e).replace(/mongodb(\+srv)?:\/\/[^\s@]*@/g, 'mongodb://***@')); }
