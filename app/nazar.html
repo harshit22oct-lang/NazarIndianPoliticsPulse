@@ -441,10 +441,7 @@ body.portrait .st-top{flex-wrap:wrap} body.portrait .st-top h2{width:100%;margin
 .dlt.up,.dlt.down{display:inline-block;-webkit-animation:pop .6s cubic-bezier(.2,1.6,.4,1) both;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
 .dlt.up{color:#0b2a12;background:var(--good);box-shadow:0 0 1.2rem rgba(123,211,137,.55)}
 .dlt.down{color:#2a1a00;background:var(--amber)}
-/* the period a tile counts (24 / 48 / 72 h), top-right; a live "+N" badge sits under it */
-.kpi-h{position:absolute;top:1.1rem;right:1.1rem;font-size:1.05rem;font-weight:700;line-height:1;padding:.4rem .75rem;border-radius:2rem;white-space:nowrap;
-  color:var(--gold);background:rgba(255,153,51,.14);border:.08rem solid rgba(255,200,87,.45)}
-.kpi .dlt{position:absolute;top:3.5rem;right:1.1rem}
+.kpi .dlt{position:absolute;top:1.1rem;right:1.1rem}
 .atb-i .dlt{position:absolute;top:-1.1rem;right:-.4rem;font-size:1rem}
 @-webkit-keyframes pop{0%{opacity:0;-webkit-transform:scale(.4) translateY(.8rem)}100%{opacity:1;-webkit-transform:none}}
 @keyframes pop{0%{opacity:0;transform:scale(.4) translateY(.8rem)}100%{opacity:1;transform:none}}
@@ -1795,17 +1792,16 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       cmpV = growth(s.kpis.views, s.compare.prevViews, 'vsPrevV', { h: hrsOf(s) });
       cmpL = growth(s.kpis.likes, s.compare.prevLikes, 'vsPrevL', { h: hrsOf(s) });
     }
-    var per = '<span class="kpi-h">' + esc(fill(t('rngH'), { h: hrsOf(s) })) + '</span>';      // every tile counts the chosen period
     function tile(v, f, key, label, sub) {
-      return '<div class="kpi">' + per + '<div class="kpi-v">' + num(v, f, key) + '</div>' + dltHtml(key) + '<div class="kpi-l">' + label + '</div><div class="kpi-s">' + sub + '</div></div>';
+      return '<div class="kpi"><div class="kpi-v">' + num(v, f, key) + '</div>' + dltHtml(key) + '<div class="kpi-l">' + label + '</div><div class="kpi-s">' + sub + '</div></div>';
     }
     var tiles = tile(s.kpis.originalPosts, 'int', 'k.posts', t('kOrig'), cmp)
       + tile(s.kpis.views, 'short', 'k.views', t('kViews'), cmpV)
       + tile(s.kpis.likes, 'short', 'k.likes', t('kLikes'), cmpL)
-      + '<div class="kpi">' + per + '<div class="kpi-v txt" style="color:' + (top ? lighten(top.color, 0.3) : '#fff') + '">' + (top ? plogo(top.logo, top.color) + ' ' : '') + esc(top ? top.party : '–') + '</div><div class="kpi-l">' + t('kParty') + '</div><div class="kpi-s">'
+      + '<div class="kpi"><div class="kpi-v txt" style="color:' + (top ? lighten(top.color, 0.3) : '#fff') + '">' + (top ? plogo(top.logo, top.color) + ' ' : '') + esc(top ? top.party : '–') + '</div><div class="kpi-l">' + t('kParty') + '</div><div class="kpi-s">'
       + (top && top.postShare !== null ? esc(fill(t('ofPartyPosts'), { v: top.postShare })) : '') + '</div></div>';
     if (STATE || !st) tiles += tile(s.kpis.accounts, 'int', 'k.acc', t('kAcc'), '');
-    else tiles += '<div class="kpi">' + per + '<div class="kpi-v txt">' + esc(stName(st.state)) + '</div><div class="kpi-l">' + t('kState') + '</div><div class="kpi-s">' + esc(postsTxt(st.posts)) + '</div></div>';
+    else tiles += '<div class="kpi"><div class="kpi-v txt">' + esc(stName(st.state)) + '</div><div class="kpi-l">' + t('kState') + '</div><div class="kpi-s">' + esc(postsTxt(st.posts)) + '</div></div>';
     /* everything Pulse has, since its first day: posts, views, likes of every account, the accounts tracked */
     var cs = s.coverageStats || {}, a = cs.allTime, band = '';
     if (a) {
