@@ -17,6 +17,7 @@ var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var urlm = require('url');
+var zlib = require('zlib');
 
 var APP = path.join(__dirname, 'app');
 var DATA = path.join(__dirname, 'data');
@@ -666,6 +667,12 @@ function send(res, code, type, body, extra) {
     'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet'
   };
   Object.keys(extra || {}).forEach(function (k) { h[k] = extra[k]; });
+  /* text (the page, JSON, the map) goes gzipped when the browser takes it: 5-10x smaller,
+     which is most of the waiting on a slow line */
+  var ae = res.req && res.req.headers['accept-encoding'] || '';
+  if (/gzip/.test(ae) && /^(text\/|application\/json)/.test(type) && body && body.length > 1024) {
+    try { body = zlib.gzipSync(typeof body === 'string' ? Buffer.from(body) : body, { level: 6 }); h['Content-Encoding'] = 'gzip'; h.Vary = 'Accept-Encoding'; } catch (e) {}
+  }
   res.writeHead(code, h); res.end(body);
 }
 function json(res, code, obj) { send(res, code, 'application/json; charset=utf-8', JSON.stringify(obj)); }
@@ -850,6 +857,14 @@ server.listen(PORT, HOST, function () {
       });
     }
     Promise.resolve(attacks.start()).catch(function () {}).then(function () { saveMain(); setInterval(saveMain, 10 * 60000).unref(); });
+    /* the screens most people open -- All India and UP, 24 / 48 / 72 h -- are rebuilt every minute
+       one after another, so a visitor always gets a ready answer (live_lib serves the last copy
+       while the next one is built) */
+    var WARM = []; ['all', 'up'].forEach(function (sc) { LIVE.C.HOURS.forEach(function (h) { WARM.push([sc, h]); }); });
+    function warmAll() {
+      WARM.reduce(function (p, x) { return p.then(function () { return svc.get(x[0], { hours: x[1] }); }).catch(function () {}); }, Promise.resolve());
+    }
+    warmAll(); setInterval(warmAll, 60000).unref();
   }).catch(function (e) { console.log('\n  ERROR: ' + e.message + '\n'); process.exit(1); });
 });
 server.on('error', function (e) {

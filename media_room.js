@@ -225,7 +225,7 @@ function createMediaRoom(opts) {
       var cut = Date.now() - KEEP_MS;
       Object.keys(items).forEach(function (k) { if (items[k].pub < cut) delete items[k]; });
       if (feeds.length) { lastRun = Date.now(); firstPass = false; }
-      if (fresh.length || changed.length) cache = {};
+      if (fresh.length || changed.length) staleViews();
       if (feeds.length) {
         log('  [media] ' + feeds.length + ' feeds read, ' + fresh.length + ' new headlines, ' + Object.keys(items).length + ' in the last 72 h'
           + (feeds.filter(function (f) { return status[f.key].error; }).length ? ' (' + feeds.filter(function (f) { return status[f.key].error; }).length + ' failed)' : ''));
@@ -238,7 +238,7 @@ function createMediaRoom(opts) {
     var newest = 0; Object.keys(status).forEach(function (k) { if ((status[k].lastTry || 0) > newest) newest = status[k].lastTry; });
     if (newest) { lastRun = newest; firstPass = false; }
     AI.restore(s.aiUsage);
-    cache = {};
+    staleViews();
   }
 
   /* the AI step, once a minute: the newest political headlines without a label, one per
@@ -258,7 +258,7 @@ function createMediaRoom(opts) {
       var callsBefore = AI.usage().calls;
       var labels = await AI.step(groups.map(function (g) { return g[0]; })), done = [];
       groups.forEach(function (g) { var L = labels[g[0]._id]; if (L) g.forEach(function (x) { x.ai = L; done.push(x); }); });
-      if (done.length) cache = {};
+      if (done.length) staleViews();
       if (AI.usage().calls !== callsBefore) {
         try { await store.saveAi(all, done, AI.usage(), status); } catch (e) { log('  [media-ai] could not save: ' + e.message); }
       }
@@ -275,12 +275,37 @@ function createMediaRoom(opts) {
       return { id: s.id, name: s.name, nameHi: s.nameHi, kind: s.kind, ok: ok, newest: newest || null };
     }).filter(Boolean);
   }
+  /* rebuilt when new headlines arrive, and every 10 minutes (the 24-hour and "hot" windows move on).
+     Building one takes seconds (every headline is tagged again) and blocks the server, so a
+     visitor never waits for it: the last copy is answered at once and the new one is built
+     right after, outside the request. Only a view never built before is built on the spot. */
+  var rebuildQ = {};
   function view(key) {
-    /* rebuilt when new headlines arrive, and every 10 minutes (the 24-hour and "hot" windows move on) */
-    if (cache[key] && Date.now() - cache[key].at < 10 * 60000) return cache[key].v;
+    var c = cache[key];
+    if (c && Date.now() - c.at >= 10 * 60000 && !rebuildQ[key]) {
+      rebuildQ[key] = setTimeout(function () { delete rebuildQ[key]; delete cache[key]; buildView(key); }, 50);
+    }
+    return c ? c.v : buildView(key);
+  }
+  /* new headlines or labels: every view is out of date, but stays in use until its new copy is built */
+  var staleT = null;
+  function staleViews() {
+    Object.keys(cache).forEach(function (k) { cache[k].at = 0; });
+    if (!staleT) staleT = setTimeout(function () { staleT = null; warmViews(); }, 100);
+  }
+  /* keep All India (and the states being watched) ready before anyone asks */
+  function warmViews() {
+    ['all'].concat(Object.keys(watch).map(function (s) { return 'st:' + s; })).forEach(function (k, i) {
+      setTimeout(function () { try { delete cache[k]; buildView(k); } catch (e) {} }, 200 + i * 400);
+    });
+  }
+  function buildView(key) {
     var all = Object.keys(items).map(function (k) { return items[k]; }), st = key === 'all' ? null : key.slice(3);
     all.forEach(function (x) {
-      x.tags = tagger(x.title, x.src);                                        // today's rules, also for headlines saved before a rule changed
+      /* today's rules, also for headlines saved before a rule changed -- once per headline per
+         run (the rules only change with a restart); the copy below is what this view adds to */
+      if (!x._tags) Object.defineProperty(x, '_tags', { value: tagger(x.title, x.src), writable: true, enumerable: false });
+      x.tags = x._tags.slice();
       /* the AI picks the topics once it has read a headline (keywords alone put a Jio deal under
          "party announcements" for the word "joins"); keywords only until then */
       if (x.ai && x.ai.c) x.tags = x.ai.c.slice();

@@ -46,6 +46,7 @@ var C = {
   BREAK_CANDIDATES: 60,
   TICKER_ITEMS: 12,
   TTL_MS: 60000,
+  STALE_OK_MS: 10 * 60000,  // an older copy is still served at once (and rebuilt behind it) up to this age
   DAYCOUNT_TTL_MS: 3600000,
   COLLECTED_TTL_MS: 6 * 3600000,
   COLLECTED_WAIT_MS: 1500,
@@ -883,9 +884,17 @@ function createService(env) {
     if (asofMs !== null) return build(scope, asofMs, H);
 
     var k = scope + '|auto|' + H, e = snaps[k], now = env.now();
-    if (e && (e.pending || now - e.at < C.TTL_MS) && e.p) { touch(k); return e.p; }
+    if (e && (e.pending || now - e.at < C.TTL_MS) && e.p) {
+      touch(k);
+      /* a rebuild is running: answer with the last good copy instead of waiting for it */
+      return e.pending && e.v && now - e.v.__at < C.STALE_OK_MS ? Promise.resolve(e.v) : e.p;
+    }
+    /* stale but recent: answer at once with it and rebuild in the background
+       (stale-while-revalidate) -- nobody waits for the maths after the first build */
+    var serveOld = e && e.v && now - e.v.__at < C.STALE_OK_MS;
     var ne = { at: now, pending: true, p: null, v: e ? e.v : null };
     ne.p = build(scope, null, H).then(function (v) {
+      Object.defineProperty(v, '__at', { value: env.now(), enumerable: false });   // when it was built (not sent)
       ne.v = v; ne.pending = false; ne.at = env.now(); return v;
     }, function (err) {
       ne.pending = false; ne.at = 0;                       // failed promise is not cached
@@ -899,7 +908,7 @@ function createService(env) {
       throw err;
     });
     snaps[k] = ne; touch(k);
-    return ne.p;
+    return serveOld ? Promise.resolve(e.v) : ne.p;
   }
 
   /* ---------------- personal view ---------------- */

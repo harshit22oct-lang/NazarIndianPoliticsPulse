@@ -2297,14 +2297,22 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   }
 
   /* ============================================================ DATA */
+  /* the same answer asked again within 25 s (the intro's prefetch, then the first screen) is
+     not fetched twice; the minute refresh always asks the server */
+  var apiMemo = {};
   function api(url) {
-    return fetch(url, { credentials: 'same-origin', cache: 'no-store' }).then(function (r) {
+    var m = apiMemo[url];
+    if (m && Date.now() - m.at < 25000) return m.p;
+    var p = fetch(url, { credentials: 'same-origin', cache: 'no-store' }).then(function (r) {
       if (r.status === 401) { stop('auth'); return null; }
       if (r.status === 403) { stop('forbidden'); return null; }
       if (r.status === 404) return { __notfound: true };
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     });
+    apiMemo[url] = { at: Date.now(), p: p };
+    p.catch(function () { if (apiMemo[url] && apiMemo[url].p === p) delete apiMemo[url]; });
+    return p;
   }
   function q(extra) { return '?scope=' + SCOPE + '&hrs=' + HOURS + (ASOF ? '&asof=' + encodeURIComponent(ASOF) : '') + (extra || ''); }
   function onData(first) {
@@ -3002,6 +3010,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   /* the intro shows real numbers, so fetch the All-India snapshot while it plays */
   if (!DEMO) api('/api/live-snapshot' + q()).then(function (j) { if (j && !j.__notfound) { state.all = j; introStats(); } }).catch(function () {});
   else state.all = demoSnap();
+  /* the Media Room's news too, a moment later, so it opens at once when chosen (api() keeps it 25 s;
+     after that the browser cache is gone but the server answers from its ready copy) */
+  if (!DEMO) setTimeout(function () { api(mrUrl()).catch(function () {}); }, 1200);
   playIntro(function () {
     if (Q.h) startShow('person', Q.h);
     else if (Q.mode === 'media') startShow('media');
