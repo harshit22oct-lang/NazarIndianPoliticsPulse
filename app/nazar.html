@@ -1447,14 +1447,16 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   T.en.stNone = 'No state with that name in this data.'; T.hi.stNone = 'इस डेटा में इस नाम का कोई राज्य नहीं।';
   T.en.stAllSub = 'Back to the whole country'; T.hi.stAllSub = 'पूरे देश पर वापस';
   T.en.stAll = 'All India'; T.hi.stAll = 'पूरा भारत';
+  /* a leader's channel is always All India (search and numbers), also when opened from a state */
+  T.en.brandSubAll = T.en.brandSub; T.hi.brandSubAll = T.hi.brandSub;
   if (STATE) {
     var stHi = STATE_HI[STATE] || STATE;
+    T.en.brandSubAll = 'India Political Pulse'; T.hi.brandSubAll = 'इंडिया पॉलिटिकल पल्स';
     T.en.brandSub = STATE + ' · Political Pulse'; T.hi.brandSub = stHi + ' · पॉलिटिकल पल्स';
     T.en.chAllK = 'Full picture of the state'; T.hi.chAllK = 'पूरे राज्य की तस्वीर';
     T.en.chAllT = STATE; T.hi.chAllT = stHi;
     T.en.chAllD = 'Every party in ' + STATE + ' — who is posting, who is being seen, what the news says.';
     T.hi.chAllD = stHi + ' की हर पार्टी — कौन पोस्ट कर रहा है, किसे देखा जा रहा है, ख़बरें क्या कहती हैं।';
-    T.en.chOneT = 'One leader of ' + STATE; T.hi.chOneT = stHi + ' का एक नेता';
     T.en.tag = 'The political pulse of ' + STATE + ' — every moment'; T.hi.tag = stHi + ' की राजनीतिक नब्ज़ — हर पल';
     T.en.scaleUp = 'Tracking <b>{a}</b> political accounts in ' + STATE + ' · <b>{t}</b> posts analysed in total';
     T.hi.scaleUp = stHi + ' के <b>{a}</b> राजनीतिक खातों पर नज़र · कुल <b>{t}</b> पोस्ट का विश्लेषण';
@@ -1607,7 +1609,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     document.documentElement.lang = LANG;
     $('langBtn').textContent = t('langBtn'); $('chLang').textContent = t('langBtn');
     $('backTxt').textContent = t('back'); $('chBackTxt').textContent = t('back');
-    $('brandSub').textContent = state.mode === 'media' ? t('mrBrand') : t('brandSub'); $('chSub').textContent = t('brandSub');
+    $('brandSub').textContent = brandText(state.mode); $('chSub').textContent = t('brandSub');
     $('mrBtn').textContent = t('mrBtn');
     $('chMediaT').textContent = t('mrChT'); $('chMediaD').textContent = t('mrChD'); $('chMediaGo').textContent = t('mrChGo') + ' →';
     if (MR.open) renderMrPanel();
@@ -1619,7 +1621,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (DEMO) showBanner('demo', t('demo')); else if (ASOF) showBanner('hist', fill(t('hist'), { d: ASOF }));
     else if (PROTO && PROTO.from && !PROTO.live) showBanner('proto', fill(t('proto'), { a: fmtDay(PROTO.from), b: fmtWhen(PROTO.to) }));
     if (PHONE) $('inSkip').textContent = t('skipTouch');
-    if (STATE) { $('stPill').className = 'chip stpill'; $('stPillTxt').textContent = stName(STATE); }
+    if (STATE) { $('stPill').className = state.mode === 'person' ? 'chip stpill hidden' : 'chip stpill'; $('stPillTxt').textContent = stName(STATE); }
     if (typeof renderSpeed === 'function' && $('spd')) renderSpeed();
     if (typeof renderRange === 'function' && $('rng')) renderRange();
     if (stList) renderStates();
@@ -1745,7 +1747,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     return { v: v, f: f };
   }
   function noteLive(s) {
-    var x = liveVals(s), old = state.live || null, key = SCOPE + '|' + HOURS;
+    var x = liveVals(s), old = state.live || null, key = ((s && s.scope) || SCOPE) + '|' + HOURS;   // the answer's own scope (a leader's channel is All India)
     if (state.liveKey !== key) { old = null; state.dlt = {}; }        // another scope / window: nothing to compare with
     state.dlt = state.dlt || {};
     /* only a rise gets a "▲ +N" badge; a fall just counts down to the new value (and takes
@@ -2320,6 +2322,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     return p;
   }
   function q(extra) { return '?scope=' + SCOPE + '&hrs=' + HOURS + (ASOF ? '&asof=' + encodeURIComponent(ASOF) : '') + (extra || ''); }
+  /* leaders are searched and shown All India, whatever state this page is on */
+  function qp(extra) { return '?scope=all&hrs=' + HOURS + (ASOF ? '&asof=' + encodeURIComponent(ASOF) : '') + (extra || ''); }
+  function brandText(mode) { return mode === 'media' ? t('mrBrand') : mode === 'person' ? t('brandSubAll') : t('brandSub'); }
   function onData(first) {
     var s = state.snap;
     var oldId = state.scenes[state.idx] && state.scenes[state.idx].id;
@@ -2341,8 +2346,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (state.mode === 'media') { fetchMedia(first); return; }
     if (DEMO) { state.all = demoSnap(); state.snap = state.all; onData(first); return; }
     var mode = state.mode, h = state.person;
-    var calls = [api('/api/live-snapshot' + q())];
-    if (mode === 'person') calls.push(api('/api/live-person' + q('&h=' + encodeURIComponent(h))));
+    var calls = [api('/api/live-snapshot' + (mode === 'person' ? qp() : q()))];
+    if (mode === 'person') calls.push(api('/api/live-person' + qp('&h=' + encodeURIComponent(h))));
     Promise.all(calls).then(function (res) {
       if (state.stopped || mode !== state.mode) return;
       var all = res[0], per = res[1];
@@ -2663,7 +2668,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (mode !== 'media') mrPanel(false);
     setCls(document.body, 'mr', mode === 'media');
     $('mrBtn').className = mode === 'media' && !KIOSK ? 'tbtn' : 'tbtn hidden';
-    $('brandSub').textContent = mode === 'media' ? t('mrBrand') : t('brandSub');
+    $('brandSub').textContent = brandText(mode);
+    /* the state pill belongs to the state's own screens, not to a leader's (All India) channel */
+    if (STATE) $('stPill').className = mode === 'person' ? 'chip stpill hidden' : 'chip stpill';
     $('chooser').className = 'hidden'; $('app').style.visibility = ''; setCls(document.body, 'choosing', false);
     state.stopped = false; clearTimeout(fetchTimer); fetchData(true);
   }
@@ -2699,6 +2706,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       .catch(function () { state.stP = null; });
   }
   function goScope(sc) {
+    /* the page opens again for the new scope: no intro this time, straight to its screens */
+    try { window.sessionStorage.setItem('nazar_skip_intro', '1'); } catch (e) {}
     var keep = location.search.replace(/^\?/, '').split('&').filter(function (kv) { return kv && !/^(scope|h|mode)=/.test(kv); });
     location.href = location.pathname + '?' + keep.concat(sc === 'all' ? [] : ['scope=' + encodeURIComponent(sc)]).concat(['mode=all']).join('&');
   }
@@ -2807,7 +2816,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (v.length < 2) { chRes = []; $('chList').innerHTML = ''; return; }
     chSearchT = setTimeout(function () {
       if (DEMO) { chRes = []; renderList(); return; }
-      fetch('/api/live-search' + q('&q=' + encodeURIComponent(v)), { credentials: 'same-origin', cache: 'no-store' })
+      fetch('/api/live-search' + qp('&q=' + encodeURIComponent(v)), { credentials: 'same-origin', cache: 'no-store' })
         .then(function (r) { if (r.status === 401) { stop('auth'); return null; } return r.ok ? r.json() : { results: [] }; })
         .then(function (j) { if (!j) return; chRes = j.results || []; chSel = chRes.length ? 0 : -1; renderList(); })
         .catch(function () {});
@@ -2824,8 +2833,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var on = $('chList').querySelector('.ch-row.on'); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest' });
   }
   function pick(i) { var p = chRes[i]; if (p) startShow('person', p.handle); }
-  function recents() { try { return JSON.parse(store('nazar_recent_' + SCOPE) || '[]') || []; } catch (e) { return []; } }
-  function rememberRecent(h) { var r = recents().filter(function (x) { return x.toLowerCase() !== String(h).toLowerCase(); }); r.unshift(h); store('nazar_recent_' + SCOPE, JSON.stringify(r.slice(0, 6))); }
+  /* one list of recent leaders on this device (leaders are All India, not per state) */
+  function recents() { try { return JSON.parse(store('nazar_recent_all') || '[]') || []; } catch (e) { return []; } }
+  function rememberRecent(h) { var r = recents().filter(function (x) { return x.toLowerCase() !== String(h).toLowerCase(); }); r.unshift(h); store('nazar_recent_all', JSON.stringify(r.slice(0, 6))); }
   function renderRecent() {
     var r = recents();
     $('chRecent').innerHTML = r.map(function (h) { return '<button type="button" data-h="' + esc(h) + '">@' + esc(h) + '</button>'; }).join('');
@@ -2851,7 +2861,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   /* the full intro plays on every open (it is the first impression); any key or click skips it */
   function playIntro(cb) {
     introCb = cb;
-    if (Q.intro === '0') { endIntro(); return; }
+    var skip = false;
+    try { skip = window.sessionStorage.getItem('nazar_skip_intro') === '1'; window.sessionStorage.removeItem('nazar_skip_intro'); } catch (e) {}
+    if (Q.intro === '0' || skip) { endIntro(); return; }
     var i, h = '';
     for (i = 0; i < 24; i++) h += '<polygon points="100,100 ' + rayPt(i * 15 - 2.2) + ' ' + rayPt(i * 15 + 2.2) + '"></polygon>';
     $('inRays').innerHTML = h;

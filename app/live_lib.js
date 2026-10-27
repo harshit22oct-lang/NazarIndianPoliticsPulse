@@ -573,9 +573,13 @@ async function fetchCollected(coll, scopeQ, toMs) {
   return by;
 }
 
+/* these handles in any letter case (the same account is spelled both ways in the data) */
+function handlesRx(handles) {
+  return new RegExp('^(' + handles.map(function (h) { return String(h).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')$', 'i');
+}
 async function fetchBaselineRows(coll, handles, fromMs, toMs) {
   if (!handles.length) return [];
-  var q = { Handle: { $in: handles }, 'Tweet Date': { $gte: fmtIst(fromMs), $lt: fmtIst(toMs) } };
+  var q = { Handle: handlesRx(handles), 'Tweet Date': { $gte: fmtIst(fromMs), $lt: fmtIst(toMs) } };
   return coll.find(q, { projection: { _id: 0, Handle: 1, 'Tweet Text': 1, 'Total Views': 1 } })
     .maxTimeMS(60000).toArray();
 }
@@ -949,13 +953,11 @@ function createService(env) {
     if (!snap.window) { out.facts = []; return out; }
     var win = snap._win || { from: snap.window.from, to: snap.window.to, fromMs: parseIst(snap.window.from), toMs: parseIst(snap.window.to) };
     var coll = env.coll;
-    var q = { Handle: rec.handle, 'Tweet Date': { $gte: fmtIst(win.fromMs - C.BREAK_BASE_DAYS * 86400000), $lte: win.to } };
+    /* any letter case: the same account comes as "AmitShah" from one source and "amitshah" from
+       another (Pulse's own rows mix both), and an exact match would drop one of them */
+    var rx = new RegExp('^' + rec.handle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i');
+    var q = { Handle: rx, 'Tweet Date': { $gte: fmtIst(win.fromMs - C.BREAK_BASE_DAYS * 86400000), $lte: win.to } };
     var rows = await coll.find(q, { projection: PROJ }).maxTimeMS(30000).toArray();
-    if (!rows.length) {                                   // the tweet data may spell the handle differently
-      var rx = new RegExp('^' + rec.handle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i');
-      q.Handle = rx;
-      rows = await coll.find(q, { projection: PROJ }).maxTimeMS(30000).toArray();
-    }
     var m = computePerson(rec, rows, win);
     out.kpis = m.kpis; out.usual = m.usual; out.hourly = m.hourly; out.daily = m.daily;
     out.topPost = m.topPost; out.latestPost = m.latestPost;
@@ -981,7 +983,7 @@ function createService(env) {
 
     var riv = rivalsFor(rec, people(), totals || {});
     var rh = riv.list.map(function (p) { return p.handle; });
-    var rrows = rh.length ? await coll.find({ Handle: { $in: rh }, 'Tweet Date': { $gte: win.from, $lte: win.to } }, { projection: PROJ })
+    var rrows = rh.length ? await coll.find({ Handle: handlesRx(rh), 'Tweet Date': { $gte: win.from, $lte: win.to } }, { projection: PROJ })
       .sort({ 'Tweet Date': -1 }).limit(400).maxTimeMS(30000).toArray() : [];
     out.rivals = { mode: riv.mode, place: riv.place || null, list: riv.list.map(function (p) {
       var mine = rrows.filter(function (r) { return String(r.Handle).toLowerCase() === p.key && !HA.isRetweet(r); });
