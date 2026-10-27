@@ -417,7 +417,7 @@ function siteIcon(dom, cb) {
 
 /* --------------------------------------------------------------- states */
 /* every state in the data with enough of its own posts to fill the screens */
-var STATE_MIN_POSTS = 200;
+var STATE_MIN_POSTS = 140;          // in STATE_DAYS (7) days -- about what 200 was over the ~10 days held before
 var STATE_HI = {
   'Andhra Pradesh': 'आंध्र प्रदेश', 'Arunachal Pradesh': 'अरुणाचल प्रदेश', 'Assam': 'असम', 'Bihar': 'बिहार', 'Chhattisgarh': 'छत्तीसगढ़',
   'Goa': 'गोवा', 'Gujarat': 'गुजरात', 'Haryana': 'हरियाणा', 'Himachal Pradesh': 'हिमाचल प्रदेश', 'Jharkhand': 'झारखंड', 'Karnataka': 'कर्नाटक',
@@ -426,12 +426,17 @@ var STATE_HI = {
   'Telangana': 'तेलंगाना', 'Tripura': 'त्रिपुरा', 'Uttar Pradesh': 'उत्तर प्रदेश', 'Uttarakhand': 'उत्तराखंड', 'West Bengal': 'पश्चिम बंगाल',
   'Delhi': 'दिल्ली', 'Jammu and Kashmir': 'जम्मू और कश्मीर', 'Ladakh': 'लद्दाख', 'Puducherry': 'पुदुचेरी', 'Chandigarh': 'चंडीगढ़'
 };
+/* posts of leaders per state over the last STATE_DAYS days (said on the start screen); the
+   number does not depend on how many days happen to be in memory */
+var STATE_DAYS = 7;
 function stateList(rows) {
-  var by = {};
-  rows.forEach(function (r) {
-    if (!LIVE.validState(r.State) || NEWS.MEDIA_CATS.indexOf(r.Category) >= 0) return;
+  var by = {}, since = LIVE.addDays(LIVE.istDay(Date.now()), -(STATE_DAYS - 1)), lo = 0, hi = rows.length;
+  while (lo < hi) { var m = (lo + hi) >> 1; if (rows[m]['Tweet Date'] < since) lo = m + 1; else hi = m; }
+  for (var i = lo; i < rows.length; i++) {
+    var r = rows[i];
+    if (!LIVE.validState(r.State) || NEWS.MEDIA_CATS.indexOf(r.Category) >= 0) continue;
     by[r.State] = (by[r.State] || 0) + 1;
-  });
+  }
   return Object.keys(by).filter(function (s) { return by[s] >= STATE_MIN_POSTS; })
     .sort(function (a, b) { return by[b] - by[a]; })
     .map(function (s) { return { state: s, posts: by[s] }; });
@@ -581,7 +586,19 @@ function makeService(rows) {
   }
   /* Pulse: day < window_start from nazar_daily, day >= window_start from the raw posts.
      null (no summary yet) -> live_lib counts the rows it has. */
+  var gapMemo = { k: null, v: null };
   var pulseHooks = !PULSE ? {} : {
+    /* days before window_start whose raw posts here are under 60 % of Pulse's own count for the
+       day (e.g. 24 Oct: Nazar's old copy stopped at 07:04) -- a leader's chart says "no data" */
+    rawGaps: function () {
+      var s = PULSE.summaryNow(); if (!s) return Promise.resolve({});
+      var k = dataVer + '|' + s.ws; if (gapMemo.k === k) return Promise.resolve(gapMemo.v);
+      var from = LIVE.addDays(s.ws, -(KEEP_RAW_DAYS + 1)), days = Object.keys(s.daily).filter(function (d) { return d >= from && d < s.ws; }), out = {};
+      return Promise.all(days.map(function (d) {
+        var tot = 0; Object.keys(s.daily[d]).forEach(function (x) { tot += s.daily[d][x]; });
+        return rawDay(d, null).then(function (n) { if (tot > 0 && n < 0.6 * tot) out[d] = 1; });
+      })).then(function () { gapMemo = { k: k, v: out }; return out; });
+    },
     dayCounts: function (scope, days) {
       return PULSE.summary().then(function (s) {
         if (!s) return null;

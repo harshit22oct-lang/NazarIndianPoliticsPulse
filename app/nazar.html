@@ -652,6 +652,7 @@ body.portrait .ak{grid-template-columns:1fr;grid-template-rows:auto 1fr}
 .dbars i{display:block;background:linear-gradient(180deg,#FF9933,#9E3600);border-radius:.5rem .5rem 0 0;min-height:.2rem}
 .dbars b{font-family:var(--head);font-size:1.6rem;margin-bottom:.3rem}
 .dbars span{font-size:1.05rem;color:var(--dim);margin-top:.4rem}
+.dbars .nod b{color:var(--dim)}
 /* personal: ranks */
 .rk{display:grid;grid-template-columns:repeat(3,1fr);grid-gap:2rem;height:100%}
 .rk div{background:var(--glass);border:.08rem solid var(--line);border-radius:1.8rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem}
@@ -1222,9 +1223,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       ofPartyPosts: '{v}% of posts by party accounts', postsN: '{v} posts', vsPrev: '{v}% vs previous period',
       scale: 'Tracking <b>{a}</b> political accounts · <b>{s}</b> states with activity · <b>{t}</b> posts analysed in total',
       scaleUp: 'Tracking <b>{a}</b> political accounts in Uttar Pradesh · <b>{t}</b> posts analysed in total',
-      active: '{n} active', collected: '{n} tracked', perAcc: '{v} posts per account', viewsPerAcc: '{v} views per account',
+      active: '{n} active', collected: '{n} in 28 days', perAcc: '{v} posts per account', viewsPerAcc: '{v} views per account',
       ltd: 'limited coverage', others: 'Others', othersSub: '{n} smaller parties',
-      notePosts: 'Leaders\' own posts only (no reposts, no media). Parties have different numbers of tracked accounts, so "per account" is the fairer comparison.',
+      notePosts: 'Leaders\' own posts only (no reposts, no media). Parties have different numbers of accounts, so "per account" (accounts active in the last 28 days) is the fairer comparison.',
       noteViews: 'Views counted on original posts only. Posts from the last few hours are still collecting views.',
       viewsWord: 'views', rank: '#{n}',
       boX: 'their usual views per post', boDetail: 'Typical post now: {r} views · usual: {b} (previous {d} days, {n} posts)',
@@ -1284,9 +1285,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       ofPartyPosts: 'पार्टी खातों के पोस्ट का {v}%', postsN: '{v} पोस्ट', vsPrev: 'पिछली अवधि से {v}%',
       scale: '<b>{a}</b> राजनीतिक खातों पर नज़र · <b>{s}</b> राज्यों से गतिविधि · कुल <b>{t}</b> पोस्ट का विश्लेषण',
       scaleUp: 'उत्तर प्रदेश के <b>{a}</b> राजनीतिक खातों पर नज़र · कुल <b>{t}</b> पोस्ट का विश्लेषण',
-      active: '{n} सक्रिय', collected: '{n} ट्रैक', perAcc: 'प्रति खाता {v} पोस्ट', viewsPerAcc: 'प्रति खाता {v} व्यूज़',
+      active: '{n} सक्रिय', collected: '28 दिन में {n}', perAcc: 'प्रति खाता {v} पोस्ट', viewsPerAcc: 'प्रति खाता {v} व्यूज़',
       ltd: 'सीमित कवरेज', others: 'अन्य', othersSub: '{n} छोटी पार्टियाँ',
-      notePosts: 'केवल नेताओं के अपने पोस्ट (रीपोस्ट और मीडिया नहीं)। हर पार्टी के ट्रैक किए गए खाते अलग-अलग हैं, इसलिए "प्रति खाता" तुलना ज़्यादा सही है।',
+      notePosts: 'केवल नेताओं के अपने पोस्ट (रीपोस्ट और मीडिया नहीं)। हर पार्टी के खाते अलग-अलग हैं, इसलिए "प्रति खाता" (पिछले 28 दिन में सक्रिय खाते) तुलना ज़्यादा सही है।',
       noteViews: 'व्यूज़ केवल मूल पोस्ट पर गिने गए। पिछले कुछ घंटों के पोस्ट पर व्यूज़ अभी बढ़ रहे हैं।',
       viewsWord: 'व्यूज़', rank: '#{n}',
       boX: 'प्रति पोस्ट सामान्य व्यूज़ का', boDetail: 'अभी आम पोस्ट: {r} व्यूज़ · सामान्य: {b} (पिछले {d} दिन, {n} पोस्ट)',
@@ -1337,7 +1338,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     'Delhi': 'दिल्ली', 'Jammu and Kashmir': 'जम्मू और कश्मीर', 'Ladakh': 'लद्दाख', 'Puducherry': 'पुदुचेरी', 'Chandigarh': 'चंडीगढ़',
     'Andaman and Nicobar': 'अंडमान और निकोबार', 'Lakshadweep': 'लक्षद्वीप', 'Dadra and Nagar Haveli and Daman and Diu': 'दादरा नगर हवेली और दमन दीव'
   };
-  T.en.stPick = 'Or follow one state'; T.hi.stPick = 'या एक राज्य पर नज़र रखें';
+  T.en.stPick = 'Or follow one state · leaders\' posts, last 7 days'; T.hi.stPick = 'या एक राज्य पर नज़र रखें · नेताओं के पोस्ट, पिछले 7 दिन';
   T.en.stMore = 'See all {n} states'; T.hi.stMore = 'सभी {n} राज्य देखें';
   T.en.atk = 'Biggest attacks on BJP and the government'; T.hi.atk = 'BJP और सरकार पर सबसे बड़े हमले';
   T.en.atkSub = 'Picked by AI'; T.hi.atkSub = 'AI द्वारा चुने गए';
@@ -1412,6 +1413,10 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   }
   var TOPIC_HI = { 'corruption': 'भ्रष्टाचार', 'farmers': 'किसान', 'jobs': 'रोज़गार', 'prices': 'महँगाई', 'law and order': 'क़ानून-व्यवस्था', 'women safety': 'महिला सुरक्षा',
     'elections': 'चुनाव', 'constitution': 'संविधान', 'communal': 'सांप्रदायिक', 'health': 'स्वास्थ्य', 'education': 'शिक्षा', 'foreign policy': 'विदेश नीति', 'other': 'अन्य' };
+  /* news topics (news_lib categories) in the page's language: the ticker and "in the news" */
+  var NEWS_TOPIC_HI = { 'politics': 'राजनीति', 'government': 'सरकार', 'crime': 'अपराध', 'law & order': 'क़ानून-व्यवस्था', 'elections': 'चुनाव',
+    'economy': 'अर्थव्यवस्था', 'business': 'कारोबार', 'education': 'शिक्षा', 'health': 'स्वास्थ्य', 'weather': 'मौसम', 'sports': 'खेल', 'international': 'अंतरराष्ट्रीय' };
+  function newsTopic(tp) { var k = String(tp || '').toLowerCase(); return LANG === 'hi' && NEWS_TOPIC_HI[k] ? NEWS_TOPIC_HI[k] : String(tp || ''); }
   /* glance: likes + everything we have; the focus-party screen; live changes */
   T.en.kLikes = 'Likes on those posts'; T.hi.kLikes = 'इन पोस्ट पर लाइक्स';
   T.en.vsPrevL = '{v}% likes vs previous {h} h'; T.hi.vsPrevL = 'लाइक्स पिछले {h} घंटे से {v}%';
@@ -1429,6 +1434,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   T.en.bjRe = '{n} reposts'; T.hi.bjRe = '{n} रीपोस्ट';
   T.en.bjFt = 'Own posts of the party\'s accounts (no reposts, no media). ▲▼ = against the previous {h} hours.';
   T.hi.bjFt = 'पार्टी खातों के अपने पोस्ट (रीपोस्ट और मीडिया नहीं)। ▲▼ = पिछले {h} घंटों के मुक़ाबले।';
+  /* without growth arrows on screen, no line explaining them */
+  T.en.bjFt0 = 'Own posts of the party\'s accounts (no reposts, no media).'; T.hi.bjFt0 = 'पार्टी खातों के अपने पोस्ट (रीपोस्ट और मीडिया नहीं)।';
   T.en.bjCatAcc = '{a} of {t} active'; T.hi.bjCatAcc = '{t} में से {a} सक्रिय';
   T.en.bjCatAccN = '{a} active'; T.hi.bjCatAccN = '{a} सक्रिय';
   T.en.bjTopV = '{v} views'; T.hi.bjTopV = '{v} व्यूज़';
@@ -1443,7 +1450,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   T.en.stSub = 'Nazar will show only this state — its parties, leaders, posts and news. Busiest first.';
   T.hi.stSub = 'नज़र सिर्फ़ इसी राज्य को दिखाएगा — इसकी पार्टियाँ, नेता, पोस्ट और ख़बरें। सबसे सक्रिय पहले।';
   T.en.stFind = 'Search a state…'; T.hi.stFind = 'राज्य खोजें…';
-  T.en.stPosts = '{n} posts in the data'; T.hi.stPosts = 'डेटा में {n} पोस्ट';
+  T.en.stPosts = '{n} posts in the last 7 days'; T.hi.stPosts = 'पिछले 7 दिन में {n} पोस्ट';
   T.en.stNone = 'No state with that name in this data.'; T.hi.stNone = 'इस डेटा में इस नाम का कोई राज्य नहीं।';
   T.en.stAllSub = 'Back to the whole country'; T.hi.stAllSub = 'पूरे देश पर वापस';
   T.en.stAll = 'All India'; T.hi.stAll = 'पूरा भारत';
@@ -1483,7 +1490,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     else if (a >= 1e5) { v = n / 1e5; u = LANG === 'hi' ? ' लाख' : ' L'; }
     else if (a >= 1e3) { v = n / 1e3; u = LANG === 'hi' ? ' हज़ार' : 'K'; }
     else return String(Math.round(n));
-    return (Math.abs(v) >= 100 ? String(Math.round(v)) : v.toFixed(1).replace(/\.0$/, '')) + u;
+    /* past 999 crore the number keeps its comma: "1,208 करोड़", not "1208 करोड़" */
+    return (Math.abs(v) >= 1000 ? (v < 0 ? '-' : '') + fmtInt(v) : Math.abs(v) >= 100 ? String(Math.round(v)) : v.toFixed(1).replace(/\.0$/, '')) + u;
   }
   function fmtDec(n) { return n === null || n === undefined ? '–' : (Math.round(n * 100) / 100).toString(); }
   function ip(s) { var m = /^(\d{4})-(\d\d)-(\d\d)[ T](\d\d):(\d\d)/.exec(String(s || '')); return m ? { y: +m[1], mo: +m[2], d: +m[3], h: +m[4], mi: +m[5] } : null; }
@@ -1673,7 +1681,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     $('ticker').style.display = '';
     var showBreaking = s && s.status && (s.status.level === 'live' || s.status.level === 'recent');
     function one(x) {
-      var tag = (showBreaking && x.breaking) ? '<span class="tk-tag brk">' + esc(t('tkBreaking')) + '</span>' : (x.topic ? '<span class="tk-tag">' + esc(x.topic) + '</span>' : '');
+      var tag = (showBreaking && x.breaking) ? '<span class="tk-tag brk">' + esc(t('tkBreaking')) + '</span>' : (x.topic ? '<span class="tk-tag">' + esc(newsTopic(x.topic)) + '</span>' : '');
       return '<div class="tk-item">' + tag + '<span>' + esc(x.head) + '</span><span class="tk-src">— ' + esc(x.src || ('@' + x.handle)) + (x.date ? ' · ' + esc(fmtWhen(x.date)) : '') + '</span></div>';
     }
     if (REDUCED) {
@@ -1839,7 +1847,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       + k(f.views, 'short', 'bj.views', t('bjViews'), g(f.views, pf && pf.views))
       + k(f.likes, 'short', 'bj.likes', t('bjLikes'), g(f.likes, pf && pf.likes))
       + k(f.accounts, 'int', 'bj.acc', t('bjAcc'), f.tracked ? esc(fill(t('bjOf'), { n: fmtInt(f.tracked) })) : '')
-      + '</div><div class="bj-ft">' + esc(fill(t('bjRe'), { n: fmtInt(f.reposts) })) + ' · ' + esc(fill(t('bjFt'), { h: H })) + '</div></div>';
+      + '</div><div class="bj-ft">' + esc(fill(t('bjRe'), { n: fmtInt(f.reposts) })) + ' · ' + esc(fill(t(pf ? 'bjFt' : 'bjFt0'), { h: H })) + '</div></div>';
     /* the 5 biggest categories, the rest added up as one "others" row, so every row fits on a TV */
     var all = f.cats.slice().sort(function (a, b) { return b.posts - a.posts; }), list = all.slice(0, all.length > 6 ? 5 : 6), max = 0;
     if (all.length > 6) {
@@ -2063,7 +2071,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var hmax = Math.max.apply(null, p.hourly.concat([1])), dmax = 1;
     p.daily.forEach(function (d) { if (d.posts > dmax) dmax = d.posts; });
     var hb = p.hourly.map(function (v) { return '<div style="height:' + (100 * v / hmax).toFixed(1) + '%" title="' + v + '"></div>'; }).join('');
+    /* posts null = a day whose posts did not all reach us: "–" and no bar, never a false 0 */
     var db = p.daily.map(function (d) {
+      if (d.posts === null) return '<div class="nod"><b>–</b><i style="height:0"></i><span>' + esc(fmtDay(d.day + ' 00:00')) + '</span></div>';
       return '<div><b>' + d.posts + '</b><i style="height:' + (100 * d.posts / dmax).toFixed(1) + '%"></i><span>' + esc(fmtDay(d.day + ' 00:00')) + '</span></div>';
     }).join('');
     return '<div class="glass full"><div class="rh"><div><h4>' + esc(t('pHours')) + '</h4><div class="hbars">' + hb + '</div><div class="hlab"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div>'
@@ -2096,7 +2106,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     function list(items, h) {
       if (!items || !items.length) return '';
       return '<div><h4>' + esc(h) + '</h4><ul class="nw">' + items.slice(0, 3).map(function (x) {
-        return '<li>' + (x.topic ? '<span class="tk-tag">' + esc(x.topic) + '</span>' : '') + '<p><em>' + esc(x.head) + '</em><span>' + esc((x.src || '') + (x.date ? ' · ' + fmtWhen(x.date) : '')) + '</span></p></li>';
+        return '<li>' + (x.topic ? '<span class="tk-tag">' + esc(newsTopic(x.topic)) + '</span>' : '') + '<p><em>' + esc(x.head) + '</em><span>' + esc((x.src || '') + (x.date ? ' · ' + fmtWhen(x.date) : '')) + '</span></p></li>';
       }).join('') + '</ul></div>';
     }
     var a = list(p.mentions, t('pMentions')), b = list(p.localNews, t('pLocal'));
@@ -2538,16 +2548,19 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (state.offline) { lvl = 'offline'; txt = t('offline') + ' · ' + txt; }
     $('chip').className = 'chip lvl-' + lvl; $('chipTxt').textContent = txt;
   }
-  /* footer: only what is not normal -- sources not answering or gone quiet, collection stopped */
+  /* footer: only what a viewer needs -- collection stopped, the screen offline. Which feeds are
+     down or quiet and the AI's daily quota are for the team: shown only with ?debug=1 */
   function mrHonesty() {
     var m = state.snap, parts = [], now = Date.now();
     if (!m) return '';
     function list(a) { return a.slice(0, 4).join(', ') + (a.length > 4 ? ' +' + (a.length - 4) : ''); }
-    var down = (m.sources || []).filter(function (s) { return !s.ok; }).map(mrSrcName);
-    if (down.length) parts.push('<span class="warn">' + esc(fill(t('mrDown'), { s: list(down) })) + '</span>');
-    var quiet = (m.sources || []).filter(function (s) { return s.ok && s.kind === 'media' && s.newest && now - s.newest > 6 * 3600000; }).map(mrSrcName);
-    if (quiet.length) parts.push('<span class="warn">' + esc(fill(t('mrStale'), { s: list(quiet) })) + '</span>');
-    if (m.ai && m.ai.state === 'paused') parts.push('<span class="warn">' + esc(t('mrAiPaused')) + '</span>');
+    if (Q.debug === '1') {
+      var down = (m.sources || []).filter(function (s) { return !s.ok; }).map(mrSrcName);
+      if (down.length) parts.push('<span class="warn">' + esc(fill(t('mrDown'), { s: list(down) })) + '</span>');
+      var quiet = (m.sources || []).filter(function (s) { return s.ok && s.kind === 'media' && s.newest && now - s.newest > 6 * 3600000; }).map(mrSrcName);
+      if (quiet.length) parts.push('<span class="warn">' + esc(fill(t('mrStale'), { s: list(quiet) })) + '</span>');
+      if (m.ai && m.ai.state === 'paused') parts.push('<span class="warn">' + esc(t('mrAiPaused')) + '</span>');
+    }
     if (m.lastRun && now - m.lastRun > 45 * 60000) parts.push('<span class="warn">' + esc(fill(t('mrPaused'), { a: fmtAgo((now - m.lastRun) / 60000) })) + '</span>');
     if (state.offline && state.savedAt) parts.push('<span class="warn">' + fill(t('hSaved'), { d: esc(fmtTimeIso(state.savedAt)) }) + '</span>');
     return parts.join(' &nbsp;·&nbsp; ');

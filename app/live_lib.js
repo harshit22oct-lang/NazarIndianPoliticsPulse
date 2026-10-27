@@ -400,7 +400,7 @@ function computeMetrics(rows, win, opts) {
   var handleTotals = {};
   Object.keys(handle).forEach(function (k) {
     var hd = handle[k];
-    handleTotals[k] = { handle: hd.handle, name: hd.name, party: hd.party, state: hd.state, posts: hd.posts, views: hd.views };
+    handleTotals[k] = { handle: hd.handle, name: hd.name, party: hd.party, state: hd.state, posts: hd.posts, views: hd.views, org: hd.org };
   });
 
   /* the focus party: totals, then one row per account category in a fixed order
@@ -636,14 +636,17 @@ function rankIn(totals, key, filter) {
   return i < 0 ? null : { rank: i + 1, of: arr.length };
 }
 
-/* rows: this handle's posts from 14 days before the window to its end */
-function computePerson(rec, rows, win) {
+/* rows: this handle's posts from BREAK_BASE_DAYS before the window to its end.
+   gaps: { 'YYYY-MM-DD': 1 } days whose posts did not all reach us -- shown as "no data"
+   in the daily chart and left out of the usual pace (never counted as a quiet day) */
+function computePerson(rec, rows, win, gaps) {
+  gaps = gaps || {};
   var inWin = [], base = [];
   rows.forEach(function (r) {
     var t = parseIst(r['Tweet Date']);
     if (!isFinite(t)) return;
     r._t = t;
-    if (t >= win.fromMs && t <= win.toMs) inWin.push(r); else if (t < win.fromMs) base.push(r);
+    if (t >= win.fromMs && t <= win.toMs) inWin.push(r); else if (t < win.fromMs && !gaps[istDay(t)]) base.push(r);
   });
   var orig = inWin.filter(function (r) { return !HA.isRetweet(r); });
   var hourly = []; for (var i = 0; i < 24; i++) hourly.push(0);
@@ -653,6 +656,7 @@ function computePerson(rec, rows, win) {
   for (var d = 6; d >= 0; d--) daily.push({ day: addDays(endDay, -d), posts: 0 });
   var dayIx = {}; daily.forEach(function (x, j) { dayIx[x.day] = j; });
   rows.forEach(function (r) { var j = dayIx[istDay(r._t)]; if (j !== undefined && !HA.isRetweet(r)) daily[j].posts++; });
+  daily.forEach(function (x) { if (gaps[x.day]) x.posts = null; });
 
   var views = 0, likes = 0, top = null, latest = null;
   orig.forEach(function (r) {
@@ -663,7 +667,14 @@ function computePerson(rec, rows, win) {
   var mature = orig.filter(function (r) { return win.toMs - r._t >= C.MATURE_H * 3600000; })
     .map(function (r) { return HA.num(r['Total Views']); });
   var baseOrig = base.filter(function (r) { return !HA.isRetweet(r); });
-  var baseDays = Math.max(1, Math.round((win.fromMs - (win.fromMs - C.BREAK_BASE_DAYS * 86400000)) / 86400000));
+  /* the usual pace is per day of data we really have: gap days are taken out of the divisor too */
+  var bFrom = win.fromMs - C.BREAK_BASE_DAYS * 86400000, gapMs = 0;
+  Object.keys(gaps).forEach(function (d) {
+    var s = parseIst(d + ' 00:00:00'), e = s + 86400000;
+    gapMs += Math.max(0, Math.min(e, win.fromMs) - Math.max(s, bFrom));
+  });
+  var baseDays = (win.fromMs - bFrom - gapMs) / 86400000;
+  if (baseDays < 1) baseOrig = [];                         // under a day of real data: no "usual" at all
   var winDays = Math.max(1 / 24, (win.toMs - win.fromMs) / 86400000);
   var usualPerDay = baseOrig.length / baseDays;
   var baseMed = median(baseOrig.map(function (r) { return HA.num(r['Total Views']); }));
@@ -958,7 +969,10 @@ function createService(env) {
     var rx = new RegExp('^' + rec.handle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i');
     var q = { Handle: rx, 'Tweet Date': { $gte: fmtIst(win.fromMs - C.BREAK_BASE_DAYS * 86400000), $lte: win.to } };
     var rows = await coll.find(q, { projection: PROJ }).maxTimeMS(30000).toArray();
-    var m = computePerson(rec, rows, win);
+    /* env.rawGaps (optional): days whose raw posts are incomplete here */
+    var gaps = {};
+    try { gaps = env.rawGaps ? (await env.rawGaps()) || {} : {}; } catch (e) { gaps = {}; }
+    var m = computePerson(rec, rows, win, gaps);
     out.kpis = m.kpis; out.usual = m.usual; out.hourly = m.hourly; out.daily = m.daily;
     out.topPost = m.topPost; out.latestPost = m.latestPost;
     if (!rows.length) {
@@ -977,7 +991,7 @@ function createService(env) {
       };
     }
     out.colleagues = !totals ? [] : Object.keys(totals).filter(function (k) {
-      var t = totals[k]; return k !== rec.key && rec.party && t.party === rec.party && rec.state && t.state === rec.state;
+      var t = totals[k]; return k !== rec.key && !t.org && rec.party && t.party === rec.party && rec.state && t.state === rec.state;   // colleagues are people, not party pages
     }).sort(function (a, b) { return totals[b].views - totals[a].views; }).slice(0, 3)
       .map(function (k) { var t = totals[k]; return { handle: t.handle, name: t.name, posts: t.posts, views: t.views, avatar: env.avatarOf(t.handle) }; });
 

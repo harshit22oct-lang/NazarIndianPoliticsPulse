@@ -33,7 +33,8 @@ const CAT_RULES = [
   ['Weather', /\b(rain|rainfall|monsoon|flood|heatwave|cyclone|storm|cold wave|imd|temperature|waterlogging|drought)\b|बारिश|मानसून|बाढ़|तूफान|शीतलहर|गर्मी|जलभराव|सूखा/i],
   ['Health', /\b(hospital|covid|dengue|virus|vaccine|patient|doctors|aiims|health department|outbreak|epidemic|medicine)\b|अस्पताल|कोरोना|डेंगू|टीका|मरीज|स्वास्थ्य|महामारी/i],
   ['Education', /\b(school|college|university|exam|result|neet|upsc|jee|board exam|student|admission|scholarship|teacher recruitment)\b|स्कूल|कॉलेज|विश्वविद्यालय|परीक्षा|रिजल्ट|छात्र|शिक्षक|दाखिला/i],
-  ['Economy', /\b(gdp|inflation|rbi|repo rate|budget|tax|gst|rupee|fiscal|subsidy|msp|unemployment|price hike)\b|महंगाई|बजट|जीएसटी|रुपया|कर|सब्सिडी|बेरोजगारी/i],
+  /* "कर" (tax) only as a word of its own: inside "होकर", "करके" ... it put a car accident under Economy */
+  ['Economy', /\b(gdp|inflation|rbi|repo rate|budget|tax|gst|rupee|fiscal|subsidy|msp|unemployment|price hike)\b|महंगाई|बजट|जीएसटी|रुपया|(^|\s)कर(\s|$)|सब्सिडी|बेरोजगारी/i],
   ['Business', /\b(company|startup|investment|investor|ipo|shares|stock|market cap|crore deal|mou|factory|plant|industry|adani|ambani|tata|reliance)\b|कंपनी|निवेश|शेयर|कारोबार|उद्योग|फैक्ट्री/i],
   ['Sports', /\b(cricket|match|wicket|goal|olympic|world cup|ipl|hockey|kabaddi|medal|tournament|innings|bcci)\b|क्रिकेट|मैच|विकेट|ओलंपिक|पदक|टूर्नामेंट/i],
   ['International', /\b(pakistan|china|usa|america|russia|ukraine|israel|un |united nations|bilateral|visa|embassy|foreign minister|border tension)\b|पाकिस्तान|चीन|अमेरिका|रूस|यूक्रेन|इजरायल|विदेश मंत्री/i],
@@ -108,7 +109,8 @@ function clean(t) {
   return String(t || '')
     .replace(/https?:\/\/\S+/g, ' ')
     .replace(/\s+/g, ' ')
-    .trim();
+    .trim()
+    .replace(/^[A-Z]{1,4}\s?\|\s*/, '');        // a desk code in front: "CR|#BreakingNews: ..."
 }
 
 function split(text) {
