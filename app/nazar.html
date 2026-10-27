@@ -53,8 +53,8 @@ button,input{font-family:inherit;color:inherit}
   background:linear-gradient(90deg,#FF9933 0%,#FF9933 33%,#FFFFFF 33%,#FFFFFF 66%,#138808 66%,#138808 100%);opacity:.85}
 #hero{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;overflow:hidden}
 /* three standing leaders on one ground line: Modi ji in front (tallest, head just
-   under the header), Shah ji left and Yogi ji right a step behind (a little smaller
-   and dimmer), heads level with each other. A soft saffron floor glow grounds them. */
+   under the header), Shah ji left and Nitin Nabin ji right a step behind (a little
+   smaller), heads level with each other. A soft saffron floor glow grounds them. */
 .hero-floor{position:absolute;left:8%;right:8%;bottom:-6%;height:30%;opacity:var(--heroMain);transition:opacity 1.2s ease;
   background:radial-gradient(ellipse 50% 45% at 50% 70%,rgba(255,153,51,.38) 0%,rgba(255,120,0,.12) 45%,rgba(255,120,0,0) 72%)}
 /* Each leader = a wrapper (position, size, glow) around the photo (bottom fade).
@@ -65,30 +65,32 @@ button,input{font-family:inherit;color:inherit}
 .hero-main{bottom:0;left:50%;height:94%;z-index:5;opacity:var(--heroMain);
   -webkit-filter:drop-shadow(0 0 2.6rem rgba(255,153,51,.45));filter:drop-shadow(0 0 2.6rem rgba(255,153,51,.45))}
 .hero-main img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 20%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 20%)}
-/* five leaders, three rows: front Modi ji; middle Shah ji (left) and Yogi ji (right);
-   back Nitin Nabin ji (far left) and Rajnath Singh ji (far right). Positions are the
-   centre of each figure; heights keep faces of one row the same size. Nitin ji's photo
-   is a half-length shot, so it is smaller and raised, fading out at the waist. */
-/* no brightness dimming and full opacity on the start / glance screens: a see-through
+/* positions are the centre of each figure. No brightness dimming and full opacity on the start / glance screens: a see-through
    or darkened photo over the maroon sky turns faces and clothes brown */
 .hero-side{bottom:2%;z-index:4;opacity:var(--heroSide);
   -webkit-filter:drop-shadow(0 0 2rem rgba(255,153,51,.3));filter:drop-shadow(0 0 2rem rgba(255,153,51,.3))}
 .hero-side img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 14%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 14%)}
-.hero-side.l{height:82%;left:26%}
-.hero-side.r{height:82%;left:74%}
-.hero-side.l2,.hero-side.r2{z-index:3;-webkit-filter:drop-shadow(0 0 1.6rem rgba(255,153,51,.26));filter:drop-shadow(0 0 1.6rem rgba(255,153,51,.26))}
-.hero-side.l2{height:44%;bottom:31%;left:10%}
-.hero-side.l2 img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 22%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 22%)}
-.hero-side.r2{height:73%;left:90%}
+/* three leaders: Modi ji in front, Shah ji left and Nitin Nabin ji right, a step behind.
+   --sh is Shah ji's height; everything on the sides follows from it, so one number moves
+   the pair together (start screen, narrow screens) and their faces stay the same size
+   with their eyes on one line:
+     Shah ji (full-length photo): eyes at 18.1 % of the photo, eye-to-chin 6.6 %
+     Nabin ji (waist-up photo):   eyes at 23.2 % of the photo, eye-to-chin 9.5 %
+     -> Nabin ji's height = --sh x 0.69, raised by 2 % + --sh x 0.289 so the eyes meet.
+   His photo ends at the waist, so it fades out longer at the bottom. */
+#hero{--sh:86%}
+.hero-side.l{height:var(--sh);left:25%}
+.hero-side.r{height:calc(var(--sh) * .69);bottom:calc(2% + var(--sh) * .289);left:75.5%}
+.hero-side.r img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 26%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 26%)}
 /* start screen: the question is centred at the top, so everyone stands a little
    lower and Modi ji's face stays clear of the text */
 body.choosing .hero-main{height:76%}
-body.choosing .hero-side.l,body.choosing .hero-side.r{height:67%}
-body.choosing .hero-side.l2{height:36%;bottom:25%}
-body.choosing .hero-side.r2{height:60%}
-.hero-main,.hero-side{transition:opacity 1.2s ease,height .8s ease,bottom .8s ease}
-/* screens narrower than 3:2 (4:3 TVs, tablets): only the front and middle rows fit */
-@media (max-aspect-ratio:3/2){.hero-side.l2,.hero-side.r2{display:none}.hero-side.l{left:18%}.hero-side.r{left:82%}}
+body.choosing #hero{--sh:69%}
+.hero-main,.hero-side{transition:opacity 1.2s ease,height .8s ease,bottom .8s ease,left .8s ease}
+/* screens narrower than 3:2 (4:3 TVs, tablets): the pair comes in and stands a little smaller */
+@media (max-aspect-ratio:3/2){#hero{--sh:80%} .hero-side.l{left:20%} .hero-side.r{left:80.5%} body.choosing #hero{--sh:64%}}
+/* very wide screens (21:9): the pair stands further out, so Modi ji has room */
+@media (min-aspect-ratio:2/1){.hero-side.l{left:29%} .hero-side.r{left:71.5%}}
 body.hero-hi{--heroMain:1;--heroSide:1}
 body.hero-mid{--heroMain:.55;--heroSide:.45}
 
@@ -797,6 +799,8 @@ body.portrait .st-title{font-size:3rem} body.portrait .st-count{display:none}
 body.portrait #scene{overflow-y:auto;-webkit-overflow-scrolling:touch}
 body.portrait .glass{padding:1.4rem 1.4rem}
 body.portrait .kpis{grid-template-columns:1fr 1fr;grid-gap:1rem}
+/* taller than the screen on upright screens: grow down and scroll, never cut off at the top */
+body.portrait .glance{height:auto;min-height:100%}
 body.portrait .kpis.k5,body.phone .kpis.k5{grid-template-columns:1fr 1fr}
 body.portrait .kpis.k5 .kpi:last-child,body.phone .kpis.k5 .kpi:last-child{grid-column:1 / -1}
 body.portrait .kpis.k5 .kpi-v{font-size:4rem} body.phone .kpis.k5 .kpi-v{font-size:3.3rem}
@@ -1041,8 +1045,6 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
 <div id="sky"></div>
 <div id="hero" aria-hidden="true">
   <div class="hero-floor"></div>
-  <div class="hero-side l2"><img id="heroL2" alt=""></div>
-  <div class="hero-side r2"><img id="heroR2" alt=""></div>
   <div class="hero-side l"><img id="heroL" alt=""></div>
   <div class="hero-side r"><img id="heroR" alt=""></div>
   <div class="hero-main"><img id="heroM" alt=""></div>
@@ -1192,9 +1194,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   var HERO = {
     heroM: ['/live/img/leaders/modi-standing.webp', 'Narendra Modi'],
     heroL: ['/live/img/leaders/amit-shah-standing.webp', 'Amit Shah'],
-    heroR: ['/live/img/leaders/yogi-standing-v2.webp?v=3', 'Yogi Adityanath'],
-    heroL2: ['/live/img/leaders/nitin-nabin-standing.webp?v=2', 'Nitin Nabin'],
-    heroR2: ['/live/img/leaders/rajnath-singh-standing.webp?v=3', 'Rajnath Singh']
+    heroR: ['/live/img/leaders/nitin-nabin-standing.webp?v=2', 'Nitin Nabin']
   };
   var BJP_LOGO = '/live/img/p/BJP';
   var LOTUS = '<svg viewBox="0 0 100 100"><g transform="translate(50,78)" fill="#fff"><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(-30) scale(.9)"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(30) scale(.9)"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(-60) scale(.75)"/><path d="M0,0 C-8,-22 -5,-44 0,-54 C5,-44 8,-22 0,0Z" transform="rotate(60) scale(.75)"/></g></svg>';
