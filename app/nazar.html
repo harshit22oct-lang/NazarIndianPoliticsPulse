@@ -416,6 +416,83 @@ body.portrait .st-top{flex-wrap:wrap} body.portrait .st-top h2{width:100%;margin
 .bar-sub .up{color:var(--good);font-weight:700} .bar-sub .down{color:var(--amber);font-weight:700}
 .scale{margin-top:1.4rem;text-align:center;font-size:1.5rem;color:var(--muted);text-shadow:0 .2rem .8rem rgba(0,0,0,.8)}
 .scale b{font-family:var(--head);font-size:2.1rem;color:var(--text);font-weight:700}
+/* glance with five tiles: posts, views, likes, party, state */
+.kpis.k5{grid-template-columns:repeat(5,1fr);grid-gap:1.3rem}
+.kpis.k5 .kpi{padding:1.6rem 1.7rem} .kpis.k5 .kpi-v{font-size:5rem} .kpis.k5 .kpi-v.txt{font-size:3.2rem}
+.kpi{position:relative}
+.kpis .kpi{-webkit-animation:rise .7s cubic-bezier(.2,.8,.2,1) both;animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+.kpis .kpi:nth-child(2){-webkit-animation-delay:.08s;animation-delay:.08s} .kpis .kpi:nth-child(3){-webkit-animation-delay:.16s;animation-delay:.16s}
+.kpis .kpi:nth-child(4){-webkit-animation-delay:.24s;animation-delay:.24s} .kpis .kpi:nth-child(5){-webkit-animation-delay:.32s;animation-delay:.32s}
+@-webkit-keyframes rise{from{opacity:0;-webkit-transform:translateY(2.4rem) scale(.96)}to{opacity:1;-webkit-transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(2.4rem) scale(.96)}to{opacity:1;transform:none}}
+/* everything we have, since the first day: one glass band under the tiles */
+.atb{margin-top:1.3rem;background:linear-gradient(90deg,rgba(230,81,0,.30),rgba(26,8,3,.86) 30%,rgba(26,8,3,.86) 70%,rgba(19,136,8,.22));
+  border:.08rem solid rgba(255,200,87,.38);border-radius:1.4rem;padding:1rem 1.8rem;display:flex;align-items:center;
+  box-shadow:0 1.2rem 2.6rem rgba(0,0,0,.4);-webkit-animation:rise .7s .4s cubic-bezier(.2,.8,.2,1) both;animation:rise .7s .4s cubic-bezier(.2,.8,.2,1) both}
+.atb-h{font-size:1.25rem;font-weight:700;color:var(--gold);letter-spacing:.04rem;text-transform:uppercase;white-space:nowrap;padding-right:1.8rem;margin-right:1.8rem;border-right:.08rem solid var(--line)}
+.atb-h small{display:block;font-size:1.05rem;color:var(--dim);text-transform:none;letter-spacing:0;font-weight:500;margin-top:.2rem}
+.atb-r{display:flex;flex:1 1 auto;justify-content:space-around;min-width:0}
+.atb-i{text-align:center;padding:0 .8rem;min-width:0;position:relative;border-radius:1rem}
+.atb-i b{display:block;font-family:var(--head);font-weight:700;font-size:3rem;line-height:1.05;white-space:nowrap}
+.atb-i b .u{font-size:.6em;margin-left:.12em}
+.atb-i span{font-size:1.15rem;color:var(--muted);white-space:nowrap}
+/* live change: the number counts to its new value, glows, and a "+N" badge pops in */
+.dlt{display:none;font-family:var(--body);font-weight:700;font-size:1.15rem;line-height:1;padding:.35rem .7rem;border-radius:2rem;white-space:nowrap;vertical-align:middle}
+.dlt.up,.dlt.down{display:inline-block;-webkit-animation:pop .6s cubic-bezier(.2,1.6,.4,1) both;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
+.dlt.up{color:#0b2a12;background:var(--good);box-shadow:0 0 1.2rem rgba(123,211,137,.55)}
+.dlt.down{color:#2a1a00;background:var(--amber)}
+.kpi .dlt{position:absolute;top:1.1rem;right:1.1rem}
+.atb-i .dlt{position:absolute;top:-1.1rem;right:-.4rem;font-size:1rem}
+@-webkit-keyframes pop{0%{opacity:0;-webkit-transform:scale(.4) translateY(.8rem)}100%{opacity:1;-webkit-transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.4) translateY(.8rem)}100%{opacity:1;transform:none}}
+.bump{-webkit-animation:bump 1.8s ease-out;animation:bump 1.8s ease-out}
+@-webkit-keyframes bump{0%{box-shadow:0 0 0 .2rem rgba(255,200,87,.9),0 0 3rem rgba(255,153,51,.75)}100%{box-shadow:0 0 0 0 rgba(255,200,87,0),0 1.6rem 3rem rgba(0,0,0,.4)}}
+@keyframes bump{0%{box-shadow:0 0 0 .2rem rgba(255,200,87,.9),0 0 3rem rgba(255,153,51,.75)}100%{box-shadow:0 0 0 0 rgba(255,200,87,0),0 1.6rem 3rem rgba(0,0,0,.4)}}
+.ticking{color:var(--gold);text-shadow:0 0 1.6rem rgba(255,200,87,.7)}
+body.reduced .kpis .kpi,body.reduced .atb,body.reduced .bj-card,body.reduced .bj-row,body.reduced .dlt,body.reduced .bump{-webkit-animation:none;animation:none}
+
+/* focus party (BJP): totals card on the left, one row per account category on the right */
+.bj{display:grid;grid-template-columns:31% 1fr;grid-gap:1.8rem;height:100%;min-height:0}
+.bj-card{background:linear-gradient(165deg,rgba(255,153,51,.30),rgba(26,8,3,.90) 55%);border:.08rem solid rgba(255,200,87,.5);border-radius:1.8rem;
+  padding:2rem 2.2rem;display:flex;flex-direction:column;min-width:0;box-shadow:0 1.6rem 3rem rgba(0,0,0,.45);
+  -webkit-animation:cardIn .8s cubic-bezier(.2,.8,.2,1) both;animation:cardIn .8s cubic-bezier(.2,.8,.2,1) both}
+@-webkit-keyframes cardIn{from{opacity:0;-webkit-transform:translateX(-3rem) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes cardIn{from{opacity:0;transform:translateX(-3rem) scale(.97)}to{opacity:1;transform:none}}
+.bj-hd{display:flex;align-items:center}
+.bj-hd .pl,.bj-hd .dot{width:6rem;height:6rem;margin-right:1.4rem;box-shadow:0 0 0 .25rem rgba(255,200,87,.7),0 0 2.4rem rgba(255,153,51,.6)}
+.bj-n{font-family:var(--head);font-weight:700;font-size:4.2rem;line-height:1}
+.bj-sh{font-size:1.2rem;color:var(--muted);margin-top:.3rem}
+.bj-k{display:grid;grid-template-columns:1fr 1fr;grid-gap:1.4rem 1.6rem;margin-top:auto;padding-top:1.6rem}
+.bj-k > div{position:relative;min-width:0}
+.bj-k b{display:block;font-family:var(--head);font-weight:700;font-size:4rem;line-height:1;white-space:nowrap}
+.bj-k b .u{font-size:.55em;margin-left:.12em}
+.bj-k .bj-l{display:block;font-size:1.2rem;color:var(--muted);margin-top:.35rem}
+.bj-k i{display:block;font-style:normal;font-size:1.1rem;margin-top:.25rem;color:var(--dim)}
+.bj-k i .up{color:var(--good);font-weight:700} .bj-k i .down{color:var(--amber);font-weight:700}
+.bj-k .dlt{position:absolute;top:-.6rem;right:0}
+.bj-ft{font-size:1.15rem;color:var(--dim);margin-top:1.3rem;padding-top:1rem;border-top:.08rem solid var(--line)}
+.bj-cats{display:flex;flex-direction:column;justify-content:center;min-width:0;min-height:0;overflow:hidden}
+.bj-cats .bj-row{flex:0 1 auto}
+.bj-row{display:grid;grid-template-columns:17rem 1fr 19rem;align-items:center;background:var(--glass);border:.08rem solid var(--line);border-radius:1.2rem;
+  padding:.75rem 1.3rem;margin-bottom:.7rem;min-width:0;position:relative;
+  -webkit-animation:rowIn .6s cubic-bezier(.2,.8,.2,1) both;animation:rowIn .6s cubic-bezier(.2,.8,.2,1) both}
+@-webkit-keyframes rowIn{from{opacity:0;-webkit-transform:translateX(4rem)}to{opacity:1;-webkit-transform:none}}
+@keyframes rowIn{from{opacity:0;transform:translateX(4rem)}to{opacity:1;transform:none}}
+.bj-row:last-child{margin-bottom:0}
+.bj-c b{display:block;font-family:var(--head);font-weight:700;font-size:2.1rem;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bj-c span{font-size:1.05rem;color:var(--dim);white-space:nowrap}
+.bj-m{min-width:0;padding:0 1.4rem}
+.bj-m .bar-track{height:1.2rem}
+.bj-nums{display:flex;align-items:baseline;margin-top:.45rem;font-size:1.15rem;color:var(--muted);white-space:nowrap;overflow:hidden}
+.bj-nums b{font-family:var(--head);font-weight:700;font-size:2rem;color:var(--text);margin-right:.35rem}
+.bj-nums em{font-style:normal;margin:0 1.1rem 0 0}
+.bj-nums .up{color:var(--good);font-weight:700} .bj-nums .down{color:var(--amber);font-weight:700}
+.bj-nums .dlt{margin-left:.6rem}
+.bj-top{display:flex;align-items:center;min-width:0}
+.bj-top .av{width:4rem;height:4rem;font-size:1.4rem;border-width:.16rem;margin-right:.9rem}
+.bj-top div{min-width:0}
+.bj-top b{display:block;font-size:1.3rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bj-top span{font-size:1.05rem;color:var(--dim);white-space:nowrap}
 
 /* bars */
 .bar-row{display:grid;grid-template-columns:14rem 1fr 14rem;align-items:center;margin-bottom:1.1rem}
@@ -720,6 +797,17 @@ body.portrait .st-title{font-size:3rem} body.portrait .st-count{display:none}
 body.portrait #scene{overflow-y:auto;-webkit-overflow-scrolling:touch}
 body.portrait .glass{padding:1.4rem 1.4rem}
 body.portrait .kpis{grid-template-columns:1fr 1fr;grid-gap:1rem}
+body.portrait .kpis.k5,body.phone .kpis.k5{grid-template-columns:1fr 1fr}
+body.portrait .kpis.k5 .kpi:last-child,body.phone .kpis.k5 .kpi:last-child{grid-column:1 / -1}
+body.portrait .kpis.k5 .kpi-v{font-size:4rem} body.phone .kpis.k5 .kpi-v{font-size:3.3rem}
+body.portrait .atb,body.phone .atb{display:block;padding:1rem 1.2rem}
+body.portrait .atb-h,body.phone .atb-h{border-right:0;margin:0 0 .8rem;padding:0;text-align:center}
+body.portrait .atb-r,body.phone .atb-r{flex-wrap:wrap}
+body.portrait .atb-i,body.phone .atb-i{width:50%;margin-bottom:.8rem}
+body.portrait .bj,body.phone .bj{grid-template-columns:1fr;height:auto}
+body.portrait .bj-row,body.phone .bj-row{grid-template-columns:12rem 1fr}
+body.portrait .bj-top,body.phone .bj-top{grid-column:1 / -1;margin-top:.6rem}
+body.phone .bj-n{font-size:3.2rem} body.phone .bj-k b{font-size:3rem} body.phone .bj-c b{font-size:1.7rem}
 body.portrait .kpi{padding:1.3rem}
 body.portrait .kpi-v{font-size:4rem} body.portrait .kpi-v.txt{font-size:2.8rem}
 body.portrait .bar-row{grid-template-columns:8.5rem 1fr 8.5rem;margin-bottom:.9rem}
@@ -1324,6 +1412,30 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   }
   var TOPIC_HI = { 'corruption': 'भ्रष्टाचार', 'farmers': 'किसान', 'jobs': 'रोज़गार', 'prices': 'महँगाई', 'law and order': 'क़ानून-व्यवस्था', 'women safety': 'महिला सुरक्षा',
     'elections': 'चुनाव', 'constitution': 'संविधान', 'communal': 'सांप्रदायिक', 'health': 'स्वास्थ्य', 'education': 'शिक्षा', 'foreign policy': 'विदेश नीति', 'other': 'अन्य' };
+  /* glance: likes + everything we have; the focus-party screen; live changes */
+  T.en.kLikes = 'Likes on those posts'; T.hi.kLikes = 'इन पोस्ट पर लाइक्स';
+  T.en.vsPrevL = '{v}% likes vs previous {h} h'; T.hi.vsPrevL = 'लाइक्स पिछले {h} घंटे से {v}%';
+  T.en.atTitle = 'All data'; T.hi.atTitle = 'पूरा डेटा';
+  T.en.atSince = 'since {d} · all accounts'; T.hi.atSince = '{d} से अब तक · सभी खाते';
+  T.en.atPosts = 'posts'; T.hi.atPosts = 'पोस्ट'; T.en.atViews = 'views'; T.hi.atViews = 'व्यूज़';
+  T.en.atLikes = 'likes'; T.hi.atLikes = 'लाइक्स'; T.en.atAcc = 'political accounts tracked'; T.hi.atAcc = 'राजनीतिक खातों पर नज़र';
+  T.en.atStates = 'states with activity'; T.hi.atStates = 'राज्यों से गतिविधि';
+  T.en.bjT = '{p} · the full picture'; T.hi.bjT = '{p} · पूरी तस्वीर';
+  T.en.bjName = 'BJP'; T.hi.bjName = 'भाजपा';
+  T.en.bjShare = '{v}% of all party-account posts'; T.hi.bjShare = 'सभी पार्टी खातों के पोस्ट का {v}%';
+  T.en.bjPosts = 'Original posts'; T.hi.bjPosts = 'मूल पोस्ट'; T.en.bjViews = 'Views'; T.hi.bjViews = 'व्यूज़';
+  T.en.bjLikes = 'Likes'; T.hi.bjLikes = 'लाइक्स'; T.en.bjAcc = 'Active accounts'; T.hi.bjAcc = 'सक्रिय खाते';
+  T.en.bjOf = 'of {n} tracked'; T.hi.bjOf = '{n} में से';
+  T.en.bjRe = '{n} reposts'; T.hi.bjRe = '{n} रीपोस्ट';
+  T.en.bjFt = 'Own posts of the party\'s accounts (no reposts, no media). ▲▼ = against the previous {h} hours.';
+  T.hi.bjFt = 'पार्टी खातों के अपने पोस्ट (रीपोस्ट और मीडिया नहीं)। ▲▼ = पिछले {h} घंटों के मुक़ाबले।';
+  T.en.bjCatAcc = '{a} of {t} active'; T.hi.bjCatAcc = '{t} में से {a} सक्रिय';
+  T.en.bjCatAccN = '{a} active'; T.hi.bjCatAccN = '{a} सक्रिय';
+  T.en.bjTopV = '{v} views'; T.hi.bjTopV = '{v} व्यूज़';
+  T.en.cat = { TOP: 'Top leaders', LS_MP: 'Lok Sabha MPs', RS_MP: 'Rajya Sabha MPs', MLA: 'MLAs', MLC: 'MLCs', NOB: 'National office-bearers',
+               PAGE: 'Party pages', MLA_C: 'MLA candidates', OTHER: 'Others' };
+  T.hi.cat = { TOP: 'शीर्ष नेता', LS_MP: 'लोकसभा सांसद', RS_MP: 'राज्यसभा सांसद', MLA: 'विधायक', MLC: 'विधान परिषद सदस्य', NOB: 'राष्ट्रीय पदाधिकारी',
+               PAGE: 'पार्टी पेज', MLA_C: 'विधायक प्रत्याशी', OTHER: 'अन्य' };
   T.en.sp_slow = 'Slow'; T.en.sp_normal = 'Normal'; T.en.sp_fast = 'Fast'; T.en.spTitle = 'How long each screen stays';
   T.hi.sp_slow = 'धीमा'; T.hi.sp_normal = 'सामान्य'; T.hi.sp_fast = 'तेज़'; T.hi.spTitle = 'हर स्क्रीन कितनी देर रहे';
   T.en.stMapHint = 'Tap a state on the map'; T.hi.stMapHint = 'मानचित्र पर राज्य चुनें';
@@ -1600,23 +1712,156 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function numHtml(s) { var i = String(s).indexOf(' '); return i < 0 ? esc(s) : esc(s.slice(0, i)) + '<span class="u">' + esc(s.slice(i)) + '</span>'; }
 
   /* ---------- All India ---------- */
+  /* ---------- live numbers ----------
+     A number that can change while it is on screen is written as num(value, format, key).
+     Every minute the new answer is compared with the last one (noteLive): what changed gets
+     a "▲ +N" badge, and on the screen now the number counts from the old value to the new
+     one and its card glows (liveUpdate). A change is a real difference between two answers
+     of the server, so it can also go down (▼) when older posts leave the window. */
+  var DLT_MS = 5 * 60000;                      // a badge stays 5 minutes after the change
+  function num(v, f, key) { return '<b data-count="' + (+v || 0) + '" data-f="' + f + '" data-live="' + key + '">0</b>'; }
+  function dltHtml(key) {
+    var d = state.dlt && state.dlt[key], on = d && Date.now() - d.at < DLT_MS;
+    return '<span class="dlt' + (on ? (d.d > 0 ? ' up' : ' down') : '') + '" data-dlt="' + key + '">' + (on ? dltTxt(d.d, key) : '') + '</span>';
+  }
+  function dltTxt(d, key) {
+    var f = (state.liveFmt && state.liveFmt[key]) || 'int';
+    return (d > 0 ? '▲ +' : '▼ −') + (f === 'short' ? fmtShort(Math.abs(d)) : fmtInt(Math.abs(d)));
+  }
+  /* the live numbers of one answer, by key */
+  function liveVals(s) {
+    var v = {}, f = {};
+    function put(k, x, fm) { if (typeof x === 'number' && isFinite(x)) { v[k] = x; f[k] = fm; } }
+    if (!s || !s.kpis) return { v: v, f: f };
+    put('k.posts', s.kpis.originalPosts, 'int'); put('k.views', s.kpis.views, 'short'); put('k.likes', s.kpis.likes, 'short'); put('k.acc', s.kpis.accounts, 'int');
+    var a = s.coverageStats && s.coverageStats.allTime;
+    if (a) { put('at.posts', a.posts, 'int'); put('at.views', a.views, 'short'); put('at.likes', a.likes, 'short'); }
+    if (s.coverageStats) put('at.acc', s.coverageStats.handlesMapped, 'int');
+    var fo = s.focus;
+    if (fo) {
+      put('bj.posts', fo.posts, 'int'); put('bj.views', fo.views, 'short'); put('bj.likes', fo.likes, 'short'); put('bj.acc', fo.accounts, 'int');
+      (fo.cats || []).forEach(function (c) { put('bj.' + c.cat + '.posts', c.posts, 'int'); put('bj.' + c.cat + '.views', c.views, 'short'); put('bj.' + c.cat + '.likes', c.likes, 'short'); });
+    }
+    return { v: v, f: f };
+  }
+  function noteLive(s) {
+    var x = liveVals(s), old = state.live || null, key = SCOPE + '|' + HOURS;
+    if (state.liveKey !== key) { old = null; state.dlt = {}; }        // another scope / window: nothing to compare with
+    state.dlt = state.dlt || {};
+    if (old) Object.keys(x.v).forEach(function (k) { if (old[k] !== undefined && old[k] !== x.v[k]) state.dlt[k] = { d: x.v[k] - old[k], at: Date.now() }; });
+    state.live = x.v; state.liveFmt = x.f; state.liveKey = key;
+  }
+  /* the screen on now: numbers count from what is shown to the new value */
+  function liveUpdate(el) {
+    if (!el || !state.live) return;
+    [].forEach.call(el.querySelectorAll('[data-live]'), function (n) {
+      var k = n.getAttribute('data-live'), to = state.live[k], from = +n.getAttribute('data-count');
+      if (to === undefined || to === from) return;
+      n.setAttribute('data-count', to);
+      tween(n, from, to, n.getAttribute('data-f') === 'short' ? fmtShort : fmtInt);
+      var card = n.closest ? n.closest('.kpi,.atb-i,.bj-k > div,.bj-row') : null;
+      if (card && !REDUCED) { card.classList.remove('bump'); void card.offsetWidth; card.classList.add('bump'); }
+    });
+    [].forEach.call(el.querySelectorAll('[data-dlt]'), function (b) {
+      var k = b.getAttribute('data-dlt'), d = state.dlt && state.dlt[k];
+      if (!d || Date.now() - d.at >= DLT_MS) { b.className = 'dlt'; b.textContent = ''; return; }
+      b.className = 'dlt'; void b.offsetWidth;                         // restart the pop
+      b.className = 'dlt ' + (d.d > 0 ? 'up' : 'down'); b.textContent = dltTxt(d.d, k);
+    });
+  }
+  function tween(n, from, to, f) {
+    if (REDUCED) { n.innerHTML = numHtml(f(to)); return; }
+    var t0 = Date.now(), D = 1600, done = false;
+    n.classList.add('ticking');
+    var finish = function () { if (done) return; done = true; n.innerHTML = numHtml(f(to)); setTimeout(function () { n.classList.remove('ticking'); }, 600); };
+    var step = function () {
+      if (done) return;
+      var k = Math.min(1, (Date.now() - t0) / D);
+      if (k >= 1) { finish(); return; }
+      n.innerHTML = numHtml(f(Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)))));
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step); setTimeout(finish, D + 300);
+  }
+
   function sGlance(s) {
-    var top = realParties(s)[0], st = (s.states || []).filter(function (x) { return !x.limited; })[0], cmp = '', cmpV = '';
+    var top = realParties(s)[0], st = (s.states || []).filter(function (x) { return !x.limited; })[0], cmp = '', cmpV = '', cmpL = '';
     /* growth against the previous period of the same length (24 / 48 / 72 h), when it is comparable */
     if (s.compare && s.compare.comparable) {
       cmp = growth(s.kpis.originalPosts, s.compare.prevPosts, 'vsPrev');
       cmpV = growth(s.kpis.views, s.compare.prevViews, 'vsPrevV', { h: hrsOf(s) });
+      cmpL = growth(s.kpis.likes, s.compare.prevLikes, 'vsPrevL', { h: hrsOf(s) });
     }
-    var tiles = '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.originalPosts + '" data-f="int">0</div><div class="kpi-l">' + t('kOrig') + '</div><div class="kpi-s">' + cmp + '</div></div>'
-      + '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.views + '" data-f="short">0</div><div class="kpi-l">' + t('kViews') + '</div><div class="kpi-s">' + cmpV + '</div></div>'
+    function tile(v, f, key, label, sub) {
+      return '<div class="kpi"><div class="kpi-v">' + num(v, f, key) + '</div>' + dltHtml(key) + '<div class="kpi-l">' + label + '</div><div class="kpi-s">' + sub + '</div></div>';
+    }
+    var tiles = tile(s.kpis.originalPosts, 'int', 'k.posts', t('kOrig'), cmp)
+      + tile(s.kpis.views, 'short', 'k.views', t('kViews'), cmpV)
+      + tile(s.kpis.likes, 'short', 'k.likes', t('kLikes'), cmpL)
       + '<div class="kpi"><div class="kpi-v txt" style="color:' + (top ? lighten(top.color, 0.3) : '#fff') + '">' + (top ? plogo(top.logo, top.color) + ' ' : '') + esc(top ? top.party : '–') + '</div><div class="kpi-l">' + t('kParty') + '</div><div class="kpi-s">'
       + (top && top.postShare !== null ? esc(fill(t('ofPartyPosts'), { v: top.postShare })) : '') + '</div></div>';
-    if (STATE || !st) tiles += '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.accounts + '" data-f="int">0</div><div class="kpi-l">' + t('kAcc') + '</div><div class="kpi-s"></div></div>';
+    if (STATE || !st) tiles += tile(s.kpis.accounts, 'int', 'k.acc', t('kAcc'), '');
     else tiles += '<div class="kpi"><div class="kpi-v txt">' + esc(stName(st.state)) + '</div><div class="kpi-l">' + t('kState') + '</div><div class="kpi-s">' + esc(postsTxt(st.posts)) + '</div></div>';
-    var cs = s.coverageStats || {};
-    var scaleTxt = STATE ? fill(t('scaleUp'), { a: esc(fmtInt(cs.handlesMapped)), t: esc(fmtShort(cs.postsInDatabase)) })
-      : fill(t('scale'), { a: esc(fmtInt(cs.handlesMapped)), s: esc(String(s.kpis.statesCovered)), t: esc(fmtShort(cs.postsInDatabase)) });
-    return '<div class="glance"><div class="kpis">' + tiles + '</div>' + (cs.handlesMapped ? '<div class="scale">' + scaleTxt + '</div>' : '') + '</div>';
+    /* everything Pulse has, since its first day: posts, views, likes of every account, the accounts tracked */
+    var cs = s.coverageStats || {}, a = cs.allTime, band = '';
+    if (a) {
+      var it = function (v, f, key, label) { return '<div class="atb-i">' + num(v, f, key) + dltHtml(key) + '<span>' + esc(label) + '</span></div>'; };
+      band = '<div class="atb"><div class="atb-h">' + esc(t('atTitle')) + '<small>' + esc(fill(t('atSince'), { d: fmtDay(a.since + ' 00:00:00') })) + '</small></div><div class="atb-r">'
+        + it(a.posts, 'int', 'at.posts', t('atPosts')) + it(a.views, 'short', 'at.views', t('atViews')) + it(a.likes, 'short', 'at.likes', t('atLikes'))
+        + (cs.handlesMapped ? it(cs.handlesMapped, 'int', 'at.acc', t('atAcc')) : '')
+        + (!STATE && s.kpis.statesCovered ? '<div class="atb-i"><b>' + esc(String(s.kpis.statesCovered)) + '</b><span>' + esc(t('atStates')) + '</span></div>' : '')
+        + '</div></div>';
+    } else if (cs.handlesMapped) {
+      band = '<div class="scale">' + (STATE ? fill(t('scaleUp'), { a: esc(fmtInt(cs.handlesMapped)), t: esc(fmtShort(cs.postsInDatabase)) })
+        : fill(t('scale'), { a: esc(fmtInt(cs.handlesMapped)), s: esc(String(s.kpis.statesCovered)), t: esc(fmtShort(cs.postsInDatabase)) })) + '</div>';
+    }
+    return '<div class="glance"><div class="kpis k5">' + tiles + '</div>' + band + '</div>';
+  }
+
+  /* ---------- the focus party (BJP), by account category ---------- */
+  function sFocus(s) {
+    var f = s.focus; if (!f) return '';
+    var pf = s.compare && s.compare.comparable ? s.compare.focus : null, H = hrsOf(s), cats = t('cat');
+    var pr = (s.parties || []).filter(function (p) { return p.party === f.party; })[0] || {};
+    function g(cur, prev) { return pf && prev ? growth(cur, prev, 'vsPrev') : ''; }
+    function k(v, fm, key, label, sub) { return '<div>' + num(v, fm, key) + dltHtml(key) + '<span class="bj-l">' + esc(label) + '</span><i>' + sub + '</i></div>'; }
+    var card = '<div class="bj-card"><div class="bj-hd">' + plogo(pr.logo || logoOf(f.party), f.color) + '<div><div class="bj-n">' + esc(f.party === 'BJP' ? t('bjName') : f.party) + '</div>'
+      + '<div class="bj-sh">' + (f.postShare !== null ? esc(fill(t('bjShare'), { v: f.postShare })) : '') + '</div></div></div>'
+      + '<div class="bj-k">'
+      + k(f.posts, 'int', 'bj.posts', t('bjPosts'), g(f.posts, pf && pf.posts))
+      + k(f.views, 'short', 'bj.views', t('bjViews'), g(f.views, pf && pf.views))
+      + k(f.likes, 'short', 'bj.likes', t('bjLikes'), g(f.likes, pf && pf.likes))
+      + k(f.accounts, 'int', 'bj.acc', t('bjAcc'), f.tracked ? esc(fill(t('bjOf'), { n: fmtInt(f.tracked) })) : '')
+      + '</div><div class="bj-ft">' + esc(fill(t('bjRe'), { n: fmtInt(f.reposts) })) + ' · ' + esc(fill(t('bjFt'), { h: H })) + '</div></div>';
+    /* the 5 biggest categories, the rest added up as one "others" row, so every row fits on a TV */
+    var all = f.cats.slice().sort(function (a, b) { return b.posts - a.posts; }), list = all.slice(0, all.length > 6 ? 5 : 6), max = 0;
+    if (all.length > 6) {
+      var o = { cat: 'OTHER', posts: 0, views: 0, likes: 0, accounts: 0, tracked: 0, top: null, parts: [] };
+      all.slice(5).forEach(function (c) {
+        o.posts += c.posts; o.views += c.views; o.likes += c.likes; o.accounts += c.accounts; o.parts.push(c.cat);
+        o.tracked = o.tracked === null || c.tracked === null ? null : o.tracked + c.tracked;
+        if (c.top && (!o.top || c.top.views > o.top.views)) o.top = c.top;
+      });
+      list.push(o);
+    }
+    list.forEach(function (c) { if (c.posts > max) max = c.posts; });
+    var rows = list.map(function (c, i) {
+      var p = pf && pf.cats && !c.parts ? pf.cats[c.cat] : null, w = max ? Math.max(2, 100 * c.posts / max) : 0;
+      if (c.parts && pf && pf.cats) {                                   // "others": its previous period is the same categories added up
+        p = { posts: 0 }; c.parts.forEach(function (k) { if (pf.cats[k]) p.posts += pf.cats[k].posts; });
+      }
+      var acc = c.tracked ? fill(t('bjCatAcc'), { a: fmtInt(c.accounts), t: fmtInt(c.tracked) }) : fill(t('bjCatAccN'), { a: fmtInt(c.accounts) });
+      var top = c.top ? '<div class="bj-top">' + avatar(c.top.name, c.top.avatar, f.color) + '<div><b>' + esc(c.top.name) + '</b><span>' + esc(fill(t('bjTopV'), { v: fmtShort(c.top.views) })) + (c.top.state ? ' · ' + esc(stName(c.top.state)) : '') + '</span></div></div>' : '<div></div>';
+      return '<div class="bj-row" style="-webkit-animation-delay:' + (0.25 + i * 0.09) + 's;animation-delay:' + (0.25 + i * 0.09) + 's">'
+        + '<div class="bj-c"><b>' + esc(c.parts ? cats.OTHER + ' (' + c.parts.map(function (k) { return cats[k] || k; }).join(', ') + ')' : (cats[c.cat] || c.cat)) + '</b><span>' + esc(acc) + '</span></div>'
+        + '<div class="bj-m"><div class="bar-track"><div class="bar-fill" data-w="' + w.toFixed(1) + '" style="background:linear-gradient(90deg,' + f.color + ',' + lighten(f.color, 0.35) + ')"></div></div>'
+        + '<div class="bj-nums">' + num(c.posts, 'int', 'bj.' + c.cat + '.posts') + '<em>' + esc(t('atPosts')) + '</em>'
+        + num(c.views, 'short', 'bj.' + c.cat + '.views') + '<em>' + esc(t('atViews')) + '</em>'
+        + num(c.likes, 'short', 'bj.' + c.cat + '.likes') + '<em>' + esc(t('atLikes')) + '</em>'
+        + (p ? growth(c.posts, p.posts, 'vsPrev') : '') + dltHtml('bj.' + c.cat + '.posts') + '</div></div>'
+        + top + '</div>';
+    }).join('');
+    return '<div class="bj">' + card + '<div class="bj-cats">' + rows + '</div></div>';
   }
   function sBars(s, metric) {
     var list = (s.parties || []).slice(), real = list.filter(function (p) { return p.party !== 'Others'; });
@@ -1772,6 +2017,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
                render: function (x) { return sTrending(x, p.party); } };
     }
     L.push({ id: 'glance', dur: 15000, hero: 'hi', title: function () { return esc(t('glance')); }, render: sGlance, after: countUp });
+    if (s.focus && s.focus.cats && s.focus.cats.length) L.push({ id: 'focus', dur: 20000,
+      title: function () { var lg = logoOf(s.focus.party); return fill(t('bjT'), { p: esc(s.focus.party === 'BJP' ? t('bjName') : s.focus.party) }) + (okImg(lg) ? '<span class="tl"><img alt="" src="' + esc(lg) + '"></span>' : ''); },
+      render: sFocus, after: function (el) { countUp(el); growBars(el); } });
     if (real.length >= 2) L.push({ id: 'posts', dur: 15000, title: function () { return esc(t('posts')); }, render: function (x) { return sBars(x, 'posts'); }, after: growBars });
     if (trend[0]) L.push(tr(trend[0]));
     if (real.length >= 2) L.push({ id: 'views', dur: 15000, title: function () { return esc(t('views')); }, render: function (x) { return sBars(x, 'views'); }, after: growBars });
@@ -2071,7 +2319,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var start = 0;
     if (first && Q.scene && !state.sceneUsed) { state.sceneUsed = true; for (var j = 0; j < state.scenes.length; j++) if (state.scenes[j].id === Q.scene) start = j; }
     if (first || keep < 0) { state.idx = -1; $('scene').innerHTML = ''; show(start); }
-    else { state.idx = keep; renderDots(); renderCount(); }
+    else { state.idx = keep; renderDots(); renderCount(); liveUpdate($('scene')); }   // the screen on now: changed numbers count to their new value
   }
   var fetchTimer = null;
   function schedule(ms) { clearTimeout(fetchTimer); if (!state.stopped) fetchTimer = setTimeout(fetchData, ms); }
@@ -2092,6 +2340,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       }
       if (mode === 'person' && !per) return;
       state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
+      noteLive(all);                                                   // what changed since the last answer
       state.all = all; state.psnap = per || null; state.snap = mode === 'person' ? per : all;
       state.lastOk = Date.now();
       if (mode === 'all' && !ASOF) { try { store('pulse_live_snap_' + SCOPE + (HOURS !== 24 ? '_' + HOURS : ''), JSON.stringify({ at: new Date().toISOString(), s: all })); } catch (e) {} }

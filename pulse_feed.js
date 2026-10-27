@@ -206,7 +206,7 @@ function createPulseFeed(o) {
       coll.aggregate([{ $match: { d: { $gte: cFrom, $lt: ws }, cat: { $nin: MEDIA } } },
         { $group: { _id: { p: '$pt', h: { $toLower: '$h' }, s: '$st' } } }]).toArray(),
       coll.aggregate([{ $match: { d: { $lt: ws } } },
-        { $group: { _id: '$st', n: { $sum: '$tw' } } }]).toArray(),
+        { $group: { _id: '$st', n: { $sum: '$tw' }, v: { $sum: '$vw' }, l: { $sum: '$lk' } } }]).toArray(),
       /* the accounts Pulse tracks (~3.8k small docs) */
       d.collection('nazar_handles').find({}, { projection: { party: 1, state: 1, cat: 1 } }).toArray()
     ]);
@@ -215,7 +215,7 @@ function createPulseFeed(o) {
     res[3].forEach(function (x) { handles[String(x._id)] = { handle: String(x._id), party: x.party, state: x.state, category: x.cat }; });
     var daily = {}, allTime = {};
     res[0].forEach(function (x) { var k = x._id.d; (daily[k] = daily[k] || {})[x._id.s || ''] = x.n; });
-    res[2].forEach(function (x) { allTime[x._id || ''] = x.n; });
+    res[2].forEach(function (x) { allTime[x._id || ''] = { n: x.n, v: x.v || 0, l: x.l || 0 }; });   // per state: posts, views, likes
     return { ws: ws, from: from, firstDay: i.first_day || null, daily: daily, allTime: allTime, handles: handles,
              collected: res[1].map(function (x) { return { p: x._id.p, h: x._id.h, s: x._id.s }; }) };
   }

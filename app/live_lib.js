@@ -26,6 +26,7 @@ var NEWS = require('./news_lib.js');
 var C = {
   WIN_H: 24,              // length of a window (default)
   HOURS: [24, 48, 72],    // window lengths a viewer can choose
+  FOCUS_PARTY: 'BJP',     // the party with its own "by category" screen
   COVER_MIN: 0.60,        // window must hold >= 60 % of the usual daily volume
   BASE_DAYS: 28,          // usual volume = 75th percentile of the last 28 days
   BASE_PCT: 0.75,
@@ -123,6 +124,13 @@ function stateOf(st) {
   return STATE_ALIAS[k] || s;
 }
 function validState(st) { return stateOf(st) !== null; }
+
+/* account categories as Pulse files them (Category on the post, cat in nazar_handles)
+   -> one key per group, shown in this order */
+var CAT_ORDER = ['TOP', 'LS_MP', 'RS_MP', 'MLA', 'MLC', 'NOB', 'PAGE', 'MLA_C', 'OTHER'];
+var CAT_KEY = { 'top leaders': 'TOP', 'ls_mp': 'LS_MP', 'rs_mp': 'RS_MP', 'mla': 'MLA', 'mlc': 'MLC', 'nob': 'NOB',
+                'official page': 'PAGE', 'party page': 'PAGE', 'mla contestent': 'MLA_C', 'mla contestant': 'MLA_C' };
+function catOf(cat) { return CAT_KEY[String(cat || '').trim().toLowerCase()] || 'OTHER'; }
 function cleanText(t) {
   return String(t || '').replace(/https?:\/\/\S+/g, ' ').replace(/\s+/g, ' ').trim();
 }
@@ -271,24 +279,33 @@ function computeMetrics(rows, win, opts) {
 
   var ex = { media: 0, retweets: 0, noParty: 0, noState: 0 };
   var party = {}, state = {}, handle = {};
-  var origPosts = 0, origViews = 0, activeAll = {}, top = null;
+  var origPosts = 0, origViews = 0, origLikes = 0, activeAll = {}, top = null;
+  /* one party seen in depth (C.FOCUS_PARTY): its totals and its account categories */
+  var FP = C.FOCUS_PARTY, fc = { posts: 0, views: 0, likes: 0, reposts: 0, handles: {}, cats: {} };
 
   for (var i = 0; i < rows.length; i++) {
     var r = rows[i];
     if (isMedia(r.Category)) { ex.media++; continue; }
-    if (HA.isRetweet(r)) { ex.retweets++; continue; }
-    var views = HA.num(r['Total Views']);
+    if (HA.isRetweet(r)) { ex.retweets++; if (FP && normParty(r.Party) === FP) fc.reposts++; continue; }
+    var views = HA.num(r['Total Views']), likes = HA.num(r['Total Likes']);
     var h = dedupeKeyHandle(r.Handle);
     var p = normParty(r.Party);
-    origPosts++; origViews += views; activeAll[h] = 1;
+    origPosts++; origViews += views; origLikes += likes; activeAll[h] = 1;
+    if (FP && p === FP) {
+      fc.posts++; fc.views += views; fc.likes += likes; fc.handles[h] = 1;
+      var ck = catOf(r.Category), cc = fc.cats[ck] || (fc.cats[ck] = { cat: ck, posts: 0, views: 0, likes: 0, handles: {}, by: {} });
+      cc.posts++; cc.views += views; cc.likes += likes; cc.handles[h] = 1;
+      var cb = cc.by[h] || (cc.by[h] = { handle: r.Handle, name: r['Candidate Name'] || r.Handle, state: stateOf(r.State), posts: 0, views: 0 });
+      cb.posts++; cb.views += views;
+    }
 
     var sn = stateOf(r.State);
     if (p === null) ex.noParty++;
     if (sn === null) ex.noState++;
 
     if (p !== null) {
-      var pp = party[p] || (party[p] = { party: p, posts: 0, views: 0, handles: {} });
-      pp.posts++; pp.views += views; pp.handles[h] = 1;
+      var pp = party[p] || (party[p] = { party: p, posts: 0, views: 0, likes: 0, handles: {} });
+      pp.posts++; pp.views += views; pp.likes += likes; pp.handles[h] = 1;
     }
     if (sn !== null) {
       var ss = state[sn] || (state[sn] = { state: sn, posts: 0, views: 0, parties: {} });
@@ -328,7 +345,7 @@ function computeMetrics(rows, win, opts) {
     var col = collected && typeof collected[x.party] === 'number' ? collected[x.party] : null;
     var mp = mapped && typeof mapped[x.party] === 'number' ? mapped[x.party] : null;
     return {
-      party: x.party, color: partyColor(x.party, i), posts: x.posts, views: x.views,
+      party: x.party, color: partyColor(x.party, i), posts: x.posts, views: x.views, likes: x.likes || 0,
       postShare: attributed ? round(100 * x.posts / attributed, 1) : null,
       viewShare: attributedViews ? round(100 * x.views / attributedViews, 1) : null,
       accounts: { mapped: mp, collected: col, active: active },
@@ -340,8 +357,8 @@ function computeMetrics(rows, win, opts) {
   }
   var parties = shown.map(partyRow);
   if (rest.length) {
-    var o = { party: 'Others', posts: 0, views: 0, handles: {} };
-    rest.forEach(function (x) { o.posts += x.posts; o.views += x.views; Object.keys(x.handles).forEach(function (k) { o.handles[k] = 1; }); });
+    var o = { party: 'Others', posts: 0, views: 0, likes: 0, handles: {} };
+    rest.forEach(function (x) { o.posts += x.posts; o.views += x.views; o.likes += x.likes; Object.keys(x.handles).forEach(function (k) { o.handles[k] = 1; }); });
     var orow = partyRow(o, 99);
     orow.color = '#546E7A'; orow.accounts.mapped = null; orow.accounts.collected = null;
     orow.postsPerCollected = null; orow.viewsPerCollected = null; orow.limited = null; orow.parts = rest.length;
@@ -384,9 +401,28 @@ function computeMetrics(rows, win, opts) {
     handleTotals[k] = { handle: hd.handle, name: hd.name, party: hd.party, state: hd.state, posts: hd.posts, views: hd.views };
   });
 
+  /* the focus party: totals, then one row per account category in a fixed order
+     (tracked = accounts of that category on the list; opts.trackedCats) */
+  var focus = null;
+  if (FP && fc.posts) {
+    var tc = opts.trackedCats || {}, fpRow = party[FP];
+    focus = {
+      party: FP, color: partyColor(FP, 0), posts: fc.posts, views: fc.views, likes: fc.likes, reposts: fc.reposts,
+      accounts: Object.keys(fc.handles).length, tracked: typeof tc.__total === 'number' ? tc.__total : null,
+      postShare: attributed && fpRow ? round(100 * fpRow.posts / attributed, 1) : null,
+      cats: CAT_ORDER.filter(function (k) { return fc.cats[k]; }).map(function (k) {
+        var c = fc.cats[k], best = Object.keys(c.by).map(function (x) { return c.by[x]; }).sort(function (a, b) { return b.views - a.views; })[0];
+        return { cat: k, posts: c.posts, views: c.views, likes: c.likes, accounts: Object.keys(c.handles).length,
+                 tracked: typeof tc[k] === 'number' ? tc[k] : null,
+                 top: best ? { handle: best.handle, name: best.name, state: best.state, posts: best.posts, views: best.views, avatar: avatarOf(best.handle) } : null };
+      })
+    };
+  }
+
   return {
-    kpis: { originalPosts: origPosts, views: origViews, accounts: Object.keys(activeAll).length,
+    kpis: { originalPosts: origPosts, views: origViews, likes: origLikes, accounts: Object.keys(activeAll).length,
             statesCovered: states.filter(function (s) { return !s.limited; }).length },
+    focus: focus,
     excluded: ex,
     parties: parties,
     leadersByParty: leadersByParty,
@@ -464,7 +500,7 @@ function makeFacts(s) {
    case-insensitive unique handles. onlyState (e.g. 'Uttar Pradesh') keeps the
    count comparable with a state-scoped dashboard. */
 function countMapped(master, onlyState) {
-  var seen = {}, by = {}, total = 0;
+  var seen = {}, by = {}, byCat = {}, total = 0;
   Object.keys(master || {}).forEach(function (k) {
     var r = master[k] || {};
     var h = String(r.handle || k).toLowerCase();
@@ -474,9 +510,14 @@ function countMapped(master, onlyState) {
     if (onlyState && stateOf(r.state) !== onlyState) return;
     total++;
     var p = normParty(r.party);
-    if (p) by[p] = (by[p] || 0) + 1;
+    if (p) {
+      by[p] = (by[p] || 0) + 1;
+      var bc = byCat[p] || (byCat[p] = { __total: 0 }), ck = catOf(r.category);
+      bc[ck] = (bc[ck] || 0) + 1; bc.__total++;
+    }
   });
-  return { byParty: by, total: total };
+  /* byPartyCat: { party: { catKey: n, __total: n } } */
+  return { byParty: by, byPartyCat: byCat, total: total };
 }
 
 /* ------------------------------------------------------------ Mongo side */
@@ -778,7 +819,8 @@ function createService(env) {
       new Promise(function (res) { setTimeout(function () { res(null); }, C.COLLECTED_WAIT_MS); })
     ]);
     var mp = env.mapped(scope);
-    var m = computeMetrics(rows, win, { collected: collected, mapped: mp ? mp.byParty : null, avatarOf: env.avatarOf });
+    var m = computeMetrics(rows, win, { collected: collected, mapped: mp ? mp.byParty : null, avatarOf: env.avatarOf,
+                                        trackedCats: mp && mp.byPartyCat ? mp.byPartyCat[C.FOCUS_PARTY] : null });
 
     var baseFrom = win.fromMs - C.BREAK_BASE_DAYS * 86400000;
     var baseRows = await fetchBaselineRows(coll, m.breakoutCandidates.map(function (c) { return c.handle; }), baseFrom, win.fromMs);
@@ -798,23 +840,32 @@ function createService(env) {
         prow.forEach(function (r) {
           if (isMedia(r.Category) || HA.isRetweet(r)) return;
           var p = normParty(r.Party); if (!p) return;
-          var x = pp[p] || (pp[p] = { posts: 0, views: 0 }); x.posts++; x.views += HA.num(r['Total Views']);
+          var x = pp[p] || (pp[p] = { posts: 0, views: 0, likes: 0 });
+          x.posts++; x.views += HA.num(r['Total Views']); x.likes += HA.num(r['Total Likes']);
         });
-        compare = { comparable: true, prevPosts: pm.kpis.originalPosts, prevViews: pm.kpis.views, parties: pp,
-                    prevFrom: plan.prev.from, prevTo: plan.prev.to };
+        /* the focus party's previous period, per category too */
+        var pf = null;
+        if (pm.focus) {
+          pf = { posts: pm.focus.posts, views: pm.focus.views, likes: pm.focus.likes, accounts: pm.focus.accounts, cats: {} };
+          pm.focus.cats.forEach(function (c) { pf.cats[c.cat] = { posts: c.posts, views: c.views, likes: c.likes }; });
+        }
+        compare = { comparable: true, prevPosts: pm.kpis.originalPosts, prevViews: pm.kpis.views, prevLikes: pm.kpis.likes,
+                    parties: pp, focus: pf, prevFrom: plan.prev.from, prevTo: plan.prev.to };
         cmpCache[ck] = { at: env.now(), v: compare };
       }
     }
 
     var ticker = [];
     try { ticker = await env.news(scope, win); } catch (e) { ticker = []; }     // news of the same period
-    var pidb = null;
+    var pidb = null, allTime = null;
     try { pidb = await env.postsInDb(scope); } catch (e) { pidb = null; }
+    /* env.allTime (optional): { posts, views, likes, since } over every day we have */
+    try { allTime = env.allTime ? await env.allTime(scope) : null; } catch (e) { allTime = null; }
 
-    out.kpis = m.kpis; out.excluded = m.excluded; out.parties = m.parties;
+    out.kpis = m.kpis; out.excluded = m.excluded; out.parties = m.parties; out.focus = m.focus;
     out.leadersByParty = m.leadersByParty; out.states = m.states; out.topPost = m.topPost;
     out.breakout = breakout; out.compare = compare; out.ticker = ticker;
-    out.coverageStats = { handlesMapped: mp ? mp.total : null, postsInDatabase: pidb };
+    out.coverageStats = { handlesMapped: mp ? mp.total : null, postsInDatabase: pidb, allTime: allTime };
     out.parties.forEach(function (p) { p.logo = env.partyLogo ? env.partyLogo(p.party) : null; });
     out.facts = makeFacts(out);
     /* not sent to the browser (non-enumerable), used by the personal view */
@@ -977,7 +1028,7 @@ module.exports = {
   baselineFor: baselineFor, planWindow: planWindow,
   parsePipelineTail: parsePipelineTail, readPipelineState: readPipelineState, chipOf: chipOf,
   computeMetrics: computeMetrics, computeBreakout: computeBreakout, makeFacts: makeFacts,
-  countMapped: countMapped, createService: createService,
+  countMapped: countMapped, createService: createService, catOf: catOf, CAT_ORDER: CAT_ORDER,
   buildPeople: buildPeople, searchPeople: searchPeople, computePerson: computePerson,
   rivalsFor: rivalsFor, personFacts: personFacts, plainName: plainName
 };

@@ -536,6 +536,29 @@ function makeService(rows) {
     while (lo < hi) { var m = (lo + hi) >> 1; if (rows[m]['Tweet Date'] < v) lo = m + 1; else hi = m; }
     return lo;
   }
+  /* everything Pulse has, for a scope: nazar_daily (all posts, every account) before window_start
+     + the raw posts from window_start on, counted the same way (retweets and media included).
+     { posts, views, likes, since } or null without Pulse's summary */
+  function allTime(scope) {
+    var k = scope || 'all', h = inDb[k];
+    if (h && h.ver === dataVer && h.key === (PULSE && PULSE.summaryNow() ? PULSE.summaryNow().ws : null)) return Promise.resolve(h.v);
+    if (!PULSE) return Promise.resolve(null);
+    return PULSE.summary().then(function (s) {
+      if (!s) return null;
+      var st = LIVE.stateOfScope(k), out = { posts: 0, views: 0, likes: 0, since: s.firstDay };
+      Object.keys(s.allTime).forEach(function (x) {
+        if (st && LIVE.stateOf(x) !== st) return;
+        var a = s.allTime[x]; out.posts += a.n; out.views += a.v; out.likes += a.l;
+      });
+      for (var i = lowerIx(s.ws); i < rows.length; i++) {
+        var r = rows[i];
+        if (st && r.State !== st) continue;
+        out.posts++; out.views += HA.num(r['Total Views']); out.likes += HA.num(r['Total Likes']);
+      }
+      inDb[k] = { ver: dataVer, key: s.ws, v: out };
+      return out;
+    });
+  }
   /* posts of one IST day held as raw rows, for a scope (state name or null = all India) */
   function rawDay(day, st) {
     var q = { 'Tweet Date': { $gte: day + ' 00:00:00 IST', $lte: day + ' 23:59:59 IST' } };
@@ -624,21 +647,13 @@ function makeService(rows) {
     /* posts in the file(s) for this scope; with Pulse: all of Pulse's history (nazar_daily
        before window_start) + the raw posts from window_start on */
     postsInDb: function (scope) {
-      var k = scope || 'all', st = LIVE.stateOfScope(k), h = inDb[k];
-      if (h && h.ver === dataVer) return Promise.resolve(h.v);
-      var job = !PULSE ? Promise.resolve(null) : PULSE.summary().then(function (s) {
-        if (!s) return null;
-        var n = 0;
-        Object.keys(s.allTime).forEach(function (x) { if (!st || LIVE.stateOf(x) === st) n += s.allTime[x]; });
-        var q = { 'Tweet Date': { $gte: s.ws } }; if (st) q.State = st;
-        return coll.countDocuments(q).then(function (live) { return n + live; });
+      return allTime(scope).then(function (a) {
+        if (a) return a.posts;
+        var st = LIVE.stateOfScope(scope);
+        return st ? rows.filter(function (r) { return r.State === st; }).length : rows.length;
       });
-      return job.then(function (v) {
-        if (v === null) v = k === 'all' ? rows.length : rows.filter(function (r) { return r.State === st; }).length;
-        inDb[k] = { ver: dataVer, v: v };
-        return v;
-      });
-    }
+    },
+    allTime: allTime
   }, pulseHooks));
 }
 
