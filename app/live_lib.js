@@ -47,6 +47,7 @@ var C = {
   TICKER_ITEMS: 12,
   TTL_MS: 60000,
   STALE_OK_MS: 10 * 60000,  // an older copy is still served at once (and rebuilt behind it) up to this age
+  SAME_DATA_MS: 5 * 60000,  // with env.version unchanged, a copy is rebuilt only after this long
   DAYCOUNT_TTL_MS: 3600000,
   COLLECTED_TTL_MS: 6 * 3600000,
   COLLECTED_WAIT_MS: 1500,
@@ -884,6 +885,10 @@ function createService(env) {
     if (asofMs !== null) return build(scope, asofMs, H);
 
     var k = scope + '|auto|' + H, e = snaps[k], now = env.now();
+    /* env.version (optional): changes whenever the data does. Same data -> the copy stays
+       good for C.SAME_DATA_MS (only "minutes ago" texts age), no rebuild every minute */
+    var ver = env.version ? env.version() : null;
+    if (e && !e.pending && e.v && ver !== null && e.ver === ver && now - e.v.__at < C.SAME_DATA_MS) { touch(k); return Promise.resolve(e.v); }
     if (e && (e.pending || now - e.at < C.TTL_MS) && e.p) {
       touch(k);
       /* a rebuild is running: answer with the last good copy instead of waiting for it */
@@ -892,8 +897,9 @@ function createService(env) {
     /* stale but recent: answer at once with it and rebuild in the background
        (stale-while-revalidate) -- nobody waits for the maths after the first build */
     var serveOld = e && e.v && now - e.v.__at < C.STALE_OK_MS;
-    var ne = { at: now, pending: true, p: null, v: e ? e.v : null };
+    var ne = { at: now, pending: true, p: null, v: e ? e.v : null, ver: e ? e.ver : null };
     ne.p = build(scope, null, H).then(function (v) {
+      ne.ver = ver;
       Object.defineProperty(v, '__at', { value: env.now(), enumerable: false });   // when it was built (not sent)
       ne.v = v; ne.pending = false; ne.at = env.now(); return v;
     }, function (err) {

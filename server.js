@@ -196,55 +196,68 @@ function Collection(rows) {
   this.reindex();
   function lower(v) { var lo = 0, hi = dates.length; while (lo < hi) { var m = (lo + hi) >> 1; if (dates[m] < v) lo = m + 1; else hi = m; } return lo; }
   function upper(v) { var lo = 0, hi = dates.length; while (lo < hi) { var m = (lo + hi) >> 1; if (dates[m] <= v) lo = m + 1; else hi = m; } return lo; }
-  function test(v, cond) {
-    if (cond instanceof RegExp) return cond.test(String(v));
+  /* one test per field, built once per query ($in / $nin lists become Sets) */
+  function pred(cond) {
+    if (cond instanceof RegExp) return function (v) { return cond.test(String(v)); };
     if (cond && typeof cond === 'object' && !Array.isArray(cond)) {
-      for (var op in cond) {
+      var t = [];
+      Object.keys(cond).forEach(function (op) {
         var c = cond[op];
-        if (op === '$gte' && !(v >= c)) return false;
-        if (op === '$gt' && !(v > c)) return false;
-        if (op === '$lte' && !(v <= c)) return false;
-        if (op === '$lt' && !(v < c)) return false;
-        if (op === '$in' && c.indexOf(v) < 0) return false;
-        if (op === '$nin' && c.indexOf(v) >= 0) return false;
-      }
-      return true;
+        if (op === '$gte') t.push(function (v) { return v >= c; });
+        else if (op === '$gt') t.push(function (v) { return v > c; });
+        else if (op === '$lte') t.push(function (v) { return v <= c; });
+        else if (op === '$lt') t.push(function (v) { return v < c; });
+        else if (op === '$in') { var si = new Set(c); t.push(function (v) { return si.has(v); }); }
+        else if (op === '$nin') { var sn = new Set(c); t.push(function (v) { return !sn.has(v); }); }
+      });
+      return function (v) { for (var i = 0; i < t.length; i++) if (!t[i](v)) return false; return true; };
     }
-    return v === cond;
+    return function (v) { return v === cond; };
   }
-  function select(q) {
+  /* the rows matching q, walked in date order (dir 1) or newest first (dir -1); stops at
+     limit. Rows are kept sorted by 'Tweet Date', so a date range is two binary searches. */
+  function scan(q, dir, limit, countOnly) {
     q = q || {};
     var lo = 0, hi = rows.length, dq = q['Tweet Date'];
-    if (dq && typeof dq === 'object') {
+    if (dq && typeof dq === 'object' && !(dq instanceof RegExp)) {
       if (dq.$gte !== undefined) lo = lower(dq.$gte);
       if (dq.$gt !== undefined) lo = upper(dq.$gt);
       if (dq.$lte !== undefined) hi = upper(dq.$lte);
       if (dq.$lt !== undefined) hi = lower(dq.$lt);
     }
-    var keys = Object.keys(q).filter(function (k) { return k !== 'Tweet Date' || typeof dq !== 'object'; });
-    var out = [];
-    for (var i = lo; i < hi; i++) {
-      var r = rows[i], ok = true;
-      for (var j = 0; j < keys.length && ok; j++) ok = test(r[keys[j]], q[keys[j]]);
-      if (ok) out.push(r);
+    var keys = Object.keys(q).filter(function (k) { return k !== 'Tweet Date' || typeof dq !== 'object' || dq instanceof RegExp; });
+    var tests = keys.map(function (k) { return pred(q[k]); }), nk = keys.length;
+    var out = countOnly ? 0 : [], n = 0, max = limit || Infinity;
+    for (var s = 0, len = hi - lo; s < len && n < max; s++) {
+      var r = rows[dir < 0 ? hi - 1 - s : lo + s], ok = true;
+      for (var j = 0; j < nk && ok; j++) ok = tests[j](r[keys[j]]);
+      if (!ok) continue;
+      n++; if (countOnly) out++; else out.push(r);
     }
     return out;
   }
-  function cursor(list) {
+  /* lazy: nothing is read until toArray, so sort({'Tweet Date': -1}).limit(1) reads one row */
+  function cursor(q) {
+    var sortK = null, dir = 1, lim = 0;
     var c = {
-      sort: function (spec) {
-        var k = Object.keys(spec)[0], dir = spec[k];
-        list = list.slice().sort(function (a, b) { return (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * dir; });
-        return c;
-      },
-      limit: function (n) { list = list.slice(0, n); return c; },
+      sort: function (spec) { sortK = Object.keys(spec)[0]; dir = spec[sortK]; return c; },
+      limit: function (n) { lim = n; return c; },
       maxTimeMS: function () { return c; },
-      toArray: function () { return Promise.resolve(list); }
+      toArray: function () {
+        if (!sortK || sortK === 'Tweet Date') return Promise.resolve(scan(q, sortK ? dir : 1, lim));
+        var list = scan(q, 1, 0).sort(function (a, b) { return (a[sortK] < b[sortK] ? -1 : a[sortK] > b[sortK] ? 1 : 0) * dir; });
+        return Promise.resolve(lim ? list.slice(0, lim) : list);
+      }
     };
     return c;
   }
-  this.find = function (q) { return cursor(select(q)); };
-  this.countDocuments = function (q) { return Promise.resolve(select(q).length); };
+  function select(q) { return scan(q, 1, 0); }
+  function listCursor(list) {
+    return { sort: function () { return this; }, limit: function () { return this; }, maxTimeMS: function () { return this; },
+             toArray: function () { return Promise.resolve(list); } };
+  }
+  this.find = function (q) { return cursor(q); };
+  this.countDocuments = function (q) { return Promise.resolve(scan(q, 1, 0, true)); };
   this.estimatedDocumentCount = function () { return Promise.resolve(rows.length); };
   /* only shape used: $match -> group by (Party, lower(Handle)) -> count per Party */
   this.aggregate = function (pipe) {
@@ -253,7 +266,7 @@ function Collection(rows) {
       var k = r.Party + '\u0001' + String(r.Handle).toLowerCase();
       if (seen[k]) return; seen[k] = 1; by[r.Party] = (by[r.Party] || 0) + 1;
     });
-    return cursor(Object.keys(by).map(function (p) { return { _id: p, n: by[p] }; }));
+    return listCursor(Object.keys(by).map(function (p) { return { _id: p, n: by[p] }; }));
   };
 }
 
@@ -606,6 +619,8 @@ function makeService(rows) {
   return LIVE.createService(Object.assign({
     coll: coll,
     now: Date.now,
+    /* changes when posts change (dataVer) or Pulse pushes (the LIVE chip) -- else no rebuild */
+    version: function () { return dataVer + '|' + (PULSE ? PULSE.lastPushIst() : ''); },
     /* "N political accounts tracked": with Pulse, the accounts Pulse actually tracks
        (nazar_handles, media left out); otherwise Nazar's own list (handle_master.json) */
     mapped: function (scope) {

@@ -128,7 +128,12 @@ function createEngine(opts) {
   var on = !!(process.env.GROQ_API_KEY || process.env.OPENROUTER_API_KEY);
   var ruling = AT.rulingParties(master());
 
-  function windowRows(win) { return rowsAll.filter(function (r) { var d = String(r['Tweet Date']).slice(0, 19); return d >= win.from.slice(0, 19) && d <= win.to.slice(0, 19); }); }
+  /* rowsAll is sorted by 'Tweet Date': the window is a slice between two binary searches */
+  function windowRows(win) {
+    var from = win.from.slice(0, 19), to = win.to.slice(0, 19) + '~';
+    function at(v) { var lo = 0, hi = rowsAll.length; while (lo < hi) { var m = (lo + hi) >> 1; if (String(rowsAll[m]['Tweet Date']) < v) lo = m + 1; else hi = m; } return lo; }
+    return rowsAll.slice(at(from), at(to));
+  }
 
   /* checker: the leading unchecked attacks of All India and of every state with a ruling party on record */
   async function checkLeaders(rows) {
