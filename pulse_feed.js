@@ -53,14 +53,15 @@ function addDays(day, n) {
 function byDate(a, b) { return a['Tweet Date'] < b['Tweet Date'] ? -1 : a['Tweet Date'] > b['Tweet Date'] ? 1 : 0; }
 
 /* o: { url, rows (Nazar's shared array, sorted by 'Tweet Date'), clean(doc) -> row | null,
-        num(v) -> number, onChange({added, changed}), log } */
+        num(v) -> number, onChange({added, changed}), persist(rows) -> Promise (optional:
+        keeps a copy of new / changed posts beyond Pulse's 3 days), log } */
 function createPulseFeed(o) {
   var log = o.log || console.log, rows = o.rows;
   var MC = require('mongodb').MongoClient;
   var client = new MC(o.url, { maxPoolSize: 5, serverSelectionTimeoutMS: 8000, socketTimeoutMS: 60000 });
-  var db = null, info = null, byId = {}, maxTs = 0, timer = null, busy = false, ready = false;
+  var db = null, info = null, byId = {}, maxTs = 0, timer = null, busy = false, ready = false, dirty = {};
   var st = { startedAt: null, lastPollAt: null, lastOkAt: null, lastPushSeen: null, lastError: null, lastErrorAt: null,
-             polls: 0, sweeps: 0, added: 0, updated: 0, droppedOwn: 0 };
+             polls: 0, sweeps: 0, added: 0, updated: 0, droppedOwn: 0, saved: 0 };
   var sum = { key: null, v: null, p: null, at: null };
 
   async function conn() {
@@ -97,10 +98,10 @@ function createPulseFeed(o) {
       var have = byId[row._id];
       if (have) {
         var diff = METRICS.some(function (f) { return have[f] !== row[f]; }) || have['Tweet Text'] !== row['Tweet Text'];
-        if (diff) { Object.assign(have, row); changed++; }
+        if (diff) { Object.assign(have, row); changed++; dirty[row._id] = have; }
         return;
       }
-      byId[row._id] = row; rows.push(row); added++;
+      byId[row._id] = row; rows.push(row); added++; dirty[row._id] = row;
     });
     if (added) rows.sort(byDate);
     st.added += added; st.updated += changed;
@@ -114,8 +115,11 @@ function createPulseFeed(o) {
     var d = await conn(), t0 = Date.now();
     var docs = await d.collection('tweets').find({ 'Tweet Date': { $gte: info.window_start } }, { projection: PROJ }).toArray();
     /* Pulse owns every day from window_start on: drop Nazar's own copies of those days first */
-    var cut = lowerBound(info.window_start), mine = rows.length - cut;
-    if (mine) { rows.splice(cut, mine); st.droppedOwn += mine; }
+    /* posts from Pulse already in rows (r._p: Nazar's saved copy, pulse_raw) are kept and only
+       updated -- so they are not saved again -- Nazar's own posts of those days go */
+    var cut = lowerBound(info.window_start), tail = rows.splice(cut, rows.length - cut), mine = 0;
+    tail.forEach(function (r) { if (r._p) { byId[r._id] = r; rows.push(r); } else mine++; });
+    st.droppedOwn += mine;
     var r = merge(docs);
     if (mine && !r.added && !r.changed) o.onChange(r);
     log('  [pulse] live window from ' + info.window_start + ': ' + docs.length.toLocaleString('en-IN') + ' posts in '
@@ -135,7 +139,7 @@ function createPulseFeed(o) {
       if (!have) { missing.push(x._id); return; }
       var diff = false;
       METRICS.forEach(function (f) { var v = o.num(x[f]); if (have[f] !== v) { have[f] = v; diff = true; } });
-      if (diff) changed++;
+      if (diff) { changed++; dirty[have._id] = have; }
     });
     var added = 0;
     for (var i = 0; i < missing.length; i += 500) {
@@ -175,6 +179,19 @@ function createPulseFeed(o) {
     } finally {
       busy = false;
     }
+    saveDirty();                       // in the background: the screens never wait for it
+  }
+  /* new / changed posts -> o.persist; on failure they stay queued for the next poll */
+  var saving = false;
+  async function saveDirty() {
+    var ids = Object.keys(dirty);
+    if (!o.persist || !ids.length || saving) return;
+    saving = true;
+    var list = ids.map(function (k) { return dirty[k]; });
+    dirty = {};
+    try { await o.persist(list); st.saved += list.length; }
+    catch (e) { list.forEach(function (r) { if (!dirty[r._id]) dirty[r._id] = r; }); fail('save', e); }
+    finally { saving = false; }
   }
 
   /* ------------------------------------------------ nazar_daily summaries */
@@ -234,6 +251,7 @@ function createPulseFeed(o) {
         summaryAt: sum.at, summaryWindowStart: sum.v ? sum.v.ws : null,
         startedAt: st.startedAt, lastPollAt: st.lastPollAt, lastOkAt: st.lastOkAt, lastPushSeen: st.lastPushSeen,
         polls: st.polls, sweeps: st.sweeps, added: st.added, updated: st.updated, droppedOwn: st.droppedOwn,
+        saved: st.saved, savePending: Object.keys(dirty).length,
         lastError: st.lastError, lastErrorAt: st.lastErrorAt
       };
     }

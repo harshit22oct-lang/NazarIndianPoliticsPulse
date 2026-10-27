@@ -126,6 +126,7 @@ body.kiosk .tbtn{display:none}
 .spd button:hover,.spd button:focus{color:var(--text);background:rgba(255,153,51,.15);outline:none}
 .spd button.on{background:linear-gradient(135deg,#E65100,#FF9933);color:#fff}
 body.kiosk .spd{display:none}
+body.mr #rng{display:none}          /* the Media Room has its own news, not the post window */
 
 #stage{flex:1 1 auto;min-height:0;position:relative;display:flex;flex-direction:column;padding-top:1.4rem}
 .st-head{flex:0 0 auto;display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.4rem}
@@ -412,6 +413,7 @@ body.portrait .st-top{flex-wrap:wrap} body.portrait .st-top h2{width:100%;margin
 .kpi-l{font-size:1.4rem;color:var(--muted);margin-top:.8rem;font-weight:500}
 .kpi-s{font-size:1.15rem;color:var(--dim);margin-top:.4rem}
 .kpi-s .up{color:var(--good)} .kpi-s .down{color:var(--amber)}
+.bar-sub .up{color:var(--good);font-weight:700} .bar-sub .down{color:var(--amber);font-weight:700}
 .scale{margin-top:1.4rem;text-align:center;font-size:1.5rem;color:var(--muted);text-shadow:0 .2rem .8rem rgba(0,0,0,.8)}
 .scale b{font-family:var(--head);font-size:2.1rem;color:var(--text);font-weight:700}
 
@@ -1040,6 +1042,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       <div class="chip stpill hidden" id="stPill"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg><span id="stPillTxt"></span></div>
       <div class="chip lvl-nodata" id="chip"><i class="cd"></i><span id="chipTxt">…</span></div>
       <div class="clock"><b id="clk">--:--</b><span id="cdate"></span></div>
+      <div class="spd" id="rng" role="group"><button type="button" data-h="24"></button><button type="button" data-h="48"></button><button type="button" data-h="72"></button></div>
       <div class="spd" id="spd" role="group"><button type="button" data-s="slow"></button><button type="button" data-s="normal"></button><button type="button" data-s="fast"></button></div>
       <button class="tbtn hidden" id="mrBtn" type="button"></button>
       <button class="tbtn" id="swBtn" type="button"></button>
@@ -1090,6 +1093,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   var KIOSK = Q.kiosk === '1';
   var DEMO = Q.demo === '1';
   var ASOF = Q.asof || '';
+  /* window length: the latest 24 / 48 / 72 hours (?hrs=48, else the last choice on this device) */
+  var HOURS_OK = [24, 48, 72];
+  var HOURS = HOURS_OK.indexOf(+Q.hrs) >= 0 ? +Q.hrs : (HOURS_OK.indexOf(+store('nazar_hours')) >= 0 ? +store('nazar_hours') : 24);
   /* standalone prototype: the server reads a recorded CSV export, not a live feed */
   var PROTO = window.NAZAR_PROTO || null;
   var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -1135,9 +1141,10 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       viewsWord: 'views', rank: '#{n}',
       boX: 'their usual views per post', boDetail: 'Typical post now: {r} views · usual: {b} (previous {d} days, {n} posts)',
       postedAt: 'posted {d}', mapNote: 'Colour = party with the most original posts from that state (at least 20). It is not a vote share.',
-      fewPosts: 'Too few posts', when24: 'Last 24 hours · up to {d}', whenDay: '{d} · latest complete day',
-      hWindow24: '<b>Showing:</b> last 24 hours up to {d}', hWindowDay: '<b>Showing:</b> {d}, the latest complete day — newer data is incomplete',
-      hWindowThin: '<b>Showing:</b> last 24 hours up to {d} — fewer posts than usual came in, data may be incomplete',
+      fewPosts: 'Too few posts', when24: 'Last {h} hours · up to {d}', whenDay: '{d} · latest complete day',
+      hWindow24: '<b>Showing:</b> last {h} hours up to {d}', hWindowDay: '<b>Showing:</b> {d}, the latest complete day — newer data is incomplete',
+      hWindowThin: '<b>Showing:</b> last {h} hours up to {d} — fewer posts than usual came in, data may be incomplete',
+      rngTitle: 'Period shown on every screen', rngH: '{h} h', vsPrevV: '{v}% views vs previous {h} h',
       hLatest: 'Latest post {d}', hEst: 'Counts are estimates from the accounts we collect',
       hSource: 'Data source not reachable at last check ({d})', hIdle: 'No new data from the source at last check ({d})',
       hSaved: 'Showing saved data from {d} — reconnecting', hDegraded: 'Server is showing its last good data from {d}',
@@ -1148,13 +1155,13 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       firstFailT: 'Cannot reach the server', firstFailP: 'Nazar will keep trying every few minutes.', retry: 'Try now',
       demo: 'Demo — sample numbers, not real data', hist: 'Historical test · as of {d}', proto: 'Recorded data · {a} – {b}',
       nodataP: 'There is no complete window of data yet. This screen updates by itself as soon as data arrives.',
-      fWindow: 'Tracked political accounts published <b>{posts}</b> original posts {when}.', fWhen24: 'in the last 24 hours', fWhenDay: 'on {d}',
+      fWindow: 'Tracked political accounts published <b>{posts}</b> original posts {when}.', fWhen24: 'in the last {h} hours', fWhenDay: 'on {d}',
       fPer: 'On average, each tracked <b>{a}</b> account posted <b>{ap}</b> times and each <b>{b}</b> account <b>{bp}</b> times.',
       fState: '<b>{s}</b> had the most posts from leaders: <b>{n}</b>.', fTop: 'The most-viewed post, by <b>{n}</b>, reached <b>{v}</b> views.',
       fBreak: 'Posts by <b>{n}</b> got <b>{x}×</b> their usual views.', fMedia: 'Media accounts we follow published <b>{n}</b> posts.',
       fPrevUp: 'That is <b>{p}% more</b> original posts than the previous period.', fPrevDown: 'That is <b>{p}% fewer</b> original posts than the previous period.',
       /* personal */
-      pProfile: '<em>{n}</em> · today', pRhythm: 'When did they post?', pTop: 'Their most-viewed post', pRank: 'Where they stand',
+      pProfile: '<em>{n}</em> · today', pProfileH: '<em>{n}</em> · last {h} hours', pRhythm: 'When did they post?', pTop: 'Their most-viewed post', pRank: 'Where they stand',
       pRivalsC: 'Rivals in <em>{p}</em>', pRivalsS: 'Rival parties in <em>{p}</em>', pColl: '<em>{p}</em> colleagues in {s}', pNews: 'In the news', pFacts: 'In plain words',
       pPosts: 'Original posts', pReposts: 'Reposts', pViews: 'Views', pLikes: 'Likes',
       pVsUsual: '{x}× their usual posting', pViewsUsual: 'Views per post {x}× usual', pUsualDay: 'Usually ~{n} posts a day',
@@ -1196,9 +1203,10 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       viewsWord: 'व्यूज़', rank: '#{n}',
       boX: 'प्रति पोस्ट सामान्य व्यूज़ का', boDetail: 'अभी आम पोस्ट: {r} व्यूज़ · सामान्य: {b} (पिछले {d} दिन, {n} पोस्ट)',
       postedAt: '{d} को पोस्ट', mapNote: 'रंग = उस राज्य से सबसे ज़्यादा मूल पोस्ट वाली पार्टी (कम से कम 20)। यह वोट शेयर नहीं है।',
-      fewPosts: 'बहुत कम पोस्ट', when24: 'पिछले 24 घंटे · {d} तक', whenDay: '{d} · ताज़ा पूरा दिन',
-      hWindow24: '<b>दिखाया जा रहा है:</b> {d} तक पिछले 24 घंटे', hWindowDay: '<b>दिखाया जा रहा है:</b> {d}, ताज़ा पूरा दिन — नया डेटा अधूरा है',
-      hWindowThin: '<b>दिखाया जा रहा है:</b> {d} तक पिछले 24 घंटे — आम दिनों से कम पोस्ट आए, डेटा अधूरा हो सकता है',
+      fewPosts: 'बहुत कम पोस्ट', when24: 'पिछले {h} घंटे · {d} तक', whenDay: '{d} · ताज़ा पूरा दिन',
+      hWindow24: '<b>दिखाया जा रहा है:</b> {d} तक पिछले {h} घंटे', hWindowDay: '<b>दिखाया जा रहा है:</b> {d}, ताज़ा पूरा दिन — नया डेटा अधूरा है',
+      hWindowThin: '<b>दिखाया जा रहा है:</b> {d} तक पिछले {h} घंटे — आम दिनों से कम पोस्ट आए, डेटा अधूरा हो सकता है',
+      rngTitle: 'हर स्क्रीन पर कितने घंटे का हिसाब', rngH: '{h} घंटे', vsPrevV: 'व्यूज़ पिछले {h} घंटे से {v}%',
       hLatest: 'ताज़ा पोस्ट {d}', hEst: 'आँकड़े हमारे संग्रहित खातों पर आधारित अनुमान हैं',
       hSource: 'पिछली जाँच में डेटा स्रोत तक पहुँच नहीं ({d})', hIdle: 'पिछली जाँच में स्रोत से नया डेटा नहीं ({d})',
       hSaved: '{d} का सहेजा डेटा — दोबारा जुड़ रहे हैं', hDegraded: 'सर्वर {d} का आख़िरी सही डेटा दिखा रहा है',
@@ -1209,12 +1217,12 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       firstFailT: 'सर्वर से संपर्क नहीं', firstFailP: 'नज़र हर कुछ मिनट में फिर कोशिश करेगा।', retry: 'अभी कोशिश करें',
       demo: 'डेमो — नमूना आँकड़े, असली डेटा नहीं', hist: 'पुराने समय का परीक्षण · {d} तक', proto: 'रिकॉर्ड किया गया डेटा · {a} – {b}',
       nodataP: 'अभी डेटा की कोई पूरी अवधि उपलब्ध नहीं है। डेटा आते ही यह स्क्रीन अपने आप अपडेट होगी।',
-      fWindow: 'ट्रैक किए गए राजनीतिक खातों ने {when} <b>{posts}</b> मूल पोस्ट किए।', fWhen24: 'पिछले 24 घंटों में', fWhenDay: '{d} को',
+      fWindow: 'ट्रैक किए गए राजनीतिक खातों ने {when} <b>{posts}</b> मूल पोस्ट किए।', fWhen24: 'पिछले {h} घंटों में', fWhenDay: '{d} को',
       fPer: 'औसतन, <b>{a}</b> के हर ट्रैक किए गए खाते ने <b>{ap}</b> और <b>{b}</b> के हर खाते ने <b>{bp}</b> पोस्ट किए।',
       fState: 'नेताओं के सबसे ज़्यादा पोस्ट <b>{s}</b> से आए: <b>{n}</b>।', fTop: 'सबसे ज़्यादा देखा गया पोस्ट <b>{n}</b> का था — <b>{v}</b> व्यूज़।',
       fBreak: '<b>{n}</b> के पोस्ट को सामान्य से <b>{x} गुना</b> व्यूज़ मिले।', fMedia: 'हम जिन मीडिया खातों को देखते हैं, उन्होंने <b>{n}</b> पोस्ट किए।',
       fPrevUp: 'यह पिछली अवधि से <b>{p}% ज़्यादा</b> मूल पोस्ट है।', fPrevDown: 'यह पिछली अवधि से <b>{p}% कम</b> मूल पोस्ट है।',
-      pProfile: '<em>{n}</em> · आज का हाल', pRhythm: 'कब पोस्ट किया?', pTop: 'उनका सबसे ज़्यादा देखा गया पोस्ट', pRank: 'वे कहाँ खड़े हैं',
+      pProfile: '<em>{n}</em> · आज का हाल', pProfileH: '<em>{n}</em> · पिछले {h} घंटे', pRhythm: 'कब पोस्ट किया?', pTop: 'उनका सबसे ज़्यादा देखा गया पोस्ट', pRank: 'वे कहाँ खड़े हैं',
       pRivalsC: '<em>{p}</em> में विरोधी', pRivalsS: '<em>{p}</em> में विरोधी दल', pColl: '{s} में <em>{p}</em> के साथी', pNews: 'ख़बरों में', pFacts: 'आसान शब्दों में',
       pPosts: 'मूल पोस्ट', pReposts: 'रीपोस्ट', pViews: 'व्यूज़', pLikes: 'लाइक्स',
       pVsUsual: 'सामान्य से {x}× पोस्ट', pViewsUsual: 'प्रति पोस्ट व्यूज़ सामान्य से {x}×', pUsualDay: 'आम तौर पर रोज़ ~{n} पोस्ट',
@@ -1501,6 +1509,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (PHONE) $('inSkip').textContent = t('skipTouch');
     if (STATE) { $('stPill').className = 'chip stpill'; $('stPillTxt').textContent = stName(STATE); }
     if (typeof renderSpeed === 'function' && $('spd')) renderSpeed();
+    if (typeof renderRange === 'function' && $('rng')) renderRange();
     if (stList) renderStates();
     renderClock(); renderChip(); renderHonesty(); renderRecent();
     if (state.snap) { renderTicker(true); rerender(); }
@@ -1515,7 +1524,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (state.mode === 'media') { $('honesty').innerHTML = mrHonesty(); return; }
     var s = state.snap, parts = [];
     if (!s) { $('honesty').innerHTML = ''; return; }
-    if (s.window && s.window.thin) parts.push('<span class="warn">' + fill(t('hWindowThin'), { d: esc(fmtWhen(s.window.to)) }) + '</span>');
+    if (s.window && s.window.thin) parts.push('<span class="warn">' + fill(t('hWindowThin'), { d: esc(fmtWhen(s.window.to)), h: hrsOf(s) }) + '</span>');
     else if (s.window && s.window.mode !== 'rolling') parts.push('<span class="warn">' + fill(t('hWindowDay'), { d: esc(fmtDay(s.window.from, true)) }) + '</span>');
     var pl = s.status && s.status.pipeline;
     if (pl && pl.state === 'source_unreachable') parts.push('<span class="warn">' + fill(t('hSource'), { d: esc(fmtWhen(pl.lastAttemptAt)) }) + '</span>');
@@ -1567,7 +1576,16 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   /* ============================================================ SCENES */
   function whenText(s) {
     if (!s || !s.window) return '';
-    return s.window.mode === 'rolling' ? fill(t('when24'), { d: fmtWhen(s.window.to) }) : fill(t('whenDay'), { d: fmtDay(s.window.from, true) });
+    return s.window.mode === 'rolling' ? fill(t('when24'), { d: fmtWhen(s.window.to), h: hrsOf(s) }) : fill(t('whenDay'), { d: fmtDay(s.window.from, true) });
+  }
+  /* the window length the server used for this answer (else the one chosen here) */
+  function hrsOf(s) { return (s && s.hours) || HOURS; }
+  /* "▲ 12% …" / "▼ 8% …" -- growth against the previous period of the same length */
+  function growth(cur, prev, key, extra) {
+    if (!prev || cur === null || cur === undefined) return '';
+    var pct = Math.round(100 * (cur - prev) / prev), o = { v: Math.abs(pct) };
+    for (var k in (extra || {})) o[k] = extra[k];
+    return '<span class="' + (pct >= 0 ? 'up' : 'down') + '">' + (pct >= 0 ? '▲ ' : '▼ ') + esc(fill(t(key), o)) + '</span>';
   }
   /* "1 post" / "5 posts" */
   function postsTxt(n) { return LANG === 'en' && +n === 1 ? '1 post' : fill(t('postsN'), { v: fmtInt(n) }); }
@@ -1583,13 +1601,14 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
 
   /* ---------- All India ---------- */
   function sGlance(s) {
-    var top = realParties(s)[0], st = (s.states || []).filter(function (x) { return !x.limited; })[0], cmp = '';
-    if (s.compare && s.compare.comparable && s.compare.prevPosts) {
-      var pct = Math.round(100 * (s.kpis.originalPosts - s.compare.prevPosts) / s.compare.prevPosts);
-      cmp = '<span class="' + (pct >= 0 ? 'up' : 'down') + '">' + (pct >= 0 ? '▲ ' : '▼ ') + esc(fill(t('vsPrev'), { v: Math.abs(pct) })) + '</span>';
+    var top = realParties(s)[0], st = (s.states || []).filter(function (x) { return !x.limited; })[0], cmp = '', cmpV = '';
+    /* growth against the previous period of the same length (24 / 48 / 72 h), when it is comparable */
+    if (s.compare && s.compare.comparable) {
+      cmp = growth(s.kpis.originalPosts, s.compare.prevPosts, 'vsPrev');
+      cmpV = growth(s.kpis.views, s.compare.prevViews, 'vsPrevV', { h: hrsOf(s) });
     }
     var tiles = '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.originalPosts + '" data-f="int">0</div><div class="kpi-l">' + t('kOrig') + '</div><div class="kpi-s">' + cmp + '</div></div>'
-      + '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.views + '" data-f="short">0</div><div class="kpi-l">' + t('kViews') + '</div><div class="kpi-s"></div></div>'
+      + '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.views + '" data-f="short">0</div><div class="kpi-l">' + t('kViews') + '</div><div class="kpi-s">' + cmpV + '</div></div>'
       + '<div class="kpi"><div class="kpi-v txt" style="color:' + (top ? lighten(top.color, 0.3) : '#fff') + '">' + (top ? plogo(top.logo, top.color) + ' ' : '') + esc(top ? top.party : '–') + '</div><div class="kpi-l">' + t('kParty') + '</div><div class="kpi-s">'
       + (top && top.postShare !== null ? esc(fill(t('ofPartyPosts'), { v: top.postShare })) : '') + '</div></div>';
     if (STATE || !st) tiles += '<div class="kpi"><div class="kpi-v" data-count="' + s.kpis.accounts + '" data-f="int">0</div><div class="kpi-l">' + t('kAcc') + '</div><div class="kpi-s"></div></div>';
@@ -1615,6 +1634,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
         if (metric === 'posts' && p.postsPerCollected !== null) bits.push(fill(t('perAcc'), { v: fmtDec(p.postsPerCollected) }));
         if (metric === 'views' && p.viewsPerCollected !== null) bits.push(fill(t('viewsPerAcc'), { v: fmtShort(p.viewsPerCollected) }));
         sub = esc(bits.join(' · ')) + (p.limited ? ' · <span class="ltd">' + esc(t('ltd')) + '</span>' : '');
+        /* this party's growth against the previous period of the same length */
+        var pp = s.compare && s.compare.comparable && s.compare.parties ? s.compare.parties[p.party] : null;
+        if (pp) { var g = growth(metric === 'posts' ? p.posts : p.views, metric === 'posts' ? pp.posts : pp.views, 'vsPrev'); if (g) sub += ' · ' + g; }
       }
       var share = metric === 'posts' ? p.postShare : p.viewShare;
       return '<div class="bar-row' + (p.party === 'Others' ? ' others' : '') + '"><div class="bar-name">' + (p.party === 'Others' ? '<i class="dot" style="background:' + p.color + '"></i>' : plogo(p.logo, p.color))
@@ -1724,7 +1746,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     return '<div class="glass full"><div class="vc"><ul class="facts">' + items.slice(0, 5).map(function (x) { return '<li><i></i><span>' + x + '</span></li>'; }).join('') + '</ul></div></div>';
   }
   function sFacts(s) {
-    var whenTxt = s.window.mode === 'rolling' ? t('fWhen24') : fill(t('fWhenDay'), { d: fmtDay(s.window.from) }), out = [];
+    var whenTxt = s.window.mode === 'rolling' ? fill(t('fWhen24'), { h: hrsOf(s) }) : fill(t('fWhenDay'), { d: fmtDay(s.window.from) }), out = [];
     (s.facts || []).forEach(function (f) {
       var x = null;
       if (f.type === 'window_posts') x = fill(t('fWindow'), { posts: esc(fmtInt(f.posts)), when: esc(whenTxt) });
@@ -1826,7 +1848,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     return '<div class="glass full"><div class="vc"><div class="nwg' + (a && b ? ' two' : '') + '">' + a + b + '</div></div></div>';
   }
   function sPFacts(p) {
-    var whenTxt = p.window.mode === 'rolling' ? t('fWhen24') : fill(t('fWhenDay'), { d: fmtDay(p.window.from) }), out = [], nm = esc(p.person.name);
+    var whenTxt = p.window.mode === 'rolling' ? fill(t('fWhen24'), { h: hrsOf(p) }) : fill(t('fWhenDay'), { d: fmtDay(p.window.from) }), out = [], nm = esc(p.person.name);
     (p.facts || []).forEach(function (f) {
       var x = null;
       if (f.type === 'p_posts') x = fill(t('fpPosts'), { n: nm, p: fmtInt(f.posts), r: fmtInt(f.reposts), when: esc(whenTxt) });
@@ -1844,7 +1866,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var L = [];
     if (!p || !p.window) { L.push({ id: 'empty', dur: 20000, hero: 'mid', title: function () { return esc(t('nodataT')); }, render: sEmpty }); return L; }
     var me = p.person, active = p.kpis && (p.kpis.posts || p.kpis.reposts);
-    L.push({ id: 'p-profile', dur: 16000, hero: 'mid', title: function () { return fill(t('pProfile'), { n: esc(me.name) }); }, render: sPProfile, after: countUp });
+    L.push({ id: 'p-profile', dur: 16000, hero: 'mid', title: function () { return hrsOf(state.snap) === 24 ? fill(t('pProfile'), { n: esc(me.name) }) : fill(t('pProfileH'), { n: esc(me.name), h: hrsOf(state.snap) }); }, render: sPProfile, after: countUp });
     if (active) L.push({ id: 'p-rhythm', dur: 14000, title: function () { return esc(t('pRhythm')); }, render: sPRhythm });
     if (p.topPost || p.latestPost) L.push({ id: 'p-top', dur: 15000, hero: 'mid', title: function () { return esc(t('pTop')); }, render: sPTop });
     if (p.rank && (p.rank.party || p.rank.state)) L.push({ id: 'p-rank', dur: 13000, hero: 'mid', title: function () { return esc(t('pRank')); }, render: sPRank });
@@ -1965,6 +1987,19 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     state.timer = setTimeout(function () { advance(); }, state.remaining);
   }
   [].forEach.call($('spd').querySelectorAll('button'), function (b) { b.onclick = function () { setSpeed(b.getAttribute('data-s')); wake(); }; });
+  /* window length: every screen, the news and the growth arrows follow it; remembered on this device */
+  function renderRange() {
+    [].forEach.call($('rng').querySelectorAll('button'), function (b) {
+      var h = +b.getAttribute('data-h'); b.textContent = fill(t('rngH'), { h: h }); b.className = h === HOURS ? 'on' : ''; b.setAttribute('aria-pressed', h === HOURS ? 'true' : 'false');
+    });
+    $('rng').setAttribute('aria-label', t('rngTitle')); $('rng').title = t('rngTitle');
+  }
+  function setRange(h) {
+    if (HOURS_OK.indexOf(h) < 0 || h === HOURS) return;
+    HOURS = h; store('nazar_hours', String(h)); renderRange();
+    if (state.mode && state.mode !== 'media') { clearTimeout(fetchTimer); fetchData(true); }
+  }
+  [].forEach.call($('rng').querySelectorAll('button'), function (b) { b.onclick = function () { setRange(+b.getAttribute('data-h')); wake(); }; });
   /* next screen -- but on a phone, not while someone is reading: a touch or a scroll
      holds the current screen for 20 s */
   function advance() {
@@ -2023,7 +2058,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       return r.json();
     });
   }
-  function q(extra) { return '?scope=' + SCOPE + (ASOF ? '&asof=' + encodeURIComponent(ASOF) : '') + (extra || ''); }
+  function q(extra) { return '?scope=' + SCOPE + '&hrs=' + HOURS + (ASOF ? '&asof=' + encodeURIComponent(ASOF) : '') + (extra || ''); }
   function onData(first) {
     var s = state.snap;
     var oldId = state.scenes[state.idx] && state.scenes[state.idx].id;
@@ -2059,7 +2094,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
       state.all = all; state.psnap = per || null; state.snap = mode === 'person' ? per : all;
       state.lastOk = Date.now();
-      if (mode === 'all' && !ASOF) { try { store('pulse_live_snap_' + SCOPE, JSON.stringify({ at: new Date().toISOString(), s: all })); } catch (e) {} }
+      if (mode === 'all' && !ASOF) { try { store('pulse_live_snap_' + SCOPE + (HOURS !== 24 ? '_' + HOURS : ''), JSON.stringify({ at: new Date().toISOString(), s: all })); } catch (e) {} }
       if (!state.geo) loadGeo();
       onData(first);
       schedule(REFRESH_MS);
@@ -2067,7 +2102,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       if (state.stopped) return;
       state.fails++; state.offline = true;
       if (!state.snap) {
-        var saved = null; try { saved = JSON.parse(store('pulse_live_snap_' + SCOPE) || 'null'); } catch (e) { saved = null; }
+        var saved = null; try { saved = JSON.parse(store('pulse_live_snap_' + SCOPE + (HOURS !== 24 ? '_' + HOURS : '')) || 'null'); } catch (e) { saved = null; }
         if (saved && saved.s && !ASOF && state.mode === 'all') { state.savedAt = saved.at; state.all = saved.s; state.snap = saved.s; onData(true); }
         else firstFail();
       } else if (!state.savedAt) state.savedAt = new Date(state.lastOk || Date.now()).toISOString();

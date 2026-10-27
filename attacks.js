@@ -152,7 +152,9 @@ function createEngine(opts) {
   async function round() {
     if (busy || !on) return; busy = true;
     try {
-      var snap = await svc.get('all', {});
+      /* the AI reads the longest window a viewer can choose (72 h), busiest posts first, so the
+         24 / 48 / 72 h boards are all covered; media posts are never sent (AT.candidates) */
+      var snap = await svc.get('all', { hours: Math.max.apply(null, LIVE.C.HOURS) });
       if (!snap.window) return;
       var rows = windowRows(snap.window), cand = AT.candidates(rows);
       /* busiest posts first, so the board fills with what matters most */
@@ -176,15 +178,16 @@ function createEngine(opts) {
   }
 
   /* what the page shows for one scope (the sticky top two are remembered per scope) */
-  function forScope(scope, snap, avatarOf) {
+  /* key: where the sticky top two are kept (scope, plus the window length when not 24 h) */
+  function forScope(scope, snap, avatarOf, key) {
     if (!snap || !snap.window) return null;
-    var stName = LIVE.stateOfScope(scope);
-    var rows = windowRows(snap.window), bk = scope + '|' + snap.window.to;
-    var prevKey = Object.keys(st.boards).filter(function (k) { return k.indexOf(scope + '|') === 0; }).sort().pop();
+    var stName = LIVE.stateOfScope(scope), bs = key || scope;
+    var rows = windowRows(snap.window), bk = bs + '|' + snap.window.to;
+    var prevKey = Object.keys(st.boards).filter(function (k) { return k.indexOf(bs + '|') === 0; }).sort().pop();
     var b = AT.board(rows, st.labels, { state: stName, ruling: ruling, prev: prevKey ? st.boards[prevKey] : null });
     var oldTop = prevKey ? (st.boards[prevKey].top || []).join(',') : '';
     if (b.keys.join(',') !== oldTop || prevKey !== bk) {
-      st.boards = Object.keys(st.boards).filter(function (k) { return k.indexOf(scope + '|') !== 0; }).reduce(function (o, k) { o[k] = st.boards[k]; return o; }, {});
+      st.boards = Object.keys(st.boards).filter(function (k) { return k.indexOf(bs + '|') !== 0; }).reduce(function (o, k) { o[k] = st.boards[k]; return o; }, {});
       st.boards[bk] = { top: b.keys };
       store.save(st, [], [bk]).catch(function () {});
     }
@@ -217,7 +220,7 @@ function createEngine(opts) {
       setTimeout(round, 15000);
       setInterval(round, ROUND_MS).unref();
     },
-    forScope: function (scope, snap, avatarOf) { return ready ? forScope(scope, snap, avatarOf) : null; }
+    forScope: function (scope, snap, avatarOf, key) { return ready ? forScope(scope, snap, avatarOf, key) : null; }
   };
 }
 

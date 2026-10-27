@@ -66,11 +66,13 @@ if (!USE_PULSE) {
   LIVE.C.BASE_DAYS = 7;
   LIVE.C.BASE_MIN_DAYS = 3;
 }
-/* show the latest 24 h even when fewer posts than usual came in (marked on screen),
-   instead of jumping back to an older complete day; below 20 % of a usual day it does jump */
-LIVE.C.LATEST_MIN = 0.2;
+/* always the latest 24 / 48 / 72 h, ending at the newest post we have (so a pause in the
+   source shows the last hours that do have data); a thin period is marked on screen */
+LIVE.C.LATEST_MIN = 0;
 LIVE.C.BREAK_BASE_DAYS = 6;        // raw posts in memory: Nazar's own history + Pulse's window
-var KEEP_RAW_DAYS = 35;            // older raw posts are dropped from memory (counts come from nazar_daily)
+/* raw posts kept: a 72 h window + its previous 72 h + 6 days of "usual" before it fit in
+   10 days; every count beyond that comes from Pulse's nazar_daily */
+var KEEP_RAW_DAYS = 10;
 
 /* ------------------------------------------------------------ Data loading (Mongo / CSV) */
 var KEEP = ['Handle', 'Tweet URL', 'Tweet ID', 'Tweet Date', 'Tweet Text', 'Total Comments', 'Total Likes',
@@ -111,7 +113,9 @@ async function loadFromMongo() {
   var coll = client.db(DB_NAME).collection(COLL_NAME);
   var t0 = Date.now();
   console.log('  Loading tweets from MongoDB Atlas (streaming)...');
-  var cursor = coll.find({}, {
+  /* with Pulse's data only the last KEEP_RAW_DAYS are needed as raw posts */
+  var since = USE_PULSE ? LIVE.addDays(LIVE.istDay(Date.now()), -KEEP_RAW_DAYS) : null;
+  var cursor = coll.find(since ? { 'Tweet Date': { $gte: since } } : {}, {
     projection: {
       _id: 0, Handle: 1, 'Tweet Date': 1, 'Tweet Text': 1, 'Tweet URL': 1,
       'Total Views': 1, 'Total Likes': 1, 'Total Retweets': 1, 'Total Comments': 1,
@@ -435,9 +439,11 @@ function newsForState(all, st) {
   var nat = all.filter(function (r) { return !tagged(r) && mine.indexOf(r) < 0; });
   return { mine: mine, nat: nat };
 }
-function headlines(rows) {
+/* how: 'breaking' (24 h: newest breaking first) or 'relevant' (48 / 72 h: the period's
+   biggest stories first, fresher ones a little higher) */
+function headlines(rows, how) {
   var own = rows.filter(function (r) { return !/^RT @/.test(String(r.head || '')); });   // a re-post is not a headline
-  return NEWS.dedupe(NEWS.sortRows(own, 'breaking'));
+  return NEWS.dedupe(NEWS.sortRows(own, how || 'breaking'));
 }
 
 /* --------------------------------------------- Political Pulse live feed */
@@ -450,7 +456,44 @@ function cleanPulseDoc(doc) {
   ['Total Views', 'Total Likes', 'Total Retweets', 'Total Comments'].forEach(function (f) { d[f] = HA.num(d[f]); });
   if (d['Tweet Text'] && String(d['Tweet Text']).startsWith('RT @')) d['Tweet Text'] = 'RT @';    // see loadFromMongo
   var cs = LIVE.stateOf(d.State); if (cs) d.State = cs;
+  d._p = 1;                                     // came from Pulse (see pulse_feed loadWindow)
   return d;
+}
+
+/* Pulse keeps raw posts for 3 days only. A copy of every post we receive goes to Nazar's
+   own database (collection pulse_raw, removed by Mongo itself after KEEP_RAW_DAYS + 1),
+   so after a restart the 48 / 72 h windows and their "previous period" still have them. */
+var rawP = null;
+function rawColl() {
+  if (!MONGO_URI) return Promise.reject(new Error('MONGODB_URI is not set'));
+  if (!rawP) {
+    rawP = (async function () {
+      var MC = require('mongodb').MongoClient, cli = new MC(MONGO_URI, { maxPoolSize: 3 });
+      await cli.connect();
+      var c = cli.db(DB_NAME).collection('pulse_raw');
+      await c.createIndex({ ts: 1 }, { expireAfterSeconds: (KEEP_RAW_DAYS + 1) * 86400 });
+      await c.createIndex({ 'Tweet Date': 1 });
+      return c;
+    })();
+    rawP.catch(function () { rawP = null; });
+  }
+  return rawP;
+}
+async function saveRaw(list) {
+  var c = await rawColl();
+  var ops = list.map(function (r) {
+    var set = { ts: new Date(LIVE.parseIst(r['Tweet Date'])) };
+    Object.keys(r).forEach(function (k) { if (k.charAt(0) !== '_') set[k] = r[k]; });   // not _id, not helper fields (_t)
+    return { updateOne: { filter: { _id: r._id }, update: { $set: set }, upsert: true } };
+  });
+  for (var i = 0; i < ops.length; i += 1000) await c.bulkWrite(ops.slice(i, i + 1000), { ordered: false });
+}
+async function loadRaw(since) {
+  var c = await rawColl(), t0 = Date.now();
+  var list = await c.find({ 'Tweet Date': { $gte: since } }, { projection: { ts: 0 } }).toArray();
+  list.forEach(function (r) { r._id = String(r._id); r._p = 1; });
+  console.log('  [pulse] ' + list.length.toLocaleString('en-IN') + ' saved Pulse posts from ' + since + ' (pulse_raw) in ' + ((Date.now() - t0) / 1000).toFixed(1) + ' s');
+  return list;
 }
 
 var ROWS = null, COLL = null, PULSE = null, dataVer = 0;
@@ -473,14 +516,26 @@ function onPulseChange() {
 
 /* ------------------------------------------------------------- service */
 function makeService(rows) {
-  var coll = COLL = new Collection(rows), memo = {}, newsMemo = null, inDb = {};
-  var media = function () {
-    if (newsMemo && newsMemo.ver === dataVer) return Promise.resolve(newsMemo.v);
-    var docs = rows.filter(function (r) { return NEWS.MEDIA_CATS.indexOf(r.Category) >= 0; }).slice(-4000).reverse();
+  var coll = COLL = new Collection(rows), memo = {}, newsMemo = {}, inDb = {};
+  /* media posts (news) of the window on screen -- the ticker and "in the news" follow the
+     chosen 24 / 48 / 72 h; without a window, the newest ones */
+  var media = function (win) {
+    var k = win ? win.from + '|' + win.to : 'newest', h = newsMemo[k];
+    if (h && h.ver === dataVer) return Promise.resolve(h.v);
+    var docs = win
+      ? rows.slice(lowerIx(win.from), lowerIx(win.to + '~')).filter(function (r) { return NEWS.MEDIA_CATS.indexOf(r.Category) >= 0; })
+      : rows.filter(function (r) { return NEWS.MEDIA_CATS.indexOf(r.Category) >= 0; });
+    docs = docs.slice(-4000).reverse();
     var items = NEWS.toItems(docs); NEWS.score(items);
-    newsMemo = { ver: dataVer, v: items };
+    if (Object.keys(newsMemo).length > 12) newsMemo = {};
+    newsMemo[k] = { ver: dataVer, v: items };
     return Promise.resolve(items);
   };
+  function lowerIx(v) {
+    var lo = 0, hi = rows.length;
+    while (lo < hi) { var m = (lo + hi) >> 1; if (rows[m]['Tweet Date'] < v) lo = m + 1; else hi = m; }
+    return lo;
+  }
   /* posts of one IST day held as raw rows, for a scope (state name or null = all India) */
   function rawDay(day, st) {
     var q = { 'Tweet Date': { $gte: day + ' 00:00:00 IST', $lte: day + ' 23:59:59 IST' } };
@@ -551,11 +606,12 @@ function makeService(rows) {
     /* a file has no push time; Pulse's is nazar_meta.updated_at (lets the chip say LIVE) */
     lastPush: function () { return Promise.resolve(PULSE ? PULSE.lastPushIst() : ''); },
     pipeline: function () { return null; },
-    news: function (scope) {
-      return media().then(function (all) {
+    news: function (scope, win) {
+      var how = win && win.toMs - win.fromMs > 25 * 3600000 ? 'relevant' : 'breaking';
+      return media(win).then(function (all) {
         var st = LIVE.stateOfScope(scope), list;
-        if (st) { var f = newsForState(all, st); list = headlines(f.mine).concat(headlines(f.nat)); }   // the state's own news first
-        else list = headlines(NEWS.forScope(all.slice(), 'all').rows);
+        if (st) { var f = newsForState(all, st); list = headlines(f.mine, how).concat(headlines(f.nat, how)); }   // the state's own news first
+        else list = headlines(NEWS.forScope(all.slice(), 'all').rows, how);
         return list.slice(0, LIVE.C.TICKER_ITEMS).map(function (r) {
           return { head: r.head, src: r.src, handle: r.h, date: r.date, views: r.vw, breaking: !!r.breaking,
                    topic: r.cat && r.cat !== 'Other' ? r.cat : null };
@@ -608,8 +664,10 @@ var ATTACKS = require('./attacks.js');
 var mediaRoom = require('./media_room.js').createMediaRoom({ dataDir: DATA });
 /* the last good screens: served at once after a restart while the posts load (snap_cache.js) */
 var snapCache = require('./snap_cache.js').createSnapCache(DATA);
-function cachedSnap(scope) {
-  var c = snapCache.get('snap:' + scope); if (!c) return null;
+/* saved screens: 'snap:<scope>' for 24 h (as before), 'snap:<scope>:<hours>' for 48 / 72 h */
+function snapKey(scope, hours) { return 'snap:' + scope + (hours && hours !== LIVE.C.WIN_H ? ':' + hours : ''); }
+function cachedSnap(scope, hours) {
+  var c = snapCache.get(snapKey(scope, hours)) || snapCache.get(snapKey(scope)); if (!c) return null;
   /* "degraded" makes the page's footer say it is showing saved data from that time */
   return Object.assign({}, c.v, { degraded: { generatedAt: new Date(c.at).toISOString() } });
 }
@@ -634,7 +692,9 @@ function avatarFor(h) {
 /* the snapshot plus the "biggest attacks" board for the same scope and window */
 function withAttacks(scope, snap) {
   var a = null;
-  try { a = attacks ? attacks.forScope(scope, snap, avatarFor) : null; } catch (e) { console.log('  [attacks] ' + e.message); }
+  /* the board is remembered per scope and window length (its sticky top two differ by period) */
+  var bkey = scope + (snap && snap.hours && snap.hours !== LIVE.C.WIN_H ? '@' + snap.hours : '');
+  try { a = attacks ? attacks.forScope(scope, snap, avatarFor, bkey) : null; } catch (e) { console.log('  [attacks] ' + e.message); }
   /* breakBaseDays: how many earlier days the "usual" level of a leader uses (the page shows it) */
   var extra = { breakBaseDays: LIVE.C.BREAK_BASE_DAYS };
   if (snap && snap.topPost) extra.topPost = Object.assign({}, snap.topPost, { avatar: avatarFor(snap.topPost.handle) });   // the photo for the "most-viewed post" card
@@ -704,17 +764,17 @@ var server = http.createServer(function (req, res) {
     return json(res, 200, { states: STATES });
   }
   if (/^\/api\/live-/.test(p)) {
-    var scope = String(q.scope || 'all');
+    var scope = String(q.scope || 'all'), hrs = LIVE.hoursOf(q.hrs);     // ?hrs=24|48|72 (anything else: 24)
     if (!svc) {
       /* while loading: the saved snapshot for this scope; the page fetches again every minute and gets the fresh one when ready */
-      var cached = p === '/api/live-snapshot' ? cachedSnap(scope) : null;
+      var cached = p === '/api/live-snapshot' ? cachedSnap(scope, hrs) : null;
       return cached ? json(res, 200, cached) : json(res, 503, { error: 'Data is still loading.', code: 'server' });
     }
     if (!validScope(scope)) return json(res, 400, { error: 'Unknown state.', code: 'scope' });
     var job;
-    if (p === '/api/live-snapshot') job = svc.get(scope, {}).then(function (s) { var r = withAttacks(scope, s); snapCache.put('snap:' + scope, r); return r; });
+    if (p === '/api/live-snapshot') job = svc.get(scope, { hours: hrs }).then(function (s) { var r = withAttacks(scope, s); snapCache.put(snapKey(scope, hrs), r); return r; });
     else if (p === '/api/live-search') job = Promise.resolve({ results: svc.search(scope, String(q.q || '').slice(0, 60)) });
-    else if (p === '/api/live-person') job = svc.person(scope, String(q.h || '').slice(0, 60), {}).then(function (r) {
+    else if (p === '/api/live-person') job = svc.person(scope, String(q.h || '').slice(0, 60), { hours: hrs }).then(function (r) {
       return r || { __status: 404, error: 'This leader is not in the list.', code: 'notfound' };
     });
     else return json(res, 404, { error: 'Not found' });
@@ -735,8 +795,22 @@ server.listen(PORT, HOST, function () {
   loadData().then(async function (rows) {
     ROWS = rows;
     if (USE_PULSE) {
+      /* Pulse posts saved by earlier runs (beyond Pulse's own 3 days) join first; a post that
+         Nazar's own data also has is kept once (same Tweet URL) */
+      if (MONGO_URI) {
+        try {
+          var saved = await loadRaw(LIVE.addDays(LIVE.istDay(Date.now()), -KEEP_RAW_DAYS));
+          if (saved.length) {
+            var urls = {}; saved.forEach(function (r) { if (r['Tweet URL']) urls[r['Tweet URL']] = 1; });
+            var own = rows.filter(function (r) { return !r['Tweet URL'] || !urls[r['Tweet URL']]; });
+            rows.length = 0; Array.prototype.push.apply(rows, own); Array.prototype.push.apply(rows, saved);
+            rows.sort(function (a, b) { return a['Tweet Date'] < b['Tweet Date'] ? -1 : a['Tweet Date'] > b['Tweet Date'] ? 1 : 0; });
+          }
+        } catch (e) { console.log('  [pulse] saved posts not loaded: ' + String(e && e.message || e).replace(/mongodb(\+srv)?:\/\/[^\s@]*@/g, 'mongodb://***@')); }
+      }
       /* Pulse's raw window joins the rows; it keeps polling even if Atlas is down right now */
-      PULSE = require('./pulse_feed.js').createPulseFeed({ url: PULSE_URL, rows: rows, clean: cleanPulseDoc, num: HA.num, onChange: onPulseChange });
+      PULSE = require('./pulse_feed.js').createPulseFeed({ url: PULSE_URL, rows: rows, clean: cleanPulseDoc, num: HA.num, onChange: onPulseChange,
+                                                         persist: MONGO_URI ? saveRaw : null });
       try { console.log('  [pulse] ' + (await PULSE.start() ? 'live from Political Pulse (pulse_hot)' : 'not reachable yet -- retrying every minute')); }
       catch (e) { console.log('  [pulse] could not start: ' + PULSE.health().lastError); }
     } else if (PULSE_URL) console.log('  [pulse] PULSE_MONGO_URL is set but USE_PULSE_DATA is not 1 -- using Nazar\'s own data only');
@@ -750,7 +824,9 @@ server.listen(PORT, HOST, function () {
        (other states are saved when someone opens them) */
     function saveMain() {
       snapCache.put('meta', meta); snapCache.put('states', STATES);
-      ['all', 'up'].forEach(function (sc) { svc.get(sc, {}).then(function (s) { snapCache.put('snap:' + sc, withAttacks(sc, s)); }).catch(function () {}); });
+      ['all', 'up'].forEach(function (sc) {
+        LIVE.C.HOURS.forEach(function (h) { svc.get(sc, { hours: h }).then(function (s) { snapCache.put(snapKey(sc, h), withAttacks(sc, s)); }).catch(function () {}); });
+      });
     }
     Promise.resolve(attacks.start()).catch(function () {}).then(function () { saveMain(); setInterval(saveMain, 10 * 60000).unref(); });
   }).catch(function (e) { console.log('\n  ERROR: ' + e.message + '\n'); process.exit(1); });

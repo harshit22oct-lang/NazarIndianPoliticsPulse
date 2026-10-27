@@ -24,7 +24,8 @@ var HA = require('./ha_lib.js');
 var NEWS = require('./news_lib.js');
 
 var C = {
-  WIN_H: 24,              // length of a window
+  WIN_H: 24,              // length of a window (default)
+  HOURS: [24, 48, 72],    // window lengths a viewer can choose
   COVER_MIN: 0.60,        // window must hold >= 60 % of the usual daily volume
   BASE_DAYS: 28,          // usual volume = 75th percentile of the last 28 days
   BASE_PCT: 0.75,
@@ -54,6 +55,8 @@ var C = {
 var SCOPE_Q = { all: {}, up: { State: 'Uttar Pradesh' } };
 /* prototype: any state can be a scope -- 'st:Bihar', 'st:West Bengal' ...
    (rows carry the canonical state name, see stateOf; server.js normalises on load) */
+/* a chosen window length, or the default */
+function hoursOf(h) { var n = +h; return C.HOURS.indexOf(n) >= 0 ? n : C.WIN_H; }
 function stateOfScope(scope) {
   if (scope === 'up') return 'Uttar Pradesh';
   var m = /^st:(.+)$/.exec(String(scope || ''));
@@ -157,25 +160,30 @@ function baselineFor(dayCounts, day) {
      lastFullDay : otherwise the latest complete IST day that does
    Coverage is count-based, so it is always an ESTIMATE. */
 function planWindow(o) {
-  var D = istDay(o.newestMs);
+  var D = istDay(o.newestMs), H = o.hours || C.WIN_H;
   var base = baselineFor(o.dayCounts, D);
-  var res = { mode: 'none', baseline: base.value, baselineDays: base.n,
+  var res = { mode: 'none', baseline: base.value, baselineDays: base.n, hours: H,
               coverage: null, estimated: true, window: null, prev: null, prevComparable: false };
-  if (base.value === null || base.value <= 0) return res;
+  var latest = typeof C.LATEST_MIN === 'number';
+  if ((base.value === null || base.value <= 0) && !latest) return res;
 
-  var cov = o.rollingCur / base.value;
-  /* C.LATEST_MIN (optional): keep the latest 24 h even below COVER_MIN, marked thin,
-     as long as it holds at least this share of a usual day */
-  var thin = cov < C.COVER_MIN && typeof C.LATEST_MIN === 'number' && cov >= C.LATEST_MIN;
-  if (cov >= C.COVER_MIN || thin) {
-    var toMs = o.newestMs, fromMs = toMs - C.WIN_H * 3600000 + 1000;
+  /* a window of H hours usually holds H/24 of a usual day */
+  var usual = base.value > 0 ? base.value * H / 24 : null;
+  var cov = usual ? o.rollingCur / usual : null;
+  /* C.LATEST_MIN (optional): keep the latest H hours even below COVER_MIN, marked thin,
+     as long as they hold at least this share of the usual volume */
+  var thin = latest && (cov === null || cov < C.COVER_MIN) && (cov === null || cov >= C.LATEST_MIN);
+  if ((cov !== null && cov >= C.COVER_MIN) || thin) {
+    var toMs = o.newestMs, fromMs = toMs - H * 3600000 + 1000;
     res.mode = 'rolling'; res.coverage = cov; res.thin = thin;
     res.window = { from: fmtIst(fromMs), to: fmtIst(toMs), fromMs: fromMs, toMs: toMs };
-    var pTo = fromMs - 1000, pFrom = pTo - C.WIN_H * 3600000 + 1000;
+    var pTo = fromMs - 1000, pFrom = pTo - H * 3600000 + 1000;
     res.prev = { from: fmtIst(pFrom), to: fmtIst(pTo), fromMs: pFrom, toMs: pTo };
-    res.prevComparable = typeof o.rollingPrev === 'number' && (o.rollingPrev / base.value) >= C.COVER_MIN;
+    /* growth is shown only when both periods are near-complete (a gap in the source is not a drop) */
+    res.prevComparable = !thin && usual !== null && typeof o.rollingPrev === 'number' && (o.rollingPrev / usual) >= C.COVER_MIN;
     return res;
   }
+  if (!usual) return res;
   for (var k = 1; k <= 7; k++) {
     var day = addDays(D, -k), n = o.dayCounts[day];
     var b = baselineFor(o.dayCounts, day);
@@ -679,7 +687,7 @@ function createService(env) {
   function touch(k) {
     var i = order.indexOf(k); if (i >= 0) order.splice(i, 1);
     order.push(k);
-    while (order.length > 8) { var old = order.shift(); delete snaps[old]; }
+    while (order.length > 24) { var old = order.shift(); delete snaps[old]; }   // scopes x window lengths
   }
 
   async function cachedDayCounts(scope, scopeQ, day) {
@@ -710,8 +718,8 @@ function createService(env) {
     return e.p;
   }
 
-  async function build(scope, asofMs) {
-    var nowMs = env.now(), scopeQ = scopeQOf(scope), coll = env.coll;
+  async function build(scope, asofMs, hours) {
+    var nowMs = env.now(), scopeQ = scopeQOf(scope), coll = env.coll, H = hours || C.WIN_H;
     var newestMs = await newestPost(coll, scopeQ, asofMs, nowMs);
     var out = { scope: scope, generatedAt: new Date(nowMs).toISOString(), mode: asofMs !== null ? 'historical' : 'current' };
     if (asofMs !== null) out.asof = fmtIst(asofMs);
@@ -738,10 +746,11 @@ function createService(env) {
 
     var D = istDay(newestMs);
     var dayCounts = await cachedDayCounts(scope, scopeQ, D);
-    var rollTo = fmtIst(newestMs), rollFrom = fmtIst(newestMs - C.WIN_H * 3600000 + 1000);
-    var rollPFrom = fmtIst(newestMs - 2 * C.WIN_H * 3600000 + 1000), rollPTo = fmtIst(newestMs - C.WIN_H * 3600000);
+    var rollTo = fmtIst(newestMs), rollFrom = fmtIst(newestMs - H * 3600000 + 1000);
+    var rollPFrom = fmtIst(newestMs - 2 * H * 3600000 + 1000), rollPTo = fmtIst(newestMs - H * 3600000);
     var counts = await Promise.all([rangeCount(coll, scopeQ, rollFrom, rollTo), rangeCount(coll, scopeQ, rollPFrom, rollPTo)]);
-    var plan = planWindow({ newestMs: newestMs, dayCounts: dayCounts, rollingCur: counts[0], rollingPrev: counts[1] });
+    var plan = planWindow({ newestMs: newestMs, dayCounts: dayCounts, rollingCur: counts[0], rollingPrev: counts[1], hours: H });
+    out.hours = H;
 
     var partial = plan.mode === 'lastFullDay' || plan.mode === 'none' || plan.thin ||
                   (pipe && (pipe.state === 'source_unreachable' || pipe.state === 'log_stale'));
@@ -784,13 +793,21 @@ function createService(env) {
         var pq = Object.assign({}, scopeQ, { 'Tweet Date': { $gte: plan.prev.from, $lte: plan.prev.to } });
         var prow = await coll.find(pq, { projection: PROJ }).maxTimeMS(30000).toArray();
         var pm = computeMetrics(prow, plan.prev, {});
-        compare = { comparable: true, prevPosts: pm.kpis.originalPosts, prevViews: pm.kpis.views };
+        /* per party too (all parties, not only the ones shown), so every bar can show its growth */
+        var pp = {};
+        prow.forEach(function (r) {
+          if (isMedia(r.Category) || HA.isRetweet(r)) return;
+          var p = normParty(r.Party); if (!p) return;
+          var x = pp[p] || (pp[p] = { posts: 0, views: 0 }); x.posts++; x.views += HA.num(r['Total Views']);
+        });
+        compare = { comparable: true, prevPosts: pm.kpis.originalPosts, prevViews: pm.kpis.views, parties: pp,
+                    prevFrom: plan.prev.from, prevTo: plan.prev.to };
         cmpCache[ck] = { at: env.now(), v: compare };
       }
     }
 
     var ticker = [];
-    try { ticker = await env.news(scope); } catch (e) { ticker = []; }
+    try { ticker = await env.news(scope, win); } catch (e) { ticker = []; }     // news of the same period
     var pidb = null;
     try { pidb = await env.postsInDb(scope); } catch (e) { pidb = null; }
 
@@ -811,12 +828,13 @@ function createService(env) {
   function get(scope, opts) {
     opts = opts || {};
     var asofMs = typeof opts.asofMs === 'number' && isFinite(opts.asofMs) ? opts.asofMs : null;
-    if (asofMs !== null) return build(scope, asofMs);
+    var H = hoursOf(opts.hours);
+    if (asofMs !== null) return build(scope, asofMs, H);
 
-    var k = scope + '|auto', e = snaps[k], now = env.now();
+    var k = scope + '|auto|' + H, e = snaps[k], now = env.now();
     if (e && (e.pending || now - e.at < C.TTL_MS) && e.p) { touch(k); return e.p; }
     var ne = { at: now, pending: true, p: null, v: e ? e.v : null };
-    ne.p = build(scope, null).then(function (v) {
+    ne.p = build(scope, null, H).then(function (v) {
       ne.v = v; ne.pending = false; ne.at = env.now(); return v;
     }, function (err) {
       ne.pending = false; ne.at = 0;                       // failed promise is not cached
@@ -909,7 +927,7 @@ function createService(env) {
 
     /* media posts that name this leader, then ones about their constituency / state */
     var media = [];
-    try { media = env.media ? await env.media() : []; } catch (e) { media = []; }
+    try { media = env.media ? await env.media(win) : []; } catch (e) { media = []; }
     var nm = plainName(rec.name).toLowerCase(), hk = '@' + rec.key;
     var nameOk = nm.split(' ').length >= 2 && nm.length >= 8;
     var placeK = rec.ac && rec.ac.length >= 5 ? rec.ac.toLowerCase() : null;
@@ -928,10 +946,11 @@ function createService(env) {
     var rec = findPerson(scope, h);
     if (!rec) return Promise.resolve(null);
     if (typeof opts.asofMs === 'number') return buildPerson(scope, rec, opts);
-    var k = scope + '|' + rec.key, e = personCache[k], now = env.now();
+    var H = hoursOf(opts.hours);
+    var k = scope + '|' + rec.key + '|' + H, e = personCache[k], now = env.now();
     if (e && (e.pending || now - e.at < C.TTL_MS)) return e.p;
     var ne = { at: now, pending: true, p: null };
-    ne.p = buildPerson(scope, rec, {}).then(function (v) { ne.pending = false; ne.at = env.now(); return v; },
+    ne.p = buildPerson(scope, rec, { hours: H }).then(function (v) { ne.pending = false; ne.at = env.now(); return v; },
       function (err) { ne.pending = false; ne.at = 0; delete personCache[k]; throw err; });
     personCache[k] = ne;
     personOrder = personOrder.filter(function (x) { return x !== k; }); personOrder.push(k);
@@ -952,7 +971,7 @@ function createService(env) {
 }
 
 module.exports = {
-  C: C, SCOPE_Q: SCOPE_Q, stateOfScope: stateOfScope, scopeQOf: scopeQOf,
+  C: C, SCOPE_Q: SCOPE_Q, stateOfScope: stateOfScope, scopeQOf: scopeQOf, hoursOf: hoursOf,
   parseIst: parseIst, fmtIst: fmtIst, istDay: istDay, addDays: addDays,
   normParty: normParty, isMedia: isMedia, validState: validState, stateOf: stateOf, partyColor: partyColor,
   baselineFor: baselineFor, planWindow: planWindow,
