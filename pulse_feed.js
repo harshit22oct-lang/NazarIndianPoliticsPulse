@@ -206,12 +206,17 @@ function createPulseFeed(o) {
       coll.aggregate([{ $match: { d: { $gte: cFrom, $lt: ws }, cat: { $nin: MEDIA } } },
         { $group: { _id: { p: '$pt', h: { $toLower: '$h' }, s: '$st' } } }]).toArray(),
       coll.aggregate([{ $match: { d: { $lt: ws } } },
-        { $group: { _id: '$st', n: { $sum: '$tw' } } }]).toArray()
+        { $group: { _id: '$st', n: { $sum: '$tw' } } }]).toArray(),
+      /* the accounts Pulse tracks (~3.8k small docs) */
+      d.collection('nazar_handles').find({}, { projection: { party: 1, state: 1, cat: 1 } }).toArray()
     ]);
+    /* in handle_master.json's shape, so live_lib.countMapped can count it */
+    var handles = {};
+    res[3].forEach(function (x) { handles[String(x._id)] = { handle: String(x._id), party: x.party, state: x.state, category: x.cat }; });
     var daily = {}, allTime = {};
     res[0].forEach(function (x) { var k = x._id.d; (daily[k] = daily[k] || {})[x._id.s || ''] = x.n; });
     res[2].forEach(function (x) { allTime[x._id || ''] = x.n; });
-    return { ws: ws, from: from, firstDay: i.first_day || null, daily: daily, allTime: allTime,
+    return { ws: ws, from: from, firstDay: i.first_day || null, daily: daily, allTime: allTime, handles: handles,
              collected: res[1].map(function (x) { return { p: x._id.p, h: x._id.h, s: x._id.s }; }) };
   }
   function summary() {
@@ -236,6 +241,8 @@ function createPulseFeed(o) {
     ready: function () { return ready; },
     info: function () { return info; },
     summary: summary,
+    /* the last summary we have, without waiting (null before the first one) */
+    summaryNow: function () { return sum.v; },
     /* Pulse's last push time, IST 'YYYY-MM-DD HH:MM:SS' (live_lib's status chip) */
     lastPushIst: function () {
       var t = info ? new Date(info.updated_at).getTime() : NaN;

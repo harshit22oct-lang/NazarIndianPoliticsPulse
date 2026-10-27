@@ -582,8 +582,11 @@ function makeService(rows) {
   return LIVE.createService(Object.assign({
     coll: coll,
     now: Date.now,
+    /* "N political accounts tracked": with Pulse, the accounts Pulse actually tracks
+       (nazar_handles, media left out); otherwise Nazar's own list (handle_master.json) */
     mapped: function (scope) {
-      var m = MAPL.load(), st = LIVE.stateOfScope(scope), k = st || 'all';
+      var ps = PULSE ? PULSE.summaryNow() : null;
+      var m = ps && ps.handles ? ps.handles : MAPL.load(), st = LIVE.stateOfScope(scope), k = st || 'all';
       if (memo.src !== m) memo = { src: m };
       if (!memo[k]) memo[k] = st ? LIVE.countMapped(m, st) : LIVE.countMapped(m);
       return memo[k];
