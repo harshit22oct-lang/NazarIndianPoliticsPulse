@@ -1716,8 +1716,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
      A number that can change while it is on screen is written as num(value, format, key).
      Every minute the new answer is compared with the last one (noteLive): what changed gets
      a "▲ +N" badge, and on the screen now the number counts from the old value to the new
-     one and its card glows (liveUpdate). A change is a real difference between two answers
-     of the server, so it can also go down (▼) when older posts leave the window. */
+     one and its card glows (liveUpdate). A number can also fall (older posts leave the
+     window): it then counts down to the new value, without a badge. */
   var DLT_MS = 5 * 60000;                      // a badge stays 5 minutes after the change
   function num(v, f, key) { return '<b data-count="' + (+v || 0) + '" data-f="' + f + '" data-live="' + key + '">0</b>'; }
   function dltHtml(key) {
@@ -1748,7 +1748,12 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var x = liveVals(s), old = state.live || null, key = SCOPE + '|' + HOURS;
     if (state.liveKey !== key) { old = null; state.dlt = {}; }        // another scope / window: nothing to compare with
     state.dlt = state.dlt || {};
-    if (old) Object.keys(x.v).forEach(function (k) { if (old[k] !== undefined && old[k] !== x.v[k]) state.dlt[k] = { d: x.v[k] - old[k], at: Date.now() }; });
+    /* only a rise gets a "▲ +N" badge; a fall just counts down to the new value (and takes
+       away an earlier rise's badge, which would no longer be true) */
+    if (old) Object.keys(x.v).forEach(function (k) {
+      if (old[k] === undefined || old[k] === x.v[k]) return;
+      if (x.v[k] > old[k]) state.dlt[k] = { d: x.v[k] - old[k], at: Date.now() }; else delete state.dlt[k];
+    });
     state.live = x.v; state.liveFmt = x.f; state.liveKey = key;
   }
   /* the screen on now: numbers count from what is shown to the new value */
