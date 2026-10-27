@@ -682,7 +682,15 @@ function createService(env) {
   async function cachedDayCounts(scope, scopeQ, day) {
     var k = scope + '|' + day, h = dayCache[k], now = env.now();
     if (h && now - h.at < C.DAYCOUNT_TTL_MS) return h.v;
-    var v = await fetchDayCounts(env.coll, scopeQ, day);
+    /* env.dayCounts (optional): daily totals from a summary table (Pulse's nazar_daily),
+       so days that are not held as raw posts still count. null -> count the posts here. */
+    var v = null;
+    if (env.dayCounts) {
+      var days = [];
+      for (var i = 0; i < C.BASE_DAYS + 8; i++) days.push(addDays(day, -i));
+      try { v = await env.dayCounts(scope, days); } catch (e) { v = null; }
+    }
+    if (!v) v = await fetchDayCounts(env.coll, scopeQ, day);
     dayCache[k] = { at: now, v: v };
     return v;
   }
@@ -691,7 +699,9 @@ function createService(env) {
     var k = scope, h = collCache[k], now = env.now();
     if (h && (h.pending || now - h.at < C.COLLECTED_TTL_MS)) return h.p;
     var e = { at: now, pending: true, p: null, v: null };
-    e.p = fetchCollected(env.coll, scopeQ, toMs).then(function (v) { e.v = v; e.pending = false; e.at = env.now(); return v; },
+    /* env.collected (optional): same count from a summary table; null -> count the posts here */
+    var job = env.collected ? Promise.resolve(env.collected(scope, toMs)).catch(function () { return null; }) : Promise.resolve(null);
+    e.p = job.then(function (v) { return v || fetchCollected(env.coll, scopeQ, toMs); }).then(function (v) { e.v = v; e.pending = false; e.at = env.now(); return v; },
       function () { e.pending = false; e.at = 0; return h && h.v ? h.v : null; });
     collCache[k] = e;
     return e.p;

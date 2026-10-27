@@ -1308,7 +1308,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   T.en.mrpHint = 'Changes show at once. Arrows to move, OK to choose, Back to continue the show.';
   T.hi.mrpHint = 'बदलाव तुरंत दिखते हैं। तीर से चलें, OK से चुनें, Back से शो फिर चलाएँ।';
   T.en.mrpHintTouch = 'Changes show at once. Tap Continue when done.'; T.hi.mrpHintTouch = 'बदलाव तुरंत दिखते हैं। हो जाए तो "आगे चलाएँ" दबाएँ।';
-  if (PROTO) {                       // a recorded file is not "live"
+  if (PROTO && !PROTO.live) {        // a recorded file is not "live" (PROTO.live: fed from Political Pulse)
     T.en.brandSub = T.en.brandSub.replace(' · Live', ''); T.hi.brandSub = T.hi.brandSub.replace(' · लाइव', '');
     T.en.proto = 'Data · {a} – {b}'; T.hi.proto = 'डेटा · {a} – {b}';
   }
@@ -1475,7 +1475,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (!s || !s.status || !s.status.newestPostAt) txt = state.offline ? t('offline') : t('nodata');
     else if (lvl === 'live') txt = t('live');
     else {
-      var ago = (DEMO || PROTO || s.mode === 'historical') ? null : s.status.newestAgeMin;
+      var ago = (DEMO || (PROTO && !PROTO.live) || s.mode === 'historical') ? null : s.status.newestAgeMin;
       txt = t('latest') + ' · ' + (ago !== null && ago !== undefined ? fmtAgo(ago) : fmtWhen(s.status.newestPostAt));
       if (state.offline) txt = t('offline') + ' · ' + txt;
     }
@@ -1495,7 +1495,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     $('chOneK').textContent = t('chOneK'); $('chOneT').textContent = t('chOneT'); $('chInput').placeholder = t('chPh'); $('chHint').textContent = t('chHint');
     $('tkLbl').textContent = tkLabel();
     if (DEMO) showBanner('demo', t('demo')); else if (ASOF) showBanner('hist', fill(t('hist'), { d: ASOF }));
-    else if (PROTO && PROTO.from) showBanner('proto', fill(t('proto'), { a: fmtDay(PROTO.from), b: fmtWhen(PROTO.to) }));
+    else if (PROTO && PROTO.from && !PROTO.live) showBanner('proto', fill(t('proto'), { a: fmtDay(PROTO.from), b: fmtWhen(PROTO.to) }));
     if (PHONE) $('inSkip').textContent = t('skipTouch');
     if (STATE) { $('stPill').className = 'chip stpill'; $('stPillTxt').textContent = stName(STATE); }
     if (typeof renderSpeed === 'function' && $('spd')) renderSpeed();

@@ -46,18 +46,28 @@ var LIVE = require(path.join(APP, 'live_lib.js'));
 var NEWS = require(path.join(APP, 'news_lib.js'));
 var MAPL = require(path.join(APP, 'mapping_lib.js'));
 
-/* An export covers a few days, not months. live_lib wants 14 days of history
-   before it trusts its "usual volume" baseline; with a one-week file that would
-   leave every screen empty. Use what the file has (at least 3 full days). */
-LIVE.C.BASE_DAYS = 7;
-LIVE.C.BASE_MIN_DAYS = 3;
-LIVE.C.BREAK_BASE_DAYS = 6;
+var HA = require(path.join(APP, 'ha_lib.js'));
 
-/* The connection string (with its password) comes ONLY from .env or the host's
+/* The connection strings (with their passwords) come ONLY from .env or the host's
    environment variables -- never from this file, which goes to GitHub. */
 var MONGO_URI = process.env.MONGODB_URI || '';
 var DB_NAME = process.env.DB_NAME || 'nazar';
 var COLL_NAME = process.env.COLL_NAME || 'tweets';
+/* Political Pulse's own data (pulse_feed.js): PULSE_MONGO_URL + USE_PULSE_DATA=1 */
+var PULSE_URL = process.env.PULSE_MONGO_URL || '';
+var USE_PULSE = !!PULSE_URL && /^(1|true|yes|on)$/i.test(String(process.env.USE_PULSE_DATA || '').trim());
+
+/* An export covers a few days, not months. live_lib wants 14 days of history
+   before it trusts its "usual volume" baseline; with a one-week file that would
+   leave every screen empty. Use what the file has (at least 3 full days).
+   With Pulse's data the daily totals go back months (nazar_daily), so the
+   baseline is Pulse's own: 28 days, at least 14. */
+if (!USE_PULSE) {
+  LIVE.C.BASE_DAYS = 7;
+  LIVE.C.BASE_MIN_DAYS = 3;
+}
+LIVE.C.BREAK_BASE_DAYS = 6;        // raw posts in memory: Nazar's own history + Pulse's window
+var KEEP_RAW_DAYS = 35;            // older raw posts are dropped from memory (counts come from nazar_daily)
 
 /* ------------------------------------------------------------ Data loading (Mongo / CSV) */
 var KEEP = ['Handle', 'Tweet URL', 'Tweet ID', 'Tweet Date', 'Tweet Text', 'Total Comments', 'Total Likes',
@@ -172,7 +182,10 @@ async function loadData() {
    Implements exactly the Mongo calls live_lib.js makes: find (+sort/limit),
    countDocuments, estimatedDocumentCount and the one distinct-handle aggregate. */
 function Collection(rows) {
-  var dates = rows.map(function (r) { return r['Tweet Date']; });
+  var dates;
+  /* rows is shared and grows while running (pulse_feed.js): index again after each change */
+  this.reindex = function () { dates = rows.map(function (r) { return r['Tweet Date']; }); };
+  this.reindex();
   function lower(v) { var lo = 0, hi = dates.length; while (lo < hi) { var m = (lo + hi) >> 1; if (dates[m] < v) lo = m + 1; else hi = m; } return lo; }
   function upper(v) { var lo = 0, hi = dates.length; while (lo < hi) { var m = (lo + hi) >> 1; if (dates[m] <= v) lo = m + 1; else hi = m; } return lo; }
   function test(v, cond) {
@@ -424,17 +437,91 @@ function headlines(rows) {
   return NEWS.dedupe(NEWS.sortRows(own, 'breaking'));
 }
 
+/* --------------------------------------------- Political Pulse live feed */
+/* a pulse_hot.tweets document -> a row like the ones loadFromMongo makes */
+function cleanPulseDoc(doc) {
+  var d = {};
+  KEEP.forEach(function (f) { if (doc[f] !== undefined && doc[f] !== null) d[f] = doc[f]; });
+  if (!/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d/.test(String(d['Tweet Date'] || '')) || !d.Handle) return null;
+  d._id = String(doc['Tweet ID'] || doc._id);
+  ['Total Views', 'Total Likes', 'Total Retweets', 'Total Comments'].forEach(function (f) { d[f] = HA.num(d[f]); });
+  if (d['Tweet Text'] && String(d['Tweet Text']).startsWith('RT @')) d['Tweet Text'] = 'RT @';    // see loadFromMongo
+  var cs = LIVE.stateOf(d.State); if (cs) d.State = cs;
+  return d;
+}
+
+var ROWS = null, COLL = null, PULSE = null, dataVer = 0;
+function rangeMeta(rows) {
+  return { from: rows.length ? rows[0]['Tweet Date'].slice(0, 16) : null, to: rows.length ? rows[rows.length - 1]['Tweet Date'].slice(0, 16) : null,
+           posts: rows.length, live: !!(PULSE && PULSE.ready()) };
+}
+/* new or changed posts from Pulse: drop raw posts older than KEEP_RAW_DAYS, index again,
+   and let every cache that was built from the old rows go */
+function onPulseChange() {
+  if (!ROWS) return;
+  var cutDay = LIVE.addDays(LIVE.istDay(Date.now()), -KEEP_RAW_DAYS), lo = 0, hi = ROWS.length;
+  while (lo < hi) { var m = (lo + hi) >> 1; if (ROWS[m]['Tweet Date'] < cutDay) lo = m + 1; else hi = m; }
+  if (lo) ROWS.splice(0, lo);
+  if (COLL) COLL.reindex();
+  dataVer++;
+  meta = rangeMeta(ROWS);
+  STATES = stateList(ROWS); STATE_SET = {}; STATES.forEach(function (s) { STATE_SET[s.state] = 1; });
+}
+
 /* ------------------------------------------------------------- service */
 function makeService(rows) {
-  var coll = new Collection(rows), memo = {}, newsMemo = null, inDb = {};
+  var coll = COLL = new Collection(rows), memo = {}, newsMemo = null, inDb = {};
   var media = function () {
-    if (newsMemo) return Promise.resolve(newsMemo);
+    if (newsMemo && newsMemo.ver === dataVer) return Promise.resolve(newsMemo.v);
     var docs = rows.filter(function (r) { return NEWS.MEDIA_CATS.indexOf(r.Category) >= 0; }).slice(-4000).reverse();
     var items = NEWS.toItems(docs); NEWS.score(items);
-    newsMemo = items;
+    newsMemo = { ver: dataVer, v: items };
     return Promise.resolve(items);
   };
-  return LIVE.createService({
+  /* posts of one IST day held as raw rows, for a scope (state name or null = all India) */
+  function rawDay(day, st) {
+    var q = { 'Tweet Date': { $gte: day + ' 00:00:00 IST', $lte: day + ' 23:59:59 IST' } };
+    if (st) q.State = st;
+    return coll.countDocuments(q);
+  }
+  /* Pulse: day < window_start from nazar_daily, day >= window_start from the raw posts.
+     null (no summary yet) -> live_lib counts the rows it has. */
+  var pulseHooks = !PULSE ? {} : {
+    dayCounts: function (scope, days) {
+      return PULSE.summary().then(function (s) {
+        if (!s) return null;
+        var st = LIVE.stateOfScope(scope), out = {};
+        return Promise.all(days.map(function (day) {
+          if (day >= s.ws) return rawDay(day, st).then(function (n) { out[day] = n; });
+          if (day < s.from || (s.firstDay && day < s.firstDay)) return null;
+          var by = s.daily[day] || {}, n = 0;
+          Object.keys(by).forEach(function (k) { if (!st || LIVE.stateOf(k) === st) n += by[k]; });
+          out[day] = n;
+          return null;
+        })).then(function () { return out; });
+      });
+    },
+    /* accounts with >= 1 post in 28 days, per party (politicians only) */
+    collected: function (scope, toMs) {
+      return PULSE.summary().then(function (s) {
+        if (!s) return null;
+        var st = LIVE.stateOfScope(scope), seen = {}, by = {};
+        function add(p, h) {
+          var k = String(p) + '\u0001' + h; if (seen[k]) return; seen[k] = 1;
+          var np = LIVE.normParty(p); if (np) by[np] = (by[np] || 0) + 1;
+        }
+        s.collected.forEach(function (e) { if (!st || LIVE.stateOf(e.s) === st) add(e.p, e.h); });
+        return coll.find({ 'Tweet Date': { $gte: s.ws, $lte: LIVE.fmtIst(toMs) } }).toArray().then(function (list) {
+          list.forEach(function (r) {
+            if (LIVE.isMedia(r.Category) || (st && r.State !== st)) return;
+            add(r.Party, String(r.Handle).toLowerCase());
+          });
+          return by;
+        });
+      });
+    }
+  };
+  return LIVE.createService(Object.assign({
     coll: coll,
     now: Date.now,
     mapped: function (scope) {
@@ -458,7 +545,8 @@ function makeService(rows) {
     partyLogo: function (p) { var e = imgIx.parties[p]; return e && e.file ? '/live/img/p/' + partySlug(p) : null; },
     master: function () { return MAPL.load(); },
     media: media,
-    lastPush: function () { return Promise.resolve(''); },   // a file has no push time
+    /* a file has no push time; Pulse's is nazar_meta.updated_at (lets the chip say LIVE) */
+    lastPush: function () { return Promise.resolve(PULSE ? PULSE.lastPushIst() : ''); },
     pipeline: function () { return null; },
     news: function (scope) {
       return media().then(function (all) {
@@ -471,12 +559,25 @@ function makeService(rows) {
         });
       });
     },
-    postsInDb: function (scope) {                            // posts in the file(s) for this scope
-      var k = scope || 'all';
-      if (inDb[k] === undefined) inDb[k] = k === 'all' ? rows.length : rows.filter(function (r) { return r.State === LIVE.stateOfScope(k); }).length;
-      return Promise.resolve(inDb[k]);
+    /* posts in the file(s) for this scope; with Pulse: all of Pulse's history (nazar_daily
+       before window_start) + the raw posts from window_start on */
+    postsInDb: function (scope) {
+      var k = scope || 'all', st = LIVE.stateOfScope(k), h = inDb[k];
+      if (h && h.ver === dataVer) return Promise.resolve(h.v);
+      var job = !PULSE ? Promise.resolve(null) : PULSE.summary().then(function (s) {
+        if (!s) return null;
+        var n = 0;
+        Object.keys(s.allTime).forEach(function (x) { if (!st || LIVE.stateOf(x) === st) n += s.allTime[x]; });
+        var q = { 'Tweet Date': { $gte: s.ws } }; if (st) q.State = st;
+        return coll.countDocuments(q).then(function (live) { return n + live; });
+      });
+      return job.then(function (v) {
+        if (v === null) v = k === 'all' ? rows.length : rows.filter(function (r) { return r.State === st; }).length;
+        inDb[k] = { ver: dataVer, v: v };
+        return v;
+      });
     }
-  });
+  }, pulseHooks));
 }
 
 /* ------------------------------------------------------------------ http */
@@ -551,6 +652,11 @@ var server = http.createServer(function (req, res) {
   /* for Render's health check: "ready" only once the posts are loaded, so a deploy switches
      over to the new server only then (Settings -> Health Check Path: /healthz) */
   if (p === '/healthz') return svc ? send(res, 200, 'text/plain', 'ok') : send(res, 503, 'text/plain', 'loading');
+  /* Political Pulse feed: window, last push, last poll, errors -- never the connection string */
+  if (p === '/health/pulse') {
+    if (!PULSE) return json(res, 200, { enabled: false, reason: PULSE_URL ? 'USE_PULSE_DATA is not 1' : 'PULSE_MONGO_URL is not set' });
+    return json(res, 200, Object.assign({ enabled: true, dataReady: !!svc, postsInMemory: ROWS ? ROWS.length : 0, range: meta }, PULSE.health()));
+  }
   if (p === '/live' || p === '/tv') {
     if (svc) return send(res, 200, 'text/html; charset=utf-8', pageHtml());
     /* still loading the posts: the full page from the saved screens if there are any, else the branded wait */
@@ -623,8 +729,15 @@ server.listen(PORT, HOST, function () {
   /* the saved screens first (seconds), so the page works while the posts load (minutes) */
   snapCache.load().then(function (n) { console.log('  [snap-cache] ' + n + ' saved screens ready for the loading time (' + snapCache.kind + ')'); })
     .catch(function (e) { console.log('  [snap-cache] none: ' + e.message); });
-  loadData().then(function (rows) {
-    meta = { from: rows.length ? rows[0]['Tweet Date'].slice(0, 16) : null, to: rows.length ? rows[rows.length - 1]['Tweet Date'].slice(0, 16) : null, posts: rows.length };
+  loadData().then(async function (rows) {
+    ROWS = rows;
+    if (USE_PULSE) {
+      /* Pulse's raw window joins the rows; it keeps polling even if Atlas is down right now */
+      PULSE = require('./pulse_feed.js').createPulseFeed({ url: PULSE_URL, rows: rows, clean: cleanPulseDoc, num: HA.num, onChange: onPulseChange });
+      try { console.log('  [pulse] ' + (await PULSE.start() ? 'live from Political Pulse (pulse_hot)' : 'not reachable yet -- retrying every minute')); }
+      catch (e) { console.log('  [pulse] could not start: ' + PULSE.health().lastError); }
+    } else if (PULSE_URL) console.log('  [pulse] PULSE_MONGO_URL is set but USE_PULSE_DATA is not 1 -- using Nazar\'s own data only');
+    meta = rangeMeta(rows);
     STATES = stateList(rows); STATE_SET = {}; STATES.forEach(function (s) { STATE_SET[s.state] = 1; });
     svc = makeService(rows);
     console.log('  ready -- ' + rows.length.toLocaleString('en-IN') + ' posts, ' + meta.from + ' to ' + meta.to + ' IST\n');
