@@ -105,6 +105,24 @@ Polite fetching: one request at a time, ~1 s apart, a desktop User-Agent, backin
   - **Controls:** a "choose election" panel, and ← Back at the top right.
 - Alliance totals checked against official counts: LS 2024 NDA 293; Bihar 2025 NDA 202 / MGB 34; Maharashtra 2024 NDA 230; Jharkhand 2024 INDIA 56.
 
+## Update (28 Oct 2026): built for leaders at a glance
+- **Headline first:** the seat tally opens with one sentence, such as "एनडीए बहुमत के पार — 201 सीटें" or "किसी को बहुमत नहीं — X सबसे बड़ा". Under it are the gap to the next alliance and BJP's own line: won / ahead / behind and its strike rate (won + ahead ÷ seats fought).
+- **आमने-सामने (head to head):** a dedicated page that keeps changing, one seat about every 7 s. It shows both candidates with their **official ECI photo**, party, votes counting up, the margin in the middle, a bar of the two-way vote split, and the queue of seats coming next.
+  - **Which seats, in order:**
+    1. big faces
+    2. seats where the lead just flipped
+    3. BJP's tightest fights (BJP first or second)
+    4. seats just declared
+    5. BJP's biggest wins
+    6. other close fights
+    
+    At most 8 on screen.
+  - **When nothing is being counted:** the page shows the latest by-election results, marked पुराना (old).
+- **More sources:**
+  - Each priority seat's ECI candidate page (votes, round, photos) is read every 2.5 min while counting, at most 10 pages per poll.
+  - When a state is counting, the Media Room adds Google News searches for that state's results and counting (Hindi + English).
+  - The demo has the archived candidate pages of its priority seats (`node fetch-election-history.js demo-cands`).
+
 ## 9. Risks
 - **ECI changes page layout between elections.** The parsers read table headers ("Won", "Leading", "Margin"), not fixed positions. If parsing fails, the screen says "ECI data could not be read" and does not guess.
 - **ECI slow or blocking on counting day:** back off, keep showing the last good numbers with their time ("3 min old").

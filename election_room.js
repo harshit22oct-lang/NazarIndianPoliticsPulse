@@ -74,6 +74,7 @@ function createElectionRoom(opts) {
   /* live: folder -> { folder, kind, title, updated, checkedAt, error, contests: { key: contest } } */
   var live = {}, finals = [], worker = false, busy = false, nextAt = 0, lastCheck = 0, lastError = null;
   var trail = {};                                                     // contest key -> [{t, by party total}] for the arrows
+  var candCache = {};                                                 // folder:code:no -> { at, status, det } (candidate pages)
   var seatPrev = {};                                                  // contest key -> { seatNo: {party, status} } for flips / declared
 
   /* ---- alliances, names, colours (config) ---- */
@@ -143,8 +144,44 @@ function createElectionRoom(opts) {
       seatPrev[key] = next;
       c.close.sort(function (a, b) { return a.margin - b.margin; }); c.close = c.close.slice(0, 10);
       c.known = seatList.length;
+      /* trailing per party (the party is second where counting is on, lost where declared) --
+         for the "BJP: won / ahead / behind" line a leader reads first */
+      c.trailing = {}; c.lost = {};
+      seatList.forEach(function (s) { if (!s.trail) return; var p = ab(s.trail.party); if (s.status === 'won') c.lost[p] = (c.lost[p] || 0) + 1; else c.trailing[p] = (c.trailing[p] || 0) + 1; });
+      rowsOf[key] = seatList.map(function (s) {
+        return { seat: titleCase(s.seat), no: s.no, cand: titleCase(s.lead.cand), party: ab(s.lead.party), vs: s.trail ? titleCase(s.trail.cand) : null,
+                 vsParty: s.trail ? ab(s.trail.party) : null, margin: s.margin, round: s.round, status: s.status };
+      });
+      c.abbrOf = abbrOf;
     }
     return c;
+  }
+  /* ---- the head-to-head page: which seats, in what order ----
+     1 big faces  2 seats that just flipped  3 BJP's tightest fights (BJP first or second)
+     4 just declared  5 BJP's biggest wins  6 other tight fights. At most 16. */
+  var rowsOf = {};
+  var FOCUS = (cfg.focus_party || 'BJP');
+  function duelPicks(c) {
+    var rows = rowsOf[c.key] || [], byNo = {}, out = [], seen = {};
+    rows.forEach(function (r) { byNo[r.no] = r; });
+    function add(no, why) { if (out.length >= 16 || seen[no] || !byNo[no]) return; seen[no] = 1; out.push({ no: no, why: why }); }
+    (c.faces || []).forEach(function (f) { add(f.no, 'face'); });
+    (c.recentFlips || []).forEach(function (f) { add(f.no, 'flip'); });
+    rows.filter(function (r) { return r.status !== 'won' && r.margin != null && (r.party === FOCUS || r.vsParty === FOCUS); })
+      .sort(function (a, b) { return a.margin - b.margin; }).slice(0, 6).forEach(function (r) { add(r.no, 'bjpclose'); });
+    (c.recentDeclared || []).slice(0, 4).forEach(function (r) { add(r.no, 'won'); });
+    rows.filter(function (r) { return r.status === 'won' && r.party === FOCUS && r.margin != null; })
+      .sort(function (a, b) { return b.margin - a.margin; }).slice(0, 3).forEach(function (r) { add(r.no, 'bjpbig'); });
+    rows.filter(function (r) { return r.status !== 'won' && r.margin != null; }).sort(function (a, b) { return a.margin - b.margin; }).slice(0, 4).forEach(function (r) { add(r.no, 'close'); });
+    return out.map(function (p) { return { row: byNo[p.no], why: p.why }; });
+  }
+  /* one head-to-head: the seat row, plus votes and ECI photos when the candidate page was read */
+  function duelOf(c, pick, det) {
+    var r = pick.row, ab = function (n) { return (c.abbrOf && c.abbrOf[String(n || '').toLowerCase()]) || abbrGuess(n) || n; };
+    var a = det && det.cands[0], b = det && det.cands[1];
+    return { seat: r.seat, no: r.no, status: r.status, round: det && det.round ? det.round + '/' + det.rounds : r.round, why: pick.why, margin: a && b && a.votes != null && b.votes != null ? a.votes - b.votes : r.margin,
+             a: { name: a ? titleCase(a.name) : r.cand, party: a ? ab(a.party) : r.party, votes: a ? a.votes : null, photo: a ? a.photo : null },
+             b: { name: b ? titleCase(b.name) : r.vs, party: b ? ab(b.party) : r.vsParty, votes: b ? b.votes : null, photo: b ? b.photo : null } };
   }
   /* a contest keeps its recent "just declared" and "flipped" events across polls */
   function carry(oldC, c) {
@@ -174,7 +211,8 @@ function createElectionRoom(opts) {
         var top = det && det.cands[0], second = det && det.cands[1];
         seats.push({ seat: titleCase(cd.seat), no: cd.no, state: cd.state, status: cd.status, cand: titleCase(cd.cand), party: cd.party, abbr: abbrGuess(cd.party),
                      votes: top ? top.votes : null, margin: top && second ? top.votes - second.votes : null, vs: second ? titleCase(second.name) : null, vsParty: second ? second.party : null,
-                     round: det && det.round ? det.round + '/' + det.rounds : null, photo: top ? top.photo : null });
+                     round: det && det.round ? det.round + '/' + det.rounds : null, photo: top ? top.photo : null,
+                     vsVotes: second ? second.votes : null, vsPhoto: second ? second.photo : null, vsAbbr: second ? abbrGuess(second.party) : null });
       }
       var anyLead = seats.some(function (s) { return s.status !== 'won'; });
       F.contests = { bye: { key: folder + ':bye', folder: folder, kind: idx.kind, en: meta(null).en, hi: meta(null).hi, state: null, title: idx.title,
@@ -208,8 +246,22 @@ function createElectionRoom(opts) {
       }
       var cm = meta(L.st); cm.seats = houseSize;
       var c = buildContest(L.key, cm, L.table, seatList, now);
-      if (!seatList && old) { ['close', 'declared', 'faces', 'known'].forEach(function (f) { c[f] = old[f]; }); }
-      F.contests[L.key] = carry(old, c);
+      if (!seatList && old) { ['close', 'declared', 'faces', 'known', 'trailing', 'lost', 'abbrOf', 'duels'].forEach(function (f) { c[f] = old[f]; }); }
+      c = carry(old, c);
+      /* head-to-heads: the candidate page of each priority seat (votes, round, ECI photos);
+         at most 10 pages a poll, a seat still counting re-read after 2.5 min, a declared one once */
+      if (L.code && rowsOf[L.key]) {
+        var picks = duelPicks(c), reads = 0;
+        for (var d = 0; d < picks.length && reads < 10; d++) {
+          var ck = folder + ':' + L.code + ':' + picks[d].row.no, hit = candCache[ck];
+          var stale = !hit || (hit.status !== 'won' && now - hit.at > 150000) || (hit.status !== 'won' && picks[d].row.status === 'won');
+          if (!stale) continue;
+          reads++; await sleep(GAP_MS);
+          try { var det = EL.parseCandidate(await get(ECI + folder + '/candidateswise-' + L.code + picks[d].row.no + '.htm')); if (det && det.cands.length) candCache[ck] = { at: now, status: picks[d].row.status, det: det }; } catch (e) {}
+        }
+        c.duels = picks.map(function (p) { var h = candCache[folder + ':' + L.code + ':' + p.row.no]; return duelOf(c, p, h && h.det); });
+      }
+      F.contests[L.key] = c;
     }
     return F;
   }
@@ -217,7 +269,13 @@ function createElectionRoom(opts) {
     var n = String(name || '').toLowerCase(), m = { 'bharatiya janata party': 'BJP', 'indian national congress': 'INC', 'samajwadi party': 'SP', 'bahujan samaj party': 'BSP',
       'all india trinamool congress': 'AITC', 'dravida munnetra kazhagam': 'DMK', 'all india anna dravida munnetra kazhagam': 'ADMK', 'tamilaga vettri kazhagam': 'TVK',
       'aam aadmi party': 'AAP', 'rashtriya janata dal': 'RJD', 'janata dal (united)': 'JD(U)', 'all india n.r. congress': 'AINRC', 'independent': 'IND',
-      'communist party of india (marxist)': 'CPI(M)', 'communist party of india': 'CPI' };
+      'communist party of india (marxist)': 'CPI(M)', 'communist party of india': 'CPI', 'communist party of india (marxist-leninist) (liberation)': 'CPI(ML)(L)',
+      'lok janshakti party(ram vilas)': 'LJPRV', 'lok janshakti party (ram vilas)': 'LJPRV', 'all india majlis-e-ittehadul muslimeen': 'AIMIM', 'jharkhand mukti morcha': 'JMM',
+      'shiv sena': 'SHS', 'shiv sena (uddhav balasaheb thackrey)': 'SHSUBT', 'nationalist congress party': 'NCP', 'nationalist congress party – sharadchandra pawar': 'NCPSP',
+      'telugu desam': 'TDP', 'yuvajana sramika rythu congress party': 'YSRCP', 'biju janata dal': 'BJD', 'bharat rashtra samithi': 'BRS', 'asom gana parishad': 'AGP',
+      'indian union muslim league': 'IUML', 'hindustani awam morcha (secular)': 'HAMS', 'rashtriya lok morcha': 'RSHTLKM', 'vikassheel insaan party': 'VIP',
+      'rashtriya lok dal': 'RLD', 'apna dal (soneylal)': 'ADAL', 'jana sena party': 'JSP', 'janata dal (secular)': 'JD(S)', 'pattali makkal katchi': 'PMK',
+      'jammu & kashmir national conference': 'JKN', 'shiromani akali dal': 'SAD', 'all india united democratic front': 'AIUDF', 'jan suraaj party': 'JSP(B)' };
     return m[n] || null;
   }
 
@@ -248,13 +306,18 @@ function createElectionRoom(opts) {
         Object.keys(live[f].contests).forEach(function (k) {
           var c = live[f].contests[k];
           if (c.status === 'live') anyLive = true;
-          if (c.status === 'final' && !finals.some(function (x) { return x._id === c.key && x.seats === c.seats && x.updated === c.updated; })) {
+          if (c.status === 'final' && !finals.some(function (x) { return x._id === c.key && x.seats === c.seats && x.updated === c.updated && JSON.stringify(x.byeSeats || null) === JSON.stringify(c.byeSeats || null); })) {
             var fin = finalRecord(c); finals = finals.filter(function (x) { return x._id !== fin._id; }).concat([fin]); newFinals.push(fin);
           }
         });
         await sleep(GAP_MS);
       }
       Object.keys(live).forEach(function (f) { if (known.indexOf(f) < 0 && Date.now() - (live[f].checkedAt || 0) > FINAL_KEEP_MS) delete live[f]; });
+      /* more news for the states being counted (the Media Room adds searches for them) */
+      if (anyLive && opts.onLiveStates) {
+        var sts = []; Object.keys(live).forEach(function (f) { Object.keys(live[f].contests).forEach(function (k) { var c = live[f].contests[k]; if (c.status === 'live' && c.state) sts.push(c.state); }); });
+        try { opts.onLiveStates(sts); } catch (e) {}
+      }
       nextAt = Date.now() + (anyLive ? LIVE_MS : 60000);
       try { await store.save(live, finals, newFinals); } catch (e) { log('  [election] could not save: ' + e.message); }
       log('  [election] ' + known.join(', ') + (anyLive ? ' -- COUNTING LIVE' : ' -- nothing being counted') + (lastError ? ' (last error: ' + lastError + ')' : ''));
@@ -291,9 +354,18 @@ function createElectionRoom(opts) {
     seatPrev[key] = null;
     var c = buildContest(key, { folder: demoData.folder, kind: 'vs', title: demoData.en, state: demoData.state, en: demoData.en, hi: demoData.hi, seats: demoData.seats }, table, demoData.seatList, now);
     c.key = 'demo';                                      // one id for the replay, so the page keeps its place between frames
+    rowsOf.demo = rowsOf[key]; delete rowsOf[key];
     delete trail[key]; delete seatPrev[key];
     c.status = 'demo'; c.frame = i + 1; c.frames = fr.length; c.archivedAt = f.at;
-    return carry(null, c);
+    c = carry(null, c);
+    /* head-to-heads from the archived candidate pages (fetch-election-history.js demo-cands) */
+    /* the archive kept only some candidate pages: seats with real votes and photos first */
+    var dc = demoData.cands || {}, picks = duelPicks(c), have = picks.filter(function (p) { return dc[p.row.no]; });
+    if (have.length < 6) (rowsOf.demo || []).forEach(function (r) {
+      if (have.length < 10 && dc[r.no] && !have.some(function (p) { return p.row.no === r.no; })) have.push({ row: r, why: r.status === 'won' ? (r.party === FOCUS ? 'bjpbig' : 'won') : (r.party === FOCUS || r.vsParty === FOCUS ? 'bjpclose' : 'close') });
+    });
+    c.duels = (have.length >= 4 ? have : picks).map(function (p) { return duelOf(c, p, dc[p.row.no]); });
+    return c;
   }
   return {
     start: async function () {
@@ -334,7 +406,7 @@ function createElectionRoom(opts) {
       var anyLive = contests.some(function (c) { return c.status === 'live'; });
       return { generatedAt: new Date(now).toISOString(), mode: demo ? 'demo' : anyLive ? 'live' : contests.length ? 'final' : 'past', worker: worker,
                checkedAt: lastCheck || null, folders: known, contests: contests, past: past, state: st || null, type: type || 'all',
-               alliancesNote: true, majorityNote: true };
+               alliancesNote: true, majorityNote: true, partyHi: cfg.party_hi, partyColor: cfg.party_color };
     },
     hasDemo: function () { return !!demoData; }
   };

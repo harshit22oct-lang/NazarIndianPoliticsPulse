@@ -720,7 +720,7 @@ var ATTACKS = require('./attacks.js');
 /* Media Room: live news from free feeds, independent of the CSV (starts with the server) */
 var mediaRoom = require('./media_room.js').createMediaRoom({ dataDir: DATA });
 /* Election Room: official results from results.eci.gov.in (live and past) + election news from the Media Room */
-var electionRoom = require('./election_room.js').createElectionRoom({ dataDir: DATA });
+var electionRoom = require('./election_room.js').createElectionRoom({ dataDir: DATA, onLiveStates: function (sts) { mediaRoom.addElectionSearches(sts); } });
 var ELEC_CFG = {}; try { ELEC_CFG = JSON.parse(fs.readFileSync(path.join(APP, 'data', 'election_config.json'), 'utf8')); } catch (e) {}
 /* election headlines by type (Hindi + English words); "all" = any election word */
 var ELEC_NEWS = {

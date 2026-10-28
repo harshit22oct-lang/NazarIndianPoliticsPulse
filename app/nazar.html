@@ -893,6 +893,71 @@ body.mr .banner.proto{display:none}          /* the recorded-data strip is about
 .er-pc .mb b{flex:0 0 3.6rem;text-align:right;font-family:var(--head);font-size:1.6rem}
 .er-pc .wn{margin-top:.9rem;font-size:1.2rem;color:var(--gold);font-weight:700}
 .er-note{margin-top:1rem;font-size:1.1rem;color:var(--dim)}
+/* tally headline: the one sentence a leader reads first, and the BJP line */
+.er-wrap{height:100%;display:flex;flex-direction:column}
+.er-wrap > .er-t{flex:1 1 auto;min-height:0;height:auto}
+.er-wrap .er-arc{max-width:21rem} .er-wrap .er-arc .c b{font-size:3rem} .er-wrap .er-als{margin-top:.4rem} .er-wrap .er-al .nm{font-size:1.7rem} .er-wrap .er-l{padding:1.1rem 1.6rem} .er-wrap .er-al{padding:.5rem 1.1rem;margin-top:.5rem} .er-wrap .er-al .n{font-size:3rem}
+.er-wrap .er-p{padding:.55rem 1rem}
+.er-hl{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding:1.1rem 2rem;border-radius:1.4rem;
+  background:linear-gradient(90deg,rgba(230,81,0,.55),rgba(230,81,0,.12) 60%,rgba(26,8,3,.6));border:.08rem solid rgba(255,200,87,.45);
+  -webkit-animation:rise .6s cubic-bezier(.2,.8,.2,1) both;animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+.er-hl b{display:block;font-family:var(--deva);font-weight:800;font-size:2.8rem;line-height:1.15}
+.er-hl small{display:block;margin-top:.2rem;font-size:1.3rem;color:var(--muted);font-weight:700}
+.er-bjp{flex:0 0 auto;margin-left:2rem;display:flex;align-items:center;padding:.7rem 1.4rem;border-radius:1.2rem;background:rgba(0,0,0,.35);border:.08rem solid rgba(255,153,51,.6)}
+.er-bjp .pl{width:3.4rem;height:3.4rem;margin-right:1rem}
+.er-bjp div{line-height:1.25}
+.er-bjp em{display:block;font-style:normal;font-size:1.1rem;color:var(--gold);font-weight:700;letter-spacing:.04rem}
+.er-bjp span{display:block;font-size:1.5rem;font-weight:700;white-space:nowrap}
+.er-bjp span i{font-style:normal;font-family:var(--head);font-size:2rem;color:#fff;margin:0 .2rem}
+/* head to head: one seat at a time, two candidates face to face, the margin in the middle */
+.er-dv{height:100%;display:flex;flex-direction:column}
+.er-ds{flex:1 1 auto;min-height:0;position:relative}
+.er-s{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;padding:1.6rem 2.4rem;opacity:0;visibility:hidden;
+  -webkit-transform:translateX(4rem);transform:translateX(4rem);-webkit-transition:opacity .6s ease,-webkit-transform .6s ease,visibility 0s .6s;transition:opacity .6s ease,transform .6s ease,visibility 0s .6s}
+.er-s.on{opacity:1;visibility:visible;-webkit-transform:none;transform:none;-webkit-transition:opacity .6s ease,-webkit-transform .6s ease;transition:opacity .6s ease,transform .6s ease}
+.er-sh{display:flex;align-items:center;flex-wrap:wrap}
+.er-sh b{font-family:var(--deva);font-weight:800;font-size:3.4rem;line-height:1.1;margin-right:1.4rem}
+.er-sh .rd{font-size:1.3rem;color:var(--muted);font-weight:700;margin-right:1.2rem}
+.er-why{display:inline-block;padding:.3rem .9rem;border-radius:.6rem;font-size:1.25rem;font-weight:700;background:rgba(255,200,87,.16);color:var(--gold);border:.08rem solid rgba(255,200,87,.45);margin-right:.8rem}
+.er-why.flip{background:#D50000;color:#fff;border-color:#D50000}
+.er-vs{flex:1 1 auto;min-height:0;display:flex;align-items:center;margin-top:.6rem;overflow:hidden}
+/* photo beside the details (a TV screen is wide, not tall) */
+.er-cand{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;text-align:left;padding:1rem 1.2rem;border-radius:1.8rem}
+.er-cand .in{min-width:0;margin-left:1.6rem;display:flex;flex-direction:column;align-items:flex-start}
+.er-cand .nm{margin-top:0!important}
+.er-cand .st{align-self:flex-start}
+body.phone .er-cand{flex-direction:column;text-align:center;width:100%} body.phone .er-cand .in{margin:.8rem 0 0;align-items:center;max-width:100%}
+body.phone .er-cand .nm{white-space:normal;font-size:2rem} body.phone .er-cand.lo .nm{font-size:1.7rem}
+body.phone .er-sh b{font-size:2rem;word-break:break-word;max-width:100%} body.phone .er-cand .vt{font-size:2.8rem} body.phone .er-mid b{font-size:3.4rem}
+body.phone .er-dq{flex-wrap:wrap} body.phone .er-dq span{margin-bottom:.5rem}
+.er-cand.win{background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(255,153,51,.22),rgba(255,153,51,0) 70%)}
+.er-cand .av{width:11.5rem;height:11.5rem;font-size:3.8rem;border-width:.4rem;box-shadow:0 1rem 3rem rgba(0,0,0,.5)}
+.er-cand.lo .av{width:8.6rem;height:8.6rem;font-size:2.8rem;opacity:.85;-webkit-filter:grayscale(.35);filter:grayscale(.35)}
+.er-cand .nm{margin-top:.8rem;font-family:var(--deva);font-weight:800;font-size:2.4rem;line-height:1.15;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.er-cand.lo .nm{font-size:1.9rem;color:var(--muted)}
+.er-cand .pt{margin-top:.4rem;display:inline-flex;align-items:center;font-size:1.4rem;font-weight:700;padding:.25rem 1rem;border-radius:2rem;background:rgba(255,255,255,.08)}
+.er-cand .pt i{width:1.2rem;height:1.2rem;border-radius:50%;margin-right:.6rem}
+.er-cand .vt{margin-top:.6rem;font-family:var(--head);font-weight:700;font-size:3.6rem;line-height:1}
+.er-cand.lo .vt{font-size:2.7rem;color:var(--muted)}
+.er-cand .vt small{font-family:var(--body);font-size:1.2rem;color:var(--dim);margin-left:.5rem;font-weight:500}
+.er-cand .st{margin-top:.7rem;font-size:1.4rem;font-weight:800;letter-spacing:.06rem;padding:.2rem 1.1rem;border-radius:.5rem}
+.er-cand.win .st{background:var(--good);color:#0b2a12} .er-cand.win .st.ld{background:var(--gold);color:#2a1a00}
+.er-cand.lo .st{background:rgba(255,107,91,.2);color:#FF6B5B}
+.er-mid{flex:0 0 22rem;text-align:center}
+.er-mid .x{display:inline-block;width:6.4rem;height:6.4rem;line-height:6.4rem;border-radius:50%;background:linear-gradient(135deg,#E65100,#FF9933);color:#fff;font-family:var(--head);font-weight:700;font-size:2.4rem;box-shadow:0 0 2.4rem rgba(255,153,51,.6)}
+.er-mid b{display:block;margin-top:1rem;font-family:var(--head);font-weight:700;font-size:4.6rem;line-height:1;color:var(--gold);text-shadow:0 0 2rem rgba(255,200,87,.35)}
+.er-mid small{display:block;margin-top:.4rem;font-size:1.5rem;font-weight:700;color:var(--muted)}
+.er-split{flex:0 0 auto;display:flex;height:1.6rem;border-radius:1rem;overflow:hidden;margin-top:1.2rem;background:rgba(255,255,255,.08)}
+.er-split i{display:block;height:100%;width:50%;-webkit-transition:width 1.4s cubic-bezier(.2,.8,.2,1);transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+.er-split-l{display:flex;justify-content:space-between;margin-top:.4rem;font-size:1.25rem;font-weight:700;color:var(--muted)}
+.er-dq{flex:0 0 auto;display:flex;margin-top:1rem;overflow:hidden}
+.er-dq span{flex:0 1 auto;min-width:0;margin-right:.6rem;padding:.4rem .9rem;border-radius:.6rem;background:rgba(255,255,255,.06);font-size:1.15rem;font-weight:700;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-bottom:.25rem solid transparent}
+.er-dq span.on{background:rgba(255,153,51,.2);color:#fff;border-bottom-color:var(--gold)}
+body.phone .er-vs{flex-direction:column} body.phone .er-mid{flex:0 0 auto;margin:1rem 0}
+body.phone .er-s{position:relative;display:none;padding:1rem} body.phone .er-s.on{display:flex}
+body.phone .er-cand .av{width:9rem;height:9rem;font-size:3rem} body.phone .er-cand.lo .av{width:7rem;height:7rem}
+body.phone .er-hl{flex-direction:column;align-items:flex-start} body.phone .er-bjp{margin:1rem 0 0} body.phone .er-hl b{font-size:2.1rem}
+body.phone .er-wrap,body.phone .er-dv{height:auto}
 /* start screen: Media Room and Election Room side by side under the two cards */
 .ch-rooms{display:flex;width:106.4rem;max-width:100%;margin:1rem auto 0}
 .ch-rooms .ch-media{flex:1 1 0;width:auto;min-width:0;margin:0}
@@ -1616,6 +1681,13 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     erpType: ['Type of election', 'चुनाव का प्रकार'], erpOfficial: ['Official results (ECI)', 'आधिकारिक नतीजे (ECI)'], erpNewsG: ['News only (no official live source)', 'सिर्फ़ ख़बरें (कोई आधिकारिक LIVE स्रोत नहीं)'],
     erpPractice: ['Practice', 'अभ्यास'], erpDemo: ['Replay Bihar 2025 counting (DEMO)', 'बिहार 2025 की मतगणना दोबारा चलाएँ (DEMO)'],
     erT_all: ['All — mix', 'सब — मिक्स'], erT_ls: ['Lok Sabha', 'लोकसभा'], erT_vs: ['Assembly', 'विधानसभा'], erT_bye: ['By-elections', 'उपचुनाव'],
+    erHlMaj: ['{a} past the majority mark — {n} seats', '{a} बहुमत के पार — {n} सीटें'], erHlMajF: ['{a} wins a majority — {n} seats', '{a} को बहुमत — {n} सीटें'],
+    erHlLead: ['{a} ahead — {k} short of majority', '{a} सबसे आगे — बहुमत से {k} दूर'], erHlHung: ['No majority — {a} largest with {n}', 'किसी को बहुमत नहीं — {a} सबसे बड़ा ({n})'],
+    erHlGap: ['{a} {n} · {b} {m} · gap {g} seats', '{a} {n} · {b} {m} · {g} सीटों का अंतर'],
+    erBjpK: ['{p} scorecard', '{p} का हाल'], erBjpLine: ['Won {w} · Ahead {l} · Behind {t}', 'जीते {w} · आगे {l} · पीछे {t}'], erStrike: ['strike rate {s}%', 'स्ट्राइक रेट {s}%'],
+    erDuel: ['Head to head', 'आमने-सामने'], erWhy_face: ['Big face', 'बड़ा चेहरा'], erWhy_flip: ['Lead flipped!', 'बढ़त पलटी!'], erWhy_bjpclose: ['BJP close fight', 'भाजपा की कड़ी टक्कर'],
+    erWhy_won: ['Just declared', 'अभी घोषित'], erWhy_bjpbig: ['BJP big win', 'भाजपा की बड़ी जीत'], erWhy_close: ['Close fight', 'कड़ी टक्कर'], erWhy_bye: ['By-election', 'उपचुनाव'],
+    erAheadBy: ['votes ahead', 'वोट से आगे'], erWonBy: ['votes — won', 'वोट से जीते'], erVotes: ['votes', 'वोट'], erBehind: ['BEHIND', 'पीछे'], erLostT: ['LOST', 'हारे'], erWonT: ['WON', 'जीते'], erAheadT: ['AHEAD', 'आगे'],
     erT_byels: ['Lok Sabha by-election', 'लोकसभा उपचुनाव'], erT_byevs: ['Assembly by-elections', 'विधानसभा उपचुनाव'],
     erT_council: ['Rajya Sabha / Council', 'राज्यसभा / विधान परिषद'], erT_local: ['Municipal / Panchayat', 'नगर निकाय / पंचायत']
   };
@@ -3023,11 +3095,16 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     });
   }
   /* ---- names, colours, badges ---- */
+  /* party names / colours: the contest's own list, else the server's full lists (config) */
   function erPName(c, abbr) {
-    var p = (c && c.parties || []).filter(function (x) { return x.abbr === abbr; })[0];
-    return LANG === 'hi' && p && p.hi ? p.hi : abbr || '';
+    var p = (c && c.parties || []).filter(function (x) { return x.abbr === abbr; })[0], m = state.snap || {};
+    var hi = (p && p.hi) || (m.partyHi && m.partyHi[abbr]);
+    return LANG === 'hi' && hi ? hi : abbr || '';
   }
-  function erPColor(c, abbr) { var p = (c && c.parties || []).filter(function (x) { return x.abbr === abbr; })[0]; return (p && p.color) || '#8D6E63'; }
+  function erPColor(c, abbr) {
+    var p = (c && c.parties || []).filter(function (x) { return x.abbr === abbr; })[0], m = state.snap || {};
+    return (p && p.color) || (m.partyColor && m.partyColor[abbr]) || '#8D6E63';
+  }
   function erAName(a) { return LANG === 'hi' ? a.hi : a.en; }
   function erYear(s) { var m = String(s || '').match(/(20\d\d)/); return m ? m[1] : ''; }
   function erKindKey(k) { return k === 'ls' ? 'erT_ls' : k === 'vs' ? 'erT_vs' : k === 'bye-ls' ? 'erT_byels' : k === 'bye-vs' ? 'erT_byevs' : 'erT_bye'; }
@@ -3083,14 +3160,92 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var hot = c.status === 'live' || c.status === 'demo';
     var right = '<div class="er-r er-glass"><div class="er-rh"><span>' + esc(t('erParty')) + '</span><span>' + esc(t('erWon')) + '</span>' + (hot ? '<span>' + esc(t('erLead')) + '</span>' : '')
       + '<span>' + esc(t('erTot')) + '</span>' + (hot ? '<span style="flex-basis:7.4rem">' + esc(t('erChg')) + '</span>' : '') + '</div>'
-      + c.parties.slice(0, hot ? 8 : 9).map(function (p) {
+      + c.parties.slice(0, 6).map(function (p) {
           return '<div class="er-p"><i class="bar" style="width:' + Math.round(100 * p.total / max) + '%;background:' + (p.color || '#8D6E63') + '"></i><div class="nm"><i style="background:' + (p.color || '#8D6E63') + '"></i><em>'
             + esc(LANG === 'hi' && p.hi ? p.hi : p.abbr) + '</em></div><span class="v">' + p.won + '</span>' + (hot ? '<span class="v">' + p.lead + '</span>' : '')
             + '<span class="v t">' + p.total + '</span>' + (hot ? '<span class="v d">' + (erDelta(p.delta || 0) || '<span style="color:var(--dim)">–</span>') + '</span>' : '') + '</div>';
         }).join('')
       + ((c.recentFlips || []).length ? '<div class="er-flips"><b>' + esc(t('erFlip')) + '</b>' + c.recentFlips.slice(0, 3).map(function (f) { return esc(f.seat + ': ' + erPName(c, f.from) + ' → ' + erPName(c, f.party)); }).join(' &nbsp;·&nbsp; ') + '</div>' : '')
       + '<div class="er-note">' + esc(t('erNoteAll')) + (c.known && c.seats ? ' · ' + esc(fill(t('erKnown'), { k: c.known, n: c.seats })) : '') + (c.won ? ' · ' + esc(fill(t('erDeclN'), { w: c.won })) : '') + '</div></div>';
-    return '<div class="er-t">' + left + right + '</div>';
+    return '<div class="er-wrap">' + erHeadline(c) + '<div class="er-t">' + left + right + '</div></div>';
+  }
+  /* the one sentence first: who has the majority (or how far the leader is from it), the gap to
+     the next, and BJP's own line -- won / ahead / behind and its strike rate */
+  var ER_FOCUS = 'BJP';
+  function erHeadline(c) {
+    var als = c.alliances || [], a = als[0], b = als[1], hot = c.status === 'live' || c.status === 'demo' || c.status === 'stalled';
+    if (!a) return '';
+    var main = a.total >= c.majority ? fill(t(hot ? 'erHlMaj' : 'erHlMajF'), { a: erAName(a), n: a.total })
+      : hot ? fill(t('erHlLead'), { a: erAName(a), k: c.majority - a.total }) : fill(t('erHlHung'), { a: erAName(a), n: a.total });
+    var sub = b ? fill(t('erHlGap'), { a: erAName(a), n: a.total, b: erAName(b), m: b.total, g: a.total - b.total }) : '';
+    var f = (c.parties || []).filter(function (p) { return p.abbr === ER_FOCUS; })[0], bj = '';
+    if (f) {
+      var tr = (c.trailing || {})[ER_FOCUS] || 0, lost = (c.lost || {})[ER_FOCUS] || 0, fought = f.won + f.lead + tr + lost;
+      bj = '<div class="er-bjp">' + plogo('/live/img/p/BJP', f.color) + '<div><em>' + esc(fill(t('erBjpK'), { p: erPName(c, ER_FOCUS) })) + '</em><span>'
+        + fill(esc(t('erBjpLine')), { w: '<i>' + f.won + '</i>', l: '<i>' + f.lead + '</i>', t: '<i>' + (tr + lost) + '</i>' })
+        + (c.trailing && fought ? ' · ' + esc(fill(t('erStrike'), { s: Math.round(100 * (f.won + f.lead) / fought) })) : '') + '</span></div></div>';
+    }
+    return '<div class="er-hl"><div><b>' + esc(main) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</div>' + bj + '</div>';
+  }
+  /* ---- screen: head to head. One seat at a time (about 7 s each): both candidates with their
+     ECI photo, party and votes, the margin in the middle, a bar of the two-way vote split.
+     The queue below shows what comes next. ---- */
+  /* a party's full ECI name -> its short name, from the names the server knows ("Indian National Congress" -> INC) */
+  var ER_FULL = { 'indian national congress': 'INC', 'bharatiya janata party': 'BJP', 'samajwadi party': 'SP', 'bahujan samaj party': 'BSP', 'all india trinamool congress': 'AITC',
+    'rashtriya janata dal': 'RJD', 'janata dal (united)': 'JD(U)', 'dravida munnetra kazhagam': 'DMK', 'tamilaga vettri kazhagam': 'TVK', 'aam aadmi party': 'AAAP', 'independent': 'IND' };
+  function erAbbr(full) { return ER_FULL[String(full || '').toLowerCase()] || full; }
+  function erDuelsOf(c) {
+    if (c.byeSeats) return c.byeSeats.map(function (s) {
+      return { seat: s.seat, no: s.no, status: s.status, round: s.round, why: 'bye', margin: s.margin, place: stName(s.state),
+               a: { name: s.cand, party: s.abbr || erAbbr(s.party), votes: s.votes, photo: s.photo },
+               b: { name: s.vs, party: s.vsAbbr || erAbbr(s.vsParty), votes: s.vsVotes != null ? s.vsVotes : (s.votes != null && s.margin != null ? s.votes - s.margin : null), photo: s.vsPhoto } };
+    }).filter(function (d) { return d.b.name; });
+    return (c.duels || []).filter(function (d) { return d.a.name && d.b.name; }).slice(0, 8);
+  }
+  function erDuelSlide(c, d, i) {
+    var won = d.status === 'won', ca = erPColor(c, d.a.party), cb = erPColor(c, d.b.party);
+    /* the split bar only when both counts are known (a missing count is not zero votes) */
+    var tot = d.a.votes != null && d.b.votes != null ? d.a.votes + d.b.votes : 0, pa = tot ? Math.round(100 * d.a.votes / tot) : 50;
+    function cand(x, col, lead) {
+      return '<div class="er-cand ' + (lead ? 'win' : 'lo') + '">' + avatar(x.name, x.photo, col) + '<div class="in"><div class="nm">' + esc(x.name) + '</div>'
+        + '<div class="pt"><i style="background:' + col + '"></i>' + esc(erPName(c, x.party) || x.party || '') + '</div>'
+        + (x.votes != null ? '<div class="vt"><span data-v="' + x.votes + '">0</span><small>' + esc(t('erVotes')) + '</small></div>' : '')
+        + '<div class="st' + (lead && !won ? ' ld' : '') + '">' + esc(t(lead ? (won ? 'erWonT' : 'erAheadT') : (won ? 'erLostT' : 'erBehind'))) + '</div></div></div>';
+    }
+    return '<div class="er-s" data-i="' + i + '" data-pa="' + pa + '"><div class="er-sh"><b>' + esc(d.seat) + '</b>'
+      + '<span class="rd">' + esc([d.place || (c.state ? stName(c.state) : ''), d.round ? fill(t('erRound'), { r: d.round }) : ''].filter(Boolean).join(' · ')) + '</span>'
+      + '<span class="er-why' + (d.why === 'flip' ? ' flip' : '') + '">' + esc(t('erWhy_' + d.why)) + '</span></div>'
+      + '<div class="er-vs">' + cand(d.a, ca, true) + '<div class="er-mid"><span class="x">VS</span>'
+      + (d.margin != null ? '<b data-v="' + d.margin + '">0</b><small>' + esc(t(won ? 'erWonBy' : 'erAheadBy')) + '</small>' : '') + '</div>' + cand(d.b, cb, false) + '</div>'
+      + (tot ? '<div class="er-split"><i style="background:' + ca + '"></i><i style="background:' + cb + '"></i></div><div class="er-split-l"><span>' + pa + '%</span><span>' + (100 - pa) + '%</span></div>' : '')
+      + '</div>';
+  }
+  function erDuels(c, list) {
+    return '<div class="er-dv"><div class="er-ds">' + list.map(function (d, i) { return erDuelSlide(c, d, i); }).join('') + '</div>'
+      + '<div class="er-dq">' + list.map(function (d, i) { return '<span data-i="' + i + '">' + esc(d.seat) + '</span>'; }).join('') + '</div></div>';
+  }
+  var ER_SLIDE_MS = 7000;
+  /* turns the slides; a data refresh redraws the screen but carries on from the slide it was on */
+  function erDuelRun(el, key) {
+    var slides = el.querySelectorAll('.er-s'), chips = el.querySelectorAll('.er-dq span'), n = slides.length;
+    if (!n) return;
+    if (state.erDuelKey !== key) { state.erDuelKey = key; state.erDuelI = 0; }
+    function go(i) {
+      state.erDuelI = i % n;
+      [].forEach.call(slides, function (s, k) { setCls(s, 'on', k === state.erDuelI); });
+      [].forEach.call(chips, function (s, k) { setCls(s, 'on', k === state.erDuelI); });
+      var s = slides[state.erDuelI], pa = +s.getAttribute('data-pa'), bars = s.querySelectorAll('.er-split i');
+      if (bars.length === 2) { bars[0].style.width = '50%'; bars[1].style.width = '50%'; state.tmo.push(setTimeout(function () { bars[0].style.width = pa + '%'; bars[1].style.width = (100 - pa) + '%'; }, 80)); }
+      [].forEach.call(s.querySelectorAll('[data-v]'), function (nd) { erCount(nd, +nd.getAttribute('data-v')); });
+    }
+    go(state.erDuelI || 0);
+    state.tmo.push(setInterval(function () { go(state.erDuelI + 1); }, Math.round(ER_SLIDE_MS * SPEED_MUL[SPEED])));
+  }
+  function erCount(nd, to) {
+    if (REDUCED) { nd.textContent = fmtInt(to); return; }
+    var t0 = Date.now(), D = 1300;
+    function step() { var k = Math.min(1, (Date.now() - t0) / D); nd.textContent = fmtInt(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) state.raf.push(requestAnimationFrame(step)); }
+    step();
   }
   /* ---- screens: close fights, big faces, declared ---- */
   function erLine(c, cand, party, lo) {
@@ -3160,7 +3315,16 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       var hot = c.status === 'live' || c.status === 'demo', w = 1 + Math.min(0.5, erMove(c) / 12), place = c.state ? stName(c.state) : '';
       var base = { sub: function () { return erSrc(c); } };
       function sc(o) { var x = {}; for (var k in base) x[k] = base[k]; for (var j in o) x[j] = o[j]; return x; }
+      var duels = erDuelsOf(c);
+      function duelScene() {
+        if (!duels.length) return;
+        L.push(sc({ id: 'er-duel-' + c.key, dur: duels.length * ER_SLIDE_MS + 1000, imp: hot, hero: 'lo', title: function () { return erTitle('erDuel', place, c.status); },
+                    label: function () { return t('erDuel') + (place ? ' · ' + place : ''); }, render: function () { return erDuels(c, duels); },
+                    after: function (el) { erDuelRun(el, 'er-duel-' + c.key); } }));
+      }
       if (c.byeSeats) {
+        duelScene();
+        if (duels.length) return;
         for (var i = 0; i < c.byeSeats.length; i += 6) (function (chunk, k) {
           L.push(sc({ id: 'er-bye-' + c.key + '-' + k, dur: 16000, title: function () { return erTitle('erBye', '', c.status); }, label: function () { return t('erBye'); }, render: function () { return erBye(c, chunk); } }));
         })(c.byeSeats.slice(i, i + 6), i / 6);
@@ -3168,6 +3332,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       }
       L.push(sc({ id: 'er-tally-' + c.key, dur: Math.round(18000 * w), imp: hot, hero: 'mid', title: function () { return erTitle('erTally', place || erCName(c), c.status); },
                   label: function () { return t('erTally') + (place ? ' · ' + place : ''); }, render: function () { return erTally(c); } }));
+      duelScene();
       if (hot && c.close && c.close.length) L.push(sc({ id: 'er-close-' + c.key, dur: 16000, imp: (c.recentFlips || []).length > 0, title: function () { return erTitle('erClose', place, c.status); },
                   label: function () { return t('erClose') + (place ? ' · ' + place : ''); }, render: function () { return erClose(c); } }));
       if (c.faces && c.faces.length) L.push(sc({ id: 'er-faces-' + c.key, dur: 15000, title: function () { return erTitle('erFaces', place, c.status); },
@@ -3175,6 +3340,16 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       if (c.declared && c.declared.length) L.push(sc({ id: 'er-decl-' + c.key, dur: 14000, title: function () { return erTitle('erDecl', place, c.status); },
                   label: function () { return t('erDecl') + (place ? ' · ' + place : ''); }, render: function () { return erDeclared(c); } }));
     });
+    /* nothing being counted: head to head still runs, on the latest by-election results (marked OLD) */
+    if (!newsOnly && !cs.some(function (c) { return c.status === 'live' || c.status === 'demo'; })) {
+      (m.past || []).filter(function (r) { return r.byeSeats && r.byeSeats.length; }).slice(0, 2).forEach(function (r) {
+        var oc = { key: r.key, status: 'old', byeSeats: r.byeSeats, parties: r.parties || [] }, od = erDuelsOf(oc);
+        if (!od.length) return;
+        L.push({ id: 'er-duel-' + r.key, dur: od.length * ER_SLIDE_MS + 1000, hero: 'lo', title: function () { return erTitle('erDuel', erCName(r), 'old', r.date); },
+                 label: function () { return t('erDuel'); }, sub: function () { return t('erNotePast'); }, render: function () { return erDuels(oc, od); },
+                 after: function (el) { erDuelRun(el, 'er-duel-' + r.key); } });
+      });
+    }
     var past = newsOnly ? [] : (m.past || []);
     for (var p = 0; p < Math.min(past.length, 8); p += 4) (function (chunk, k) {
       L.push({ id: 'er-past-' + k, dur: 18000, hero: 'mid', title: function () { return erTitle('erPast', erState() ? stName(erState()) : '', 'old'); }, label: function () { return t('erPast'); },

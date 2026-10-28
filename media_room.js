@@ -377,6 +377,19 @@ function createMediaRoom(opts) {
       };
     },
     states: Object.keys(ML.STATE_HI),
+    /* counting day: the Election Room adds "<state> results / counting" searches for each state
+       being counted (Hindi + English), read every 15 min like the rest, kept until restart */
+    addElectionSearches: function (states) {
+      (states || []).forEach(function (st) {
+        if (!ML.STATE_HI[st]) return;
+        [['en', '"' + st + '" election results OR counting OR leads'], ['hi', ML.STATE_HI[st] + ' चुनाव नतीजे OR मतगणना OR रुझान']].forEach(function (q) {
+          var key = 'elec:live:' + st + ':' + q[0];
+          if (NAT.some(function (f) { return f.key === key; })) return;
+          NAT.push({ key: key, src: 'state', state: st, name: 'Google News', kind: 'media', via: 'gnews', url: gnUrl(q[1], q[0]) });
+          log('  [media] counting in ' + st + ': added "' + q[1] + '"');
+        });
+      });
+    },
     /* headlines of the last `hours` that pass test(title), in one state (or national) -- for
        the Election Room's news screens; copies of a story merged, newest first */
     find: function (test, st, hours, limit) {

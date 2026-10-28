@@ -124,8 +124,34 @@ async function demo() {
   return { folder: F, state: 'Bihar', seats: 243, en: 'Bihar assembly election 2025', hi: 'बिहार विधानसभा चुनाव 2025', frames: frames, seatList: seats };
 }
 
+/* demo head-to-heads: the archived candidate page (votes, ECI photos) of the seats the Election
+   Room puts first -- big faces, BJP's tightest fights and biggest wins, other close fights */
+async function demoCands() {
+  var d = JSON.parse(fs.readFileSync(DEMO, 'utf8')), F = d.folder, cfg = JSON.parse(fs.readFileSync(path.join(__dirname, 'app', 'data', 'election_config.json'), 'utf8'));
+  var faces = (cfg.faces[d.state] || []).map(function (n) { var w = n.toUpperCase().split(/[\s.]+/); return function (c) { var u = ' ' + String(c || '').toUpperCase().replace(/\./g, ' ') + ' '; return w.every(function (x) { return u.indexOf(' ' + x + ' ') >= 0; }); }; });
+  var rows = d.seatList, pick = [], seen = {};
+  function add(s) { if (s && !seen[s.no] && pick.length < 34) { seen[s.no] = 1; pick.push(s); } }
+  var isB = function (p) { return /Bharatiya Janata Party/i.test(p || ''); };
+  rows.forEach(function (s) { if (faces.some(function (f) { return f(s.lead.cand) || (s.trail && f(s.trail.cand)); })) add(s); });
+  rows.filter(function (s) { return s.status !== 'won' && s.margin != null && (isB(s.lead.party) || (s.trail && isB(s.trail.party))); }).sort(function (a, b) { return a.margin - b.margin; }).slice(0, 12).forEach(add);
+  rows.filter(function (s) { return s.status === 'won' && isB(s.lead.party); }).sort(function (a, b) { return b.margin - a.margin; }).slice(0, 5).forEach(add);
+  rows.filter(function (s) { return s.status !== 'won' && s.margin != null; }).sort(function (a, b) { return a.margin - b.margin; }).slice(0, 10).forEach(add);
+  rows.filter(function (s) { return s.status === 'won'; }).slice(0, 6).forEach(add);
+  var mid = d.frames.length ? d.frames[Math.floor(d.frames.length / 2)].at : '20251114';
+  d.cands = d.cands || {};
+  for (var i = 0; i < pick.length; i++) {
+    if (d.cands[pick[i].no]) continue;
+    var h = await archived(F + '/candidateswise-S04' + pick[i].no + '.htm', mid), c = h ? EL.parseCandidate(h) : null;
+    if (c && c.cands.length >= 2) { d.cands[pick[i].no] = { round: c.round, rounds: c.rounds, cands: c.cands.slice(0, 3) }; console.log('    ' + pick[i].seat + ': ' + c.cands[0].name + ' ' + c.cands[0].votes + ' vs ' + c.cands[1].name + ' ' + c.cands[1].votes); }
+    else console.log('    ' + pick[i].seat + ': not archived');
+  }
+  fs.writeFileSync(DEMO, JSON.stringify(d));
+  console.log('Done: ' + Object.keys(d.cands).length + ' candidate pages in the demo');
+}
+
 (async function () {
   var only = process.argv[2], folder = process.argv[3] || null;
+  if (only === 'demo-cands') { await demoCands(); return; }
   if (only !== 'demo') {
     console.log('Past results (archived ECI pages):');
     var h = await history(folder);
