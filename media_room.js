@@ -49,6 +49,14 @@ function nationalFeeds(cfg) {
       if (s.coverage[l]) out.push({ key: s.id + ':gn:' + l, src: s.id, name: s.en, kind: 'media', via: 'gnews', url: gnUrl(s.coverage[l], l), names: s.names ? ML.anyRe(s.names) : null });
     });
   });
+  /* the Election Room's searches (local bodies, panchayat, by-elections, councils): no official live feed for these */
+  try {
+    var ec = JSON.parse(fs.readFileSync(path.join(__dirname, 'app', 'data', 'election_config.json'), 'utf8')).news_searches || {};
+    Object.keys(ec).forEach(function (k) {
+      if (k.charAt(0) === '_') return;
+      out.push({ key: 'elec:' + k, src: 'state', name: 'Google News', kind: 'media', via: 'gnews', url: gnUrl(ec[k], /-hi$/.test(k) ? 'hi' : 'en') });
+    });
+  } catch (e) {}
   return out;
 }
 function stateFeeds(st) {
@@ -368,7 +376,16 @@ function createMediaRoom(opts) {
         all: view('all'), local: st ? view('st:' + st) : null, sources: sourceStatus(), ai: aiInfo()
       };
     },
-    states: Object.keys(ML.STATE_HI)
+    states: Object.keys(ML.STATE_HI),
+    /* headlines of the last `hours` that pass test(title), in one state (or national) -- for
+       the Election Room's news screens; copies of a story merged, newest first */
+    find: function (test, st, hours, limit) {
+      var since = Date.now() - (hours || 24) * 3600000;
+      var mine = Object.keys(items).map(function (k) { return items[k]; }).filter(function (x) {
+        return x.pub >= since && (st ? x.states.indexOf(st) >= 0 : true) && !/#shorts|#viral/i.test(x.title) && test(x.title);
+      });
+      return ML.newsCards(mine, logoOf, limit);
+    }
   };
 }
 

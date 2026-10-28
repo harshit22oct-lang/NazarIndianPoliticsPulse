@@ -719,6 +719,28 @@ var svc = null, meta = null, page = { mtime: 0, body: '' }, attacks = null;
 var ATTACKS = require('./attacks.js');
 /* Media Room: live news from free feeds, independent of the CSV (starts with the server) */
 var mediaRoom = require('./media_room.js').createMediaRoom({ dataDir: DATA });
+/* Election Room: official results from results.eci.gov.in (live and past) + election news from the Media Room */
+var electionRoom = require('./election_room.js').createElectionRoom({ dataDir: DATA });
+var ELEC_CFG = {}; try { ELEC_CFG = JSON.parse(fs.readFileSync(path.join(APP, 'data', 'election_config.json'), 'utf8')); } catch (e) {}
+/* election headlines by type (Hindi + English words); "all" = any election word */
+var ELEC_NEWS = {
+  all: /चुनाव|मतगणना|मतदान|नतीजे|परिणाम|उपचुनाव|निकाय|पंचायत|election|poll|bypoll|by-election|counting|vote|result|ballot|civic|panchayat|municipal|mayor|MLC/i,
+  ls: /लोकसभा|Lok Sabha|parliamentary|\bMP\b seat/i,
+  vs: /विधानसभा|assembly|vidhan sabha|\bMLA\b/i,
+  bye: /उपचुनाव|bypoll|by-poll|by-election|bye-election/i,
+  council: /राज्यसभा|Rajya Sabha|विधान परिषद|\bMLC\b|legislative council/i,
+  local: /नगर निगम|नगर निकाय|नगर पालिका|नगर पंचायत|निकाय चुनाव|पंचायत|प्रधान|पार्षद|मेयर|महापौर|वार्ड|जिला परिषद|ज़िला परिषद|municipal|civic|corporation poll|mayor|panchayat|zila parishad|ward|councillor|BMC|GHMC/i
+};
+var ELEC_WORD = /चुनाव|मतगणना|मतदान|नतीजे|परिणाम|election|poll|counting|vote|result/i;
+function electionNews(st, type, city) {
+  var re = ELEC_NEWS[type] || ELEC_NEWS.all, cre = null;
+  if (city && st && ELEC_CFG.cities && ELEC_CFG.cities[st]) {
+    var pair = ELEC_CFG.cities[st].filter(function (c) { return c[0] === city; })[0];
+    if (pair) cre = new RegExp(pair.map(function (x) { return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'), 'i');
+  }
+  var test = function (t) { return re.test(t) && (type === 'all' || type === 'local' || type === 'council' || ELEC_WORD.test(t)) && (!cre || cre.test(t)); };
+  try { return mediaRoom.find(test, st || null, 48, 12); } catch (e) { return []; }
+}
 /* the last good screens: served at once after a restart while the posts load (snap_cache.js) */
 var snapCache = require('./snap_cache.js').createSnapCache(DATA);
 /* saved screens: 'snap:<scope>' for 24 h (as before), 'snap:<scope>:<hours>' for 48 / 72 h */
@@ -816,6 +838,20 @@ var server = http.createServer(function (req, res) {
     try { return json(res, 200, mediaRoom.get(mrSt || null)); }
     catch (err) { console.log('  [media] ' + err.message); return json(res, 500, { error: 'News is not available right now.', code: 'server' }); }
   }
+  if (p === '/api/election-room') {
+    /* ?state=<name>&type=all|ls|vs|bye|council|local&city=<en name>&demo=1 */
+    /* state=- : All India chosen on the page (even on a state's page) */
+    var erSt = q.state === '-' ? null : q.state ? String(q.state).slice(0, 60) : LIVE.stateOfScope(String(q.scope || 'all'));
+    var erType = /^(all|ls|vs|bye|council|local)$/.test(String(q.type || '')) ? String(q.type) : 'all';
+    try {
+      if (erSt) mediaRoom.get(erSt);                                     // the Media Room starts collecting this state's news too
+      var er = electionRoom.get(erSt || null, erType === 'council' || erType === 'local' ? 'none' : erType, q.demo === '1');
+      er.news = electionNews(erSt || null, erType, q.city ? String(q.city).slice(0, 40) : null);
+      er.cities = erSt && ELEC_CFG.cities ? ELEC_CFG.cities[erSt] || [] : [];
+      er.hasDemo = electionRoom.hasDemo();
+      return json(res, 200, er);
+    } catch (err) { console.log('  [election] ' + err.message); return json(res, 500, { error: 'Results are not available right now.', code: 'server' }); }
+  }
   if (p === '/api/live-states') {
     if (!svc) { var cs = snapCache.get('states'); return cs ? json(res, 200, { states: cs.v }) : json(res, 503, { error: 'Data is still loading.', code: 'server' }); }
     return json(res, 200, { states: STATES });
@@ -846,6 +882,7 @@ server.listen(PORT, HOST, function () {
   console.log('  open:  http://localhost:' + PORT + '/live' + (HOST === '0.0.0.0' ? '   (also from other devices on this network)' : ''));
   console.log('  loading data from ' + DATA + ' ...');
   mediaRoom.start().catch(function (e) { console.log('  [media] ' + e.message); });
+  electionRoom.start().catch(function (e) { console.log('  [election] ' + e.message); });
   /* the saved screens first (seconds), so the page works while the posts load (minutes) */
   snapCache.load().then(function (n) { console.log('  [snap-cache] ' + n + ' saved screens ready for the loading time (' + snapCache.kind + ')'); })
     .catch(function (e) { console.log('  [snap-cache] none: ' + e.message); });

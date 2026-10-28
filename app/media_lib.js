@@ -223,6 +223,10 @@ function card(g, logoOf, tag) {
            n: others.length, o: others.slice(0, 3), f: top.seen,           // f = first seen: the page shows NEW for 30 minutes
            as: top.ai ? top.ai.s : null, ab: top.ai ? top.ai.b : null };   // the AI's stance and whose voice (for the attack / good-news screens)
 }
+/* any set of headlines as cards (copies of one story merged), newest first -- the Election Room's news */
+function newsCards(items, logoOf, limit) {
+  return cluster(items).map(function (g) { return card(g, logoOf); }).sort(function (a, b) { return b.p - a.p; }).slice(0, limit || 10);
+}
 function distinctSources(g) { var o = {}; g.items.forEach(function (x) { o[x.srcName] = 1; }); return Object.keys(o).length; }
 
 /* opts: { items (already filtered to this area), topics: [ids], sources (configured, with status),
@@ -252,5 +256,5 @@ function buildView(opts) {
 
 module.exports = {
   parseFeed: parseFeed, parseDate: parseDate, decode: decode, canonical: canonical, idOf: idOf, isHindi: isHindi,
-  makeTagger: makeTagger, statesIn: statesIn, anyRe: anyRe, STATE_HI: STATE_HI, tokens: tokens, cluster: cluster, buildView: buildView, istStr: istStr
+  makeTagger: makeTagger, statesIn: statesIn, anyRe: anyRe, STATE_HI: STATE_HI, tokens: tokens, cluster: cluster, buildView: buildView, istStr: istStr, newsCards: newsCards
 };

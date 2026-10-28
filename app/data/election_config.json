@@ -1,0 +1,99 @@
+{
+  "_about": "Election Room settings. Seat numbers always come from ECI; this file only groups parties into alliances, names them in Hindi, colours them, and lists the big faces to follow. Party keys are ECI's own short names (as on results.eci.gov.in). Edit freely; the server reads it at start.",
+  "alliances": {
+    "NDA": { "en": "NDA", "hi": "एनडीए", "color": "#FF9933",
+      "parties": ["BJP", "JD(U)", "TDP", "SHS", "NCP", "LJPRV", "HAMS", "RSHTLKM", "AGP", "UPPL", "BOPF", "AINRC", "AJSUP", "RLD", "JD(S)", "JnP", "JSP", "ADAL", "NISHAD", "SBSP", "ADMK", "PMK", "AMMKMNKZ", "NPP", "NDPP", "SKM", "BDJS", "TMC(M)", "IJK", "RLP", "HSJP", "JNJP"] },
+    "INDIA": { "en": "INDIA", "hi": "इंडिया", "color": "#1E88E5",
+      "parties": ["INC", "SP", "AITC", "DMK", "RJD", "SHSUBT", "NCPSP", "JMM", "CPI(M)", "CPI", "CPI(ML)(L)", "IUML", "JKN", "VCK", "KEC", "RSP", "MDMK", "VIP", "KMDK", "RLTP", "JKNC", "AAP", "AAAP"] }
+  },
+  "alliances_by_state": {
+    "Kerala": {
+      "UDF": { "en": "UDF", "hi": "यूडीएफ", "color": "#1E88E5", "parties": ["INC", "IUML", "KEC", "RSP", "CMPKSC", "KC(J)", "RMPOI", "KEC(J)"] },
+      "LDF": { "en": "LDF", "hi": "एलडीएफ", "color": "#D32F2F", "parties": ["CPI(M)", "CPI", "KEC(M)", "JD(S)", "NCP", "INL", "KC(B)", "CNSPK", "RJD"] },
+      "NDA": { "en": "NDA", "hi": "एनडीए", "color": "#FF9933", "parties": ["BJP", "BDJS"] }
+    },
+    "Tamil Nadu": {
+      "DMK+": { "en": "DMK+", "hi": "डीएमके+", "color": "#C62828", "parties": ["DMK", "INC", "VCK", "CPI", "CPI(M)", "MDMK", "IUML", "KMDK", "MMK"] },
+      "ADMK+": { "en": "ADMK+", "hi": "एडीएमके+", "color": "#2E7D32", "parties": ["ADMK", "BJP", "PMK", "AMMKMNKZ", "TMC(M)", "IJK"] },
+      "TVK": { "en": "TVK", "hi": "टीवीके", "color": "#F9A825", "parties": ["TVK"] }
+    },
+    "West Bengal": {
+      "NDA": { "en": "BJP", "hi": "भाजपा", "color": "#FF9933", "parties": ["BJP"] },
+      "TMC": { "en": "TMC", "hi": "टीएमसी", "color": "#2E7D32", "parties": ["AITC"] },
+      "LEFT": { "en": "Left + Congress", "hi": "वाम + कांग्रेस", "color": "#C62828", "parties": ["CPI(M)", "CPI", "RSP", "AIFB", "INC", "AISF"] }
+    },
+    "Delhi": {
+      "NDA": { "en": "BJP+", "hi": "भाजपा+", "color": "#FF9933", "parties": ["BJP", "JD(U)", "LJPRV"] },
+      "AAP": { "en": "AAP", "hi": "आप", "color": "#0277BD", "parties": ["AAP", "AAAP"] },
+      "INC": { "en": "Congress", "hi": "कांग्रेस", "color": "#26A69A", "parties": ["INC"] }
+    },
+    "Punjab": {
+      "AAP": { "en": "AAP", "hi": "आप", "color": "#0277BD", "parties": ["AAP", "AAAP"] },
+      "INC": { "en": "Congress", "hi": "कांग्रेस", "color": "#26A69A", "parties": ["INC"] },
+      "SAD": { "en": "SAD", "hi": "अकाली दल", "color": "#F9A825", "parties": ["SAD", "BSP"] },
+      "NDA": { "en": "BJP+", "hi": "भाजपा+", "color": "#FF9933", "parties": ["BJP", "SAD(S)"] }
+    }
+  },
+  "party_hi": {
+    "BJP": "भाजपा", "INC": "कांग्रेस", "SP": "सपा", "BSP": "बसपा", "AITC": "टीएमसी", "RJD": "राजद", "JD(U)": "जदयू", "DMK": "डीएमके",
+    "ADMK": "एआईएडीएमके", "TVK": "टीवीके", "AAP": "आप", "AAAP": "आप", "DMDK": "डीएमडीके", "AJUP": "एजेयूपी", "AISF": "एआईएसएफ", "JLKM": "जेएलकेएम", "MNM": "एमएनएम", "AIFB": "फ़ॉरवर्ड ब्लॉक", "RSP": "आरएसपी", "CPI(M)": "माकपा", "CPI": "भाकपा", "CPI(ML)(L)": "भाकपा (माले)", "JMM": "झामुमो",
+    "SHS": "शिवसेना", "SHSUBT": "शिवसेना (UBT)", "NCP": "एनसीपी", "NCPSP": "एनसीपी (SP)", "LJPRV": "लोजपा (रा)", "IUML": "आईयूएमएल",
+    "AIMIM": "एआईएमआईएम", "TDP": "टीडीपी", "YSRCP": "वाईएसआरसीपी", "BJD": "बीजद", "BRS": "बीआरएस", "IND": "निर्दलीय", "AGP": "अगप",
+    "AINRC": "एनआर कांग्रेस", "HAMS": "हम", "RSHTLKM": "रालोमो", "JKN": "नेशनल कॉन्फ़्रेंस", "JKNC": "नेशनल कॉन्फ़्रेंस", "RLD": "रालोद", "PMK": "पीएमके",
+    "VCK": "वीसीके", "KEC": "केरल कांग्रेस", "BOPF": "बीपीएफ", "UPPL": "यूपीपीएल", "AIUDF": "एआईयूडीएफ", "JSP": "जनसेना", "JD(S)": "जदएस",
+    "ADAL": "अपना दल (एस)", "SBSP": "सुभासपा", "NISHAD": "निषाद पार्टी", "VIP": "वीआईपी", "SAD": "अकाली दल", "AJSUP": "आजसू", "NPP": "एनपीपी",
+    "SKM": "एसकेएम", "Others": "अन्य"
+  },
+  "party_color": {
+    "BJP": "#FF9933", "INC": "#26A69A", "SP": "#D32F2F", "BSP": "#3949AB", "AITC": "#2E7D32", "RJD": "#00897B", "JD(U)": "#1565C0",
+    "DMK": "#C62828", "ADMK": "#43A047", "TVK": "#F9A825", "AAP": "#0277BD", "AAAP": "#0277BD", "AIUDF": "#00796B", "BOPF": "#5D4037", "UPPL": "#8E24AA", "SAD": "#F9A825", "SHS(UBT)": "#EF6C00", "VCK": "#4527A0", "IUML(K)": "#00695C", "KEC": "#2E7D32", "PMK": "#FBC02D", "CPI(M)": "#B71C1C", "CPI": "#E53935", "CPI(ML)(L)": "#8E0000",
+    "JMM": "#1B5E20", "SHS": "#F57C00", "SHSUBT": "#EF6C00", "NCP": "#0D47A1", "NCPSP": "#283593", "LJPRV": "#6A1B9A", "IUML": "#00695C",
+    "AIMIM": "#2E7D32", "TDP": "#FBC02D", "YSRCP": "#1976D2", "BJD": "#388E3C", "BRS": "#EC407A", "IND": "#757575", "AGP": "#00838F",
+    "AINRC": "#5E35B1", "HAMS": "#7B1FA2", "JKN": "#C62828", "JKNC": "#C62828", "Others": "#616161"
+  },
+  "news_searches": {
+    "_about": "Extra Google News searches the Media Room collector reads every 15 min, so election types with no official live feed (local bodies, panchayat, councils) still have news. Headlines only.",
+    "local-hi": "नगर निगम चुनाव OR नगर निकाय चुनाव OR नगर पालिका चुनाव परिणाम",
+    "local-en": "municipal election results OR civic polls results OR mayor election",
+    "panchayat-hi": "पंचायत चुनाव परिणाम OR जिला पंचायत चुनाव OR प्रधान चुनाव",
+    "panchayat-en": "panchayat election results OR panchayat polls",
+    "bye-hi": "उपचुनाव परिणाम OR उपचुनाव मतगणना",
+    "bye-en": "bypoll results OR by-election counting",
+    "council-hi": "राज्यसभा चुनाव OR विधान परिषद चुनाव",
+    "council-en": "Rajya Sabha election OR MLC election results"
+  },
+  "cities": {
+    "Uttar Pradesh": [["Lucknow", "लखनऊ"], ["Varanasi", "वाराणसी"], ["Kanpur", "कानपुर"], ["Prayagraj", "प्रयागराज"], ["Ayodhya", "अयोध्या"], ["Gorakhpur", "गोरखपुर"], ["Noida", "नोएडा"], ["Ghaziabad", "गाजियाबाद"], ["Meerut", "मेरठ"], ["Agra", "आगरा"], ["Bareilly", "बरेली"], ["Aligarh", "अलीगढ़"]],
+    "Bihar": [["Patna", "पटना"], ["Muzaffarpur", "मुजफ्फरपुर"], ["Bhagalpur", "भागलपुर"], ["Gaya", "गया"], ["Darbhanga", "दरभंगा"]],
+    "Maharashtra": [["Mumbai", "मुंबई"], ["Pune", "पुणे"], ["Nagpur", "नागपुर"], ["Thane", "ठाणे"], ["Nashik", "नासिक"]],
+    "Madhya Pradesh": [["Bhopal", "भोपाल"], ["Indore", "इंदौर"], ["Gwalior", "ग्वालियर"], ["Jabalpur", "जबलपुर"], ["Ujjain", "उज्जैन"]],
+    "Rajasthan": [["Jaipur", "जयपुर"], ["Jodhpur", "जोधपुर"], ["Udaipur", "उदयपुर"], ["Kota", "कोटा"], ["Ajmer", "अजमेर"]],
+    "Gujarat": [["Ahmedabad", "अहमदाबाद"], ["Surat", "सूरत"], ["Vadodara", "वडोदरा"], ["Rajkot", "राजकोट"], ["Gandhinagar", "गांधीनगर"]],
+    "West Bengal": [["Kolkata", "कोलकाता"], ["Howrah", "हावड़ा"], ["Siliguri", "सिलीगुड़ी"], ["Durgapur", "दुर्गापुर"]],
+    "Delhi": [["New Delhi", "नई दिल्ली"]],
+    "Haryana": [["Gurugram", "गुरुग्राम"], ["Faridabad", "फरीदाबाद"], ["Rohtak", "रोहतक"], ["Hisar", "हिसार"]],
+    "Punjab": [["Amritsar", "अमृतसर"], ["Ludhiana", "लुधियाना"], ["Jalandhar", "जालंधर"], ["Patiala", "पटियाला"]],
+    "Uttarakhand": [["Dehradun", "देहरादून"], ["Haridwar", "हरिद्वार"], ["Haldwani", "हल्द्वानी"]],
+    "Jharkhand": [["Ranchi", "रांची"], ["Jamshedpur", "जमशेदपुर"], ["Dhanbad", "धनबाद"]],
+    "Chhattisgarh": [["Raipur", "रायपुर"], ["Bilaspur", "बिलासपुर"], ["Durg", "दुर्ग"]],
+    "Karnataka": [["Bengaluru", "बेंगलुरु"], ["Mysuru", "मैसूर"], ["Hubballi", "हुबली"]],
+    "Tamil Nadu": [["Chennai", "चेन्नई"], ["Madurai", "मदुरै"], ["Coimbatore", "कोयंबटूर"]],
+    "Telangana": [["Hyderabad", "हैदराबाद"]],
+    "Kerala": [["Thiruvananthapuram", "तिरुवनंतपुरम"], ["Kochi", "कोच्चि"]],
+    "Odisha": [["Bhubaneswar", "भुवनेश्वर"], ["Cuttack", "कटक"]],
+    "Assam": [["Guwahati", "गुवाहाटी"]]
+  },
+  "faces": {
+    "_about": "Big faces to follow on counting day: the name as ECI writes it (all words must match), by state. Keep each list short.",
+    "Bihar": ["TEJASHWI PRASAD YADAV", "SAMRAT CHOUDHARY", "VIJAY KUMAR SINHA", "MAITHILI THAKUR", "TEJ PRATAP YADAV", "ANANT KUMAR SINGH", "SHREYASI SINGH"],
+    "Uttar Pradesh": ["YOGI ADITYANATH", "KESHAV PRASAD MAURYA", "BRAJESH PATHAK", "AKHILESH YADAV", "SHIVPAL SINGH YADAV", "AZAM KHAN"],
+    "West Bengal": ["SUVENDU ADHIKARI", "MAMATA BANERJEE", "SAMIK BHATTACHARYA"],
+    "Tamil Nadu": ["VIJAY", "M.K.STALIN", "UDHAYANIDHI STALIN", "EDAPPADI K. PALANISWAMI", "K. ANNAMALAI"],
+    "Kerala": ["PINARAYI VIJAYAN", "V.D.SATHEESAN", "RAMESH CHENNITHALA"],
+    "Assam": ["HIMANTA BISWA SARMA", "GAURAV GOGOI"],
+    "Punjab": ["BHAGWANT MANN", "PARTAP SINGH BAJWA", "SUKHBIR SINGH BADAL"],
+    "Uttarakhand": ["PUSHKAR SINGH DHAMI", "HARISH RAWAT"],
+    "Goa": ["PRAMOD SAWANT"],
+    "Delhi": ["ARVIND KEJRIWAL", "ATISHI", "PARVESH SAHIB SINGH", "MANISH SISODIA"]
+  }
+}

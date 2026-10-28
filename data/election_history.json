@@ -1,0 +1,887 @@
+{
+ "builtAt": "2026-10-28T12:31:17.486Z",
+ "source": "ECI results.eci.gov.in, archived copies (web.archive.org)",
+ "results": [
+  {
+   "folder": "ResultAcGenMay2026",
+   "type": "vs",
+   "date": "2026-05-04",
+   "en": "Assembly elections, May 2026",
+   "hi": "विधानसभा चुनाव, मई 2026",
+   "state": "Assam",
+   "seats": 126,
+   "parties": [
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 82
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 19
+    },
+    {
+     "name": "Bodoland Peoples Front",
+     "abbr": "BOPF",
+     "won": 10
+    },
+    {
+     "name": "Asom Gana Parishad",
+     "abbr": "AGP",
+     "won": 10
+    },
+    {
+     "name": "All India United Democratic Front",
+     "abbr": "AIUDF",
+     "won": 2
+    },
+    {
+     "name": "Raijor Dal",
+     "abbr": "RJRD",
+     "won": 2
+    },
+    {
+     "name": "All India Trinamool Congress",
+     "abbr": "AITC",
+     "won": 1
+    }
+   ],
+   "at": "20260512025830"
+  },
+  {
+   "folder": "ResultAcGenMay2026",
+   "type": "vs",
+   "date": "2026-05-04",
+   "en": "Assembly elections, May 2026",
+   "hi": "विधानसभा चुनाव, मई 2026",
+   "state": "Kerala",
+   "seats": 140,
+   "parties": [
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 63
+    },
+    {
+     "name": "Communist Party of India (Marxist)",
+     "abbr": "CPI(M)",
+     "won": 26
+    },
+    {
+     "name": "Indian Union Muslim League",
+     "abbr": "IUML",
+     "won": 22
+    },
+    {
+     "name": "Communist Party of India",
+     "abbr": "CPI",
+     "won": 8
+    },
+    {
+     "name": "Kerala Congress",
+     "abbr": "KEC",
+     "won": 7
+    },
+    {
+     "name": "Revolutionary Socialist Party",
+     "abbr": "RSP",
+     "won": 3
+    },
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 3
+    },
+    {
+     "name": "Rashtriya Janata Dal",
+     "abbr": "RJD",
+     "won": 1
+    },
+    {
+     "name": "Revolutionary Marxist Party of India",
+     "abbr": "RMPOI",
+     "won": 1
+    },
+    {
+     "name": "Kerala Congress (Jacob)",
+     "abbr": "KEC(J)",
+     "won": 1
+    },
+    {
+     "name": "Communist Marxist Party Kerala State Committee",
+     "abbr": "CMPKSC",
+     "won": 1
+    },
+    {
+     "name": "Independent",
+     "abbr": "IND",
+     "won": 4
+    }
+   ],
+   "at": "20260518035243"
+  },
+  {
+   "folder": "ResultAcGenMay2026",
+   "type": "vs",
+   "date": "2026-05-04",
+   "en": "Assembly elections, May 2026",
+   "hi": "विधानसभा चुनाव, मई 2026",
+   "state": "Tamil Nadu",
+   "seats": 234,
+   "parties": [
+    {
+     "name": "Tamilaga Vettri Kazhagam",
+     "abbr": "TVK",
+     "won": 108
+    },
+    {
+     "name": "Dravida Munnetra Kazhagam",
+     "abbr": "DMK",
+     "won": 59
+    },
+    {
+     "name": "All India Anna Dravida Munnetra Kazhagam",
+     "abbr": "ADMK",
+     "won": 47
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 5
+    },
+    {
+     "name": "Pattali Makkal Katchi",
+     "abbr": "PMK",
+     "won": 4
+    },
+    {
+     "name": "Indian Union Muslim League",
+     "abbr": "IUML",
+     "won": 2
+    },
+    {
+     "name": "Communist Party of India",
+     "abbr": "CPI",
+     "won": 2
+    },
+    {
+     "name": "Viduthalai Chiruthaigal Katchi",
+     "abbr": "VCK",
+     "won": 2
+    },
+    {
+     "name": "Communist Party of India (Marxist)",
+     "abbr": "CPI(M)",
+     "won": 2
+    },
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 1
+    },
+    {
+     "name": "Desiya Murpokku Dravida Kazhagam",
+     "abbr": "DMDK",
+     "won": 1
+    },
+    {
+     "name": "Amma Makkal Munnettra Kazagam",
+     "abbr": "AMMKMNKZ",
+     "won": 1
+    }
+   ],
+   "at": "20260816115156"
+  },
+  {
+   "folder": "ResultAcGenMay2026",
+   "type": "vs",
+   "date": "2026-05-04",
+   "en": "Assembly elections, May 2026",
+   "hi": "विधानसभा चुनाव, मई 2026",
+   "state": "West Bengal",
+   "seats": 293,
+   "parties": [
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 207
+    },
+    {
+     "name": "All India Trinamool Congress",
+     "abbr": "AITC",
+     "won": 80
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 2
+    },
+    {
+     "name": "Aam Janata Unnayan party",
+     "abbr": "AJUP",
+     "won": 2
+    },
+    {
+     "name": "Communist Party of India (Marxist)",
+     "abbr": "CPI(M)",
+     "won": 1
+    },
+    {
+     "name": "All India Secular Front",
+     "abbr": "AISF",
+     "won": 1
+    }
+   ],
+   "at": "20260710112353"
+  },
+  {
+   "folder": "ResultAcGenMay2026",
+   "type": "vs",
+   "date": "2026-05-04",
+   "en": "Assembly elections, May 2026",
+   "hi": "विधानसभा चुनाव, मई 2026",
+   "state": "Puducherry",
+   "seats": 30,
+   "parties": [
+    {
+     "name": "All India N.R. Congress",
+     "abbr": "AINRC",
+     "won": 12
+    },
+    {
+     "name": "Dravida Munnetra Kazhagam",
+     "abbr": "DMK",
+     "won": 5
+    },
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 4
+    },
+    {
+     "name": "Tamilaga Vettri Kazhagam",
+     "abbr": "TVK",
+     "won": 2
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 1
+    },
+    {
+     "name": "Latchiya Jananayaka Katchi (LJK)",
+     "abbr": "LJK",
+     "won": 1
+    },
+    {
+     "name": "All India Anna Dravida Munnetra Kazhagam",
+     "abbr": "ADMK",
+     "won": 1
+    },
+    {
+     "name": "Neyam Makkal Kazhagam",
+     "abbr": "NYMK",
+     "won": 1
+    },
+    {
+     "name": "Independent",
+     "abbr": "IND",
+     "won": 3
+    }
+   ],
+   "at": "20260512031116"
+  },
+  {
+   "folder": "ResultAcGenNov2025",
+   "type": "vs",
+   "date": "2025-11-14",
+   "en": "Bihar assembly election 2025",
+   "hi": "बिहार विधानसभा चुनाव 2025",
+   "state": "Bihar",
+   "seats": 243,
+   "parties": [
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 89
+    },
+    {
+     "name": "Janata Dal (United)",
+     "abbr": "JD(U)",
+     "won": 85
+    },
+    {
+     "name": "Rashtriya Janata Dal",
+     "abbr": "RJD",
+     "won": 25
+    },
+    {
+     "name": "Lok Janshakti Party (Ram Vilas)",
+     "abbr": "LJPRV",
+     "won": 19
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 6
+    },
+    {
+     "name": "All India Majlis-E-Ittehadul Muslimeen",
+     "abbr": "AIMIM",
+     "won": 5
+    },
+    {
+     "name": "Hindustani Awam Morcha (Secular)",
+     "abbr": "HAMS",
+     "won": 5
+    },
+    {
+     "name": "Rashtriya Lok Morcha",
+     "abbr": "RSHTLKM",
+     "won": 4
+    },
+    {
+     "name": "Communist Party of India (Marxist-Leninist) (Liberation)",
+     "abbr": "CPI(ML)(L)",
+     "won": 2
+    },
+    {
+     "name": "Indian Inclusive Party",
+     "abbr": "IIP",
+     "won": 1
+    },
+    {
+     "name": "Communist Party of India (Marxist)",
+     "abbr": "CPI(M)",
+     "won": 1
+    },
+    {
+     "name": "Bahujan Samaj Party",
+     "abbr": "BSP",
+     "won": 1
+    }
+   ],
+   "at": "20260410213943"
+  },
+  {
+   "folder": "ResultAcGenNov2024",
+   "type": "vs",
+   "date": "2024-11-23",
+   "en": "Assembly elections, Nov 2024",
+   "hi": "विधानसभा चुनाव, नवंबर 2024",
+   "state": "Maharashtra",
+   "seats": 288,
+   "parties": [
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 132
+    },
+    {
+     "name": "Shiv Sena",
+     "abbr": "SHS",
+     "won": 57
+    },
+    {
+     "name": "Nationalist Congress Party",
+     "abbr": "NCP",
+     "won": 41
+    },
+    {
+     "name": "Shiv Sena (Uddhav Balasaheb Thackeray)",
+     "abbr": "SHSUBT",
+     "won": 20
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 16
+    },
+    {
+     "name": "Nationalist Congress Party – Sharadchandra Pawar",
+     "abbr": "NCPSP",
+     "won": 10
+    },
+    {
+     "name": "Samajwadi Party",
+     "abbr": "SP",
+     "won": 2
+    },
+    {
+     "name": "Jan Surajya Shakti",
+     "abbr": "JSS",
+     "won": 2
+    },
+    {
+     "name": "Rashtriya Yuva Swabhiman Party",
+     "abbr": "RSHYVSWBHM",
+     "won": 1
+    },
+    {
+     "name": "Rashtriya Samaj Paksha",
+     "abbr": "RSPS",
+     "won": 1
+    },
+    {
+     "name": "All India Majlis-E-Ittehadul Muslimeen",
+     "abbr": "AIMIM",
+     "won": 1
+    },
+    {
+     "name": "Communist Party of India (Marxist)",
+     "abbr": "CPI(M)",
+     "won": 1
+    },
+    {
+     "name": "Peasants And Workers Party of India",
+     "abbr": "PWPI",
+     "won": 1
+    },
+    {
+     "name": "Rajarshi Shahu Vikas Aghadi",
+     "abbr": "RSVA",
+     "won": 1
+    },
+    {
+     "name": "Independent",
+     "abbr": "IND",
+     "won": 2
+    }
+   ],
+   "at": "20251106194823"
+  },
+  {
+   "folder": "ResultAcGenNov2024",
+   "type": "vs",
+   "date": "2024-11-23",
+   "en": "Assembly elections, Nov 2024",
+   "hi": "विधानसभा चुनाव, नवंबर 2024",
+   "state": "Jharkhand",
+   "seats": 81,
+   "parties": [
+    {
+     "name": "Jharkhand Mukti Morcha",
+     "abbr": "JMM",
+     "won": 34
+    },
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 21
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 16
+    },
+    {
+     "name": "Rashtriya Janata Dal",
+     "abbr": "RJD",
+     "won": 4
+    },
+    {
+     "name": "Communist Party of India (Marxist-Leninist) (Liberation)",
+     "abbr": "CPI(ML)(L)",
+     "won": 2
+    },
+    {
+     "name": "AJSU Party",
+     "abbr": "AJSUP",
+     "won": 1
+    },
+    {
+     "name": "Lok Janshakti Party(Ram Vilas)",
+     "abbr": "LJPRV",
+     "won": 1
+    },
+    {
+     "name": "Jharkhand Loktantrik Krantikari Morcha",
+     "abbr": "JLKM",
+     "won": 1
+    },
+    {
+     "name": "Janata Dal (United)",
+     "abbr": "JD(U)",
+     "won": 1
+    }
+   ],
+   "at": "20251106194825"
+  },
+  {
+   "folder": "AcResultGenOct2024",
+   "type": "vs",
+   "date": "2024-10-08",
+   "en": "Assembly elections, Oct 2024",
+   "hi": "विधानसभा चुनाव, अक्टूबर 2024",
+   "state": "Haryana",
+   "seats": 90,
+   "parties": [
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 48
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 37
+    },
+    {
+     "name": "Indian National Lok Dal",
+     "abbr": "INLD",
+     "won": 2
+    },
+    {
+     "name": "Independent",
+     "abbr": "IND",
+     "won": 3
+    }
+   ],
+   "at": "20251106201611"
+  },
+  {
+   "folder": "AcResultGenOct2024",
+   "type": "vs",
+   "date": "2024-10-08",
+   "en": "Assembly elections, Oct 2024",
+   "hi": "विधानसभा चुनाव, अक्टूबर 2024",
+   "state": "Jammu and Kashmir",
+   "seats": 90,
+   "parties": [
+    {
+     "name": "Jammu & Kashmir National Conference",
+     "abbr": "JKN",
+     "won": 42
+    },
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 29
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 6
+    },
+    {
+     "name": "Jammu & Kashmir Peoples Democratic Party",
+     "abbr": "JKPDP",
+     "won": 3
+    },
+    {
+     "name": "Jammu & Kashmir People Conference",
+     "abbr": "JPC",
+     "won": 1
+    },
+    {
+     "name": "Communist Party of India (Marxist)",
+     "abbr": "CPI(M)",
+     "won": 1
+    },
+    {
+     "name": "Aam Aadmi Party",
+     "abbr": "AAAP",
+     "won": 1
+    },
+    {
+     "name": "Independent",
+     "abbr": "IND",
+     "won": 7
+    }
+   ],
+   "at": "20251106201606"
+  },
+  {
+   "folder": "AcResultGenJune2024",
+   "type": "vs",
+   "date": "2024-06-04",
+   "en": "Assembly elections, June 2024",
+   "hi": "विधानसभा चुनाव, जून 2024",
+   "state": "Andhra Pradesh",
+   "seats": 175,
+   "parties": [
+    {
+     "name": "Telugu Desam",
+     "abbr": "TDP",
+     "won": 135
+    },
+    {
+     "name": "Janasena Party",
+     "abbr": "JnP",
+     "won": 21
+    },
+    {
+     "name": "Yuvajana Sramika Rythu Congress Party",
+     "abbr": "YSRCP",
+     "won": 11
+    },
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 8
+    }
+   ],
+   "at": "20251106202150"
+  },
+  {
+   "folder": "AcResultGenJune2024",
+   "type": "vs",
+   "date": "2024-06-04",
+   "en": "Assembly elections, June 2024",
+   "hi": "विधानसभा चुनाव, जून 2024",
+   "state": "Odisha",
+   "seats": 147,
+   "parties": [
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 78
+    },
+    {
+     "name": "Biju Janata Dal",
+     "abbr": "BJD",
+     "won": 51
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 14
+    },
+    {
+     "name": "Communist Party of India (Marxist)",
+     "abbr": "CPI(M)",
+     "won": 1
+    },
+    {
+     "name": "Independent",
+     "abbr": "IND",
+     "won": 3
+    }
+   ],
+   "at": "20251106202147"
+  },
+  {
+   "folder": "PcResultGenJune2024",
+   "type": "ls",
+   "date": "2024-06-04",
+   "en": "Lok Sabha election 2024",
+   "hi": "लोकसभा चुनाव 2024",
+   "state": null,
+   "seats": 543,
+   "parties": [
+    {
+     "name": "Bharatiya Janata Party",
+     "abbr": "BJP",
+     "won": 240
+    },
+    {
+     "name": "Indian National Congress",
+     "abbr": "INC",
+     "won": 99
+    },
+    {
+     "name": "Samajwadi Party",
+     "abbr": "SP",
+     "won": 37
+    },
+    {
+     "name": "All India Trinamool Congress",
+     "abbr": "AITC",
+     "won": 29
+    },
+    {
+     "name": "Dravida Munnetra Kazhagam",
+     "abbr": "DMK",
+     "won": 22
+    },
+    {
+     "name": "Telugu Desam",
+     "abbr": "TDP",
+     "won": 16
+    },
+    {
+     "name": "Janata Dal (United)",
+     "abbr": "JD(U)",
+     "won": 12
+    },
+    {
+     "name": "Shiv Sena (Uddhav Balasaheb Thackrey)",
+     "abbr": "SHSUBT",
+     "won": 9
+    },
+    {
+     "name": "Nationalist Congress Party – Sharadchandra Pawar",
+     "abbr": "NCPSP",
+     "won": 8
+    },
+    {
+     "name": "Shiv Sena",
+     "abbr": "SHS",
+     "won": 7
+    },
+    {
+     "name": "Lok Janshakti Party(Ram Vilas)",
+     "abbr": "LJPRV",
+     "won": 5
+    },
+    {
+     "name": "Yuvajana Sramika Rythu Congress Party",
+     "abbr": "YSRCP",
+     "won": 4
+    },
+    {
+     "name": "Rashtriya Janata Dal",
+     "abbr": "RJD",
+     "won": 4
+    },
+    {
+     "name": "Communist Party of India (Marxist)",
+     "abbr": "CPI(M)",
+     "won": 4
+    },
+    {
+     "name": "Indian Union Muslim League",
+     "abbr": "IUML",
+     "won": 3
+    },
+    {
+     "name": "Aam Aadmi Party",
+     "abbr": "AAAP",
+     "won": 3
+    },
+    {
+     "name": "Jharkhand Mukti Morcha",
+     "abbr": "JMM",
+     "won": 3
+    },
+    {
+     "name": "Janasena Party",
+     "abbr": "JnP",
+     "won": 2
+    },
+    {
+     "name": "Communist Party of India (Marxist-Leninist) (Liberation)",
+     "abbr": "CPI(ML)(L)",
+     "won": 2
+    },
+    {
+     "name": "Janata Dal (Secular)",
+     "abbr": "JD(S)",
+     "won": 2
+    },
+    {
+     "name": "Viduthalai Chiruthaigal Katchi",
+     "abbr": "VCK",
+     "won": 2
+    },
+    {
+     "name": "Communist Party of India",
+     "abbr": "CPI",
+     "won": 2
+    },
+    {
+     "name": "Rashtriya Lok Dal",
+     "abbr": "RLD",
+     "won": 2
+    },
+    {
+     "name": "Jammu & Kashmir National Conference",
+     "abbr": "JKN",
+     "won": 2
+    },
+    {
+     "name": "United People’s Party, Liberal",
+     "abbr": "UPPL",
+     "won": 1
+    },
+    {
+     "name": "Asom Gana Parishad",
+     "abbr": "AGP",
+     "won": 1
+    },
+    {
+     "name": "Hindustani Awam Morcha (Secular)",
+     "abbr": "HAMS",
+     "won": 1
+    },
+    {
+     "name": "Kerala Congress",
+     "abbr": "KEC",
+     "won": 1
+    },
+    {
+     "name": "Revolutionary Socialist Party",
+     "abbr": "RSP",
+     "won": 1
+    },
+    {
+     "name": "Nationalist Congress Party",
+     "abbr": "NCP",
+     "won": 1
+    },
+    {
+     "name": "Voice of the People Party",
+     "abbr": "VOTPP",
+     "won": 1
+    },
+    {
+     "name": "Zoram People’s Movement",
+     "abbr": "ZPM",
+     "won": 1
+    },
+    {
+     "name": "Shiromani Akali Dal",
+     "abbr": "SAD",
+     "won": 1
+    },
+    {
+     "name": "Rashtriya Loktantrik Party",
+     "abbr": "RLTP",
+     "won": 1
+    },
+    {
+     "name": "Bharat Adivasi Party",
+     "abbr": "BHRTADVSIP",
+     "won": 1
+    },
+    {
+     "name": "Sikkim Krantikari Morcha",
+     "abbr": "SKM",
+     "won": 1
+    },
+    {
+     "name": "Marumalarchi Dravida Munnetra Kazhagam",
+     "abbr": "MDMK",
+     "won": 1
+    },
+    {
+     "name": "Aazad Samaj Party (Kanshi Ram)",
+     "abbr": "ASPKR",
+     "won": 1
+    },
+    {
+     "name": "Apna Dal (Soneylal)",
+     "abbr": "ADAL",
+     "won": 1
+    },
+    {
+     "name": "AJSU Party",
+     "abbr": "AJSUP",
+     "won": 1
+    },
+    {
+     "name": "All India Majlis-E-Ittehadul Muslimeen",
+     "abbr": "AIMIM",
+     "won": 1
+    },
+    {
+     "name": "Independent",
+     "abbr": "IND",
+     "won": 7
+    }
+   ],
+   "at": "20251106190917"
+  }
+ ]
+}

@@ -817,6 +817,112 @@ body.reduced .mr-dot{animation:none}
 .mrp-x:focus{outline:none;box-shadow:0 0 0 .2rem #fff}
 .mrp-hint{font-size:1.05rem;color:var(--dim);line-height:1.4}
 body.mr .banner.proto{display:none}          /* the recorded-data strip is about the CSV, not the live news */
+
+/* ======================= Election Room ======================= */
+/* status badge next to the screen title: LIVE / FINAL / OLD / DEMO */
+.er-b{display:inline-block;vertical-align:.7rem;margin-left:1.2rem;height:2.8rem;line-height:2.8rem;padding:0 1rem;border-radius:.6rem;font-family:var(--head),var(--deva);font-size:1.3rem;font-weight:700;letter-spacing:.06rem;white-space:nowrap}
+.er-b.live{background:#D50000;color:#fff;box-shadow:0 0 1.6rem rgba(213,0,0,.5)}
+.er-b.live i{display:inline-block;width:.8rem;height:.8rem;border-radius:50%;background:#fff;margin-right:.6rem;vertical-align:.1rem;-webkit-animation:erBlink 1.2s ease-in-out infinite;animation:erBlink 1.2s ease-in-out infinite}
+.er-b.final{background:rgba(123,211,137,.16);color:var(--good);border:.08rem solid rgba(123,211,137,.5)}
+.er-b.old{background:rgba(255,255,255,.08);color:var(--muted);border:.08rem solid var(--line)}
+.er-b.demo{background:#6A1B9A;color:#fff}
+.er-b.stalled{background:rgba(255,183,77,.18);color:var(--amber);border:.08rem solid rgba(255,183,77,.5)}
+@-webkit-keyframes erBlink{50%{opacity:.25}} @keyframes erBlink{50%{opacity:.25}}
+.er-up{color:var(--good)} .er-dn{color:#FF6B5B}
+.er-d{display:inline-block;margin-left:.6rem;padding:0 .6rem;border-radius:1rem;font-family:var(--head);font-size:1.2rem;font-weight:700;line-height:2rem;vertical-align:middle}
+.er-d.up{background:rgba(123,211,137,.18);color:var(--good)} .er-d.dn{background:rgba(255,107,91,.18);color:#FF6B5B}
+.er-glass{background:var(--glass);border:.08rem solid var(--line);border-radius:1.6rem;box-shadow:0 1.6rem 3rem rgba(0,0,0,.35)}
+/* seat tally: arc + alliances left, parties right */
+.er-t{height:100%;display:flex;align-items:stretch}
+.er-l{flex:0 0 44%;min-width:0;margin-right:1.6rem;display:flex;flex-direction:column;padding:1.6rem 2rem}
+.er-arc{position:relative;width:100%;max-width:33rem;margin:0 auto}
+.er-arc svg{display:block;width:100%;height:auto}
+.er-arc .c{position:absolute;left:0;right:0;bottom:0;text-align:center;line-height:1.1}
+.er-arc .c b{display:block;font-family:var(--head);font-weight:700;font-size:3.6rem}
+.er-arc .c span{font-size:1.2rem;color:var(--muted)}
+.er-als{margin-top:1rem;flex:1 1 auto;min-height:0;overflow:hidden}
+.er-al{display:flex;align-items:center;padding:.7rem 1.2rem;border-radius:1.1rem;background:rgba(255,255,255,.05);border-left:.6rem solid #888;margin-top:.6rem}
+.er-al .nm{flex:1 1 auto;min-width:0;font-family:var(--deva);font-weight:800;font-size:1.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.er-al .nm small{display:block;font-family:var(--body);font-weight:500;font-size:1.1rem;color:var(--dim)}
+.er-al .n{font-family:var(--head);font-weight:700;font-size:3.6rem;line-height:1}
+.er-al.win{background:linear-gradient(90deg,rgba(255,153,51,.22),rgba(255,153,51,.04));box-shadow:0 0 0 .1rem rgba(255,200,87,.5)}
+.er-al .mj{display:inline-block;margin-left:.6rem;font-size:1rem;font-weight:700;color:#1b0700;background:var(--gold);border-radius:.4rem;padding:0 .4rem;vertical-align:.25rem}
+.er-r{flex:1 1 auto;min-width:0;padding:1.4rem 1.8rem;display:flex;flex-direction:column}
+.er-rh{display:flex;font-size:1.1rem;color:var(--dim);font-weight:700;letter-spacing:.06rem;text-transform:uppercase;padding:0 1rem .6rem;border-bottom:.08rem solid var(--line)}
+.er-rh span,.er-p .v{flex:0 0 6.4rem;text-align:right}
+.er-rh span:first-child{flex:1 1 auto;text-align:left}
+.er-p{display:flex;align-items:center;padding:.75rem 1rem;border-bottom:.08rem solid rgba(255,255,255,.06);position:relative}
+.er-p .nm{flex:1 1 auto;min-width:0;display:flex;align-items:center;font-weight:700;font-size:1.6rem;position:relative;z-index:1}
+.er-p .nm i{width:1.3rem;height:1.3rem;border-radius:.3rem;margin-right:.9rem;flex:0 0 auto}
+.er-p .nm em{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.er-p .bar{position:absolute;left:0;top:.3rem;bottom:.3rem;border-radius:.5rem;opacity:.16}
+.er-p .v{font-family:var(--head);font-weight:700;font-size:1.8rem;position:relative;z-index:1}
+.er-p .v.t{font-size:2.2rem}
+.er-p .v.d{flex-basis:7.4rem}
+.er-flips{margin-top:auto;padding-top:1rem;font-size:1.3rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.er-flips b{color:#fff;background:#D50000;border-radius:.4rem;padding:0 .5rem;margin-right:.6rem}
+/* cards: close fights, big faces, declared, by-elections, past */
+.er-g{display:grid;grid-template-columns:repeat(4,1fr);grid-gap:1.2rem;height:100%;align-content:start}
+.er-g.c3{grid-template-columns:repeat(3,1fr)} .er-g.c2{grid-template-columns:repeat(2,1fr)}
+.er-c{padding:1.3rem 1.5rem;min-width:0;position:relative;overflow:hidden}
+.er-c .hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:.7rem}
+.er-c .hd b{font-family:var(--deva);font-weight:800;font-size:1.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.er-c .hd span{flex:0 0 auto;margin-left:.8rem;font-size:1.1rem;color:var(--dim)}
+.er-ln{display:flex;align-items:center;margin-top:.45rem;min-width:0}
+.er-ln i{width:1rem;height:1rem;border-radius:50%;margin-right:.7rem;flex:0 0 auto}
+.er-ln em{font-style:normal;font-weight:700;font-size:1.4rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1 1 auto;min-width:0}
+.er-ln small{flex:0 0 auto;margin-left:.6rem;font-size:1.15rem;font-weight:700;color:var(--muted)}
+.er-ln.lo em{font-weight:500;color:var(--muted)}
+.er-mg{margin-top:.8rem;font-family:var(--head);font-weight:700;font-size:2.2rem;color:var(--gold)}
+.er-mg small{font-family:var(--body);font-size:1.1rem;color:var(--dim);font-weight:500;margin-left:.4rem}
+.er-flip{position:absolute;top:1rem;right:1rem;background:#D50000;color:#fff;font-size:1.05rem;font-weight:700;border-radius:.4rem;padding:.1rem .6rem}
+.er-st{display:inline-block;font-size:1.1rem;font-weight:700;border-radius:.4rem;padding:.1rem .6rem;margin-top:.6rem}
+.er-st.won{background:rgba(123,211,137,.2);color:var(--good)} .er-st.lead{background:rgba(255,200,87,.18);color:var(--gold)}
+.er-st.trail{background:rgba(255,183,77,.15);color:var(--amber)} .er-st.lost{background:rgba(255,107,91,.18);color:#FF6B5B}
+.er-face{display:flex;align-items:center}
+.er-face .av{width:5.4rem;height:5.4rem;font-size:1.8rem;border-width:.2rem;margin-right:1.1rem}
+.er-face .ph{width:5.4rem;height:5.4rem;border-radius:50%;object-fit:cover;margin-right:1.1rem;flex:0 0 auto;border:.2rem solid var(--gold);background:#3a1205}
+.er-face b{display:block;font-size:1.7rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.er-face span{display:block;font-size:1.15rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.er-face > div{min-width:0}
+/* past result card: mini bars */
+.er-pc .mb{display:flex;align-items:center;margin-top:.55rem}
+.er-pc .mb em{flex:0 0 9rem;font-style:normal;font-weight:700;font-size:1.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.er-pc .mb span{flex:1 1 auto;height:1.2rem;border-radius:.6rem;background:rgba(255,255,255,.07);overflow:hidden;margin:0 .8rem}
+.er-pc .mb span i{display:block;height:100%;border-radius:.6rem}
+.er-pc .mb b{flex:0 0 3.6rem;text-align:right;font-family:var(--head);font-size:1.6rem}
+.er-pc .wn{margin-top:.9rem;font-size:1.2rem;color:var(--gold);font-weight:700}
+.er-note{margin-top:1rem;font-size:1.1rem;color:var(--dim)}
+/* start screen: Media Room and Election Room side by side under the two cards */
+.ch-rooms{display:flex;width:106.4rem;max-width:100%;margin:1rem auto 0}
+.ch-rooms .ch-media{flex:1 1 0;width:auto;min-width:0;margin:0}
+.ch-rooms .ch-media + .ch-media{margin-left:1.2rem}
+.ch-rooms .ch-media{padding:.7rem 1.8rem}
+.ch-rooms .ch-media svg{width:3rem;height:3rem;margin-right:1.2rem}
+.ch-rooms .ch-media b{font-size:1.7rem}
+.ch-rooms .ch-media > div > span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-rooms .ch-media > div{min-width:0}
+.ch-rooms .ch-media b span{display:inline}
+.ch-rooms .ch-media b span.er-live{display:none}
+.ch-rooms .ch-media.live b span.er-live{display:inline-block}
+body.portrait .ch-rooms,body.phone .ch-rooms{display:block;width:auto}
+body.portrait .ch-rooms .ch-media + .ch-media,body.phone .ch-rooms .ch-media + .ch-media{margin:1rem 0 0}
+/* header: Back is the last, most visible button in the Election Room */
+.tbtn.er-back{border-color:rgba(255,200,87,.6);color:var(--gold)}
+/* start screen strip: under the Media Room's */
+.ch-media.ch-er svg{stroke:#FF8A65}
+.ch-media .er-live{display:none;margin-left:1rem;height:2.4rem;line-height:2.4rem;padding:0 .8rem;border-radius:.5rem;background:#D50000;color:#fff;font-size:1.1rem;font-weight:700;vertical-align:.2rem}
+.ch-media.live .er-live{display:inline-block}
+body.phone .er-t{display:block;height:auto} body.phone .er-l{margin:0 0 1rem} body.phone .er-g{grid-template-columns:1fr!important;height:auto}
+/* phone: the number columns narrow (fixed widths wider than the screen would zoom the whole page out) */
+.er-r,.er-l,.er-c{overflow:hidden}
+body.phone .er-r{padding:1rem} body.phone .er-l{padding:1.2rem}
+body.phone .er-rh span,body.phone .er-p .v{flex-basis:4.2rem;font-size:1.5rem} body.phone .er-p .v.t{font-size:1.7rem}
+body.phone .er-rh span{font-size:.95rem} body.phone .er-p .v.d,body.phone .er-rh span:last-child{flex-basis:5.4rem}
+body.phone .er-p{padding:.6rem .4rem} body.phone .er-p .nm{font-size:1.4rem}
+body.phone .er-d{font-size:1rem;padding:0 .4rem;margin-left:.3rem}
+body.phone .er-b{font-size:1.1rem;height:2.4rem;line-height:2.4rem;margin-left:.6rem}
+body.portrait .er-t{display:block;height:auto} body.portrait .er-l{margin:0 0 1rem} body.portrait .er-g{grid-template-columns:1fr 1fr;height:auto}
 /* start screen: the Media Room strip under the two cards */
 /* (the start screen is a little tighter so the strip fits under the cards on a 16:9 screen) */
 #chooser{padding-bottom:1.6rem} .ch-q{margin-top:.6rem} .ch-q h1{font-size:4rem}
@@ -1163,9 +1269,15 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       <div class="ch-hint" id="chHint"></div>
     </div>
   </div>
+  <div class="ch-rooms">
   <div class="ch-media" id="chMedia" tabindex="0" role="button">
     <svg viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="13" rx="2"/><path d="M8 21h8M12 17.5V21"/><path d="M6.5 9h7M6.5 12.5h11"/></svg>
     <div><b id="chMediaT"></b><span id="chMediaD"></span></div><i id="chMediaGo"></i>
+  </div>
+  <div class="ch-media ch-er" id="chElec" tabindex="0" role="button">
+    <svg viewBox="0 0 24 24"><rect x="3.5" y="10" width="17" height="10.5" rx="1.5"/><path d="M8 10V4.5h8V10"/><path d="M9.5 7.5l1.7 1.7 3.3-3.4"/><path d="M8 14h8"/></svg>
+    <div><b><span id="chElecT"></span><span class="er-live" id="chElecLive"></span></b><span id="chElecD"></span></div><i id="chElecGo"></i>
+  </div>
   </div>
   <div class="st-panel hidden" id="stPanel" role="dialog" aria-modal="true" aria-labelledby="stpTitle">
     <div class="st-box">
@@ -1189,6 +1301,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       <button class="tbtn" id="swBtn" type="button"></button>
       <button class="tbtn" id="langBtn" type="button">हिंदी</button>
       <button class="tbtn" id="backBtn" type="button">&#8592; <span id="backTxt">Dashboard</span></button>
+      <button class="tbtn er-back hidden" id="erBack" type="button">&#8592; <span id="erBackTxt"></span></button>
     </div>
   </header>
   <main id="stage" aria-live="polite">
@@ -1477,6 +1590,36 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   T.en.grpPol = 'Politics'; T.hi.grpPol = 'राजनीति';
   T.en.grpGov = 'Government & country'; T.hi.grpGov = 'शासन और देश';
   T.en.grpSrc = 'Sources'; T.hi.grpSrc = 'स्रोत';
+  /* Election Room */
+  var ER_T = {
+    erChT: ['Election Room', 'चुनाव कक्ष'], erChLive: ['COUNTING LIVE', 'मतगणना LIVE'],
+    erChD: ['Official results from the Election Commission — LIVE on counting day; past results and election news on other days', 'चुनाव आयोग के आधिकारिक नतीजे — मतगणना के दिन LIVE, बाक़ी दिन पिछले नतीजे और चुनावी ख़बरें'],
+    erBrand: ['Election Room · official results', 'चुनाव कक्ष · आधिकारिक नतीजे'], erBtn: ['Choose election', 'चुनाव चुनें'], erBack: ['Back', 'वापस'],
+    erTally: ['Seat tally', 'सीटों का हाल'], erClose: ['Close fights', 'कड़ी टक्कर'], erFaces: ['Big faces', 'बड़े चेहरे'], erDecl: ['Results declared', 'घोषित नतीजे'],
+    erBye: ['By-election results', 'उपचुनाव नतीजे'], erPast: ['Past results', 'पिछले नतीजे'], erNews: ['Election news', 'चुनावी ख़बरें'],
+    erLive: ['LIVE', 'LIVE'], erFinal: ['FINAL', 'अंतिम नतीजे'], erOld: ['OLD', 'पुराना'], erDemo: ['DEMO · practice', 'DEMO · अभ्यास'], erStalled: ['NO UPDATE', 'अपडेट रुका'],
+    erSrcLive: ['Election Commission (ECI) · updated {a}', 'चुनाव आयोग (ECI) · अपडेट {a}'], erSrcFinal: ['Election Commission (ECI) · final, {d}', 'चुनाव आयोग (ECI) · अंतिम, {d}'],
+    erSrcPast: ['Election Commission final results', 'चुनाव आयोग के अंतिम नतीजे'], erSrcDemo: ['Replay of real ECI data, Bihar 2025 · step {i} of {n}', 'बिहार 2025 के असली ECI आँकड़ों का रीप्ले · चरण {i} / {n}'],
+    erKnown: ['trends in {k} of {n} seats', '{n} में से {k} सीटों का रुझान'], erDeclN: ['{w} declared', '{w} घोषित'],
+    erMaj: ['Majority {m}', 'बहुमत {m}'], erSeats: ['{n} seats', '{n} सीटें'], erWon: ['Won', 'जीते'], erLead: ['Leading', 'आगे'], erTrail: ['Trailing', 'पीछे'], erLost: ['Lost', 'हारे'],
+    erTot: ['Total', 'कुल'], erChg: ['Change', 'बदलाव'], erParty: ['Party', 'पार्टी'], erLeft: ['Yet to count', 'गिनती बाक़ी'],
+    erBy: ['by {n} votes', '{n} वोट से'], erOnly: ['votes', 'वोट का अंतर'], erRound: ['round {r}', 'राउंड {r}'], erFlip: ['Flipped!', 'पलटा!'], erVs: ['vs', 'बनाम'],
+    erNoteAll: ['Seats: Election Commission of India. Alliances: Nazar\'s grouping.', 'सीटें: भारत निर्वाचन आयोग। गठबंधन: Nazar की सूची।'],
+    erNoteDemo: ['DEMO: real Bihar 2025 counting data, replayed for practice — this is NOT live', 'DEMO: बिहार 2025 की मतगणना के असली आँकड़े, अभ्यास के लिए दोबारा — यह LIVE नहीं है'],
+    erNotePast: ['Past results: Election Commission pages (copy kept by the Internet Archive)', 'पुराने नतीजे: चुनाव आयोग के पेज (Internet Archive में रखी कॉपी)'],
+    erNoteNone: ['No counting anywhere right now — showing past results and news', 'अभी कहीं मतगणना नहीं चल रही — पिछले नतीजे और ख़बरें दिखा रहे हैं'],
+    erNoteNews: ['No official live source for this type of election — headlines from news, not official figures', 'इस तरह के चुनाव का कोई आधिकारिक LIVE स्रोत नहीं — ख़बरों से, आधिकारिक आँकड़े नहीं'],
+    erChipLive: ['Counting LIVE · {a}', 'मतगणना LIVE · {a}'], erChipFinal: ['Final results', 'अंतिम नतीजे'], erChipNone: ['No counting now', 'अभी कोई मतगणना नहीं'], erChipDemo: ['DEMO · practice', 'DEMO · अभ्यास'],
+    erNoneT: ['Nothing to show yet', 'अभी दिखाने को कुछ नहीं'], erNoneP: ['No results or news for this election and area. Pause (or press "Choose election") to pick another.', 'इस चुनाव और क्षेत्र के लिए न नतीजे मिले, न ख़बरें। दूसरा चुनने के लिए रोकें (या "चुनाव चुनें" दबाएँ)।'],
+    erTk: ['Election · latest', 'चुनाव · ताज़ा'], erWinner: ['Majority: {a} ({n})', 'बहुमत: {a} ({n})'], erNoMaj: ['No one past the majority mark', 'किसी को बहुमत नहीं'],
+    erpT: ['Which election to show?', 'कौन-सा चुनाव दिखाएँ?'], erpArea: ['Area', 'क्षेत्र'], erpAll: ['All India', 'पूरा देश'], erpCity: ['City (for news)', 'शहर (ख़बरों के लिए)'], erpAnyCity: ['All cities', 'सारे शहर'],
+    erpType: ['Type of election', 'चुनाव का प्रकार'], erpOfficial: ['Official results (ECI)', 'आधिकारिक नतीजे (ECI)'], erpNewsG: ['News only (no official live source)', 'सिर्फ़ ख़बरें (कोई आधिकारिक LIVE स्रोत नहीं)'],
+    erpPractice: ['Practice', 'अभ्यास'], erpDemo: ['Replay Bihar 2025 counting (DEMO)', 'बिहार 2025 की मतगणना दोबारा चलाएँ (DEMO)'],
+    erT_all: ['All — mix', 'सब — मिक्स'], erT_ls: ['Lok Sabha', 'लोकसभा'], erT_vs: ['Assembly', 'विधानसभा'], erT_bye: ['By-elections', 'उपचुनाव'],
+    erT_byels: ['Lok Sabha by-election', 'लोकसभा उपचुनाव'], erT_byevs: ['Assembly by-elections', 'विधानसभा उपचुनाव'],
+    erT_council: ['Rajya Sabha / Council', 'राज्यसभा / विधान परिषद'], erT_local: ['Municipal / Panchayat', 'नगर निकाय / पंचायत']
+  };
+  Object.keys(ER_T).forEach(function (k) { T.en[k] = ER_T[k][0]; T.hi[k] = ER_T[k][1]; });
   if (PROTO && !PROTO.live) {        // a recorded file is not "live" (PROTO.live: fed from Political Pulse)
     T.en.brandSub = T.en.brandSub.replace(' · Live', ''); T.hi.brandSub = T.hi.brandSub.replace(' · लाइव', '');
     T.en.proto = 'Data · {a} – {b}'; T.hi.proto = 'डेटा · {a} – {b}';
@@ -1671,6 +1814,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   }
   function renderChip() {
     if (state.mode === 'media') { mrChip(); return; }
+    if (state.mode === 'election') { erChip(); return; }
     var s = state.snap, el = $('chip'), txt, lvl = s && s.status ? s.status.level : 'nodata';
     if (state.offline) lvl = 'offline';
     el.className = 'chip lvl-' + lvl;
@@ -1688,8 +1832,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     $('langBtn').textContent = t('langBtn'); $('chLang').textContent = t('langBtn');
     $('backTxt').textContent = t('back'); $('chBackTxt').textContent = t('back');
     $('brandSub').textContent = brandText(state.mode); $('chSub').textContent = t('brandSub');
-    $('mrBtn').textContent = t('mrBtn');
+    $('mrBtn').textContent = t(state.mode === 'election' ? 'erBtn' : 'mrBtn'); $('erBackTxt').textContent = t('erBack');
     $('chMediaT').textContent = t('mrChT'); $('chMediaD').textContent = t('mrChD'); $('chMediaGo').textContent = t('mrChGo') + ' →';
+    $('chElecT').textContent = t('erChT'); $('chElecD').textContent = t('erChD'); $('chElecGo').textContent = t('mrChGo') + ' →'; $('chElecLive').textContent = t('erChLive');
     if (MR.open) renderMrPanel();
     $('swBtn').textContent = t('sw'); $('inTag').textContent = t('tag'); $('inSkip').textContent = t('skip');
     $('chQ').textContent = t('chQ'); $('chQs').textContent = t('chQs');
@@ -1714,6 +1859,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
      and the latest post are already in every screen's subtitle and in the header chip. */
   function renderHonesty() {
     if (state.mode === 'media') { $('honesty').innerHTML = mrHonesty(); return; }
+    if (state.mode === 'election') { $('honesty').innerHTML = erHonesty(); return; }
     var s = state.snap, parts = [];
     if (!s) { $('honesty').innerHTML = ''; return; }
     if (s.window && s.window.thin) parts.push('<span class="warn">' + fill(t('hWindowThin'), { d: esc(fmtWhen(s.window.to)), h: hrsOf(s) }) + '</span>');
@@ -1730,9 +1876,10 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
 
   /* ------------------------------------------------------------- ticker */
   var TK_SINGLE = null;
-  function tkLabel() { return state.mode === 'person' ? t('tkLblP') : state.mode === 'media' ? t('mrTk') : t('tkLbl'); }
+  function tkLabel() { return state.mode === 'person' ? t('tkLblP') : state.mode === 'media' ? t('mrTk') : state.mode === 'election' ? t('erTk') : t('tkLbl'); }
   function tickerItems() {
     if (state.mode === 'media') return mrTicker();
+    if (state.mode === 'election') return erTicker();
     if (state.mode === 'person' && state.psnap) {
       var p = state.psnap, list = (p.mentions || []).concat(p.localNews || []);
       if (list.length >= 3) return list;
@@ -2313,7 +2460,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
      sees what is coming, not a number) */
   function renderCount() {
     var el = $('stCount'), n = state.scenes.length, nx = n > 1 ? state.scenes[(state.idx + 1) % n] : null;
-    if (state.mode === 'media') { el.className = 'st-count nx'; el.innerHTML = nx && nx.label ? '<b>' + esc(t('mrNext')) + '</b>' + esc(nx.label()) : ''; return; }
+    if (state.mode === 'media' || state.mode === 'election') { el.className = 'st-count nx'; el.innerHTML = nx && nx.label ? '<b>' + esc(t('mrNext')) + '</b>' + esc(nx.label()) : ''; return; }
     el.className = 'st-count'; el.textContent = (state.idx + 1) + ' / ' + n;
   }
   function rerender() { var sc = state.scenes[state.idx]; if (!sc) return; clearSceneWork(); renderScene(sc); }
@@ -2403,7 +2550,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     }
     $('cPlayIco').innerHTML = state.paused ? '<polygon points="7 5 19 12 7 19 7 5"/>' : '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
     $('cPlay').setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
-    if (state.mode === 'media') mrPanel(state.paused);        // Media Room: pausing opens "what to show"
+    if (state.mode === 'media' || state.mode === 'election') mrPanel(state.paused);        // Media / Election Room: pausing opens "what to show"
   }
   function renderDots() { var h = ''; for (var i = 0; i < state.scenes.length; i++) h += '<i' + (i === state.idx ? ' class="on"' : '') + '></i>'; $('cDots').innerHTML = h; }
 
@@ -2438,11 +2585,11 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function q(extra) { return '?scope=' + SCOPE + '&hrs=' + HOURS + (ASOF ? '&asof=' + encodeURIComponent(ASOF) : '') + (extra || ''); }
   /* leaders are searched and shown All India, whatever state this page is on */
   function qp(extra) { return '?scope=all&hrs=' + HOURS + (ASOF ? '&asof=' + encodeURIComponent(ASOF) : '') + (extra || ''); }
-  function brandText(mode) { return mode === 'media' ? t('mrBrand') : mode === 'person' ? t('brandSubAll') : t('brandSub'); }
+  function brandText(mode) { return mode === 'media' ? t('mrBrand') : mode === 'election' ? t('erBrand') : mode === 'person' ? t('brandSubAll') : t('brandSub'); }
   function onData(first) {
     var s = state.snap;
     var oldId = state.scenes[state.idx] && state.scenes[state.idx].id;
-    state.scenes = state.mode === 'person' ? buildPersonScenes(s) : state.mode === 'media' ? buildMediaScenes(s) : buildAllScenes(s);
+    state.scenes = state.mode === 'person' ? buildPersonScenes(s) : state.mode === 'media' ? buildMediaScenes(s) : state.mode === 'election' ? buildElectionScenes(s) : buildAllScenes(s);
     var keep = -1;
     for (var i = 0; i < state.scenes.length; i++) if (state.scenes[i].id === oldId) keep = i;
     renderChip(); renderHonesty(); renderTicker(false);
@@ -2451,6 +2598,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var start = 0;
     if (first && Q.scene && !state.sceneUsed) { state.sceneUsed = true; for (var j = 0; j < state.scenes.length; j++) if (state.scenes[j].id === Q.scene) start = j; }
     if (first || keep < 0) { state.idx = -1; $('scene').innerHTML = ''; show(start); }
+    else if (state.mode === 'election') { state.idx = keep; rerender(); }              // counting moved on: the screen on now redraws with the new seats
     else { state.idx = keep; renderDots(); renderCount(); liveUpdate($('scene')); }   // the screen on now: changed numbers count to their new value
   }
   var fetchTimer = null;
@@ -2458,6 +2606,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function fetchData(first) {
     if (state.stopped || !state.mode) return;
     if (state.mode === 'media') { fetchMedia(first); return; }
+    if (state.mode === 'election') { fetchElection(first); return; }
     if (DEMO) { state.all = demoSnap(); state.snap = state.all; onData(first); return; }
     var mode = state.mode, h = state.person;
     var calls = [api('/api/live-snapshot' + (mode === 'person' ? qp() : q()))];
@@ -2735,6 +2884,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     return fill(t('mrpLoop'), { n: L.length, m: Math.max(1, Math.round(ms * SPEED_MUL[SPEED] / 60000)) });
   }
   function renderMrPanel() {
+    if (state.mode === 'election') { renderErPanel(); return; }
     var st = mrState(), m = state.snap, ae = document.activeElement, focusK = ae && ae.getAttribute ? ae.getAttribute('data-k') : null;
     $('mrpT').textContent = t('mrpT'); $('mrpX').textContent = t('mrpGo'); $('mrpAreaK').textContent = t('mrpArea'); $('mrpTopK').textContent = t('mrpTopic');
     $('mrpSpdK').textContent = t('mrpSpeed'); $('mrpSum').textContent = mrLoopSum();
@@ -2774,6 +2924,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (focusK) { var f = null; [].forEach.call($('mrp').querySelectorAll('button[data-k]'), function (b) { if (b.getAttribute('data-k') === focusK) f = b; }); if (f) { try { f.focus(); } catch (e) {} } }
   }
   function mrChoose(k) {
+    if (state.mode === 'election') { erChoose(k); return; }
     mrIdle();
     var kind = k.slice(0, 2), v = k.slice(2), refetch = false;
     if (kind === 'p:') { setSpeed(v); renderMrPanel(); return; }
@@ -2834,6 +2985,300 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (bs.length) { try { bs[(j + bs.length) % bs.length].focus(); } catch (x) {} }
   }
 
+  /* ===================================================== ELECTION ROOM */
+  /* Official results from the Election Commission (server: election_room.js, plan:
+     ELECTION_ROOM_PLAN.md). Choices, kept on this screen and settable by link
+     (?mode=election&est=Bihar&etype=vs&ecity=Patna&edemo=1):
+       area   All India or one state (the page's own state by default); a city narrows the news
+       type   all | ls | vs | bye (official results) | council | local (news only)
+       demo   replay real Bihar 2025 counting data -- always labelled DEMO, never LIVE */
+  var ER_TYPES = /^(all|ls|vs|bye|council|local)$/;
+  var ER = { type: ER_TYPES.test(Q.etype || '') ? Q.etype : (ER_TYPES.test(store('nazar_er_type') || '') ? store('nazar_er_type') : 'all'),
+             pick: Q.est || store('nazar_er_state') || '', city: Q.ecity || store('nazar_er_city') || '',
+             demo: Q.edemo === '1' || (Q.edemo !== '0' && store('nazar_er_demo') === '1'), statesOpen: false };
+  /* '' = the page's own state (or All India), '-' = All India chosen here */
+  function erState() { if (ER.pick === '-') return null; return STATE_HI[ER.pick] ? ER.pick : (STATE || null); }
+  function erUrl() {
+    var st = erState();
+    return '/api/election-room?scope=' + SCOPE + '&type=' + ER.type + '&state=' + (st ? encodeURIComponent(st) : '-')
+      + (st && ER.city ? '&city=' + encodeURIComponent(ER.city) : '') + (ER.demo ? '&demo=1' : '');
+  }
+  function fetchElection(first) {
+    api(erUrl()).then(function (m) {
+      if (state.stopped || state.mode !== 'election' || !m || m.__notfound) return;
+      state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
+      state.snap = m; state.lastOk = Date.now();
+      try { store('nazar_er_snap', JSON.stringify({ at: new Date().toISOString(), s: m })); } catch (e) {}
+      onData(first); if (MR.open) renderMrPanel();
+      schedule(m.mode === 'live' || m.mode === 'demo' ? 30000 : 120000);       // counting day: every 30 s
+    }).catch(function () {
+      if (state.stopped) return;
+      state.fails++; state.offline = true;
+      if (!state.snap) {
+        var saved = null; try { saved = JSON.parse(store('nazar_er_snap') || 'null'); } catch (e) { saved = null; }
+        if (saved && saved.s) { state.savedAt = saved.at; state.snap = saved.s; onData(true); } else firstFail();
+      } else if (!state.savedAt) state.savedAt = new Date(state.lastOk || Date.now()).toISOString();
+      renderChip(); renderHonesty();
+      schedule(BACKOFF[Math.min(state.fails - 1, BACKOFF.length - 1)]);
+    });
+  }
+  /* ---- names, colours, badges ---- */
+  function erPName(c, abbr) {
+    var p = (c && c.parties || []).filter(function (x) { return x.abbr === abbr; })[0];
+    return LANG === 'hi' && p && p.hi ? p.hi : abbr || '';
+  }
+  function erPColor(c, abbr) { var p = (c && c.parties || []).filter(function (x) { return x.abbr === abbr; })[0]; return (p && p.color) || '#8D6E63'; }
+  function erAName(a) { return LANG === 'hi' ? a.hi : a.en; }
+  function erYear(s) { var m = String(s || '').match(/(20\d\d)/); return m ? m[1] : ''; }
+  function erKindKey(k) { return k === 'ls' ? 'erT_ls' : k === 'vs' ? 'erT_vs' : k === 'bye-ls' ? 'erT_byels' : k === 'bye-vs' ? 'erT_byevs' : 'erT_bye'; }
+  /* "Bihar · Assembly 2025" -- the state in the page's language, the type, the year */
+  function erCName(c) { return (c.state ? stName(c.state) + ' · ' : '') + t(erKindKey(c.kind && c.kind !== 'bye' ? c.kind : c.type)) + (erYear(c.title || c.date || c.en) ? ' ' + erYear(c.title || c.date || c.en) : ''); }
+  function erBadge(st, date) {
+    if (st === 'live') return '<span class="er-b live"><i></i>' + esc(t('erLive')) + '</span>';
+    if (st === 'demo') return '<span class="er-b demo">' + esc(t('erDemo')) + '</span>';
+    if (st === 'stalled') return '<span class="er-b stalled">' + esc(t('erStalled')) + '</span>';
+    if (st === 'final') return '<span class="er-b final">' + esc(t('erFinal')) + '</span>';
+    if (st === 'old') return '<span class="er-b old">' + esc(t('erOld')) + (date ? ' · ' + esc(erDate(date)) : '') + '</span>';
+    return '';
+  }
+  /* "2025-11-14" -> "14 नवंबर 2025" */
+  function erDate(d) { d = String(d || ''); return /^\d{4}-\d\d-\d\d/.test(d) ? fmtDay(d.slice(0, 10) + ' 00:00') + ' ' + d.slice(0, 4) : ''; }
+  function erDelta(n) { return n > 0 ? '<span class="er-d up">▲ ' + n + '</span>' : n < 0 ? '<span class="er-d dn">▼ ' + (-n) + '</span>' : ''; }
+  function erSrc(c) {
+    if (c.status === 'demo') return fill(t('erSrcDemo'), { i: c.frame, n: c.frames });
+    if (c.status === 'live' || c.status === 'stalled') return fill(t('erSrcLive'), { a: c.updated ? fmtAgo(Math.max(0, (Date.now() - c.updated) / 60000)) : '–' });
+    if (c.status === 'final') return fill(t('erSrcFinal'), { d: c.updated ? erDate(new Date(c.updated + 19800000).toISOString()) : '' });
+    return t('erSrcPast');
+  }
+  function erTitle(key, place, st, date) { return esc(t(key)) + (place ? '<span class="mr-area">' + MR_PIN + esc(place) + '</span>' : '') + erBadge(st, date); }
+
+  /* ---- the half circle: one arc per alliance, grey for seats not yet counted, the majority tick ---- */
+  function erArc(segs, total, maj) {
+    var R = 92, r = 58, cx = 100, cy = 100, a = Math.PI, out = '';
+    function pt(rad, ang) { return (cx + rad * Math.cos(ang)).toFixed(2) + ' ' + (cy - rad * Math.sin(ang)).toFixed(2); }
+    segs.forEach(function (s) {
+      if (!s.n || !total) return;
+      var b = Math.max(0, a - Math.PI * s.n / total);
+      out += '<path d="M' + pt(R, a) + ' A' + R + ' ' + R + ' 0 0 1 ' + pt(R, b) + ' L' + pt(r, b) + ' A' + r + ' ' + r + ' 0 0 0 ' + pt(r, a) + ' Z" fill="' + s.c + '" stroke="rgba(0,0,0,.35)" stroke-width=".6"/>';
+      a = b;
+    });
+    var m = Math.PI - Math.PI * maj / total;
+    out += '<line x1="' + (cx + (r - 6) * Math.cos(m)).toFixed(2) + '" y1="' + (cy - (r - 6) * Math.sin(m)).toFixed(2) + '" x2="' + (cx + (R + 7) * Math.cos(m)).toFixed(2) + '" y2="' + (cy - (R + 7) * Math.sin(m)).toFixed(2) + '" stroke="#FFC857" stroke-width="1.6" stroke-dasharray="3 2"/>';
+    return '<svg viewBox="0 0 200 104" aria-hidden="true">' + out + '</svg>';
+  }
+  /* ---- screen: seat tally ---- */
+  function erTally(c) {
+    var als = (c.alliances || []).slice(0, 5), sum = 0, segs = [];
+    als.forEach(function (a) { segs.push({ n: a.total, c: a.color }); sum += a.total; });
+    if (c.seats > sum) segs.push({ n: c.seats - sum, c: 'rgba(255,255,255,.12)' });
+    var left = '<div class="er-l er-glass"><div class="er-arc">' + erArc(segs, c.seats, c.majority)
+      + '<div class="c"><b>' + esc(fmtInt(c.seats)) + '</b><span>' + esc(t('erTot')) + ' · ' + esc(fill(t('erMaj'), { m: c.majority })) + '</span></div></div><div class="er-als">'
+      + als.slice(0, 4).map(function (a) {
+          var win = a.total >= c.majority;
+          return '<div class="er-al' + (win ? ' win' : '') + '" style="border-left-color:' + a.color + '"><div class="nm">' + esc(erAName(a)) + (win ? '<span class="mj">' + esc(fill(t('erMaj'), { m: '' }).trim()) + '</span>' : '')
+            + '<small>' + esc(t('erWon')) + ' ' + a.won + (a.lead ? ' · ' + esc(t('erLead')) + ' ' + a.lead : '') + '</small></div><span class="n">' + a.total + '</span>' + erDelta(a.delta || 0) + '</div>';
+        }).join('')
+      + (c.seats > sum ? '<div class="er-note">' + esc(t('erLeft')) + ': ' + (c.seats - sum) + '</div>' : '') + '</div></div>';
+    var max = 1; c.parties.forEach(function (p) { if (p.total > max) max = p.total; });
+    var hot = c.status === 'live' || c.status === 'demo';
+    var right = '<div class="er-r er-glass"><div class="er-rh"><span>' + esc(t('erParty')) + '</span><span>' + esc(t('erWon')) + '</span>' + (hot ? '<span>' + esc(t('erLead')) + '</span>' : '')
+      + '<span>' + esc(t('erTot')) + '</span>' + (hot ? '<span style="flex-basis:7.4rem">' + esc(t('erChg')) + '</span>' : '') + '</div>'
+      + c.parties.slice(0, hot ? 8 : 9).map(function (p) {
+          return '<div class="er-p"><i class="bar" style="width:' + Math.round(100 * p.total / max) + '%;background:' + (p.color || '#8D6E63') + '"></i><div class="nm"><i style="background:' + (p.color || '#8D6E63') + '"></i><em>'
+            + esc(LANG === 'hi' && p.hi ? p.hi : p.abbr) + '</em></div><span class="v">' + p.won + '</span>' + (hot ? '<span class="v">' + p.lead + '</span>' : '')
+            + '<span class="v t">' + p.total + '</span>' + (hot ? '<span class="v d">' + (erDelta(p.delta || 0) || '<span style="color:var(--dim)">–</span>') + '</span>' : '') + '</div>';
+        }).join('')
+      + ((c.recentFlips || []).length ? '<div class="er-flips"><b>' + esc(t('erFlip')) + '</b>' + c.recentFlips.slice(0, 3).map(function (f) { return esc(f.seat + ': ' + erPName(c, f.from) + ' → ' + erPName(c, f.party)); }).join(' &nbsp;·&nbsp; ') + '</div>' : '')
+      + '<div class="er-note">' + esc(t('erNoteAll')) + (c.known && c.seats ? ' · ' + esc(fill(t('erKnown'), { k: c.known, n: c.seats })) : '') + (c.won ? ' · ' + esc(fill(t('erDeclN'), { w: c.won })) : '') + '</div></div>';
+    return '<div class="er-t">' + left + right + '</div>';
+  }
+  /* ---- screens: close fights, big faces, declared ---- */
+  function erLine(c, cand, party, lo) {
+    return '<div class="er-ln' + (lo ? ' lo' : '') + '"><i style="background:' + erPColor(c, party) + '"></i><em>' + esc(cand || '') + '</em><small>' + esc(erPName(c, party)) + '</small></div>';
+  }
+  function erClose(c) {
+    var flip = {}; (c.recentFlips || []).forEach(function (f) { flip[f.no] = 1; });
+    return '<div class="er-g">' + c.close.slice(0, 8).map(function (s) {
+      return '<div class="er-c er-glass">' + (flip[s.no] ? '<span class="er-flip">' + esc(t('erFlip')) + '</span>' : '') + '<div class="hd"><b>' + esc(s.seat) + '</b><span>' + esc(fill(t('erRound'), { r: s.round || '–' })) + '</span></div>'
+        + erLine(c, s.cand, s.party) + (s.vs ? erLine(c, s.vs, s.vsParty, true) : '')
+        + '<div class="er-mg">' + esc(fmtInt(s.margin)) + '<small>' + esc(t('erOnly')) + '</small></div></div>';
+    }).join('') + '</div>';
+  }
+  function erFaces(c) {
+    var key = { won: 'erWon', lead: 'erLead', trail: 'erTrail', lost: 'erLost' };
+    return '<div class="er-g c3">' + c.faces.slice(0, 9).map(function (f) {
+      return '<div class="er-c er-glass"><div class="er-face">' + avatar(f.face, null, erPColor(c, f.party)) + '<div><b>' + esc(f.face) + '</b><span>' + esc(f.seat) + ' · ' + esc(erPName(c, f.party)) + '</span></div></div>'
+        + '<span class="er-st ' + f.facing + '">' + esc(t(key[f.facing] || 'erLead')) + (f.margin != null ? ' · ' + esc(fill(t('erBy'), { n: fmtInt(f.margin) })) : '') + '</span>'
+        + (f.vs ? '<div class="er-ln lo" style="margin-top:.6rem"><em>' + esc(t('erVs')) + ' ' + esc(f.vs) + '</em><small>' + esc(erPName(c, f.vsParty)) + '</small></div>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  function erDeclared(c) {
+    return '<div class="er-g c3">' + c.declared.slice(0, 9).map(function (s) {
+      return '<div class="er-c er-glass"><div class="hd"><b>' + esc(s.seat) + '</b><span class="er-st won" style="margin:0">' + esc(t('erWon')) + '</span></div>'
+        + erLine(c, s.cand, s.party) + (s.vs ? erLine(c, s.vs, s.vsParty, true) : '')
+        + (s.margin != null ? '<div class="er-mg">' + esc(fmtInt(s.margin)) + '<small>' + esc(t('erOnly')) + '</small></div>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  /* by-election seats: ECI's candidate photo, votes, margin, round */
+  function erBye(c, seats) {
+    return '<div class="er-g ' + (seats.length > 4 ? 'c3' : 'c2') + '">' + seats.map(function (s) {
+      var won = s.status === 'won';
+      return '<div class="er-c er-glass"><div class="hd"><b>' + esc(s.seat) + '</b><span>' + esc(stName(s.state)) + '</span></div>'
+        + '<div class="er-face">' + (s.photo ? '<img class="ph" alt="" src="' + esc(s.photo) + '" onerror="this.parentNode.removeChild(this)">' : '')
+        + '<div><b>' + esc(s.cand) + '</b><span>' + esc(s.abbr ? erPName(c, s.abbr) || s.abbr : s.party) + '</span></div></div>'
+        + '<span class="er-st ' + (won ? 'won' : 'lead') + '">' + esc(t(won ? 'erWon' : 'erLead')) + (s.margin != null ? ' · ' + esc(fill(t('erBy'), { n: fmtInt(s.margin) })) : '') + '</span>'
+        + (s.vs ? '<div class="er-ln lo" style="margin-top:.6rem"><em>' + esc(t('erVs')) + ' ' + esc(s.vs) + '</em><small>' + esc(s.vsParty || '') + '</small></div>' : '')
+        + (s.round ? '<div class="er-note">' + esc(fill(t('erRound'), { r: s.round })) + (s.votes ? ' · ' + esc(fmtInt(s.votes)) + ' ' + esc(t('erOnly').split(' ')[0]) : '') + '</div>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  /* past results: up to four elections, top parties as bars, who crossed the majority */
+  function erPast(list) {
+    return '<div class="er-g c2">' + list.map(function (r) {
+      if (r.byeSeats) return '<div class="er-c er-glass er-pc"><div class="hd"><b>' + esc(erCName(r)) + '</b>' + erBadge('old', r.date) + '</div>'
+        + r.byeSeats.slice(0, 5).map(function (s) { return '<div class="er-ln"><i style="background:' + erPColor(r, s.abbr) + '"></i><em>' + esc(s.seat + ' · ' + s.cand) + '</em><small>' + esc(s.abbr ? erPName(r, s.abbr) || s.abbr : s.party) + '</small></div>'; }).join('') + '</div>';
+      var top = (r.parties || []).slice(0, 5), al = (r.alliances || [])[0], win = al && al.total >= r.majority ? al : null;
+      var pw = !win && top[0] && top[0].won >= r.majority ? top[0] : null;
+      return '<div class="er-c er-glass er-pc"><div class="hd"><b>' + esc(erCName(r)) + '</b>' + erBadge('old', r.date) + '</div>'
+        + top.map(function (p) { return '<div class="mb"><em>' + esc(LANG === 'hi' && p.hi ? p.hi : p.abbr) + '</em><span><i style="width:' + Math.round(100 * p.won / r.seats) + '%;background:' + (p.color || '#8D6E63') + '"></i></span><b>' + p.won + '</b></div>'; }).join('')
+        + '<div class="wn">' + esc(win ? fill(t('erWinner'), { a: erAName(win), n: win.total }) : pw ? fill(t('erWinner'), { a: LANG === 'hi' && pw.hi ? pw.hi : pw.abbr, n: pw.won }) : t('erNoMaj'))
+        + ' · ' + esc(fill(t('erSeats'), { n: r.seats })) + '</div></div>';
+    }).join('') + '</div>';
+  }
+  function erMsg(h, p) { return '<div class="glass full"><div class="empty"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p></div></div>'; }
+
+  /* ---- the loop. Live (or demo) contests first, the one that moved most first and longest;
+     past results lead when nothing is being counted; news always closes the round. ---- */
+  function erMove(c) { var n = 0; (c.alliances || c.parties || []).forEach(function (a) { n += Math.abs(a.delta || 0); }); return n + 3 * (c.recentFlips || []).length; }
+  function buildElectionScenes(m) {
+    var L = [], newsOnly = ER.type === 'council' || ER.type === 'local';
+    if (!m) return L;
+    var cs = (m.contests || []).slice().sort(function (a, b) {
+      var la = a.status === 'live' || a.status === 'demo', lb = b.status === 'live' || b.status === 'demo';
+      return (lb - la) || (erMove(b) - erMove(a)) || ((b.seats || 0) - (a.seats || 0));
+    });
+    cs.forEach(function (c) {
+      var hot = c.status === 'live' || c.status === 'demo', w = 1 + Math.min(0.5, erMove(c) / 12), place = c.state ? stName(c.state) : '';
+      var base = { sub: function () { return erSrc(c); } };
+      function sc(o) { var x = {}; for (var k in base) x[k] = base[k]; for (var j in o) x[j] = o[j]; return x; }
+      if (c.byeSeats) {
+        for (var i = 0; i < c.byeSeats.length; i += 6) (function (chunk, k) {
+          L.push(sc({ id: 'er-bye-' + c.key + '-' + k, dur: 16000, title: function () { return erTitle('erBye', '', c.status); }, label: function () { return t('erBye'); }, render: function () { return erBye(c, chunk); } }));
+        })(c.byeSeats.slice(i, i + 6), i / 6);
+        return;
+      }
+      L.push(sc({ id: 'er-tally-' + c.key, dur: Math.round(18000 * w), imp: hot, hero: 'mid', title: function () { return erTitle('erTally', place || erCName(c), c.status); },
+                  label: function () { return t('erTally') + (place ? ' · ' + place : ''); }, render: function () { return erTally(c); } }));
+      if (hot && c.close && c.close.length) L.push(sc({ id: 'er-close-' + c.key, dur: 16000, imp: (c.recentFlips || []).length > 0, title: function () { return erTitle('erClose', place, c.status); },
+                  label: function () { return t('erClose') + (place ? ' · ' + place : ''); }, render: function () { return erClose(c); } }));
+      if (c.faces && c.faces.length) L.push(sc({ id: 'er-faces-' + c.key, dur: 15000, title: function () { return erTitle('erFaces', place, c.status); },
+                  label: function () { return t('erFaces') + (place ? ' · ' + place : ''); }, render: function () { return erFaces(c); } }));
+      if (c.declared && c.declared.length) L.push(sc({ id: 'er-decl-' + c.key, dur: 14000, title: function () { return erTitle('erDecl', place, c.status); },
+                  label: function () { return t('erDecl') + (place ? ' · ' + place : ''); }, render: function () { return erDeclared(c); } }));
+    });
+    var past = newsOnly ? [] : (m.past || []);
+    for (var p = 0; p < Math.min(past.length, 8); p += 4) (function (chunk, k) {
+      L.push({ id: 'er-past-' + k, dur: 18000, hero: 'mid', title: function () { return erTitle('erPast', erState() ? stName(erState()) : '', 'old'); }, label: function () { return t('erPast'); },
+               sub: function () { return t('erNotePast'); }, render: function () { return erPast(chunk); } });
+    })(past.slice(p, p + 4), p / 4);
+    var news = m.news || [];
+    for (var n = 0; n < Math.min(news.length, 10); n += 5) (function (chunk, k) {
+      L.push({ id: 'er-news-' + k, dur: 18000, title: function () { return erTitle('erNews', erState() ? stName(erState()) + (ER.city ? ' · ' + erCity(ER.city) : '') : '', null); },
+               label: function () { return t('erNews'); }, sub: function () { return newsOnly ? t('erNoteNews') : t('erT_' + ER.type); }, render: function () { return mrCards(chunk, 'elections'); } });
+    })(news.slice(n, n + 5), n / 5);
+    /* a long counting-day loop shows the tallies a second time half-way round */
+    if (L.length > 6 && cs.some(function (c) { return c.status === 'live' || c.status === 'demo'; })) {
+      var again = L.filter(function (s) { return s.imp; }).map(function (s) { var c2 = {}; for (var k in s) c2[k] = s[k]; c2.id = s.id + '-2'; return c2; });
+      if (again.length) L.splice.apply(L, [Math.floor(L.length / 2), 0].concat(again));
+    }
+    if (!L.length) L.push({ id: 'er-none', dur: 20000, hero: 'mid', title: function () { return esc(t('erNoneT')); }, render: function () { return erMsg(t('erNoneT'), t('erNoneP')); } });
+    return L;
+  }
+  function erCity(en) { var st = erState(), m = state.snap; var c = (m && m.cities || []).filter(function (x) { return x[0] === en; })[0]; return c ? (LANG === 'hi' ? c[1] : c[0]) : en; }
+  /* ticker: seats as they are declared while counting, otherwise election headlines */
+  function erTicker() {
+    var m = state.snap, out = []; if (!m) return out;
+    (m.contests || []).forEach(function (c) {
+      if (c.status !== 'live' && c.status !== 'demo') return;
+      (c.declared || []).slice(0, 12).forEach(function (s) { out.push({ head: s.seat + ': ' + s.cand + ' (' + erPName(c, s.party) + ') ' + t('erWon') + (s.margin != null ? ' · ' + fill(t('erBy'), { n: fmtInt(s.margin) }) : ''), src: 'ECI' }); });
+    });
+    if (out.length) return out;
+    return (m.news || []).slice(0, 16).map(function (c) { return { head: c.t, src: c.s, date: c.d }; });
+  }
+  function erChip() {
+    var m = state.snap, lvl = 'nodata', txt = t('nodata');
+    if (m) {
+      var live = (m.contests || []).filter(function (c) { return c.status === 'live'; })[0];
+      if (m.mode === 'demo') { lvl = 'delayed'; txt = t('erChipDemo'); }
+      else if (live) { lvl = 'live'; txt = fill(t('erChipLive'), { a: live.updated ? fmtAgo(Math.max(0, (Date.now() - live.updated) / 60000)) : '–' }); }
+      else if (m.mode === 'final') { lvl = 'recent'; txt = t('erChipFinal'); }
+      else { lvl = 'stale'; txt = t('erChipNone'); }
+    }
+    if (state.offline) { lvl = 'offline'; txt = t('offline') + ' · ' + txt; }
+    $('chip').className = 'chip lvl-' + lvl; $('chipTxt').textContent = txt;
+  }
+  function erHonesty() {
+    var m = state.snap, parts = [];
+    if (!m) return '';
+    if (m.mode === 'demo') parts.push('<span class="warn">' + esc(t('erNoteDemo')) + '</span>');
+    else if (ER.type === 'council' || ER.type === 'local') parts.push('<span class="warn">' + esc(t('erNoteNews')) + '</span>');
+    else if (m.mode === 'past') parts.push('<span class="warn">' + esc(t('erNoteNone')) + '</span>');
+    if (state.offline && state.savedAt) parts.push('<span class="warn">' + fill(t('hSaved'), { d: esc(fmtTimeIso(state.savedAt)) }) + '</span>');
+    return parts.join(' &nbsp;·&nbsp; ');
+  }
+  /* ---- the "which election" panel (the Media Room's panel, with the Election Room's choices) ---- */
+  function renderErPanel() {
+    var st = erState(), m = state.snap, ae = document.activeElement, focusK = ae && ae.getAttribute ? ae.getAttribute('data-k') : null;
+    $('mrpT').textContent = t('erpT'); $('mrpX').textContent = t('mrpGo'); $('mrpAreaK').textContent = t('erpArea'); $('mrpTopK').textContent = t('erpType');
+    $('mrpSpdK').textContent = t('mrpSpeed'); $('mrpHint').textContent = PHONE ? t('mrpHintTouch') : t('mrpHint');
+    var L = buildElectionScenes(m).filter(function (s) { return s.id !== 'er-none'; }), ms = 0;
+    L.forEach(function (s) { ms += s.dur || 18000; });
+    $('mrpSum').textContent = L.length ? fill(t('mrpLoop'), { n: L.length, m: Math.max(1, Math.round(ms * SPEED_MUL[SPEED] / 60000)) }) : t('erNoneT');
+    $('mrpArea').innerHTML = mrOpt('e:all', t('erpAll'), !st, false, '')
+      + (st ? mrOpt('e:st', stName(st), true, false, '') : '')
+      + mrOpt('e:pick', '⟳ ' + t(st ? 'mrpChange' : 'mrpPickSt'), ER.statesOpen, false, undefined, 'lnk');
+    if (ER.statesOpen) {
+      var names = Object.keys(STATE_HI).sort(function (a, b) { return stName(a).localeCompare(stName(b), LANG === 'hi' ? 'hi' : 'en'); });
+      $('mrpStates').innerHTML = names.map(function (s) { return mrOpt('es:' + s, stName(s), s === st); }).join('');
+      $('mrpStates').className = 'mrp-states';
+    } else $('mrpStates').className = 'mrp-states hidden';
+    $('mrpSpd').innerHTML = ['slow', 'normal', 'fast'].map(function (s) { return mrOpt('p:' + s, t('sp_' + s), s === SPEED); }).join('');
+    $('mrpPer').textContent = L.length ? fill(t('mrpPer'), { s: Math.round(ms / L.length * SPEED_MUL[SPEED] / 1000) }) : '';
+    /* types: which have something live right now (a LIVE tag on the button) */
+    var liveK = {}; (m && m.contests || []).forEach(function (c) { if (c.status === 'live') liveK[c.kind === 'ls' ? 'ls' : c.kind === 'vs' ? 'vs' : 'bye'] = 1; });
+    var tag = function (k) { return liveK[k] || (k === 'all' && Object.keys(liveK).length) ? '<span class="fr" style="background:#D50000;color:#fff">LIVE</span>' : ''; };
+    var opt = function (k) { return mrOpt('et:' + k, t('erT_' + k), ER.type === k, false, tag(k)); };
+    var html = '<div class="mrp-g"><div class="mrp-gh"><span>' + esc(t('erpOfficial')) + '</span></div><div class="mrp-row">' + ['all', 'ls', 'vs', 'bye'].map(opt).join('') + '</div></div>'
+      + '<div class="mrp-g"><div class="mrp-gh"><span>' + esc(t('erpNewsG')) + '</span></div><div class="mrp-row">' + ['council', 'local'].map(opt).join('') + '</div></div>';
+    var cities = st && m && m.cities ? m.cities : [];
+    if (cities.length) html += '<div class="mrp-g"><div class="mrp-gh"><span>' + esc(t('erpCity')) + '</span></div><div class="mrp-row">' + mrOpt('ec:', t('erpAnyCity'), !ER.city, false, '')
+      + cities.map(function (c) { return mrOpt('ec:' + c[0], LANG === 'hi' ? c[1] : c[0], ER.city === c[0], false, ''); }).join('') + '</div></div>';
+    if (m && m.hasDemo) html += '<div class="mrp-g"><div class="mrp-gh"><span>' + esc(t('erpPractice')) + '</span></div><div class="mrp-row">' + mrOpt('ed:', t('erpDemo'), ER.demo, false, '') + '</div></div>';
+    $('mrpTop').innerHTML = html;
+    [].forEach.call($('mrp').querySelectorAll('button[data-k]'), function (b) { b.onclick = function () { erChoose(b.getAttribute('data-k')); }; });
+    if (focusK) { var f = null; [].forEach.call($('mrp').querySelectorAll('button[data-k]'), function (b) { if (b.getAttribute('data-k') === focusK) f = b; }); if (f) { try { f.focus(); } catch (e) {} } }
+  }
+  function erChoose(k) {
+    mrIdle();
+    var i = k.indexOf(':'), kind = k.slice(0, i), v = k.slice(i + 1);
+    if (kind === 'p') { setSpeed(v); renderErPanel(); return; }
+    if (kind === 'e' && v === 'pick') { ER.statesOpen = !ER.statesOpen; renderErPanel(); return; }
+    if (kind === 'e' && v === 'st') return;
+    if (kind === 'e' && v === 'all') { ER.pick = '-'; ER.city = ''; }
+    else if (kind === 'es') { ER.pick = v; ER.city = ''; ER.statesOpen = false; }
+    else if (kind === 'et') ER.type = v;
+    else if (kind === 'ec') ER.city = v;
+    else if (kind === 'ed') ER.demo = !ER.demo;
+    store('nazar_er_state', ER.pick); store('nazar_er_type', ER.type); store('nazar_er_city', ER.city); store('nazar_er_demo', ER.demo ? '1' : '0');
+    renderErPanel();
+    clearTimeout(fetchTimer); fetchData(true);
+  }
+  /* start screen: a red LIVE tag on the Election Room's strip while counting is on */
+  function erChooserLive() {
+    api('/api/election-room?scope=' + SCOPE + '&type=all').then(function (m) {
+      var on = m && m.mode === 'live'; $('chElec').className = 'ch-media ch-er' + (on ? ' live' : '');
+    }).catch(function () {});
+  }
+
   /* ============================================================ MODES */
   function startShow(mode, handle) {
     stopChooser();
@@ -2844,9 +3289,12 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     try { history.replaceState(null, '', url); } catch (e) {}
     if (mode === 'person') rememberRecent(handle);
     if (state.paused) pause(false);
-    if (mode !== 'media') mrPanel(false);
-    setCls(document.body, 'mr', mode === 'media');
-    $('mrBtn').className = mode === 'media' && !KIOSK ? 'tbtn' : 'tbtn hidden';
+    mrPanel(false);
+    setCls(document.body, 'mr', mode === 'media' || mode === 'election'); setCls(document.body, 'er', mode === 'election');
+    $('mrBtn').className = (mode === 'media' || mode === 'election') && !KIOSK ? 'tbtn' : 'tbtn hidden';
+    $('mrBtn').textContent = t(mode === 'election' ? 'erBtn' : 'mrBtn');
+    /* the Election Room's own Back (top right) -- the start screen is one press away */
+    $('erBack').className = mode === 'election' && !KIOSK ? 'tbtn er-back' : 'tbtn er-back hidden';
     $('brandSub').textContent = brandText(mode);
     /* the state pill belongs to the state's own screens, not to a leader's (All India) channel */
     if (STATE) $('stPill').className = mode === 'person' ? 'chip stpill hidden' : 'chip stpill';
@@ -2859,7 +3307,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function openChooser() {
     clearTimeout(state.timer); clearSceneWork(); clearTimeout(fetchTimer);
     state.mode = null; $('app').style.visibility = 'hidden'; $('chooser').className = ''; setCls(document.body, 'choosing', true);
-    mrPanel(false); setCls(document.body, 'mr', false); $('mrBtn').className = 'tbtn hidden';
+    mrPanel(false); setCls(document.body, 'mr', false); setCls(document.body, 'er', false); $('mrBtn').className = 'tbtn hidden'; $('erBack').className = 'tbtn er-back hidden';
+    if (!DEMO) erChooserLive();
     heroLevel('hi'); renderRecent(); loadStates(); $('chInput').value = ''; $('chList').innerHTML = '';
     chLeft = CHOOSER_AUTO_S; tickChooser(); clearTimeout(chResumeT);
     clearInterval(chT); chT = setInterval(tickChooser, 1000);
@@ -3030,6 +3479,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   });
   $('chMedia').onclick = function () { startShow('media'); };
   $('chMedia').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { startShow('media'); e.preventDefault(); } e.stopPropagation(); };
+  $('chElec').onclick = function () { startShow('election'); };
+  $('chElec').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { startShow('election'); e.preventDefault(); } e.stopPropagation(); };
   $('chAll').onclick = function () { startShow('all'); };
   $('chAll').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { startShow('all'); e.preventDefault(); } };
   $('chooser').addEventListener('mousemove', holdChooser);
@@ -3126,7 +3577,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   $('langBtn').onclick = toggleLang; $('chLang').onclick = function () { holdChooser(); toggleLang(); };
   $('backBtn').onclick = goBack; $('chBack').onclick = goBack;
   $('swBtn').onclick = function () { openChooser(); };
-  $('mrBtn').onclick = function () { if (state.mode === 'media') pause(!MR.open); wake(); };
+  $('mrBtn').onclick = function () { if (state.mode === 'media' || state.mode === 'election') pause(!MR.open); wake(); };
+  $('erBack').onclick = function () { openChooser(); };
   $('mrpX').onclick = function () { pause(false); };
   document.addEventListener('mousemove', wake);
   var tx = null;
@@ -3142,7 +3594,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (!state.mode) return;
     if (MR.open) { mrKey(e); return; }
     var k = e.key || '';
-    if ((k === 'm' || k === 'M') && state.mode === 'media') pause(true);
+    if ((k === 'm' || k === 'M') && (state.mode === 'media' || state.mode === 'election')) pause(true);
+    /* the remote's Back in the Election Room: back to the start screen */
+    else if ((k === 'Escape' || k === 'Esc' || k === 'Backspace' || k === 'GoBack' || k === 'BrowserBack') && state.mode === 'election') { openChooser(); e.preventDefault(); }
     else if (k === 'ArrowRight' || k === 'Right' || k === 'MediaTrackNext') show(state.idx + 1);
     else if (k === 'ArrowLeft' || k === 'Left' || k === 'MediaTrackPrevious') show(state.idx - 1);
     else if (k === ' ' || k === 'Spacebar' || k === 'MediaPlayPause' || k === 'Enter') { if (k === 'Enter' && e.target && e.target.tagName === 'BUTTON') return; pause(!state.paused); e.preventDefault(); }
@@ -3212,6 +3666,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   playIntro(function () {
     if (Q.h) startShow('person', Q.h);
     else if (Q.mode === 'media') startShow('media');
+    else if (Q.mode === 'election') startShow('election');
     else if (KIOSK || Q.mode === 'all' || DEMO) startShow('all');
     else openChooser();
   });
