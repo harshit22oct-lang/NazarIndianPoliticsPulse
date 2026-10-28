@@ -34,8 +34,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{font-size:16px;height:100%;background:#160602;-webkit-text-size-adjust:100%;text-size-adjust:100%}   /* no Android / iOS text inflation */
 /* a laptop browser window (wide and short, set by scale()): slimmer frame, more height for the screens */
-body.wide #app{padding:1rem 3.4rem 1rem} body.wide .top{height:4.8rem} body.wide #stage{padding-top:.8rem}
-body.wide .st-head{margin-bottom:1rem} body.wide .st-title{font-size:3.8rem} body.wide .ticker{height:3.9rem;margin-top:.7rem} body.wide .tk-single{line-height:3.9rem}
+body.wide #app{padding:1rem 3.4rem 1rem} body.wide .top{height:6.4rem} body.wide #stage{padding-top:.8rem}
+body.wide .st-head{margin-bottom:1rem} body.wide .st-title{font-size:4.6rem} body.wide .ticker{height:3.9rem;margin-top:.7rem} body.wide .tk-single{line-height:3.9rem}
 body.wide #chooser{padding:1.2rem 3.4rem 1.2rem;overflow-y:auto} body.wide .ch-q{margin-top:0} body.wide .ch-q h1{font-size:3.2rem} body.wide .ch-q p{font-size:1.4rem;margin-top:.3rem}
 body.wide .ch-cards{margin-top:1.2rem}
 body{height:100%;overflow:hidden;background:#160602;color:var(--text);font-family:var(--body);-webkit-font-smoothing:antialiased}
@@ -52,9 +52,8 @@ button,input{font-family:inherit;color:inherit}
 #sky:after{content:'';position:absolute;top:0;left:0;right:0;height:.35rem;
   background:linear-gradient(90deg,#FF9933 0%,#FF9933 33%,#FFFFFF 33%,#FFFFFF 66%,#138808 66%,#138808 100%);opacity:.85}
 #hero{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;overflow:hidden}
-/* three standing leaders on one ground line: Modi ji in front (tallest, head just
-   under the header), Shah ji left and Nitin Nabin ji right a step behind (a little
-   smaller), heads level with each other. A soft saffron floor glow grounds them. */
+/* two standing leaders: Modi ji in front (tallest, head just under the header),
+   Nitin Nabin ji a step behind on his right. A soft saffron floor glow grounds them. */
 .hero-floor{position:absolute;left:8%;right:8%;bottom:-6%;height:30%;opacity:var(--heroMain);transition:opacity 1.2s ease;
   background:radial-gradient(ellipse 50% 45% at 50% 70%,rgba(255,153,51,.38) 0%,rgba(255,120,0,.12) 45%,rgba(255,120,0,0) 72%)}
 /* Each leader = a wrapper (position, size, glow) around the photo (bottom fade).
@@ -70,16 +69,11 @@ button,input{font-family:inherit;color:inherit}
 .hero-side{bottom:2%;z-index:4;opacity:var(--heroSide);
   -webkit-filter:drop-shadow(0 0 2rem rgba(255,153,51,.3));filter:drop-shadow(0 0 2rem rgba(255,153,51,.3))}
 .hero-side img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 14%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 14%)}
-/* three leaders: Modi ji in front, Shah ji left and Nitin Nabin ji right, a step behind.
-   --sh is Shah ji's height; everything on the sides follows from it, so one number moves
-   the pair together (start screen, narrow screens) and their faces stay the same size
-   with their eyes on one line:
-     Shah ji (full-length photo): eyes at 18.1 % of the photo, eye-to-chin 6.6 %
-     Nabin ji (waist-up photo):   eyes at 23.2 % of the photo, eye-to-chin 9.5 %
-     -> Nabin ji's height = --sh x 0.69, raised by 2 % + --sh x 0.289 so the eyes meet.
-   His photo ends at the waist, so it fades out longer at the bottom. */
+/* two leaders: Modi ji in the centre, in front; Nitin Nabin ji right, a step behind.
+   --sh is the side scale: Nabin ji's photo ends at the waist, so his height is
+   --sh x 0.69, raised by 2 % + --sh x 0.289 so his eyes sit just below Modi ji's.
+   His photo fades out longer at the bottom. */
 #hero{--sh:86%}
-.hero-side.l{height:var(--sh);left:25%}
 .hero-side.r{height:calc(var(--sh) * .69);bottom:calc(2% + var(--sh) * .289);left:75.5%}
 .hero-side.r img{-webkit-mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 26%);mask-image:linear-gradient(to top,rgba(0,0,0,0) 0%,#000 26%)}
 /* start screen: the question is centred at the top, so everyone stands a little
@@ -88,23 +82,25 @@ body.choosing .hero-main{height:76%}
 body.choosing #hero{--sh:69%}
 .hero-main,.hero-side{transition:opacity 1.2s ease,height .8s ease,bottom .8s ease,left .8s ease}
 /* screens narrower than 3:2 (4:3 TVs, tablets): the pair comes in and stands a little smaller */
-@media (max-aspect-ratio:3/2){#hero{--sh:80%} .hero-side.l{left:20%} .hero-side.r{left:80.5%} body.choosing #hero{--sh:64%}}
-/* very wide screens (21:9): the pair stands further out, so Modi ji has room */
-@media (min-aspect-ratio:2/1){.hero-side.l{left:29%} .hero-side.r{left:71.5%}}
+@media (max-aspect-ratio:3/2){#hero{--sh:80%} .hero-side.r{left:80.5%} body.choosing #hero{--sh:64%}}
+/* very wide screens (21:9): Nabin ji stands a little closer in */
+@media (min-aspect-ratio:2/1){.hero-side.r{left:71.5%}}
 body.hero-hi{--heroMain:1;--heroSide:1}
 body.hero-mid{--heroMain:.55;--heroSide:.45}
 
 /* ---------- frame ---------- */
 #app{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;padding:1.6rem 3.4rem 1.4rem}
-.top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;height:5.6rem}
+/* the brand (logo + नज़र) is sized to hold the top-left corner, so the left side
+   doesn't look empty next to the leaders */
+.top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;height:7rem}
 .brand{display:flex;align-items:center}
-.logo{width:4.6rem;height:4.6rem;border-radius:50%;overflow:hidden;margin-right:1.2rem;flex:0 0 auto;position:relative;
+.logo{width:6.2rem;height:6.2rem;border-radius:50%;overflow:hidden;margin-right:1.5rem;flex:0 0 auto;position:relative;
   background:linear-gradient(135deg,#FF9933,#E65100);box-shadow:0 0 0 .2rem rgba(255,200,87,.7),0 .6rem 1.8rem rgba(230,81,0,.5)}
 .logo img{width:100%;height:100%;object-fit:cover;display:block}
 .logo svg{position:absolute;top:18%;left:18%;width:64%;height:64%}
-.wm{font-family:var(--deva);font-weight:800;font-size:3rem;line-height:1;letter-spacing:.02rem;color:#fff;text-shadow:0 .2rem 1rem rgba(230,81,0,.6)}
-.wm small{font-family:var(--head);font-weight:700;font-size:1.5rem;letter-spacing:.35rem;color:var(--gold);margin-left:.9rem;vertical-align:.35rem}
-.wm-sub{font-size:1rem;color:var(--muted);letter-spacing:.14rem;text-transform:uppercase;margin-top:.45rem}
+.wm{font-family:var(--deva);font-weight:800;font-size:4.1rem;line-height:1;letter-spacing:.02rem;color:#fff;text-shadow:0 .2rem 1rem rgba(230,81,0,.6)}
+.wm small{font-family:var(--head);font-weight:700;font-size:1.9rem;letter-spacing:.4rem;color:var(--gold);margin-left:1.1rem;vertical-align:.5rem}
+.wm-sub{font-size:1.3rem;color:var(--muted);letter-spacing:.16rem;text-transform:uppercase;margin-top:.55rem}
 .right{display:flex;align-items:center}
 .right > *{margin-left:1.2rem}
 .chip{display:flex;align-items:center;height:3rem;padding:0 1.3rem;border-radius:3rem;background:var(--glass);border:.08rem solid var(--line);font-size:1.15rem;font-weight:700;white-space:nowrap}
@@ -122,21 +118,22 @@ body.hero-mid{--heroMain:.55;--heroSide:.45}
 .tbtn:hover,.tbtn:focus{border-color:var(--gold);outline:none}
 body.kiosk .tbtn{display:none}
 /* screen speed: Slow / Normal / Fast (Normal = the timings the screens were designed for) */
-.spd{display:flex;height:3rem;border-radius:.8rem;border:.08rem solid var(--line);background:var(--glass);overflow:hidden;flex:0 0 auto}
-.spd button{border:0;background:transparent;padding:0 1.05rem;font-family:var(--deva);font-size:1.1rem;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
-.spd button + button{border-left:.08rem solid var(--line)}
+/* a pill: speed icon, then three equal parts; the chosen one is a raised saffron chip */
+.spd{display:flex;align-items:center;height:3rem;padding:0 .25rem 0 .2rem;border-radius:3rem;border:.08rem solid var(--line);background:var(--glass);flex:0 0 auto}
+.spd .spd-i{display:block;width:2.2rem;height:2.2rem;margin:0 .2rem 0 .5rem;fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round;flex:0 0 auto}
+.spd button{height:2.4rem;min-width:5rem;border:0;border-radius:2rem;background:transparent;padding:0 .9rem;font-family:var(--deva);font-size:1.1rem;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
 .spd button:hover,.spd button:focus{color:var(--text);background:rgba(255,153,51,.15);outline:none}
-.spd button.on{background:linear-gradient(135deg,#E65100,#FF9933);color:#fff}
+.spd button.on{background:linear-gradient(135deg,#E65100,#FF9933);color:#fff;box-shadow:0 .2rem .8rem rgba(230,81,0,.45)}
 body.kiosk .spd{display:none}
 body.mr #rng{display:none}          /* the Media Room has its own news, not the post window */
 
 #stage{flex:1 1 auto;min-height:0;position:relative;display:flex;flex-direction:column;padding-top:1.4rem}
 .st-head{flex:0 0 auto;display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.4rem}
-.st-title{font-family:var(--head);font-weight:700;font-size:4.2rem;line-height:1.02;text-shadow:0 .3rem 1.4rem rgba(0,0,0,.55)}
+.st-title{font-family:var(--head);font-weight:700;font-size:4.8rem;line-height:1.02;text-shadow:0 .3rem 1.4rem rgba(0,0,0,.55)}
 .st-title em{font-style:normal;color:var(--gold)}
 .st-title .tl{display:inline-block;width:3.6rem;height:3.6rem;border-radius:50%;overflow:hidden;vertical-align:-.5rem;margin-left:1rem;box-shadow:0 0 0 .15rem rgba(255,200,87,.6)}
 .st-title .tl img{width:100%;height:100%;object-fit:cover;display:block}
-.st-when{font-size:1.35rem;color:var(--muted);margin-top:.5rem;text-shadow:0 .1rem .5rem rgba(0,0,0,.6)}
+.st-when{font-size:1.5rem;color:var(--muted);margin-top:.5rem;text-shadow:0 .1rem .5rem rgba(0,0,0,.6)}
 .st-count{font-family:var(--head);font-size:1.4rem;color:var(--dim);white-space:nowrap;margin-left:2rem}
 #scene{flex:1 1 auto;min-height:0;position:relative;overflow:hidden;opacity:1;transition:opacity .45s ease,transform .45s ease}
 #scene.out{opacity:0;-webkit-transform:translateY(.8rem);transform:translateY(.8rem)}
@@ -418,6 +415,19 @@ body.portrait .st-top{flex-wrap:wrap} body.portrait .st-top h2{width:100%;margin
 .bar-sub .up{color:var(--good);font-weight:700} .bar-sub .down{color:var(--amber);font-weight:700}
 .scale{margin-top:1.4rem;text-align:center;font-size:1.5rem;color:var(--muted);text-shadow:0 .2rem .8rem rgba(0,0,0,.8)}
 .scale b{font-family:var(--head);font-size:2.1rem;color:var(--text);font-weight:700}
+/* glance highlights: fills the space left of Modi ji, above the tiles. Its width
+   stops short of Modi ji's figure (centre 50vw, about 24vh to each side). */
+.gh{flex:0 0 auto;margin:auto 0 1.4rem;width:calc(50vw - 24vh - 5.4rem);max-width:38rem;min-width:24rem;
+  background:linear-gradient(135deg,rgba(26,8,3,.86),rgba(26,8,3,.62));border:.08rem solid var(--line);border-left:.35rem solid #FF9933;
+  border-radius:1.6rem;padding:.5rem 1.6rem;box-shadow:0 1.6rem 3rem rgba(0,0,0,.4);
+  -webkit-animation:rise .7s .2s cubic-bezier(.2,.8,.2,1) both;animation:rise .7s .2s cubic-bezier(.2,.8,.2,1) both}
+.gh-r{display:flex;align-items:center;padding:.6rem 0}
+.gh-r + .gh-r{border-top:.08rem solid var(--line)}
+.gh-r .av{width:4rem;height:4rem;font-size:1.4rem;border-width:.18rem;margin-right:1.1rem}
+.gh-t{min-width:0;flex:1 1 auto;line-height:1.25}
+.gh-t span{display:block;font-size:1.05rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gh-t b{display:block;font-size:1.55rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gh-t i{display:block;font-style:normal;font-size:1.15rem;font-weight:700;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* glance with five tiles: posts, views, likes, party, state */
 .kpis.k5{grid-template-columns:repeat(5,1fr);grid-gap:1.3rem}
 .kpis.k5 .kpi{padding:1.6rem 1.7rem} .kpis.k5 .kpi-v{font-size:5rem} .kpis.k5 .kpi-v.txt{font-size:3.2rem}
@@ -755,23 +765,57 @@ body.reduced .mr-dot{animation:none}
 .mr-s li small b{color:#fff;background:var(--live);padding:0 .4rem;border-radius:.3rem;margin-right:.4rem;font-size:.9rem}
 .mr-empty{font-size:1.5rem;color:var(--muted)}
 /* the panel: opens when the show is paused (or "Topics" in the header); changes apply at once */
-.mrp{position:fixed;top:8.6rem;right:3.4rem;z-index:30;width:52rem;max-height:calc(100% - 18rem);overflow-y:auto;padding:1.8rem 2rem 1.6rem;border-radius:1.6rem;
-  background:rgba(32,10,3,.97);border:.1rem solid rgba(255,200,87,.45);box-shadow:0 2rem 5rem rgba(0,0,0,.6)}
-.mrp-h{display:flex;align-items:center;justify-content:space-between}
-.mrp-h b{font-family:var(--deva);font-weight:800;font-size:2.1rem}
+/* left: where (area) and how fast; right: topics in groups; footer: hint + Continue */
+.mrp{position:fixed;top:8.6rem;right:3.4rem;z-index:30;width:78rem;max-width:calc(100% - 6.8rem);max-height:calc(100% - 15rem);display:flex;flex-direction:column;border-radius:1.8rem;overflow:hidden;
+  background:linear-gradient(160deg,rgba(48,15,4,.98),rgba(24,7,2,.98));border:.1rem solid rgba(255,200,87,.45);box-shadow:0 2.4rem 6rem rgba(0,0,0,.7);
+  -webkit-animation:rise .35s cubic-bezier(.2,.8,.2,1) both;animation:rise .35s cubic-bezier(.2,.8,.2,1) both}
+.mrp-h{flex:0 0 auto;padding:1.5rem 2.2rem 1.2rem;border-bottom:.08rem solid var(--line);background:linear-gradient(90deg,rgba(230,81,0,.28),rgba(230,81,0,0) 70%)}
+.mrp-h b{display:block;font-family:var(--deva);font-weight:800;font-size:2.3rem;line-height:1.1}
+.mrp-h small{display:block;margin-top:.35rem;font-size:1.2rem;color:var(--gold);font-weight:700}
+.mrp-body{flex:1 1 auto;min-height:0;overflow-y:auto;display:flex;align-items:flex-start;padding:.4rem 2.2rem 1rem}
+.mrp-side{flex:0 0 22rem;margin-right:2.2rem;padding-right:2.2rem;border-right:.08rem solid var(--line)}
+.mrp-main{flex:1 1 auto;min-width:0}
 .mrp-k{font-family:var(--head),var(--deva);font-weight:700;font-size:1.1rem;letter-spacing:.14rem;text-transform:uppercase;color:var(--gold);margin:1.3rem 0 .7rem}
 .mrp-row{display:flex;flex-wrap:wrap}
 .mrp button.o{margin:0 .6rem .6rem 0;height:3.4rem;padding:0 1.2rem;border-radius:2rem;border:.08rem solid rgba(255,200,87,.25);background:rgba(255,255,255,.06);
   font-family:var(--deva);font-size:1.25rem;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--text)}
 .mrp button.o:hover,.mrp button.o:focus{border-color:var(--gold);outline:none;background-color:rgba(255,153,51,.18)}
 .mrp button.o:focus{box-shadow:0 0 0 .2rem var(--gold)}
-.mrp button.o.on{background:linear-gradient(135deg,#E65100,#FF9933);border-color:transparent;color:#fff}
-.mrp button.o.dim{opacity:.5}
-.mrp-states{display:grid;grid-template-columns:repeat(3,1fr);grid-gap:.5rem;max-height:19rem;overflow-y:auto;margin-bottom:.4rem}
-.mrp-states button.o{margin:0;width:100%;border-radius:.8rem;text-align:left;overflow:hidden;text-overflow:ellipsis}
-.mrp-x{height:3.4rem;padding:0 1.5rem;border-radius:2rem;border:0;background:var(--green);color:#fff;font-weight:700;font-size:1.25rem;cursor:pointer;font-family:var(--deva)}
+.mrp button.o.on{background:linear-gradient(135deg,#E65100,#FF9933);border-color:transparent;color:#fff;box-shadow:0 .4rem 1.2rem rgba(230,81,0,.35)}
+.mrp button.o.on:focus{box-shadow:0 0 0 .2rem #fff}
+.mrp button.o.dim{opacity:.45}
+/* a topic: a tick when on, a green "3 new" when it has fresh stories */
+.mrp button.o .ck{display:inline-block;width:1.5rem;height:1.5rem;border-radius:50%;border:.14rem solid rgba(255,255,255,.4);margin-right:.6rem;vertical-align:-.25rem;position:relative}
+.mrp button.o.on .ck{background:#fff;border-color:#fff}
+.mrp button.o.on .ck:after{content:'';position:absolute;left:.42rem;top:.16rem;width:.38rem;height:.72rem;border:solid #E65100;border-width:0 .18rem .18rem 0;-webkit-transform:rotate(45deg);transform:rotate(45deg)}
+.mrp button.o .fr{display:inline-block;margin-left:.6rem;padding:0 .55rem;border-radius:1rem;font-size:1rem;line-height:1.7rem;background:rgba(123,211,137,.18);color:var(--good)}
+.mrp button.o.on .fr{background:rgba(255,255,255,.25);color:#fff}
+.mrp button.o .fr:before{content:'';display:inline-block;width:.55rem;height:.55rem;border-radius:50%;background:currentColor;margin-right:.35rem;vertical-align:.1rem}
+/* topic groups */
+.mrp-g{margin-top:.2rem}
+.mrp-gh{display:flex;align-items:center;margin:.9rem 0 .55rem}
+.mrp-gh span{font-size:1.15rem;font-weight:700;color:var(--muted)}
+.mrp-gh:after{content:'';flex:1 1 auto;height:.08rem;background:var(--line);margin-left:1rem}
+.mrp button.ga{order:2;margin-left:1rem;height:2.4rem;padding:0 .9rem;border-radius:1.2rem;border:.08rem solid rgba(255,200,87,.3);background:transparent;color:var(--gold);
+  font-family:var(--deva);font-size:1.05rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.mrp-gh:after{order:1}
+.mrp button.ga:hover,.mrp button.ga:focus{outline:none;background:rgba(255,153,51,.18);border-color:var(--gold)}
+/* area: one choice per line, like radio buttons */
+.mrp-list button.o{display:block;width:100%;margin:0 0 .55rem;text-align:left;border-radius:1rem;overflow:hidden;text-overflow:ellipsis}
+.mrp-list button.o .ck{border-radius:50%}
+.mrp-list button.o.on .ck:after{left:.33rem;top:.33rem;width:.55rem;height:.55rem;border:0;border-radius:50%;background:#E65100;-webkit-transform:none;transform:none}
+.mrp-list button.o.lnk{height:2.8rem;background:transparent;border-style:dashed;color:var(--gold);font-size:1.1rem}
+/* speed: three equal parts */
+.mrp-seg{display:flex;border-radius:1rem;border:.08rem solid rgba(255,200,87,.25);overflow:hidden;background:rgba(255,255,255,.04)}
+.mrp-seg button.o{flex:1 1 0;margin:0;border:0;border-radius:0;padding:0 .4rem;text-align:center}
+.mrp-seg button.o + button.o{border-left:.08rem solid rgba(255,200,87,.2)}
+.mrp-note{margin-top:.55rem;font-size:1.05rem;color:var(--dim)}
+.mrp-states{display:grid;grid-template-columns:1fr 1fr;grid-gap:.5rem;max-height:19rem;overflow-y:auto;margin-bottom:.6rem}
+.mrp-states button.o{margin:0;width:100%;border-radius:.8rem;text-align:left;overflow:hidden;text-overflow:ellipsis;padding:0 .8rem;font-size:1.15rem}
+.mrp-f{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 2.2rem;border-top:.08rem solid var(--line);background:rgba(0,0,0,.25)}
+.mrp-x{flex:0 0 auto;margin-left:1.6rem;height:3.8rem;padding:0 2rem;border-radius:2rem;border:0;background:var(--green);color:#fff;font-weight:700;font-size:1.35rem;cursor:pointer;font-family:var(--deva);box-shadow:0 .5rem 1.4rem rgba(19,136,8,.35)}
 .mrp-x:focus{outline:none;box-shadow:0 0 0 .2rem #fff}
-.mrp-hint{margin-top:.9rem;font-size:1.05rem;color:var(--dim);line-height:1.4}
+.mrp-hint{font-size:1.05rem;color:var(--dim);line-height:1.4}
 body.mr .banner.proto{display:none}          /* the recorded-data strip is about the CSV, not the live news */
 /* start screen: the Media Room strip under the two cards */
 /* (the start screen is a little tighter so the strip fits under the cards on a 16:9 screen) */
@@ -802,6 +846,7 @@ body.portrait .glass{padding:1.4rem 1.4rem}
 body.portrait .kpis{grid-template-columns:1fr 1fr;grid-gap:1rem}
 /* taller than the screen on upright screens: grow down and scroll, never cut off at the top */
 body.portrait .glance{height:auto;min-height:100%}
+body.portrait .gh{width:auto;max-width:none;min-width:0;margin:0 0 1rem}
 body.portrait .kpis.k5,body.phone .kpis.k5{grid-template-columns:1fr 1fr}
 body.portrait .kpis.k5 .kpi:last-child,body.phone .kpis.k5 .kpi:last-child{grid-column:1 / -1}
 body.portrait .kpis.k5 .kpi-v{font-size:4rem} body.phone .kpis.k5 .kpi-v{font-size:3.3rem}
@@ -876,7 +921,8 @@ body.phone #swBtn,body.phone #langBtn{position:absolute;top:.3rem;margin:0}
 body.phone #langBtn{right:0} body.phone #swBtn{right:5.4rem}
 body.phone .chip,body.phone .tbtn,body.phone .spd{height:2.8rem;font-size:1.1rem}
 body.phone .chip{padding:0 .9rem} body.phone .tbtn{padding:0 .9rem}
-body.phone .spd button{padding:0 .8rem;font-size:1.1rem}
+body.phone .spd button{padding:0 .8rem;font-size:1.1rem;min-width:0;height:2.2rem}
+body.phone .spd .spd-i{display:none}
 body.phone .clock{display:none}
 /* screen title */
 body.phone #stage{display:block;padding-top:.6rem}
@@ -1036,7 +1082,12 @@ body.phone .mr-f,body.phone .mr-lead .mr-f{font-size:1.05rem}
 body.phone .mr-area{font-size:1.2rem;vertical-align:.3rem;margin-left:.6rem;padding:.25rem .9rem .25rem .7rem}
 body.phone .st-count.nx{display:block;margin:.4rem 0 0;font-size:1.1rem;max-width:none}
 body.phone .mr-s li a{font-size:1.4rem}
-body.phone .mrp{top:auto;bottom:0;left:0;right:0;width:auto;max-height:78%;border-radius:1.4rem 1.4rem 0 0;padding:1.4rem 1.2rem}
+body.phone .mrp{top:auto;bottom:0;left:0;right:0;width:auto;max-width:none;max-height:82%;border-radius:1.4rem 1.4rem 0 0}
+body.phone .mrp-h,body.phone .mrp-f{padding-left:1.4rem;padding-right:1.4rem}
+body.phone .mrp-body{display:block;padding:0 1.4rem .8rem}
+body.phone .mrp-side{margin:0;padding:0;border:0}
+body.phone .mrp-hint{display:none}
+body.phone .mrp-x{margin-left:0;width:100%}
 body.phone .mrp-states{grid-template-columns:1fr 1fr}
 body.phone .ch-media{display:flex;padding:1.3rem 1.4rem}
 body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1rem} body.phone .ch-media i{display:none}
@@ -1046,7 +1097,6 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
 <div id="sky"></div>
 <div id="hero" aria-hidden="true">
   <div class="hero-floor"></div>
-  <div class="hero-side l"><img id="heroL" alt=""></div>
   <div class="hero-side r"><img id="heroR" alt=""></div>
   <div class="hero-main"><img id="heroM" alt=""></div>
 </div>
@@ -1134,7 +1184,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       <div class="chip lvl-nodata" id="chip"><i class="cd"></i><span id="chipTxt">…</span></div>
       <div class="clock"><b id="clk">--:--</b><span id="cdate"></span></div>
       <div class="spd" id="rng" role="group"><button type="button" data-h="24"></button><button type="button" data-h="48"></button><button type="button" data-h="72"></button></div>
-      <div class="spd" id="spd" role="group"><button type="button" data-s="slow"></button><button type="button" data-s="normal"></button><button type="button" data-s="fast"></button></div>
+      <div class="spd" id="spd" role="group"><svg class="spd-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 17a8 8 0 1 1 15 0"/><path d="M12 13l4-4"/><circle cx="12" cy="13" r="1.2"/></svg><button type="button" data-s="slow"></button><button type="button" data-s="normal"></button><button type="button" data-s="fast"></button></div>
       <button class="tbtn hidden" id="mrBtn" type="button"></button>
       <button class="tbtn" id="swBtn" type="button"></button>
       <button class="tbtn" id="langBtn" type="button">हिंदी</button>
@@ -1158,11 +1208,16 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   <button type="button" id="cFull" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 </div>
 <div class="mrp hidden" id="mrp" role="dialog" aria-labelledby="mrpT">
-  <div class="mrp-h"><b id="mrpT"></b><button type="button" class="mrp-x" id="mrpX"></button></div>
-  <div class="mrp-k" id="mrpAreaK"></div><div class="mrp-row" id="mrpArea"></div>
-  <div class="mrp-states hidden" id="mrpStates"></div>
-  <div class="mrp-k" id="mrpTopK"></div><div class="mrp-row" id="mrpTop"></div>
-  <div class="mrp-hint" id="mrpHint"></div>
+  <div class="mrp-h"><div><b id="mrpT"></b><small id="mrpSum"></small></div></div>
+  <div class="mrp-body">
+    <div class="mrp-side">
+      <div class="mrp-k" id="mrpAreaK"></div><div class="mrp-list" id="mrpArea"></div>
+      <div class="mrp-states hidden" id="mrpStates"></div>
+      <div class="mrp-k" id="mrpSpdK"></div><div class="mrp-seg" id="mrpSpd"></div><div class="mrp-note" id="mrpPer"></div>
+    </div>
+    <div class="mrp-main"><div class="mrp-k" id="mrpTopK"></div><div id="mrpTop"></div></div>
+  </div>
+  <div class="mrp-f"><span class="mrp-hint" id="mrpHint"></span><button type="button" class="mrp-x" id="mrpX"></button></div>
 </div>
 <div class="banner hidden" id="banner"></div>
 <div class="overlay hidden" id="overlay"><div class="ov-box"><h2 id="ovTitle"></h2><p id="ovText"></p><span id="ovAct"></span></div></div>
@@ -1194,7 +1249,6 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   /* leader photos -- replace the files (same names) to change them; see live_assets/leaders/ATTRIBUTION.md */
   var HERO = {
     heroM: ['/live/img/leaders/modi-standing.webp', 'Narendra Modi'],
-    heroL: ['/live/img/leaders/amit-shah-standing.webp', 'Amit Shah'],
     heroR: ['/live/img/leaders/nitin-nabin-standing.webp?v=2', 'Nitin Nabin']
   };
   var BJP_LOGO = '/live/img/p/BJP';
@@ -1220,6 +1274,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       breakout: 'Doing far better than usual', toppost: 'Most-viewed post',
       map: 'Where are leaders posting from?', facts: 'In plain words', nodataT: 'Waiting for data',
       kOrig: 'Original posts', kViews: 'Views on those posts', kParty: 'Most active party', kState: 'Most active state', kAcc: 'Active accounts',
+      hiBjp: 'Most seen in BJP', hiBreak: 'Talked about more than usual', hiPost: 'Most-viewed post',
+      hiViews: '{v} views', hiX: '{x}× the usual views',
       ofPartyPosts: '{v}% of posts by party accounts', postsN: '{v} posts', vsPrev: '{v}% vs previous period',
       scale: 'Tracking <b>{a}</b> political accounts · <b>{s}</b> states with activity · <b>{t}</b> posts analysed in total',
       scaleUp: 'Tracking <b>{a}</b> political accounts in Uttar Pradesh · <b>{t}</b> posts analysed in total',
@@ -1282,6 +1338,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       breakout: 'सामान्य से कहीं बेहतर', toppost: 'सबसे ज़्यादा देखा गया पोस्ट',
       map: 'नेता कहाँ से पोस्ट कर रहे हैं?', facts: 'आसान शब्दों में', nodataT: 'डेटा का इंतज़ार',
       kOrig: 'मूल पोस्ट', kViews: 'इन पोस्ट पर व्यूज़', kParty: 'सबसे सक्रिय पार्टी', kState: 'सबसे सक्रिय राज्य', kAcc: 'सक्रिय खाते',
+      hiBjp: 'BJP में सबसे ज़्यादा देखे गए', hiBreak: 'सामान्य से ज़्यादा चर्चा में', hiPost: 'सबसे ज़्यादा देखा गया पोस्ट',
+      hiViews: '{v} व्यूज़', hiX: 'सामान्य से {x} गुना व्यूज़',
       ofPartyPosts: 'पार्टी खातों के पोस्ट का {v}%', postsN: '{v} पोस्ट', vsPrev: 'पिछली अवधि से {v}%',
       scale: '<b>{a}</b> राजनीतिक खातों पर नज़र · <b>{s}</b> राज्यों से गतिविधि · कुल <b>{t}</b> पोस्ट का विश्लेषण',
       scaleUp: 'उत्तर प्रदेश के <b>{a}</b> राजनीतिक खातों पर नज़र · कुल <b>{t}</b> पोस्ट का विश्लेषण',
@@ -1407,6 +1465,18 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   T.en.mrpHint = 'Changes show at once. Arrows to move, OK to choose, Back to continue the show.';
   T.hi.mrpHint = 'बदलाव तुरंत दिखते हैं। तीर से चलें, OK से चुनें, Back से शो फिर चलाएँ।';
   T.en.mrpHintTouch = 'Changes show at once. Tap Continue when done.'; T.hi.mrpHintTouch = 'बदलाव तुरंत दिखते हैं। हो जाए तो "आगे चलाएँ" दबाएँ।';
+  T.en.mrpTopic = 'Topics'; T.hi.mrpTopic = 'विषय';
+  T.en.mrpSpeed = 'Speed'; T.hi.mrpSpeed = 'गति';
+  T.en.mrpLoop = '{n} screens · one full round ≈ {m} min'; T.hi.mrpLoop = '{n} स्क्रीन · पूरा चक्कर लगभग {m} मिनट';
+  T.en.mrpPer = 'Each screen ≈ {s} s'; T.hi.mrpPer = 'हर स्क्रीन लगभग {s} सेकंड';
+  T.en.mrpFresh = '{n} new'; T.hi.mrpFresh = '{n} नई';
+  T.en.mrpAllG = 'All'; T.hi.mrpAllG = 'सब चुनें';
+  T.en.mrpNoneG = 'Remove'; T.hi.mrpNoneG = 'हटाएँ';
+  T.en.grpMain = 'Quick'; T.hi.grpMain = 'झटपट';
+  T.en.grpBjp = 'BJP watch'; T.hi.grpBjp = 'BJP नज़र';
+  T.en.grpPol = 'Politics'; T.hi.grpPol = 'राजनीति';
+  T.en.grpGov = 'Government & country'; T.hi.grpGov = 'शासन और देश';
+  T.en.grpSrc = 'Sources'; T.hi.grpSrc = 'स्रोत';
   if (PROTO && !PROTO.live) {        // a recorded file is not "live" (PROTO.live: fed from Political Pulse)
     T.en.brandSub = T.en.brandSub.replace(' · Live', ''); T.hi.brandSub = T.hi.brandSub.replace(' · लाइव', '');
     T.en.proto = 'Data · {a} – {b}'; T.hi.proto = 'डेटा · {a} – {b}';
@@ -1830,7 +1900,40 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       band = '<div class="scale">' + (STATE ? fill(t('scaleUp'), { a: esc(fmtInt(cs.handlesMapped)), t: esc(fmtShort(cs.postsInDatabase)) })
         : fill(t('scale'), { a: esc(fmtInt(cs.handlesMapped)), s: esc(String(s.kpis.statesCovered)), t: esc(fmtShort(cs.postsInDatabase)) })) + '</div>';
     }
-    return '<div class="glance"><div class="kpis k5">' + tiles + '</div>' + band + '</div>';
+    return '<div class="glance">' + glanceHighlights(s) + '<div class="kpis k5">' + tiles + '</div>' + band + '</div>';
+  }
+  /* the space left of Modi ji, above the tiles: three faces with one line each --
+     BJP's most-seen leader, who is buzzing more than usual, the most-viewed post */
+  function glanceHighlights(s) {
+    var rows = [], seen = {};
+    function colorOf(p) { var x = p ? partyOf(p) : null; return x && x.color ? x.color : '#E65100'; }
+    function row(p, label, line) {
+      if (!p || seen[p.handle]) return;
+      seen[p.handle] = 1;
+      rows.push('<div class="gh-r">' + avatar(p.name, p.avatar, colorOf(p.party || 'BJP')) + '<div class="gh-t"><span>' + esc(label) + '</span><b>' + esc(p.name) + '</b><i>' + esc(line) + '</i></div></div>');
+    }
+    var bjp = ((s.leadersByParty || {}).BJP || [])[0];
+    if (bjp) row(bjp, t('hiBjp'), fill(t('hiViews'), { v: fmtShort(bjp.views) }));
+    var br = (s.breakout || [])[0];
+    if (br) row(br, t('hiBreak'), fill(t('hiX'), { x: br.ratio }));
+    var tp = s.topPost;
+    if (tp) row(tp, t('hiPost'), fill(t('hiViews'), { v: fmtShort(tp.views) }));
+    if (rows.length < 2) return '';
+    return '<div class="gh">' + rows.join('') + '</div>';
+  }
+  /* short screens: drop rows from the end until the glance fits; under two rows, drop the panel */
+  function fitHighlights(el) {
+    var g = el && el.querySelector('.glance'), h = g && g.querySelector('.gh');
+    if (!h || document.body.classList.contains('portrait')) return;
+    var rows = h.querySelectorAll('.gh-r'), n = rows.length;
+    /* heights, not screen positions: the entry animation moves things but does not resize them */
+    function need() {
+      var sum = 0, c = g.children, i, cs;
+      for (i = 0; i < c.length; i++) { cs = window.getComputedStyle(c[i]); sum += c[i].offsetHeight + (parseFloat(cs.marginBottom) || 0) + (c[i] === h ? 0 : (parseFloat(cs.marginTop) || 0)); }
+      return sum;
+    }
+    while (n > 0 && need() > g.clientHeight) { h.removeChild(rows[--n]); }
+    if (n < 2 && h.parentNode) h.parentNode.removeChild(h);
   }
 
   /* ---------- the focus party (BJP), by account category ---------- */
@@ -2031,7 +2134,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
                title: function () { return fill(t('trending'), { p: esc(p.party) }) + (okImg(p.logo) ? '<span class="tl"><img alt="" src="' + esc(p.logo) + '"></span>' : ''); },
                render: function (x) { return sTrending(x, p.party); } };
     }
-    L.push({ id: 'glance', dur: 15000, hero: 'hi', title: function () { return esc(t('glance')); }, render: sGlance, after: countUp });
+    L.push({ id: 'glance', dur: 15000, hero: 'hi', title: function () { return esc(t('glance')); }, render: sGlance, after: function (el) { fitHighlights(el); countUp(el); } });
     if (s.focus && s.focus.cats && s.focus.cats.length) L.push({ id: 'focus', dur: 20000,
       title: function () { var lg = logoOf(s.focus.party); return fill(t('bjT'), { p: esc(s.focus.party === 'BJP' ? t('bjName') : s.focus.party) }) + (okImg(lg) ? '<span class="tl"><img alt="" src="' + esc(lg) + '"></span>' : ''); },
       render: sFocus, after: function (el) { countUp(el); growBars(el); } });
@@ -2241,6 +2344,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function setSpeed(s) {
     if (!SPEED_MUL[s] || s === SPEED) return;
     SPEED = s; store('nazar_speed', s); renderSpeed();
+    if (MR.open) renderMrPanel();
     /* the screen on now keeps the share of its time already shown, at the new speed */
     if (!state.mode || !state.base) return;
     var newDur = state.base * SPEED_MUL[SPEED];
@@ -2593,16 +2697,57 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   }
   /* a TV left paused carries on by itself after 2 minutes without a key or a touch */
   function mrIdle() { clearTimeout(MR.idleT); MR.idleT = setTimeout(function () { if (MR.open && state.paused) pause(false); }, 120000); }
-  function mrOpt(k, label, on, dim) { return '<button type="button" class="o' + (on ? ' on' : '') + (dim ? ' dim' : '') + '" data-k="' + esc(k) + '">' + esc(label) + '</button>'; }
+  function mrOpt(k, label, on, dim, extra, cls) {
+    return '<button type="button" class="o' + (on ? ' on' : '') + (dim ? ' dim' : '') + (cls ? ' ' + cls : '') + '" data-k="' + esc(k) + '">'
+      + (extra === undefined ? '' : '<i class="ck"></i>') + esc(label) + (extra || '') + '</button>';
+  }
+  /* topic groups in the panel; a topic added to the config later lands in "Politics" */
+  var MR_GROUPS = [
+    { k: 'grpBjp', ids: ['atk', 'pro', 'opprift'] },
+    { k: 'grpPol', ids: ['politics', 'elections', 'students', 'party', 'controversy', 'protests', 'legislature'] },
+    { k: 'grpGov', ids: ['governance', 'lawandorder', 'economy', 'international'] },
+    { k: 'grpSrc', ids: ['official', 'bysource'] }
+  ];
+  function mrGroups(m) {
+    var all = mrAllTopics(m), used = { hot: 1 }, out = MR_GROUPS.map(function (g) {
+      var ids = g.ids.filter(function (id) { return all.indexOf(id) >= 0; }); ids.forEach(function (id) { used[id] = 1; }); return { k: g.k, ids: ids };
+    });
+    all.forEach(function (id) { if (!used[id]) out[1].ids.push(id); });
+    return out.filter(function (g) { return g.ids.length; });
+  }
+  /* stories on a topic published in the last hour, in the chosen areas (publish time, not
+     when we found it: after a restart everything is "found" at once) */
+  function mrFresh(m, id) {
+    if (!m || !m.all || id === 'bysource') return 0;
+    var n = 0, now = Date.now(), seen = {};
+    mrAreas().forEach(function (a) {
+      var v = a === 'all' ? m.all : m.local, l = v && v.lists ? v.lists[id] || [] : [];
+      l.forEach(function (c) { if (!seen[c.u] && c.p && now - c.p < 3600000 && !c.nd) { seen[c.u] = 1; n++; } });
+    });
+    return n;
+  }
+  /* what the loop will be with these choices: screens and the time for one full round */
+  function mrLoopSum() {
+    var m = state.snap; if (!m || !m.all) return '';
+    var L = buildMediaScenes(m).filter(function (s) { return s.id !== 'mr-none'; }), ms = 0;
+    if (!L.length) return t('mrNoneT');
+    L.forEach(function (s) { ms += s.dur || 20000; });
+    return fill(t('mrpLoop'), { n: L.length, m: Math.max(1, Math.round(ms * SPEED_MUL[SPEED] / 60000)) });
+  }
   function renderMrPanel() {
     var st = mrState(), m = state.snap, ae = document.activeElement, focusK = ae && ae.getAttribute ? ae.getAttribute('data-k') : null;
     $('mrpT').textContent = t('mrpT'); $('mrpX').textContent = t('mrpGo'); $('mrpAreaK').textContent = t('mrpArea'); $('mrpTopK').textContent = t('mrpTopic');
+    $('mrpSpdK').textContent = t('mrpSpeed'); $('mrpSum').textContent = mrLoopSum();
     $('mrpHint').textContent = PHONE ? t('mrpHintTouch') : t('mrpHint');
     var area = st ? MR.area : 'all';
-    $('mrpArea').innerHTML = mrOpt('a:all', t('stAll'), area === 'all')
-      + mrOpt('a:state', st ? (STATE ? fill(t('mrpAuto'), { s: stName(st) }) : stName(st)) : t('mrpPickSt'), area === 'state')
-      + mrOpt('a:both', t('mrpBoth') + (st ? ' · ' + t('stAll') + ' + ' + stName(st) : ''), area === 'both')
-      + (!STATE && st ? mrOpt('a:pick', t('mrpChange'), MR.statesOpen) : '');
+    $('mrpArea').innerHTML = mrOpt('a:all', t('stAll'), area === 'all', false, '')
+      + mrOpt('a:state', st ? (STATE ? fill(t('mrpAuto'), { s: stName(st) }) : stName(st)) : t('mrpPickSt'), area === 'state', false, '')
+      + mrOpt('a:both', t('mrpBoth') + (st ? ' · ' + t('stAll') + ' + ' + stName(st) : ''), area === 'both', false, '')
+      + (!STATE && st ? mrOpt('a:pick', '⟳ ' + t('mrpChange'), MR.statesOpen, false, undefined, 'lnk') : '');
+    $('mrpSpd').innerHTML = ['slow', 'normal', 'fast'].map(function (s) { return mrOpt('p:' + s, t('sp_' + s), s === SPEED); }).join('');
+    var per = 0, L = m && m.all ? buildMediaScenes(m) : [];
+    L.forEach(function (s) { per += s.dur || 20000; });
+    $('mrpPer').textContent = L.length ? fill(t('mrpPer'), { s: Math.round(per / L.length * SPEED_MUL[SPEED] / 1000) }) : '';
     if (MR.statesOpen) {
       var names = Object.keys(STATE_HI).filter(function (s) { return !MR_NO_FEED[s]; }).sort(function (a, b) { return stName(a).localeCompare(stName(b), LANG === 'hi' ? 'hi' : 'en'); });
       $('mrpStates').innerHTML = names.map(function (s) { return mrOpt('s:' + s, stName(s), s === st); }).join('');
@@ -2613,13 +2758,34 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       if (!m || !m.all) return true;
       return ar.some(function (a) { var v = a === 'all' ? m.all : m.local; if (!v) return false; return id === 'bysource' ? !!(v.bySource && v.bySource.length) : !!(v.lists[id] && v.lists[id].length); });
     }
-    $('mrpTop').innerHTML = mrOpt('t:mix', t('mrMix'), mix) + mrAllTopics(m).map(function (id) { return mrOpt('t:' + id, mrTopicName(id), !mix && MR.topics.indexOf(id) >= 0, !has(id)); }).join('');
-    [].forEach.call($('mrp').querySelectorAll('button.o'), function (b) { b.onclick = function () { mrChoose(b.getAttribute('data-k')); }; });
-    if (focusK) { var f = null; [].forEach.call($('mrp').querySelectorAll('button.o'), function (b) { if (b.getAttribute('data-k') === focusK) f = b; }); if (f) { try { f.focus(); } catch (e) {} } }
+    function topic(id) {
+      var n = mrFresh(m, id);
+      return mrOpt('t:' + id, mrTopicName(id), !mix && MR.topics.indexOf(id) >= 0, !has(id), n ? '<span class="fr">' + esc(fill(t('mrpFresh'), { n: n })) + '</span>' : '');
+    }
+    var html = '<div class="mrp-row">' + mrOpt('t:mix', t('mrMix'), mix, false, '') + topic('hot') + '</div>';
+    mrGroups(m).forEach(function (g, gi) {
+      var allOn = !mix && g.ids.every(function (id) { return MR.topics.indexOf(id) >= 0; });
+      html += '<div class="mrp-g"><div class="mrp-gh"><span>' + esc(t(g.k)) + '</span>'
+        + (g.ids.length > 1 ? '<button type="button" class="ga" data-k="g:' + gi + '">' + esc(t(allOn ? 'mrpNoneG' : 'mrpAllG')) + '</button>' : '')
+        + '</div><div class="mrp-row">' + g.ids.map(topic).join('') + '</div></div>';
+    });
+    $('mrpTop').innerHTML = html;
+    [].forEach.call($('mrp').querySelectorAll('button[data-k]'), function (b) { b.onclick = function () { mrChoose(b.getAttribute('data-k')); }; });
+    if (focusK) { var f = null; [].forEach.call($('mrp').querySelectorAll('button[data-k]'), function (b) { if (b.getAttribute('data-k') === focusK) f = b; }); if (f) { try { f.focus(); } catch (e) {} } }
   }
   function mrChoose(k) {
     mrIdle();
     var kind = k.slice(0, 2), v = k.slice(2), refetch = false;
+    if (kind === 'p:') { setSpeed(v); renderMrPanel(); return; }
+    if (kind === 'g:') {
+      /* a group's "All": switch on every topic in it (or, when all are on, take them off) */
+      var g = mrGroups(state.snap)[+v]; if (!g) return;
+      var cur2 = mrIsMix() ? [] : MR.topics.slice(), allOn = g.ids.every(function (id) { return cur2.indexOf(id) >= 0; });
+      g.ids.forEach(function (id) { var x = cur2.indexOf(id); if (allOn && x >= 0) cur2.splice(x, 1); else if (!allOn && x < 0) cur2.push(id); });
+      MR.topics = cur2.length ? cur2 : ['mix']; store('nazar_mr_topics', MR.topics.join(','));
+      renderMrPanel(); if (state.snap) { onData(true); renderTicker(false); }
+      return;
+    }
     if (kind === 'a:') {
       if (v === 'pick') { MR.statesOpen = !MR.statesOpen; renderMrPanel(); return; }
       if (v !== 'all' && !mrState()) { MR.pending = v; MR.statesOpen = true; renderMrPanel(); return; }   // "State" with no state yet: pick one first
