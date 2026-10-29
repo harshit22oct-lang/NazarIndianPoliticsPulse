@@ -491,8 +491,10 @@ body.reduced .kpis .kpi,body.reduced .atb,body.reduced .bj-card,body.reduced .bj
 .bj-row{display:grid;grid-template-columns:17rem 1fr 19rem;align-items:center;background:var(--glass);border:.08rem solid var(--line);border-radius:1.2rem;
   padding:.75rem 1.3rem;margin-bottom:.7rem;min-width:0;position:relative;
   -webkit-animation:rowIn .6s cubic-bezier(.2,.8,.2,1) both;animation:rowIn .6s cubic-bezier(.2,.8,.2,1) both}
-@-webkit-keyframes rowIn{from{opacity:0;-webkit-transform:translateX(4rem)}to{opacity:1;-webkit-transform:none}}
-@keyframes rowIn{from{opacity:0;transform:translateX(4rem)}to{opacity:1;transform:none}}
+/* the rows rise into place (a slide from the right was cut by the list's edge, so the leader's
+   name on the right looked clipped for a moment) */
+@-webkit-keyframes rowIn{from{opacity:0;-webkit-transform:translateY(.9rem)}to{opacity:1;-webkit-transform:none}}
+@keyframes rowIn{from{opacity:0;transform:translateY(.9rem)}to{opacity:1;transform:none}}
 .bj-row:last-child{margin-bottom:0}
 .bj-c b{display:block;font-family:var(--head);font-weight:700;font-size:2.1rem;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bj-c span{font-size:1.05rem;color:var(--dim);white-space:nowrap}
