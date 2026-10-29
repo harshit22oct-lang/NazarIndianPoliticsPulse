@@ -732,13 +732,18 @@ var ELEC_NEWS = {
   local: /नगर निगम|नगर निकाय|नगर पालिका|नगर पंचायत|निकाय चुनाव|पंचायत|प्रधान|पार्षद|मेयर|महापौर|वार्ड|जिला परिषद|ज़िला परिषद|municipal|civic|corporation poll|mayor|panchayat|zila parishad|ward|councillor|BMC|GHMC/i
 };
 var ELEC_WORD = /चुनाव|मतगणना|मतदान|नतीजे|परिणाम|election|poll|counting|vote|result/i;
+/* another country's election is not the Election Room's ("US midterm election 2026", Trump) */
+/* (not Pakistan or Bangladesh: Indian campaigns name them all the time -- "infiltrators", "Pakistan
+   will celebrate" -- so they say nothing about whose election it is) */
+var ELEC_ABROAD = /\b(America|American|midterms?|mid-terms?|Trump|Biden|Kamala Harris|Britain|British|Canada|Canadian|Nepal|Sri Lanka|Japan|Germany|France|Australia)\b|अमेरिक|यूएस|मिड ?टर्म|ट्रंप|बाइडेन|ब्रिटेन|कनाडा|नेपाल|श्रीलंका|जापान|जर्मनी|फ्रांस|ऑस्ट्रेलिया/i;
+var ELEC_ABROAD_CS = /\b(US|U\.S\.|USA|UK)\b/;          // capitals only: "us" is an English word
 function electionNews(st, type, city) {
   var re = ELEC_NEWS[type] || ELEC_NEWS.all, cre = null;
   if (city && st && ELEC_CFG.cities && ELEC_CFG.cities[st]) {
     var pair = ELEC_CFG.cities[st].filter(function (c) { return c[0] === city; })[0];
     if (pair) cre = new RegExp(pair.map(function (x) { return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'), 'i');
   }
-  var test = function (t) { return re.test(t) && (type === 'all' || type === 'local' || type === 'council' || ELEC_WORD.test(t)) && (!cre || cre.test(t)); };
+  var test = function (t) { return re.test(t) && !ELEC_ABROAD.test(t) && !ELEC_ABROAD_CS.test(t) && (type === 'all' || type === 'local' || type === 'council' || ELEC_WORD.test(t)) && (!cre || cre.test(t)); };
   try { return mediaRoom.find(test, st || null, 48, 12); } catch (e) { return []; }
 }
 /* the last good screens: served at once after a restart while the posts load (snap_cache.js) */

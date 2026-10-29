@@ -1451,7 +1451,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function sstore(k, v) { try { if (v === undefined) return window.sessionStorage.getItem(k); if (v === null) window.sessionStorage.removeItem(k); else window.sessionStorage.setItem(k, v); } catch (e) { return null; } return null; }
   var VIEW_KEYS = /^(scope|mode|h|est|etype|ecity|edemo|area|t|mrstate)$/;
   /* these used to be kept on the device for good: dropped, so an old choice never comes back */
-  try { ['nazar_er_state', 'nazar_er_city', 'nazar_er_demo', 'nazar_mr_state'].forEach(function (k) { window.localStorage.removeItem(k); }); } catch (e) {}
+  try { ['nazar_er_state', 'nazar_er_city', 'nazar_er_demo', 'nazar_er_type', 'nazar_mr_state'].forEach(function (k) { window.localStorage.removeItem(k); }); } catch (e) {}
   (function () {
     var keep = Q.kiosk === '1' || sstore('nazar_keep') === '1';
     sstore('nazar_keep', null);
@@ -3173,7 +3173,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
        type   all | ls | vs | bye (official results) | council | local (news only)
        demo   replay real Bihar 2025 counting data -- always labelled DEMO, never LIVE */
   var ER_TYPES = /^(all|ls|vs|bye|council|local)$/;
-  var ER = { type: ER_TYPES.test(Q.etype || '') ? Q.etype : (ER_TYPES.test(store('nazar_er_type') || '') ? store('nazar_er_type') : 'all'),
+  var ER = { type: ER_TYPES.test(Q.etype || '') ? Q.etype : (ER_TYPES.test(sstore('nazar_er_type') || '') ? sstore('nazar_er_type') : 'all'),
              pick: Q.est || sstore('nazar_er_state') || '', city: Q.ecity || sstore('nazar_er_city') || '',
              demo: Q.edemo === '1' || (Q.edemo !== '0' && sstore('nazar_er_demo') === '1'), statesOpen: false };
   /* '' = the page's own state (or All India), '-' = All India chosen here */
@@ -3487,7 +3487,14 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       if (c.declared && c.declared.length) L.push(sc({ id: 'er-decl-' + c.key, dur: 14000, title: function () { return erTitle('erDecl', place, c.status); },
                   label: function () { return t('erDecl') + (place ? ' · ' + place : ''); }, render: function () { return erDeclared(c); } }));
     });
-    /* nothing being counted: head to head still runs, on the latest by-election results (marked OLD) */
+    /* nothing being counted: the past results come first -- every state's, side by side -- so the
+       room does not open on one by-election seat (it looked as if a state had been chosen) */
+    var past = newsOnly ? [] : (m.past || []);
+    for (var p = 0; p < Math.min(past.length, 8); p += 4) (function (chunk, k) {
+      L.push({ id: 'er-past-' + k, dur: 18000, hero: 'mid', title: function () { return erTitle('erPast', erState() ? stName(erState()) : t('erpAll'), 'old'); }, label: function () { return t('erPast'); },
+               sub: function () { return t('erNotePast'); }, render: function () { return erPast(chunk); } });
+    })(past.slice(p, p + 4), p / 4);
+    /* then head to head, on the latest by-election results (marked OLD) */
     if (!newsOnly && !cs.some(function (c) { return c.status === 'live' || c.status === 'demo'; })) {
       (m.past || []).filter(function (r) { return r.byeSeats && r.byeSeats.length; }).slice(0, 2).forEach(function (r) {
         var oc = { key: r.key, status: 'old', byeSeats: r.byeSeats, parties: r.parties || [] }, od = erDuelsOf(oc);
@@ -3497,14 +3504,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
                  after: function (el) { erDuelRun(el, 'er-duel-' + r.key); } });
       });
     }
-    var past = newsOnly ? [] : (m.past || []);
-    for (var p = 0; p < Math.min(past.length, 8); p += 4) (function (chunk, k) {
-      L.push({ id: 'er-past-' + k, dur: 18000, hero: 'mid', title: function () { return erTitle('erPast', erState() ? stName(erState()) : '', 'old'); }, label: function () { return t('erPast'); },
-               sub: function () { return t('erNotePast'); }, render: function () { return erPast(chunk); } });
-    })(past.slice(p, p + 4), p / 4);
     var news = m.news || [];
     for (var n = 0; n < Math.min(news.length, 10); n += 5) (function (chunk, k) {
-      L.push({ id: 'er-news-' + k, dur: 18000, title: function () { return erTitle('erNews', erState() ? stName(erState()) + (ER.city ? ' · ' + erCity(ER.city) : '') : '', null); },
+      L.push({ id: 'er-news-' + k, dur: 18000, title: function () { return erTitle('erNews', erState() ? stName(erState()) + (ER.city ? ' · ' + erCity(ER.city) : '') : t('erpAll'), null); },
                label: function () { return t('erNews'); }, sub: function () { return newsOnly ? t('erNoteNews') : t('erT_' + ER.type); }, render: function () { return mrCards(chunk, 'elections'); } });
     })(news.slice(n, n + 5), n / 5);
     /* a long counting-day loop shows the tallies a second time half-way round */
@@ -3593,7 +3595,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     else if (kind === 'et') ER.type = v;
     else if (kind === 'ec') ER.city = v;
     else if (kind === 'ed') ER.demo = !ER.demo;
-    sstore('nazar_er_state', ER.pick); store('nazar_er_type', ER.type); sstore('nazar_er_city', ER.city); sstore('nazar_er_demo', ER.demo ? '1' : '0');
+    sstore('nazar_er_state', ER.pick); sstore('nazar_er_type', ER.type); sstore('nazar_er_city', ER.city); sstore('nazar_er_demo', ER.demo ? '1' : '0');
     renderErPanel();
     clearTimeout(fetchTimer); fetchData(true);
   }
@@ -3623,7 +3625,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     function go() {
       close();
       ER.type = 'all'; ER.pick = c.state && STATE_HI[c.state] ? c.state : '-'; ER.city = ''; ER.demo = false;
-      sstore('nazar_er_state', ER.pick); store('nazar_er_type', ER.type); sstore('nazar_er_city', ''); sstore('nazar_er_demo', '0');
+      sstore('nazar_er_state', ER.pick); sstore('nazar_er_type', ER.type); sstore('nazar_er_city', ''); sstore('nazar_er_demo', '0');
       startShow('election');
     }
     function draw() {
@@ -3841,8 +3843,15 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   });
   $('chMedia').onclick = function () { startShow('media'); };
   $('chMedia').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { startShow('media'); e.preventDefault(); } e.stopPropagation(); };
-  $('chElec').onclick = function () { startShow('election'); };
-  $('chElec').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { startShow('election'); e.preventDefault(); } e.stopPropagation(); };
+  /* the Election Room from the start screen always opens on its defaults: every type (mix), and All
+     India -- or the state this Nazar is for. Choices made inside it last until it is left. */
+  function erOpen() {
+    ER.type = 'all'; ER.pick = ''; ER.city = ''; ER.demo = false; ER.statesOpen = false;
+    ['nazar_er_type', 'nazar_er_state', 'nazar_er_city', 'nazar_er_demo'].forEach(function (k) { sstore(k, null); });
+    startShow('election');
+  }
+  $('chElec').onclick = erOpen;
+  $('chElec').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { erOpen(); e.preventDefault(); } e.stopPropagation(); };
   $('chAll').onclick = function () { startShow('all'); };
   $('chAll').onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { startShow('all'); e.preventDefault(); } };
   $('chooser').addEventListener('mousemove', holdChooser);
