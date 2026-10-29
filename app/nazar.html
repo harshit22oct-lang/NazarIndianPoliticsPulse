@@ -1287,6 +1287,13 @@ body.phone .mrp-x{margin-left:0;width:100%}
 body.phone .mrp-states{grid-template-columns:1fr 1fr}
 body.phone .ch-media{display:flex;padding:1.3rem 1.4rem}
 body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1rem} body.phone .ch-media i{display:none}
+/* Hindi in a one-line box that clips (for the "..." of a long name): with a tight line-height the
+   vowel signs above the letters (ि, ी, े, ॅ) and below them (ु, ृ) fall outside the box and were cut
+   ("विधायक" lost the top of its ि). Room above and below inside the box, taken back outside it,
+   so nothing around moves. */
+.bj-c b,.ak-who b,.ak-row .n b,.mr-who b,.mr-sh b,.kpi-v.txt{padding-top:.22em;padding-bottom:.14em;margin-top:-.22em;margin-bottom:-.14em}
+.ln{line-height:1.3}
+.er-cand .nm{line-height:1.4}
 </style>
 </head>
 <body>
