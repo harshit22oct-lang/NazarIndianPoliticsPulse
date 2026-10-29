@@ -95,5 +95,19 @@
     "Uttarakhand": ["PUSHKAR SINGH DHAMI", "HARISH RAWAT"],
     "Goa": ["PRAMOD SAWANT"],
     "Delhi": ["ARVIND KEJRIWAL", "ATISHI", "PARVESH SAHIB SINGH", "MANISH SISODIA"]
+  },
+  "face_hi": {
+    "_about": "Hindi names of the big faces (checked by hand), used where ECI's Hindi page has no Hindi name for them. Key: the name as in 'faces'.",
+    "TEJASHWI PRASAD YADAV": "तेजस्वी प्रसाद यादव", "SAMRAT CHOUDHARY": "सम्राट चौधरी", "VIJAY KUMAR SINHA": "विजय कुमार सिन्हा",
+    "MAITHILI THAKUR": "मैथिली ठाकुर", "TEJ PRATAP YADAV": "तेज प्रताप यादव", "ANANT KUMAR SINGH": "अनंत कुमार सिंह", "SHREYASI SINGH": "श्रेयसी सिंह",
+    "YOGI ADITYANATH": "योगी आदित्यनाथ", "KESHAV PRASAD MAURYA": "केशव प्रसाद मौर्य", "BRAJESH PATHAK": "ब्रजेश पाठक",
+    "AKHILESH YADAV": "अखिलेश यादव", "SHIVPAL SINGH YADAV": "शिवपाल सिंह यादव", "AZAM KHAN": "आज़म ख़ान",
+    "SUVENDU ADHIKARI": "शुभेंदु अधिकारी", "MAMATA BANERJEE": "ममता बनर्जी", "SAMIK BHATTACHARYA": "शमिक भट्टाचार्य",
+    "VIJAY": "विजय", "M.K.STALIN": "एम.के. स्टालिन", "UDHAYANIDHI STALIN": "उदयनिधि स्टालिन", "EDAPPADI K. PALANISWAMI": "एडप्पाडी के. पलानीस्वामी", "K. ANNAMALAI": "के. अन्नामलाई",
+    "PINARAYI VIJAYAN": "पिनराई विजयन", "V.D.SATHEESAN": "वी.डी. सतीशन", "RAMESH CHENNITHALA": "रमेश चेन्निथला",
+    "HIMANTA BISWA SARMA": "हिमंत बिस्व सरमा", "GAURAV GOGOI": "गौरव गोगोई",
+    "BHAGWANT MANN": "भगवंत मान", "PARTAP SINGH BAJWA": "प्रताप सिंह बाजवा", "SUKHBIR SINGH BADAL": "सुखबीर सिंह बादल",
+    "PUSHKAR SINGH DHAMI": "पुष्कर सिंह धामी", "HARISH RAWAT": "हरीश रावत", "PRAMOD SAWANT": "प्रमोद सावंत",
+    "ARVIND KEJRIWAL": "अरविंद केजरीवाल", "ATISHI": "आतिशी", "PARVESH SAHIB SINGH": "प्रवेश साहिब सिंह", "MANISH SISODIA": "मनीष सिसोदिया"
   }
 }

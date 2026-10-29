@@ -71,6 +71,7 @@ function createElectionRoom(opts) {
   var cfg = JSON.parse(fs.readFileSync(CFG_FILE, 'utf8'));
   var history = []; try { history = JSON.parse(fs.readFileSync(path.join(dataDir, 'election_history.json'), 'utf8')).results || []; } catch (e) {}
   var demoData = null; try { demoData = JSON.parse(fs.readFileSync(path.join(dataDir, 'election_demo.json'), 'utf8')); } catch (e) {}
+  var DEMO_CODE = demoData && demoData.state ? EL.BYNAME[String(demoData.state).toLowerCase()] || null : null;
   /* live: folder -> { folder, kind, title, updated, checkedAt, error, contests: { key: contest } } */
   var live = {}, finals = [], worker = false, busy = false, nextAt = 0, lastCheck = 0, lastError = null;
   var trail = {};                                                     // contest key -> [{t, by party total}] for the arrows
@@ -94,6 +95,32 @@ function createElectionRoom(opts) {
     parties.forEach(function (p) { var o = p.alliance ? out[p.alliance] : other; o.won += p.won; o.lead += p.lead; o.total += p.total; });
     return Object.keys(out).map(function (k) { return out[k]; }).filter(function (a) { return a.total > 0; }).concat(other.total ? [other] : [])
       .sort(function (a, b) { return b.total - a.total; });
+  }
+  /* ---- Hindi names (ECI's /hi/ pages) ----
+     folder:code -> { at, done, seat: { no: 'अलीनगर' }, cand: { 'MAITHILI THAKUR': 'मैथिली ठाकुर' } }.
+     A Hindi candidate name is learned from the Hindi seat list only when that row has the same
+     margin as the English row of the same seat (both pages from the same moment, so the leading
+     and trailing names line up). cfg.face_hi, checked by hand, covers the big faces. */
+  var hiCache = {};
+  function hiKey(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim(); }
+  var FACE_HI = {}; Object.keys(cfg.face_hi || {}).forEach(function (k) { if (k.charAt(0) !== '_') FACE_HI[hiKey(k)] = cfg.face_hi[k]; });
+  function hiFor(folder, code) {
+    var H = hiCache[folder + ':' + code] || { seat: {}, cand: {} };
+    return { seat: function (no) { return H.seat[no] || null; }, cand: function (en) { var k = hiKey(en); return H.cand[k] || FACE_HI[k] || null; } };
+  }
+  function learnHi(folder, code, hiRows, enRows) {
+    var H = hiCache[folder + ':' + code] || (hiCache[folder + ':' + code] = { at: 0, seat: {}, cand: {} }), en = {};
+    (enRows || []).forEach(function (s) { en[s.no] = s; });
+    Object.keys(hiRows || {}).forEach(function (no) {
+      var h = hiRows[no], e = en[no];
+      if (h.seat) H.seat[no] = h.seat;
+      if (e && h.margin != null && e.margin === h.margin) {
+        if (h.lead && e.lead) H.cand[hiKey(e.lead.cand)] = h.lead;
+        if (h.trail && e.trail) H.cand[hiKey(e.trail.cand)] = h.trail;
+      }
+    });
+    H.at = Date.now();
+    return H;
   }
   /* "TEJASHWI PRASAD YADAV" matches a candidate when every word of it is in the candidate's name */
   function faceRe(name) { var w = String(name).toUpperCase().split(/[\s.]+/).filter(Boolean); return function (c) { var u = ' ' + String(c || '').toUpperCase().replace(/[.]/g, ' ') + ' '; return w.every(function (x) { return u.indexOf(' ' + x + ' ') >= 0; }); }; }
@@ -125,9 +152,15 @@ function createElectionRoom(opts) {
       var prev = seatPrev[key] || {}, next = {}, firstLook = !seatPrev[key];
       var abbrOf = {}; table.parties.forEach(function (p) { abbrOf[p.name.toLowerCase()] = p.abbr; });
       var ab = function (name) { return abbrOf[String(name || '').toLowerCase()] || name; };
+      var H = hiFor(meta.folder, meta.code);
+      /* one seat row, with the Hindi names where ECI gave them */
+      var rowOf = function (s) {
+        return { seat: titleCase(s.seat), seatHi: H.seat(s.no), no: s.no, cand: titleCase(s.lead.cand), candHi: H.cand(s.lead.cand), party: ab(s.lead.party),
+                 vs: s.trail ? titleCase(s.trail.cand) : null, vsHi: s.trail ? H.cand(s.trail.cand) : null,
+                 vsParty: s.trail ? ab(s.trail.party) : null, margin: s.margin, round: s.round, status: s.status };
+      };
       seatList.forEach(function (s) {
-        var row = { seat: titleCase(s.seat), no: s.no, cand: titleCase(s.lead.cand), party: ab(s.lead.party), vs: s.trail ? titleCase(s.trail.cand) : null,
-                    vsParty: s.trail ? ab(s.trail.party) : null, margin: s.margin, round: s.round, status: s.status };
+        var row = rowOf(s);
         next[s.no] = { party: row.party, status: row.status };
         var p = prev[s.no];
         if (!firstLook && p && p.status !== 'won' && row.status === 'won') c.declaredNew = (c.declaredNew || []).concat([Object.assign({ at: now }, row)]);
@@ -137,8 +170,9 @@ function createElectionRoom(opts) {
         var A = (cfg.faces[state] || []).filter(function (n) { return n.charAt(0) !== '_'; });
         A.forEach(function (n) {
           var m = faceRe(n);
-          if (m(s.lead.cand)) c.faces.push(Object.assign({}, row, { face: titleCase(s.lead.cand), facing: row.status === 'won' ? 'won' : 'lead' }));
-          else if (s.trail && m(s.trail.cand)) c.faces.push(Object.assign({}, row, { face: titleCase(s.trail.cand), facing: row.status === 'won' ? 'lost' : 'trail', party: row.vsParty, vs: row.cand, vsParty: row.party }));
+          /* a big face's Hindi name: ECI's, else the hand-checked one of the config name that matched */
+          if (m(s.lead.cand)) c.faces.push(Object.assign({}, row, { face: titleCase(s.lead.cand), faceHi: row.candHi || FACE_HI[hiKey(n)] || null, facing: row.status === 'won' ? 'won' : 'lead' }));
+          else if (s.trail && m(s.trail.cand)) c.faces.push(Object.assign({}, row, { face: titleCase(s.trail.cand), faceHi: row.vsHi || FACE_HI[hiKey(n)] || null, facing: row.status === 'won' ? 'lost' : 'trail', party: row.vsParty, vs: row.cand, vsHi: row.candHi, vsParty: row.party }));
         });
       });
       seatPrev[key] = next;
@@ -148,10 +182,7 @@ function createElectionRoom(opts) {
          for the "BJP: won / ahead / behind" line a leader reads first */
       c.trailing = {}; c.lost = {};
       seatList.forEach(function (s) { if (!s.trail) return; var p = ab(s.trail.party); if (s.status === 'won') c.lost[p] = (c.lost[p] || 0) + 1; else c.trailing[p] = (c.trailing[p] || 0) + 1; });
-      rowsOf[key] = seatList.map(function (s) {
-        return { seat: titleCase(s.seat), no: s.no, cand: titleCase(s.lead.cand), party: ab(s.lead.party), vs: s.trail ? titleCase(s.trail.cand) : null,
-                 vsParty: s.trail ? ab(s.trail.party) : null, margin: s.margin, round: s.round, status: s.status };
-      });
+      rowsOf[key] = seatList.map(rowOf);
       c.abbrOf = abbrOf;
     }
     return c;
@@ -175,13 +206,28 @@ function createElectionRoom(opts) {
     rows.filter(function (r) { return r.status !== 'won' && r.margin != null; }).sort(function (a, b) { return a.margin - b.margin; }).slice(0, 4).forEach(function (r) { add(r.no, 'close'); });
     return out.map(function (p) { return { row: byNo[p.no], why: p.why }; });
   }
-  /* one head-to-head: the seat row, plus votes and ECI photos when the candidate page was read */
+  /* one head-to-head: the seat row, plus votes and ECI photos when the candidate page was read.
+     The candidate page is read less often than the seat list (every 2.5 min, or an archived copy
+     in the demo), so it can be from an earlier moment: its votes are used only when it agrees with
+     the list (same leader, same margin). Otherwise the list's leader and margin are shown, without
+     vote counts -- one seat never shows two different margins on two screens. Photos are always
+     taken from the page, by name. */
+  function sameName(x, y) { var n = function (s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }; return n(x) === n(y); }
   function duelOf(c, pick, det) {
     var r = pick.row, ab = function (n) { return (c.abbrOf && c.abbrOf[String(n || '').toLowerCase()]) || abbrGuess(n) || n; };
     var a = det && det.cands[0], b = det && det.cands[1];
-    return { seat: r.seat, no: r.no, status: r.status, round: det && det.round ? det.round + '/' + det.rounds : r.round, why: pick.why, margin: a && b && a.votes != null && b.votes != null ? a.votes - b.votes : r.margin,
-             a: { name: a ? titleCase(a.name) : r.cand, party: a ? ab(a.party) : r.party, votes: a ? a.votes : null, photo: a ? a.photo : null },
-             b: { name: b ? titleCase(b.name) : r.vs, party: b ? ab(b.party) : r.vsParty, votes: b ? b.votes : null, photo: b ? b.photo : null } };
+    var agrees = a && b && a.votes != null && b.votes != null && sameName(a.name, r.cand) && (r.margin == null || a.votes - b.votes === r.margin);
+    /* the Hindi name of a candidate on this seat (the row's, or a big face's) */
+    var hiOf = function (name) { return sameName(name, r.cand) ? r.candHi : sameName(name, r.vs) ? r.vsHi : (FACE_HI[hiKey(name)] || null); };
+    if (!agrees) {
+      var photo = function (name) { var x = det && det.cands.filter(function (k) { return sameName(k.name, name); })[0]; return x ? x.photo : null; };
+      return { seat: r.seat, seatHi: r.seatHi || null, no: r.no, status: r.status, round: r.round, why: pick.why, margin: r.margin,
+               a: { name: r.cand, nameHi: r.candHi || null, party: r.party, votes: null, photo: photo(r.cand) },
+               b: { name: r.vs, nameHi: r.vsHi || null, party: r.vsParty, votes: null, photo: photo(r.vs) } };
+    }
+    return { seat: r.seat, seatHi: r.seatHi || null, no: r.no, status: r.status, round: det.round ? det.round + '/' + det.rounds : r.round, why: pick.why, margin: r.margin != null ? r.margin : a.votes - b.votes,
+             a: { name: titleCase(a.name), nameHi: hiOf(a.name), party: ab(a.party), votes: a.votes, photo: a.photo },
+             b: { name: titleCase(b.name), nameHi: hiOf(b.name), party: ab(b.party), votes: b.votes, photo: b.photo } };
   }
   /* a contest keeps its recent "just declared" and "flipped" events across polls */
   function carry(oldC, c) {
@@ -203,16 +249,23 @@ function createElectionRoom(opts) {
     var when = (idx.title.match(/(\w+)-(\d{4})\s*$/) || []);
     var meta = function (st) { return { folder: folder, kind: idx.kind, title: idx.title, updated: idx.updated, state: st, en: (st ? st + ' · ' : '') + name[0] + (when[0] ? ' ' + when[1] + ' ' + when[2] : ''), hi: (st ? st + ' · ' : '') + name[1] + (when[2] ? ' ' + when[2] : '') }; };
     if (/^bye/.test(idx.kind)) {
+      /* Hindi seat names: the Hindi index once, again every 6 hours */
+      var hk = folder + ':bye', HC = hiCache[hk];
+      if (!HC || now - HC.at > 6 * 3600000) {
+        try { await sleep(GAP_MS); var hix = EL.parseIndexHi(await get(ECI + folder + '/hi/index.htm')); if (hix) hiCache[hk] = HC = { at: now, seat: hix, cand: {} }; } catch (e) {}
+      }
       /* by-elections: each seat's card, plus its candidate page (votes, margin, round) */
       var seats = [];
       for (var i = 0; i < idx.cards.length; i++) {
         var cd = idx.cards[i], det = null;
         try { await sleep(GAP_MS); det = EL.parseCandidate(await get(ECI + folder + '/' + cd.link)); } catch (e) {}
         var top = det && det.cands[0], second = det && det.cands[1];
-        seats.push({ seat: titleCase(cd.seat), no: cd.no, state: cd.state, status: cd.status, cand: titleCase(cd.cand), party: cd.party, abbr: abbrGuess(cd.party),
+        seats.push({ seat: titleCase(cd.seat), seatHi: HC && HC.seat[cd.code + cd.no] || null, no: cd.no, state: cd.state, status: cd.status,
+                     cand: titleCase(cd.cand), candHi: FACE_HI[hiKey(cd.cand)] || null, party: cd.party, abbr: abbrGuess(cd.party),
                      votes: top ? top.votes : null, margin: top && second ? top.votes - second.votes : null, vs: second ? titleCase(second.name) : null, vsParty: second ? second.party : null,
                      round: det && det.round ? det.round + '/' + det.rounds : null, photo: top ? top.photo : null,
-                     vsVotes: second ? second.votes : null, vsPhoto: second ? second.photo : null, vsAbbr: second ? abbrGuess(second.party) : null });
+                     vsVotes: second ? second.votes : null, vsPhoto: second ? second.photo : null, vsAbbr: second ? abbrGuess(second.party) : null,
+                     vsHi: second ? FACE_HI[hiKey(second.name)] || null : null });
       }
       var anyLead = seats.some(function (s) { return s.status !== 'won'; });
       F.contests = { bye: { key: folder + ':bye', folder: folder, kind: idx.kind, en: meta(null).en, hi: meta(null).hi, state: null, title: idx.title,
@@ -244,7 +297,23 @@ function createElectionRoom(opts) {
           if (sw.of && seatList.length >= sw.of) break;
         }
       }
-      var cm = meta(L.st); cm.seats = houseSize;
+      /* Hindi names (hi/statewise pages, the same pages as the English list): on the first look,
+         every 15 min while counting (new candidates reach first or second place), once when final */
+      if (L.code && seatList && seatList.length) {
+        var hk2 = folder + ':' + L.code, hc = hiCache[hk2];
+        if (!hc || (L.table.totals.lead > 0 && now - hc.at > 15 * 60000)) {
+          var hiRows = {};
+          for (var hp = 1; hp <= 40; hp++) {
+            await sleep(GAP_MS);
+            var hr = null; try { hr = EL.parseStatewiseHi(await get(ECI + folder + '/hi/statewise' + L.code + hp + '.htm')); } catch (e) { break; }
+            if (!hr) break;
+            Object.keys(hr).forEach(function (no) { hiRows[no] = hr[no]; });
+            if (Object.keys(hiRows).length >= seatList.length) break;
+          }
+          learnHi(folder, L.code, hiRows, seatList);
+        }
+      }
+      var cm = meta(L.st); cm.seats = houseSize; cm.code = L.code || null;
       var c = buildContest(L.key, cm, L.table, seatList, now);
       if (!seatList && old) { ['close', 'declared', 'faces', 'known', 'trailing', 'lost', 'abbrOf', 'duels'].forEach(function (f) { c[f] = old[f]; }); }
       c = carry(old, c);
@@ -352,7 +421,7 @@ function createElectionRoom(opts) {
     var key = 'demo:' + i; trail[key] = i === 0 ? [{ t: now - DELTA_MS, v: (function () { var v = {}; f.parties.forEach(function (p) { v[p.abbr] = p.won + p.lead; }); return v; })() }]
       : [{ t: now - DELTA_MS, v: (function () { var v = {}; fr[i - 1].parties.forEach(function (p) { v[p.abbr] = p.won + p.lead; }); return v; })() }];
     seatPrev[key] = null;
-    var c = buildContest(key, { folder: demoData.folder, kind: 'vs', title: demoData.en, state: demoData.state, en: demoData.en, hi: demoData.hi, seats: demoData.seats }, table, demoData.seatList, now);
+    var c = buildContest(key, { folder: demoData.folder, code: DEMO_CODE, kind: 'vs', title: demoData.en, state: demoData.state, en: demoData.en, hi: demoData.hi, seats: demoData.seats }, table, demoData.seatList, now);
     c.key = 'demo';                                      // one id for the replay, so the page keeps its place between frames
     rowsOf.demo = rowsOf[key]; delete rowsOf[key];
     delete trail[key]; delete seatPrev[key];
@@ -369,6 +438,8 @@ function createElectionRoom(opts) {
   }
   return {
     start: async function () {
+      /* the demo's Hindi names (archived ECI Hindi pages, fetch-election-history.js demo-hi) */
+      if (demoData && demoData.hi && DEMO_CODE) learnHi(demoData.folder, DEMO_CODE, demoData.hi, demoData.seatList);
       try { var s = await store.load(); if (s.live) live = s.live; finals = (s.finals || []).filter(function (x) { return x && x._id; }); } catch (e) { log('  [election] could not load saved results: ' + e.message); }
       /* ELECTION_WORKER=on|off overrides MEDIA_WORKER for this room alone */
       worker = String(process.env.ELECTION_WORKER || process.env.MEDIA_WORKER || 'on').toLowerCase() !== 'off';

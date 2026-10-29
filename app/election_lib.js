@@ -167,5 +167,44 @@ function parseCandidate(html) {
   return { round: r ? +r[1] : null, rounds: r ? +r[2] : null, no: seat ? +seat[1] : null, seat: seat ? seat[2].trim() : null, state: seat ? seat[3] : null, cands: cands, updated: updatedAt(html) };
 }
 
+/* ---------------------------------------------------------- Hindi names
+   ECI publishes the same pages in Hindi under /hi/. They give the official Hindi name of every
+   seat, and in a general election also the candidates' names (as the returning officer entered
+   them -- where none was entered, ECI shows the English name, which is then not used).
+   Each reader returns names keyed by seat number; nothing else is taken from these pages. */
+var DEVA = /[ऀ-ॿ]/;
+function hi(s) { s = String(s || '').trim(); return DEVA.test(s) ? s : null; }
+
+/* hi/statewiseSxxN.htm: seat | no. | leading cand | party | trailing cand | party | margin | round | status.
+   A row ends at the status, the cell right after the round ("29/29"). */
+function parseStatewiseHi(html) {
+  var h = clean(html), at = h.search(/<tbody/i);
+  if (at < 0) return null;
+  var tokens = [];
+  h.slice(at).replace(/<td[^>]*>([\s\S]*?)(?=<td|<\/td>|<\/tr>)/gi, function (x, c) { var v = text(c); if (v) tokens.push(v); return x; });
+  var out = {}, cur = [];
+  for (var i = 0; i < tokens.length; i++) {
+    cur.push(tokens[i]);
+    if (/^\d+\s*\/\s*\d+$/.test(tokens[i]) && i + 1 < tokens.length) {     // the round; the next cell is the status
+      cur.push(tokens[++i]);
+      var r = cur.length >= 9 ? cur.slice(-9) : null;
+      if (r && num(r[1]) && hi(r[0])) out[num(r[1])] = { seat: hi(r[0]), lead: hi(r[2]), trail: hi(r[4]), margin: num(r[6]) };
+      cur = [];
+    }
+  }
+  return Object.keys(out).length ? out : null;
+}
+/* hi/index.htm of a by-election: one card per seat -> { 'S25210': 'नन्दीग्राम' } */
+function parseIndexHi(html) {
+  var out = {};
+  clean(html).replace(/<a href=['"]candidateswise-([SU]\d{2}\d+)\.htm['"][^>]*>\s*<div class=['"]box-content['"]>([\s\S]*?)<\/div>/gi, function (m, code, inner) {
+    var x = inner.match(/<h3[^>]*>([\s\S]*?)<\/h3>/i), s = x ? hi(text(x[1]).replace(/\s*\(\d+\)\s*$/, '')) : null;
+    if (s) out[code] = s;
+    return m;
+  });
+  return Object.keys(out).length ? out : null;
+}
+
 module.exports = { CODES: CODES, BYNAME: BYNAME, parseIndex: parseIndex, parsePartyTable: parsePartyTable, parseStatewise: parseStatewise,
-                   parseCandidate: parseCandidate, kindOf: kindOf, updatedAt: updatedAt, text: text };
+                   parseCandidate: parseCandidate, kindOf: kindOf, updatedAt: updatedAt, text: text,
+                   parseStatewiseHi: parseStatewiseHi, parseIndexHi: parseIndexHi };

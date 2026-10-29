@@ -3167,7 +3167,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
             + esc(LANG === 'hi' && p.hi ? p.hi : p.abbr) + '</em></div><span class="v">' + p.won + '</span>' + (hot ? '<span class="v">' + p.lead + '</span>' : '')
             + '<span class="v t">' + p.total + '</span>' + (hot ? '<span class="v d">' + (erDelta(p.delta || 0) || '<span style="color:var(--dim)">–</span>') + '</span>' : '') + '</div>';
         }).join('')
-      + ((c.recentFlips || []).length ? '<div class="er-flips"><b>' + esc(t('erFlip')) + '</b>' + c.recentFlips.slice(0, 3).map(function (f) { return esc(f.seat + ': ' + erPName(c, f.from) + ' → ' + erPName(c, f.party)); }).join(' &nbsp;·&nbsp; ') + '</div>' : '')
+      + ((c.recentFlips || []).length ? '<div class="er-flips"><b>' + esc(t('erFlip')) + '</b>' + c.recentFlips.slice(0, 3).map(function (f) { return esc(erN(f.seat, f.seatHi) + ': ' + erPName(c, f.from) + ' → ' + erPName(c, f.party)); }).join(' &nbsp;·&nbsp; ') + '</div>' : '')
       + '<div class="er-note">' + esc(t('erNoteAll')) + (c.known && c.seats ? ' · ' + esc(fill(t('erKnown'), { k: c.known, n: c.seats })) : '') + (c.won ? ' · ' + esc(fill(t('erDeclN'), { w: c.won })) : '') + '</div></div>';
     return '<div class="er-wrap">' + erHeadline(c) + '<div class="er-t">' + left + right + '</div></div>';
   }
@@ -3198,9 +3198,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function erAbbr(full) { return ER_FULL[String(full || '').toLowerCase()] || full; }
   function erDuelsOf(c) {
     if (c.byeSeats) return c.byeSeats.map(function (s) {
-      return { seat: s.seat, no: s.no, status: s.status, round: s.round, why: 'bye', margin: s.margin, place: stName(s.state),
-               a: { name: s.cand, party: s.abbr || erAbbr(s.party), votes: s.votes, photo: s.photo },
-               b: { name: s.vs, party: s.vsAbbr || erAbbr(s.vsParty), votes: s.vsVotes != null ? s.vsVotes : (s.votes != null && s.margin != null ? s.votes - s.margin : null), photo: s.vsPhoto } };
+      return { seat: s.seat, seatHi: s.seatHi, no: s.no, status: s.status, round: s.round, why: 'bye', margin: s.margin, place: stName(s.state),
+               a: { name: s.cand, nameHi: s.candHi, party: s.abbr || erAbbr(s.party), votes: s.votes, photo: s.photo },
+               b: { name: s.vs, nameHi: s.vsHi, party: s.vsAbbr || erAbbr(s.vsParty), votes: s.vsVotes != null ? s.vsVotes : (s.votes != null && s.margin != null ? s.votes - s.margin : null), photo: s.vsPhoto } };
     }).filter(function (d) { return d.b.name; });
     return (c.duels || []).filter(function (d) { return d.a.name && d.b.name; }).slice(0, 8);
   }
@@ -3209,12 +3209,12 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     /* the split bar only when both counts are known (a missing count is not zero votes) */
     var tot = d.a.votes != null && d.b.votes != null ? d.a.votes + d.b.votes : 0, pa = tot ? Math.round(100 * d.a.votes / tot) : 50;
     function cand(x, col, lead) {
-      return '<div class="er-cand ' + (lead ? 'win' : 'lo') + '">' + avatar(x.name, x.photo, col) + '<div class="in"><div class="nm">' + esc(x.name) + '</div>'
+      return '<div class="er-cand ' + (lead ? 'win' : 'lo') + '">' + avatar(x.name, x.photo, col) + '<div class="in"><div class="nm">' + esc(erN(x.name, x.nameHi)) + '</div>'
         + '<div class="pt"><i style="background:' + col + '"></i>' + esc(erPName(c, x.party) || x.party || '') + '</div>'
         + (x.votes != null ? '<div class="vt"><span data-v="' + x.votes + '">0</span><small>' + esc(t('erVotes')) + '</small></div>' : '')
         + '<div class="st' + (lead && !won ? ' ld' : '') + '">' + esc(t(lead ? (won ? 'erWonT' : 'erAheadT') : (won ? 'erLostT' : 'erBehind'))) + '</div></div></div>';
     }
-    return '<div class="er-s" data-i="' + i + '" data-pa="' + pa + '"><div class="er-sh"><b>' + esc(d.seat) + '</b>'
+    return '<div class="er-s" data-i="' + i + '" data-pa="' + pa + '"><div class="er-sh"><b>' + esc(erN(d.seat, d.seatHi)) + '</b>'
       + '<span class="rd">' + esc([d.place || (c.state ? stName(c.state) : ''), d.round ? fill(t('erRound'), { r: d.round }) : ''].filter(Boolean).join(' · ')) + '</span>'
       + '<span class="er-why' + (d.why === 'flip' ? ' flip' : '') + '">' + esc(t('erWhy_' + d.why)) + '</span></div>'
       + '<div class="er-vs">' + cand(d.a, ca, true) + '<div class="er-mid"><span class="x">VS</span>'
@@ -3224,7 +3224,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   }
   function erDuels(c, list) {
     return '<div class="er-dv"><div class="er-ds">' + list.map(function (d, i) { return erDuelSlide(c, d, i); }).join('') + '</div>'
-      + '<div class="er-dq">' + list.map(function (d, i) { return '<span data-i="' + i + '">' + esc(d.seat) + '</span>'; }).join('') + '</div></div>';
+      + '<div class="er-dq">' + list.map(function (d, i) { return '<span data-i="' + i + '">' + esc(erN(d.seat, d.seatHi)) + '</span>'; }).join('') + '</div></div>';
   }
   var ER_SLIDE_MS = 7000;
   /* turns the slides; a data refresh redraws the screen but carries on from the slide it was on */
@@ -3249,6 +3249,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     function step() { var k = Math.min(1, (Date.now() - t0) / D); nd.textContent = fmtInt(Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) state.raf.push(requestAnimationFrame(step)); }
     step();
   }
+  /* a seat's or candidate's name in the page's language: ECI's Hindi name on the Hindi page
+     where it has one (the server adds seatHi / candHi / vsHi / faceHi / nameHi), else as ECI wrote it */
+  function erN(en, hi) { return LANG === 'hi' && hi ? hi : en; }
   /* ---- screens: close fights, big faces, declared ---- */
   function erLine(c, cand, party, lo) {
     return '<div class="er-ln' + (lo ? ' lo' : '') + '"><i style="background:' + erPColor(c, party) + '"></i><em>' + esc(cand || '') + '</em><small>' + esc(erPName(c, party)) + '</small></div>';
@@ -3256,23 +3259,23 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function erClose(c) {
     var flip = {}; (c.recentFlips || []).forEach(function (f) { flip[f.no] = 1; });
     return '<div class="er-g">' + c.close.slice(0, 8).map(function (s) {
-      return '<div class="er-c er-glass">' + (flip[s.no] ? '<span class="er-flip">' + esc(t('erFlip')) + '</span>' : '') + '<div class="hd"><b>' + esc(s.seat) + '</b><span>' + esc(fill(t('erRound'), { r: s.round || '–' })) + '</span></div>'
-        + erLine(c, s.cand, s.party) + (s.vs ? erLine(c, s.vs, s.vsParty, true) : '')
+      return '<div class="er-c er-glass">' + (flip[s.no] ? '<span class="er-flip">' + esc(t('erFlip')) + '</span>' : '') + '<div class="hd"><b>' + esc(erN(s.seat, s.seatHi)) + '</b><span>' + esc(fill(t('erRound'), { r: s.round || '–' })) + '</span></div>'
+        + erLine(c, erN(s.cand, s.candHi), s.party) + (s.vs ? erLine(c, erN(s.vs, s.vsHi), s.vsParty, true) : '')
         + '<div class="er-mg">' + esc(fmtInt(s.margin)) + '<small>' + esc(t('erOnly')) + '</small></div></div>';
     }).join('') + '</div>';
   }
   function erFaces(c) {
     var key = { won: 'erWon', lead: 'erLead', trail: 'erTrail', lost: 'erLost' };
     return '<div class="er-g c3">' + c.faces.slice(0, 9).map(function (f) {
-      return '<div class="er-c er-glass"><div class="er-face">' + avatar(f.face, null, erPColor(c, f.party)) + '<div><b>' + esc(f.face) + '</b><span>' + esc(f.seat) + ' · ' + esc(erPName(c, f.party)) + '</span></div></div>'
+      return '<div class="er-c er-glass"><div class="er-face">' + avatar(f.face, null, erPColor(c, f.party)) + '<div><b>' + esc(erN(f.face, f.faceHi)) + '</b><span>' + esc(erN(f.seat, f.seatHi)) + ' · ' + esc(erPName(c, f.party)) + '</span></div></div>'
         + '<span class="er-st ' + f.facing + '">' + esc(t(key[f.facing] || 'erLead')) + (f.margin != null ? ' · ' + esc(fill(t('erBy'), { n: fmtInt(f.margin) })) : '') + '</span>'
-        + (f.vs ? '<div class="er-ln lo" style="margin-top:.6rem"><em>' + esc(t('erVs')) + ' ' + esc(f.vs) + '</em><small>' + esc(erPName(c, f.vsParty)) + '</small></div>' : '') + '</div>';
+        + (f.vs ? '<div class="er-ln lo" style="margin-top:.6rem"><em>' + esc(t('erVs')) + ' ' + esc(erN(f.vs, f.vsHi)) + '</em><small>' + esc(erPName(c, f.vsParty)) + '</small></div>' : '') + '</div>';
     }).join('') + '</div>';
   }
   function erDeclared(c) {
     return '<div class="er-g c3">' + c.declared.slice(0, 9).map(function (s) {
-      return '<div class="er-c er-glass"><div class="hd"><b>' + esc(s.seat) + '</b><span class="er-st won" style="margin:0">' + esc(t('erWon')) + '</span></div>'
-        + erLine(c, s.cand, s.party) + (s.vs ? erLine(c, s.vs, s.vsParty, true) : '')
+      return '<div class="er-c er-glass"><div class="hd"><b>' + esc(erN(s.seat, s.seatHi)) + '</b><span class="er-st won" style="margin:0">' + esc(t('erWon')) + '</span></div>'
+        + erLine(c, erN(s.cand, s.candHi), s.party) + (s.vs ? erLine(c, erN(s.vs, s.vsHi), s.vsParty, true) : '')
         + (s.margin != null ? '<div class="er-mg">' + esc(fmtInt(s.margin)) + '<small>' + esc(t('erOnly')) + '</small></div>' : '') + '</div>';
     }).join('') + '</div>';
   }
@@ -3280,11 +3283,11 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function erBye(c, seats) {
     return '<div class="er-g ' + (seats.length > 4 ? 'c3' : 'c2') + '">' + seats.map(function (s) {
       var won = s.status === 'won';
-      return '<div class="er-c er-glass"><div class="hd"><b>' + esc(s.seat) + '</b><span>' + esc(stName(s.state)) + '</span></div>'
+      return '<div class="er-c er-glass"><div class="hd"><b>' + esc(erN(s.seat, s.seatHi)) + '</b><span>' + esc(stName(s.state)) + '</span></div>'
         + '<div class="er-face">' + (s.photo ? '<img class="ph" alt="" src="' + esc(s.photo) + '" onerror="this.parentNode.removeChild(this)">' : '')
-        + '<div><b>' + esc(s.cand) + '</b><span>' + esc(s.abbr ? erPName(c, s.abbr) || s.abbr : s.party) + '</span></div></div>'
+        + '<div><b>' + esc(erN(s.cand, s.candHi)) + '</b><span>' + esc(s.abbr ? erPName(c, s.abbr) || s.abbr : s.party) + '</span></div></div>'
         + '<span class="er-st ' + (won ? 'won' : 'lead') + '">' + esc(t(won ? 'erWon' : 'erLead')) + (s.margin != null ? ' · ' + esc(fill(t('erBy'), { n: fmtInt(s.margin) })) : '') + '</span>'
-        + (s.vs ? '<div class="er-ln lo" style="margin-top:.6rem"><em>' + esc(t('erVs')) + ' ' + esc(s.vs) + '</em><small>' + esc(s.vsParty || '') + '</small></div>' : '')
+        + (s.vs ? '<div class="er-ln lo" style="margin-top:.6rem"><em>' + esc(t('erVs')) + ' ' + esc(erN(s.vs, s.vsHi)) + '</em><small>' + esc(s.vsParty || '') + '</small></div>' : '')
         + (s.round ? '<div class="er-note">' + esc(fill(t('erRound'), { r: s.round })) + (s.votes ? ' · ' + esc(fmtInt(s.votes)) + ' ' + esc(t('erOnly').split(' ')[0]) : '') + '</div>' : '') + '</div>';
     }).join('') + '</div>';
   }
@@ -3292,7 +3295,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function erPast(list) {
     return '<div class="er-g c2">' + list.map(function (r) {
       if (r.byeSeats) return '<div class="er-c er-glass er-pc"><div class="hd"><b>' + esc(erCName(r)) + '</b>' + erBadge('old', r.date) + '</div>'
-        + r.byeSeats.slice(0, 5).map(function (s) { return '<div class="er-ln"><i style="background:' + erPColor(r, s.abbr) + '"></i><em>' + esc(s.seat + ' · ' + s.cand) + '</em><small>' + esc(s.abbr ? erPName(r, s.abbr) || s.abbr : s.party) + '</small></div>'; }).join('') + '</div>';
+        + r.byeSeats.slice(0, 5).map(function (s) { return '<div class="er-ln"><i style="background:' + erPColor(r, s.abbr) + '"></i><em>' + esc(erN(s.seat, s.seatHi) + ' · ' + erN(s.cand, s.candHi)) + '</em><small>' + esc(s.abbr ? erPName(r, s.abbr) || s.abbr : s.party) + '</small></div>'; }).join('') + '</div>';
       var top = (r.parties || []).slice(0, 5), al = (r.alliances || [])[0], win = al && al.total >= r.majority ? al : null;
       var pw = !win && top[0] && top[0].won >= r.majority ? top[0] : null;
       return '<div class="er-c er-glass er-pc"><div class="hd"><b>' + esc(erCName(r)) + '</b>' + erBadge('old', r.date) + '</div>'
@@ -3376,7 +3379,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var m = state.snap, out = []; if (!m) return out;
     (m.contests || []).forEach(function (c) {
       if (c.status !== 'live' && c.status !== 'demo') return;
-      (c.declared || []).slice(0, 12).forEach(function (s) { out.push({ head: s.seat + ': ' + s.cand + ' (' + erPName(c, s.party) + ') ' + t('erWon') + (s.margin != null ? ' · ' + fill(t('erBy'), { n: fmtInt(s.margin) }) : ''), src: 'ECI' }); });
+      (c.declared || []).slice(0, 12).forEach(function (s) { out.push({ head: erN(s.seat, s.seatHi) + ': ' + erN(s.cand, s.candHi) + ' (' + erPName(c, s.party) + ') ' + t('erWon') + (s.margin != null ? ' · ' + fill(t('erBy'), { n: fmtInt(s.margin) }) : ''), src: 'ECI' }); });
     });
     if (out.length) return out;
     return (m.news || []).slice(0, 16).map(function (c) { return { head: c.t, src: c.s, date: c.d }; });

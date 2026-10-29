@@ -149,9 +149,29 @@ async function demoCands() {
   console.log('Done: ' + Object.keys(d.cands).length + ' candidate pages in the demo');
 }
 
+/* demo Hindi names: ECI's Hindi seat pages (hi/statewiseS04N.htm) as the archive kept them --
+   every snapshot of every page, newest first, until each page is read once. They give the Hindi
+   name of each seat, and of its leading and trailing candidates at that moment (with the margin,
+   so the room can tell whether a name still belongs to the same position). */
+async function demoHi() {
+  var d = JSON.parse(fs.readFileSync(DEMO, 'utf8')), F = d.folder, got = {};
+  for (var p = 1; p <= 13; p++) {
+    var ts = (await snaps(F + '/hi/statewiseS04' + p + '.htm')).reverse(), done = false;
+    for (var i = 0; i < Math.min(ts.length, 3) && !done; i++) {
+      var h = await archived(F + '/hi/statewiseS04' + p + '.htm', ts[i]), m = h ? EL.parseStatewiseHi(h) : null;
+      if (m) { Object.keys(m).forEach(function (no) { got[no] = m[no]; }); done = true; console.log('    hi page ' + p + ' @' + ts[i] + ': ' + Object.keys(m).length + ' seats'); }
+    }
+    if (!done) console.log('    hi page ' + p + ': not archived');
+  }
+  d.hi = got;
+  fs.writeFileSync(DEMO, JSON.stringify(d));
+  console.log('Done: Hindi names for ' + Object.keys(got).length + ' of ' + d.seatList.length + ' seats');
+}
+
 (async function () {
   var only = process.argv[2], folder = process.argv[3] || null;
   if (only === 'demo-cands') { await demoCands(); return; }
+  if (only === 'demo-hi') { await demoHi(); return; }
   if (only !== 'demo') {
     console.log('Past results (archived ECI pages):');
     var h = await history(folder);
