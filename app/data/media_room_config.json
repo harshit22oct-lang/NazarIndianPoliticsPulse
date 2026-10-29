@@ -65,7 +65,7 @@
     { "en": "Facebook / Instagram pages", "why": "Meta requires App Review + business verification for public page content" },
     { "en": "X official API", "why": "no usable free reading tier (pay per read); Nazar uses the X data Pulse already collects" }
   ],
-  "block_publishers": ["Head Topics"],
+  "block_publishers": ["Head Topics", "Winnipeg Free Press", "DiscoverWestman"],
   "_bjp_side": "the AI's 'attack on BJP' / 'good news for BJP' counts only when the headline also names BJP's side (a check against the model's mistakes)",
   "bjp_side": ["BJP", "NDA", "Modi", "Yogi", "Amit Shah", "Nadda", "Nitin Nabin", "Rajnath", "Sitharaman", "Fadnavis", "Shivraj", "Dhami", "Himanta", "Bhupendra Patel", "Mohan Yadav",
                "Bhajanlal", "Nayab Saini", "Rekha Gupta", "Vishnu Deo Sai", "Majhi", "Keshav Maurya", "Brajesh Pathak", "Centre", "central government", "Union government", "Union minister",

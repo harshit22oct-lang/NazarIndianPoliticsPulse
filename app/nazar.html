@@ -332,7 +332,10 @@ body.portrait .ch-st-body{grid-template-columns:1fr} body.portrait .ch-map svg{h
   border:.08rem solid rgba(255,200,87,.18);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
   color:var(--text);font-family:var(--deva);font-weight:700;font-size:1.25rem;text-align:left;cursor:pointer;white-space:nowrap;overflow:hidden;
   transition:border-color .15s,background-color .15s,-webkit-transform .15s;transition:border-color .15s,background-color .15s,transform .15s}
-.st-chip span{overflow:hidden;text-overflow:ellipsis}
+.st-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1 1 auto;min-width:0}
+/* the name always wins: in a narrow chip the post count gives way, never the state's name */
+.ch-st-list{grid-template-columns:repeat(auto-fill,minmax(10.5rem,1fr))}
+.st-chip small{min-width:0;overflow:hidden}
 .st-chip small{flex:0 0 auto;font-family:var(--head);font-size:1.05rem;font-weight:600;color:var(--dim);margin-left:.6rem}
 .st-chip:hover,.st-chip:focus{border-color:var(--gold);background-color:rgba(255,153,51,.18);outline:none;-webkit-transform:translateY(-.1rem);transform:translateY(-.1rem)}
 .st-chip.on{background:linear-gradient(135deg,#E65100,#FF9933);border-color:transparent}
@@ -1425,6 +1428,24 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (!kv) return; var i = kv.indexOf('='), k = i < 0 ? kv : kv.slice(0, i);
     try { Q[decodeURIComponent(k)] = i < 0 ? '' : decodeURIComponent(kv.slice(i + 1).replace(/\+/g, ' ')); } catch (e) {}
   });
+  /* Opening Nazar (a new tab, a bookmark, a refresh) always starts on All India -- never on
+     whatever was open last. The address carries a view only for this tab itself: choosing a
+     state reloads the page with ?scope=, and the 6-hourly refresh reloads the view it was on;
+     both mark the tab first (nazar_keep, this tab only). A TV link (kiosk=1) and the UP entry
+     (/up -> ?scope=up) keep theirs always. Choices made inside the rooms (a state, a city, the
+     practice replay) last for this tab only, too. */
+  function sstore(k, v) { try { if (v === undefined) return window.sessionStorage.getItem(k); if (v === null) window.sessionStorage.removeItem(k); else window.sessionStorage.setItem(k, v); } catch (e) { return null; } return null; }
+  var VIEW_KEYS = /^(scope|mode|h|est|etype|ecity|edemo|area|t|mrstate)$/;
+  /* these used to be kept on the device for good: dropped, so an old choice never comes back */
+  try { ['nazar_er_state', 'nazar_er_city', 'nazar_er_demo', 'nazar_mr_state'].forEach(function (k) { window.localStorage.removeItem(k); }); } catch (e) {}
+  (function () {
+    var keep = Q.kiosk === '1' || sstore('nazar_keep') === '1';
+    sstore('nazar_keep', null);
+    if (keep) return;
+    Object.keys(Q).forEach(function (k) { if (VIEW_KEYS.test(k) && !(k === 'scope' && Q[k] === 'up')) delete Q[k]; });
+    var rest = location.search.replace(/^\?/, '').split('&').filter(function (kv) { var k = kv.split('=')[0]; return kv && (!VIEW_KEYS.test(k) || kv === 'scope=up'); });
+    try { history.replaceState(null, '', location.pathname + (rest.length ? '?' + rest.join('&') : '') + location.hash); } catch (e) {}
+  })();
   /* scope: 'all', 'up', or one state ('st:Bihar') -- a state scope makes every
      screen, the leader search and the news about that state only */
   var SCOPE = Q.scope === 'up' ? 'up' : (/^st:./.test(Q.scope || '') ? Q.scope : 'all');
@@ -2762,7 +2783,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   var MR = { open: false, idleT: null, statesOpen: false, pending: null,
     area: MR_AREA_OK.test(Q.area || '') ? Q.area : (MR_AREA_OK.test(store('nazar_mr_area') || '') ? store('nazar_mr_area') : (STATE ? 'both' : 'all')),
     topics: String(Q.t || store('nazar_mr_topics') || 'mix').split(',').filter(Boolean),
-    pick: Q.mrstate || store('nazar_mr_state') || '' };
+    pick: Q.mrstate || sstore('nazar_mr_state') || '' };
   function mrState() { return STATE || (STATE_HI[MR.pick] && !MR_NO_FEED[MR.pick] ? MR.pick : null); }
   function mrAreas() { var st = mrState(); if (!st || MR.area === 'all') return ['all']; return MR.area === 'state' ? ['local'] : ['all', 'local']; }
   function mrUrl() { var st = mrState(); return '/api/media-room' + q(st && st !== STATE && MR.area !== 'all' ? '&state=' + encodeURIComponent(st) : ''); }
@@ -3042,7 +3063,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       MR.area = v; store('nazar_mr_area', v); MR.statesOpen = false;
       refetch = v !== 'all' && (!state.snap || state.snap.state !== mrState());
     } else if (kind === 's:') {
-      MR.pick = v; store('nazar_mr_state', v); MR.statesOpen = false;
+      MR.pick = v; sstore('nazar_mr_state', v); MR.statesOpen = false;
       if (MR.pending) { MR.area = MR.pending; MR.pending = null; } else if (MR.area === 'all') MR.area = 'state';
       store('nazar_mr_area', MR.area); refetch = true;
     } else if (kind === 't:') {
@@ -3093,8 +3114,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
        demo   replay real Bihar 2025 counting data -- always labelled DEMO, never LIVE */
   var ER_TYPES = /^(all|ls|vs|bye|council|local)$/;
   var ER = { type: ER_TYPES.test(Q.etype || '') ? Q.etype : (ER_TYPES.test(store('nazar_er_type') || '') ? store('nazar_er_type') : 'all'),
-             pick: Q.est || store('nazar_er_state') || '', city: Q.ecity || store('nazar_er_city') || '',
-             demo: Q.edemo === '1' || (Q.edemo !== '0' && store('nazar_er_demo') === '1'), statesOpen: false };
+             pick: Q.est || sstore('nazar_er_state') || '', city: Q.ecity || sstore('nazar_er_city') || '',
+             demo: Q.edemo === '1' || (Q.edemo !== '0' && sstore('nazar_er_demo') === '1'), statesOpen: false };
   /* '' = the page's own state (or All India), '-' = All India chosen here */
   function erState() { if (ER.pick === '-') return null; return STATE_HI[ER.pick] ? ER.pick : (STATE || null); }
   function erUrl() {
@@ -3108,7 +3129,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
       state.snap = m; state.lastOk = Date.now();
       /* real counting began while this screen was on the practice replay: the replay is switched off for good */
-      if (m.demoSkipped && ER.demo) { ER.demo = false; store('nazar_er_demo', '0'); }
+      if (m.demoSkipped && ER.demo) { ER.demo = false; sstore('nazar_er_demo', '0'); }
       try { store('nazar_er_snap', JSON.stringify({ at: new Date().toISOString(), s: m })); } catch (e) {}
       onData(first); if (MR.open) renderMrPanel();
       schedule(m.mode === 'live' || m.mode === 'demo' ? 30000 : 120000);       // counting day: every 30 s
@@ -3512,7 +3533,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     else if (kind === 'et') ER.type = v;
     else if (kind === 'ec') ER.city = v;
     else if (kind === 'ed') ER.demo = !ER.demo;
-    store('nazar_er_state', ER.pick); store('nazar_er_type', ER.type); store('nazar_er_city', ER.city); store('nazar_er_demo', ER.demo ? '1' : '0');
+    sstore('nazar_er_state', ER.pick); store('nazar_er_type', ER.type); sstore('nazar_er_city', ER.city); sstore('nazar_er_demo', ER.demo ? '1' : '0');
     renderErPanel();
     clearTimeout(fetchTimer); fetchData(true);
   }
@@ -3542,7 +3563,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     function go() {
       close();
       ER.type = 'all'; ER.pick = c.state && STATE_HI[c.state] ? c.state : '-'; ER.city = ''; ER.demo = false;
-      store('nazar_er_state', ER.pick); store('nazar_er_type', ER.type); store('nazar_er_city', ''); store('nazar_er_demo', '0');
+      sstore('nazar_er_state', ER.pick); store('nazar_er_type', ER.type); sstore('nazar_er_city', ''); sstore('nazar_er_demo', '0');
       startShow('election');
     }
     function draw() {
@@ -3565,9 +3586,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     stopChooser();
     state.mode = mode; state.person = handle || ''; state.snap = null; state.psnap = null; state.tickerKey = '';
     state.scenes = []; state.idx = -1; clearTimeout(state.timer); clearSceneWork(); $('scene').innerHTML = '';
-    var url = location.pathname + '?' + location.search.replace(/^\?/, '').split('&').filter(function (kv) { return kv && !/^(h|mode)=/.test(kv); })
-      .concat(mode === 'person' ? ['h=' + encodeURIComponent(handle)] : ['mode=' + mode]).join('&');
-    try { history.replaceState(null, '', url); } catch (e) {}
+    /* (the address is not changed: a refresh or a new tab starts on All India) */
     if (mode === 'person') rememberRecent(handle);
     if (state.paused) pause(false);
     mrPanel(false);
@@ -3575,7 +3594,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     $('mrBtn').className = (mode === 'media' || mode === 'election') && !KIOSK ? 'tbtn' : 'tbtn hidden';
     $('mrBtn').textContent = t(mode === 'election' ? 'erBtn' : 'mrBtn');
     /* the Election Room's own Back (top right) -- the start screen is one press away */
-    $('erBack').className = mode === 'election' && !KIOSK ? 'tbtn er-back' : 'tbtn er-back hidden';
+    $('erBack').className = (mode === 'election' || mode === 'media') && !KIOSK ? 'tbtn er-back' : 'tbtn er-back hidden';
     $('brandSub').textContent = brandText(mode);
     /* the state pill belongs to the state's own screens, not to a leader's (All India) channel */
     if (STATE) $('stPill').className = mode === 'person' ? 'chip stpill hidden' : 'chip stpill';
@@ -3618,6 +3637,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function goScope(sc) {
     /* the page opens again for the new scope: no intro this time, straight to its screens */
     try { window.sessionStorage.setItem('nazar_skip_intro', '1'); } catch (e) {}
+    sstore('nazar_keep', '1');                                         // this reload keeps its ?scope=
     var keep = location.search.replace(/^\?/, '').split('&').filter(function (kv) { return kv && !/^(scope|h|mode)=/.test(kv); });
     location.href = location.pathname + '?' + keep.concat(sc === 'all' ? [] : ['scope=' + encodeURIComponent(sc)]).concat(['mode=all']).join('&');
   }
@@ -3880,7 +3900,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if ((k === 'm' || k === 'M') && state.mode === 'media') pause(true);
     else if ((k === 'm' || k === 'M') && state.mode === 'election') erOpenPanel();
     /* the remote's Back in the Election Room: back to the start screen */
-    else if ((k === 'Escape' || k === 'Esc' || k === 'Backspace' || k === 'GoBack' || k === 'BrowserBack') && state.mode === 'election') { openChooser(); e.preventDefault(); }
+    else if ((k === 'Escape' || k === 'Esc' || k === 'Backspace' || k === 'GoBack' || k === 'BrowserBack') && (state.mode === 'election' || state.mode === 'media')) { openChooser(); e.preventDefault(); }
     else if (k === 'ArrowRight' || k === 'Right' || k === 'MediaTrackNext') show(state.idx + 1);
     else if (k === 'ArrowLeft' || k === 'Left' || k === 'MediaTrackPrevious') show(state.idx - 1);
     else if (k === ' ' || k === 'Spacebar' || k === 'MediaPlayPause' || k === 'Enter') { if (k === 'Enter' && e.target && e.target.tagName === 'BUTTON') return; pause(!state.paused); e.preventDefault(); }
@@ -3903,7 +3923,13 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (state.stopped) return;
     if (!DEMO && Date.now() - state.lastOk > 3 * 60000) { setTimeout(softReload, 10 * 60000); return; }
     if (!state.mode) { setTimeout(softReload, 10 * 60000); return; }      // never reload in the middle of a choice
-    location.reload();
+    if (KIOSK) { location.reload(); return; }
+    /* the same view again (a plain reload would start on All India) */
+    sstore('nazar_keep', '1'); try { window.sessionStorage.setItem('nazar_skip_intro', '1'); } catch (e) {}
+    var rest = location.search.replace(/^\?/, '').split('&').filter(function (kv) { return kv && !VIEW_KEYS.test(kv.split('=')[0]); });
+    if (SCOPE !== 'all') rest.push('scope=' + encodeURIComponent(SCOPE));
+    rest.push(state.mode === 'person' ? 'h=' + encodeURIComponent(state.person) : 'mode=' + state.mode);
+    location.href = location.pathname + '?' + rest.join('&');
   }
 
   /* ---------------------------------------------------------- demo */
@@ -3951,8 +3977,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (Q.h) startShow('person', Q.h);
     else if (Q.mode === 'media') startShow('media');
     else if (Q.mode === 'election') startShow('election');
-    else if (KIOSK || Q.mode === 'all' || DEMO) startShow('all');
-    else openChooser();
+    else startShow('all');                       // the start screen opens from "नज़र बदलें"
   });
   if (!DEMO) setTimeout(softReload, SOFT_RELOAD_MS);
 })();

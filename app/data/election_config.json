@@ -54,11 +54,11 @@
   "news_searches": {
     "_about": "Extra Google News searches the Media Room collector reads every 15 min, so election types with no official live feed (local bodies, panchayat, councils) still have news. Headlines only.",
     "local-hi": "नगर निगम चुनाव OR नगर निकाय चुनाव OR नगर पालिका चुनाव परिणाम",
-    "local-en": "municipal election results OR civic polls results OR mayor election",
+    "local-en": "India (municipal election results OR civic polls results OR mayor election)",
     "panchayat-hi": "पंचायत चुनाव परिणाम OR जिला पंचायत चुनाव OR प्रधान चुनाव",
     "panchayat-en": "panchayat election results OR panchayat polls",
     "bye-hi": "उपचुनाव परिणाम OR उपचुनाव मतगणना",
-    "bye-en": "bypoll results OR by-election counting",
+    "bye-en": "India (bypoll results OR by-election counting)",
     "council-hi": "राज्यसभा चुनाव OR विधान परिषद चुनाव",
     "council-en": "Rajya Sabha election OR MLC election results"
   },

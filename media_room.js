@@ -154,6 +154,10 @@ function createMediaRoom(opts) {
     .sort(function (a, b) { return a.priority - b.priority || a.i - b.i; });
   var BJPSIDE = ML.anyRe(cfg.bjp_side || []);
   var BLOCK = {}; (cfg.block_publishers || []).forEach(function (p) { BLOCK[String(p).toLowerCase()] = 1; });   // copy-paste sites
+  /* a news-search result from another country's website (winnipeg.citynews.ca, bbc.co.uk): not
+     Indian politics, however the search words matched ("mayor election" found Winnipeg's) */
+  var ABROAD = /\.(ca|uk|au|nz|us|ie|za|sg|my|ph|pk|bd|lk|np|ae|qa|ng|ke)$/i;
+  function unwanted(it) { return BLOCK[String(it.srcName || '').toLowerCase()] || (it.dom && ABROAD.test(it.dom)); }
   var SRC = cfg.sources.map(function (s) { return { id: s.id, name: s.en, nameHi: s.hi, kind: s.type, group: s.group, direct: !!((s.rss && s.rss.length) || s.youtube) }; });
 
   function toItem(f, e, now) {
@@ -212,7 +216,7 @@ function createMediaRoom(opts) {
           var got = await fetchFeed(f), n = 0, newest = 0;
           got.forEach(function (e) {
             var it = toItem(f, e, now);
-            if (it.pub < now - KEEP_MS || BLOCK[it.srcName.toLowerCase()]) return;
+            if (it.pub < now - KEEP_MS || unwanted(it)) return;
             if (f.names && !f.names(it.title)) return;
             if (it.pub > newest) newest = it.pub;
             var old = items[it._id];
@@ -242,7 +246,8 @@ function createMediaRoom(opts) {
     } finally { busy = false; }
   }
   async function reload() {
-    var s = await store.load(); items = {}; s.items.forEach(function (x) { items[x._id] = x; }); status = s.status || {};
+    /* saved headlines go through today's filter too (a publisher blocked after it was saved) */
+    var s = await store.load(); items = {}; s.items.forEach(function (x) { if (!unwanted(x)) items[x._id] = x; }); status = s.status || {};
     var newest = 0; Object.keys(status).forEach(function (k) { if ((status[k].lastTry || 0) > newest) newest = status[k].lastTry; });
     if (newest) { lastRun = newest; firstPass = false; }
     AI.restore(s.aiUsage);
