@@ -11524,6 +11524,20 @@
    "name": "Patrika Hindi News",
    "at": 1793265321056,
    "live": true
+  },
+  "news24tvchannel": {
+   "file": "avatars/news24tvchannel.jpg",
+   "handle": "news24tvchannel",
+   "name": "News24",
+   "at": 1793267053860,
+   "live": true
+  },
+  "indiatvnews": {
+   "file": "avatars/indiatvnews.jpg",
+   "handle": "indiatvnews",
+   "name": "India TV",
+   "at": 1793267267488,
+   "live": true
   }
  },
  "parties": {
