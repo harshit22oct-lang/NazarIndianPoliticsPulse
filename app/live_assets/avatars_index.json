@@ -11510,6 +11510,20 @@
    "name": "Dainik Jagran",
    "at": 1792823603191,
    "live": true
+  },
+  "etvbharateng": {
+   "file": "avatars/etvbharateng.jpg",
+   "handle": "etvbharateng",
+   "name": "ETV Bharat",
+   "at": 1793265008090,
+   "live": true
+  },
+  "patrikanews": {
+   "file": "avatars/patrikanews.jpg",
+   "handle": "patrikanews",
+   "name": "Patrika Hindi News",
+   "at": 1793265321056,
+   "live": true
   }
  },
  "parties": {
