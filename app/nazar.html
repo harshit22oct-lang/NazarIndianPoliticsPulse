@@ -2622,7 +2622,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     }
     $('cPlayIco').innerHTML = state.paused ? '<polygon points="7 5 19 12 7 19 7 5"/>' : '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
     $('cPlay').setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
-    if (state.mode === 'media' || state.mode === 'election') mrPanel(state.paused);        // Media / Election Room: pausing opens "what to show"
+    if (state.mode === 'media') mrPanel(state.paused);        // Media Room: pausing opens "what to show"
+    /* Election Room: pause only pauses; the panel opens from "Choose election" and closes when the show goes on */
+    else if (state.mode === 'election' && !state.paused) mrPanel(false);
   }
   function renderDots() { var h = ''; for (var i = 0; i < state.scenes.length; i++) h += '<i' + (i === state.idx ? ' class="on"' : '') + '></i>'; $('cDots').innerHTML = h; }
 
@@ -3752,7 +3754,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   $('langBtn').onclick = toggleLang; $('chLang').onclick = function () { holdChooser(); toggleLang(); };
   $('backBtn').onclick = goBack; $('chBack').onclick = goBack;
   $('swBtn').onclick = function () { openChooser(); };
-  $('mrBtn').onclick = function () { if (state.mode === 'media' || state.mode === 'election') pause(!MR.open); wake(); };
+  function erOpenPanel() { if (MR.open) { pause(false); return; } pause(true); mrPanel(true); }
+  $('mrBtn').onclick = function () { if (state.mode === 'media') pause(!MR.open); else if (state.mode === 'election') erOpenPanel(); wake(); };
   $('erBack').onclick = function () { openChooser(); };
   $('mrpX').onclick = function () { pause(false); };
   document.addEventListener('mousemove', wake);
@@ -3769,7 +3772,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (!state.mode) return;
     if (MR.open) { mrKey(e); return; }
     var k = e.key || '';
-    if ((k === 'm' || k === 'M') && (state.mode === 'media' || state.mode === 'election')) pause(true);
+    if ((k === 'm' || k === 'M') && state.mode === 'media') pause(true);
+    else if ((k === 'm' || k === 'M') && state.mode === 'election') erOpenPanel();
     /* the remote's Back in the Election Room: back to the start screen */
     else if ((k === 'Escape' || k === 'Esc' || k === 'Backspace' || k === 'GoBack' || k === 'BrowserBack') && state.mode === 'election') { openChooser(); e.preventDefault(); }
     else if (k === 'ArrowRight' || k === 'Right' || k === 'MediaTrackNext') show(state.idx + 1);
