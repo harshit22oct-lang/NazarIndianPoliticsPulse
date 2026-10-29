@@ -486,8 +486,11 @@ body.reduced .kpis .kpi,body.reduced .atb,body.reduced .bj-card,body.reduced .bj
 .bj-k i .up{color:var(--good);font-weight:700} .bj-k i .down{color:var(--amber);font-weight:700}
 .bj-k .dlt{position:absolute;top:-.6rem;right:0}
 .bj-ft{font-size:1.15rem;color:var(--dim);margin-top:1.3rem;padding-top:1rem;border-top:.08rem solid var(--line)}
-.bj-cats{display:flex;flex-direction:column;justify-content:center;min-width:0;min-height:0;overflow:hidden}
-.bj-cats .bj-row{flex:0 1 auto}
+/* the rows always fit the height there is (a browser window with its tab bar and the taskbar is
+   much shorter than a TV): they give up their spare padding first, and should even that not be
+   enough the list starts at the top ("safe"), so the first row is never cut, only the last */
+.bj-cats{display:flex;flex-direction:column;justify-content:center;justify-content:safe center;min-width:0;min-height:0;overflow:hidden}
+.bj-cats .bj-row{flex:0 1 auto;min-height:0}
 .bj-row{display:grid;grid-template-columns:17rem 1fr 19rem;align-items:center;background:var(--glass);border:.08rem solid var(--line);border-radius:1.2rem;
   padding:.75rem 1.3rem;margin-bottom:.7rem;min-width:0;position:relative;
   -webkit-animation:rowIn .6s cubic-bezier(.2,.8,.2,1) both;animation:rowIn .6s cubic-bezier(.2,.8,.2,1) both}
@@ -566,7 +569,9 @@ body.reduced .bar-fill{transition:none}
   background:linear-gradient(180deg,rgba(42,13,4,.94),rgba(24,7,2,.94));border:.08rem solid rgba(255,153,51,.22);box-shadow:0 1.6rem 3.4rem rgba(0,0,0,.4),inset 0 .08rem 0 rgba(255,200,87,.1)}
 .ak-c:after{content:'';position:absolute;top:0;left:0;right:0;height:.35rem;background:var(--sevc,#FF7043)}
 .ak-c.ak-lead{padding:2.4rem 2.6rem 2.2rem;background:linear-gradient(160deg,rgba(255,61,0,.16) 0%,rgba(46,14,4,.95) 36%,rgba(24,7,2,.95) 100%);border-color:rgba(255,138,101,.4)}
-.ak-r .ak-c{flex:0 1 auto;margin-bottom:1.4rem}
+/* the #2 card keeps its full height (shrunk, its quote was cut through the middle of a line);
+   the list under it gives way instead, a whole row at a time (fitLists) */
+.ak-r .ak-c{flex:0 0 auto;margin-bottom:1.4rem}
 .ak-top{display:flex;align-items:center;flex-wrap:wrap;flex:0 0 auto}
 .ak-top > *{margin:0 .7rem .5rem 0}
 .ak-rk{font-family:var(--head);font-weight:700;font-size:2.3rem;line-height:1;color:var(--gold)}
@@ -2574,7 +2579,53 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     heroLevel(sc.hero || 'lo');
     var el = $('scene'); el.innerHTML = sc.render(state.snap);
     if (sc.after) sc.after(el);
+    fitScene(el); state.tmo.push(setTimeout(function () { fitScene(el); }, 900));      // again once the fonts and photos are in
     renderDots();
+  }
+  /* a list in a box of fixed height (a short browser window has less room than a TV) shows only
+     the rows that fit whole -- never a row cut through the middle */
+  /* the whole screen: the design is sized for a TV's shape; a short browser window (tab bar,
+     taskbar) can leave a screen a little taller than its room. Then the screen is drawn just
+     that much smaller (at most 15 %) instead of losing its last line. Boxes that clip their own
+     content (lists, quotes) are measured as boxes. */
+  function fitScene(el) {
+    el = el || $('scene');
+    var kid = el.firstElementChild; if (!kid) return;
+    kid.style.zoom = '';
+    fitLists(el);
+    /* phones and tall screens scroll the page: nothing to fit there */
+    if (document.body.className.indexOf('portrait') >= 0 || el.clientHeight < 100) return;
+    /* the lowest point of the content as drawn, less any slide-in still running (an element's own
+       translateY and its parents'), so a row still moving into place does not count */
+    function lowest() {
+      var bottom = el.getBoundingClientRect().bottom, low = 0;
+      (function walk(n, ty) {
+        [].forEach.call(n.children, function (c) {
+          var cs = getComputedStyle(c); if (cs.display === 'none' || cs.position === 'fixed' || cs.position === 'absolute') return;
+          var m = cs.transform && cs.transform !== 'none' ? cs.transform.match(/matrix\(([^)]+)\)/) : null, y = ty + (m ? +m[1].split(',')[5] || 0 : 0);
+          var r = c.getBoundingClientRect(); if (r.height) low = Math.max(low, r.bottom - y - bottom);
+          /* a card that clips its own content counts by what it hides (a grid squeezes its cards
+             to the screen's height, and their last line went) */
+          if (c.matches && c.matches(FIT_BOXES)) low = Math.max(low, c.scrollHeight - c.clientHeight);
+          if (!/hidden|clip/.test(cs.overflowY)) walk(c, y);
+        });
+      })(kid, 0);
+      return low;                                                  // > 0: that many pixels past the screen's bottom
+    }
+    var room = el.clientHeight, z = 1, over = lowest();
+    for (var k = 0; k < 5 && over > 1 && z > 0.85; k++) {
+      z = Math.max(0.85, Math.floor(100 * z * room / (room + over)) / 100 - (k ? 0.01 : 0));
+      kid.style.zoom = String(z); fitLists(el); over = lowest();
+    }
+  }
+  var FIT_LISTS = '.ak-l', FIT_BOXES = '.er-c, .er-l, .er-r, .ak-c';
+  function fitLists(el) {
+    [].forEach.call((el || $('scene')).querySelectorAll(FIT_LISTS), function (box) {
+      var kids = [].slice.call(box.children);
+      kids.forEach(function (k) { k.style.display = ''; });
+      var bottom = box.getBoundingClientRect().bottom + 1;
+      kids.forEach(function (k) { if (k.getBoundingClientRect().bottom > bottom) k.style.display = 'none'; });
+    });
   }
   /* "3 / 12" -- in the Media Room "Up next: Elections · Uttar Pradesh" instead (a TV viewer
      sees what is coming, not a number) */
