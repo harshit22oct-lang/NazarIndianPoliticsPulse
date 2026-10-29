@@ -843,6 +843,8 @@ var server = http.createServer(function (req, res) {
     /* state=- : All India chosen on the page (even on a state's page) */
     var erSt = q.state === '-' ? null : q.state ? String(q.state).slice(0, 60) : LIVE.stateOfScope(String(q.scope || 'all'));
     var erType = /^(all|ls|vs|bye|council|local)$/.test(String(q.type || '')) ? String(q.type) : 'all';
+    /* ?watch=1: only what is being counted and what just started (every screen asks every few minutes) */
+    if (q.watch === '1') { try { return json(res, 200, electionRoom.watch()); } catch (err) { return json(res, 500, { error: 'Results are not available right now.', code: 'server' }); } }
     try {
       if (erSt) mediaRoom.get(erSt);                                     // the Media Room starts collecting this state's news too
       var er = electionRoom.get(erSt || null, erType === 'council' || erType === 'local' ? 'none' : erType, q.demo === '1');

@@ -13,6 +13,13 @@
       "runtimeArgs": ["server.js"],
       "env": { "ELECTION_WORKER": "on" },
       "port": 3300
+    },
+    {
+      "name": "nazar-view",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
+      "env": { "ELECTION_WORKER": "off" },
+      "port": 3300
     }
   ]
 }

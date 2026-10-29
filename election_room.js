@@ -26,6 +26,17 @@ var IDLE_MS = 15 * 60000, LIVE_MS = 75000, GAP_MS = 1000;
 var LIVE_FRESH_MS = 6 * 3600000;          // "leading" seats but no update for 6 h: not called live
 var DELTA_MS = 10 * 60000;                 // the up / down arrows compare with 10 minutes ago
 var FINAL_KEEP_MS = 7 * 86400000;          // a just-finished election stays "latest" for a week
+var DISCOVER_MS = 5 * 60000;               // how often results.eci.gov.in/ is asked which election is current
+var WAIT_MS = 2 * 60000;                   // a folder with no trends yet (counting about to start) is re-read this often
+var START_SHOW_MS = 60 * 60000;            // "counting has started" is said for an hour after we saw it start
+/* "can still flip": the margin divided by the rounds still to count is under this many votes.
+   A definition shown on screen, not a forecast: ECI's EVM rounds (postal votes are counted apart). */
+var FLIP_NEED = 500;
+/* "12/29" -> rounds still to count (17); null when ECI gave no round */
+function roundsLeft(r) { var m = String(r || '').match(/(\d+)\s*\/\s*(\d+)/); return m && +m[2] >= +m[1] ? +m[2] - +m[1] : null; }
+/* the average votes a round the trailing candidate must gain on the leader to catch up */
+function needOf(status, margin, left) { return status !== 'won' && margin != null && left > 0 ? Math.ceil(margin / left) : null; }
+function nf(n) { return Number(n).toLocaleString('en-IN'); }
 
 function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 async function get(url) {
@@ -144,8 +155,11 @@ function createElectionRoom(opts) {
        counting day), so the constituency list's "out of 243" (or a size seen before) wins */
     var seats = Math.max(meta.seats || 0, table.totals.total || parties.reduce(function (s, p) { return s + p.total; }, 0));
     var c = { key: key, folder: meta.folder, kind: meta.kind, en: meta.en, hi: meta.hi, state: state, title: meta.title,
-              status: table.totals.lead > 0 ? 'live' : 'final', updated: table.updated || meta.updated || null, checkedAt: now,
+              /* no seat won or ahead yet: ECI has put the page up, counting has not begun -- never "final" */
+              status: table.totals.lead > 0 ? 'live' : table.totals.won > 0 ? 'final' : 'waiting', updated: table.updated || meta.updated || null, checkedAt: now,
               seats: seats, majority: Math.floor(seats / 2) + 1, won: table.totals.won, lead: table.totals.lead,
+              /* the house size is sure only when ECI's seat list said "out of N" (or the demo's own) */
+              seatsSure: !!meta.seats, flipNeed: FLIP_NEED,
               parties: parties, alliances: alliances, close: [], declared: [], flips: [], faces: [] };
     if (c.status === 'live' && c.updated && now - c.updated > LIVE_FRESH_MS) c.status = 'stalled';
     if (seatList && seatList.length) {
@@ -155,9 +169,11 @@ function createElectionRoom(opts) {
       var H = hiFor(meta.folder, meta.code);
       /* one seat row, with the Hindi names where ECI gave them */
       var rowOf = function (s) {
+        var left = roundsLeft(s.round);
         return { seat: titleCase(s.seat), seatHi: H.seat(s.no), no: s.no, cand: titleCase(s.lead.cand), candHi: H.cand(s.lead.cand), party: ab(s.lead.party),
                  vs: s.trail ? titleCase(s.trail.cand) : null, vsHi: s.trail ? H.cand(s.trail.cand) : null,
-                 vsParty: s.trail ? ab(s.trail.party) : null, margin: s.margin, round: s.round, status: s.status };
+                 vsParty: s.trail ? ab(s.trail.party) : null, margin: s.margin, round: s.round, status: s.status,
+                 left: s.status === 'won' ? null : left, need: needOf(s.status, s.margin, left) };
       };
       seatList.forEach(function (s) {
         var row = rowOf(s);
@@ -176,7 +192,11 @@ function createElectionRoom(opts) {
         });
       });
       seatPrev[key] = next;
-      c.close.sort(function (a, b) { return a.margin - b.margin; }); c.close = c.close.slice(0, 10);
+      /* close fights: the seats that need the smallest catch-up a round first, then those with every
+         round counted but not yet declared, then any without a round, each by margin */
+      var rank = function (r) { return r.need != null ? 0 : r.left === 0 ? 1 : 2; };
+      c.close.sort(function (a, b) { return rank(a) - rank(b) || (rank(a) === 0 ? a.need - b.need : 0) || a.margin - b.margin; }); c.close = c.close.slice(0, 10);
+      c.canFlip = seatList.filter(function (s) { var n = needOf(s.status, s.margin, roundsLeft(s.round)); return n != null && n < FLIP_NEED; }).length;
       c.known = seatList.length;
       /* trailing per party (the party is second where counting is on, lost where declared) --
          for the "BJP: won / ahead / behind" line a leader reads first */
@@ -241,6 +261,87 @@ function createElectionRoom(opts) {
     return c;
   }
 
+  /* ---- "counting has started": only when this server saw it start -- the contest was waiting
+     (page up, no trends) or its folder appeared on ECI after this server was already watching.
+     A server that starts mid-count says nothing about when counting began. ---- */
+  var freshFolder = {};
+  function startedAt(old, c, folder, now) {
+    if (old && old.startedAt) return old.startedAt;
+    if (c.status !== 'live') return null;
+    return (old ? old.status === 'waiting' : !!freshFolder[folder]) ? now : null;
+  }
+
+  /* ---- the headlines: fixed sentences filled with ECI's numbers. Each one says only what the
+     numbers show: "won" only for seats ECI declared, "in trends" for won + ahead, "so far" while
+     counting is on. Every line in English and Hindi (ECI's Hindi names where known). ---- */
+  function pHi(abbr) { return cfg.party_hi[abbr] || abbr; }
+  /* opt.seats false: no per-seat lines; opt.whole false: no lines about every seat at once
+     ("narrowest so far", "n seats can flip") -- the demo, whose seat list is one archived moment
+     with 160 of the 243 seats, uses both (see demoView) */
+  function flashOf(c, rows, opt) {
+    opt = opt || {};
+    var perSeat = opt.seats !== false, whole = opt.whole !== false;
+    var out = [], add = function (k, en, hi, no) { if (out.length < 14 && (k === 'maj' || k === 'big' || perSeat)) out.push({ k: k, en: en, hi: hi, no: no == null ? null : no }); };
+    var hot = c.status === 'live' || c.status === 'demo' || c.status === 'stalled';
+    if (c.status === 'waiting') return out;
+    var sh = function (r) { return r.seatHi || r.seat; }, chi = function (r) { return r.candHi || r.cand; };
+    if (c.byeSeats) {
+      c.byeSeats.forEach(function (s) {
+        if (s.margin == null || !s.cand) return;
+        var p = s.abbr || s.party, ph = s.abbr ? pHi(s.abbr) : s.party;
+        if (s.status === 'won') add('won', s.seat + ' by-election: ' + s.cand + ' (' + p + ') wins by ' + nf(s.margin) + ' votes',
+                                     sh(s) + ' उपचुनाव: ' + chi(s) + ' (' + ph + ') की जीत, ' + nf(s.margin) + ' वोट से', s.no);
+        else add(s.need != null && s.need < FLIP_NEED ? 'flip' : 'lead', s.seat + ': ' + s.cand + ' (' + p + ') ahead by ' + nf(s.margin) + ' votes' + (s.left != null ? ', ' + s.left + ' rounds to go' : ''),
+                 sh(s) + ': ' + chi(s) + ' (' + ph + ') ' + nf(s.margin) + ' वोट से आगे' + (s.left != null ? ', ' + s.left + ' राउंड बाक़ी' : ''), s.no);
+      });
+      return out;
+    }
+    var M = c.majority, a = (c.alliances || [])[0], p0 = (c.parties || [])[0], p1 = (c.parties || [])[1];
+    /* majority: the alliance first, then a party on its own -- only when the house size is ECI's */
+    if (c.seatsSure && a && a.id !== 'OTH') {
+      if (a.won >= M) add('maj', a.en + ' wins a majority: ' + a.won + ' seats declared (majority ' + M + ')', a.hi + ' को बहुमत: ' + a.won + ' सीटें घोषित (बहुमत ' + M + ')');
+      else if (hot && a.total >= M) add('maj', a.en + ' past the majority mark in trends: ' + a.total + ' of ' + c.seats + ' (majority ' + M + ')', a.hi + ' रुझानों में बहुमत के पार: ' + c.seats + ' में से ' + a.total + ' (बहुमत ' + M + ')');
+    }
+    if (c.seatsSure && p0) {
+      if (p0.won >= M) add('maj', p0.abbr + ' wins a majority on its own: ' + p0.won + ' seats declared', pHi(p0.abbr) + ' को अकेले बहुमत: ' + p0.won + ' सीटें घोषित');
+      else if (hot && p0.total >= M) add('maj', p0.abbr + ' alone past the majority mark in trends: ' + p0.total, pHi(p0.abbr) + ' रुझानों में अकेले बहुमत के पार: ' + p0.total);
+    }
+    if (p0 && p1 && p0.total > p1.total) add('big', p0.abbr + ' the largest party: ' + p0.total + (c.lead > 0 ? ' seats (won + ahead)' : ' seats'),
+                                             pHi(p0.abbr) + ' सबसे बड़ी पार्टी: ' + p0.total + (c.lead > 0 ? ' सीटें (जीत + बढ़त)' : ' सीटें'));
+    /* leads that changed hands in the last 45 minutes (seen by this server between two reads) */
+    (c.recentFlips || []).slice(0, 4).forEach(function (f) {
+      add('flip', f.seat + ': the lead passes from ' + f.from + ' to ' + f.party, sh(f) + ': बढ़त ' + pHi(f.from) + ' से ' + pHi(f.party) + ' के पास', f.no);
+    });
+    /* big faces: lost, behind, won (ahead is not news) */
+    var fo = { lost: 0, trail: 1, won: 2 };
+    (c.faces || []).filter(function (f) { return f.facing in fo; }).sort(function (x, y) { return fo[x.facing] - fo[y.facing]; }).forEach(function (f) {
+      var by = f.margin != null ? f.margin : null, fh = f.faceHi || f.face, ph = pHi(f.party);
+      if (f.facing === 'lost') add('face', f.face + ' (' + f.party + ') loses ' + f.seat + (by != null ? ' by ' + nf(by) + ' votes' : ''), sh(f) + ' में ' + fh + ' (' + ph + ') की हार' + (by != null ? ', ' + nf(by) + ' वोट से' : ''), f.no);
+      else if (f.facing === 'trail') add('face', f.face + ' (' + f.party + ') behind in ' + f.seat + (by != null ? ' by ' + nf(by) + ' votes' : ''), fh + ' (' + ph + ') ' + sh(f) + ' में' + (by != null ? ' ' + nf(by) + ' वोट से' : '') + ' पीछे', f.no);
+      else add('face', f.face + ' (' + f.party + ') wins ' + f.seat + (by != null ? ' by ' + nf(by) + ' votes' : ''), sh(f) + ' से ' + fh + ' (' + ph + ') की जीत' + (by != null ? ', ' + nf(by) + ' वोट से' : ''), f.no);
+    });
+    rows = whole ? rows || [] : [];
+    if (hot) {
+      var flip = rows.filter(function (r) { return r.need != null && r.need < FLIP_NEED; });
+      if (flip.length) add('flip', flip.length + (flip.length === 1 ? ' seat' : ' seats') + ' can still flip: under ' + FLIP_NEED + ' votes a remaining round to catch up',
+                           flip.length + (flip.length === 1 ? ' सीट अभी पलट सकती है' : ' सीटें अभी पलट सकती हैं') + ': बचे हर राउंड में ' + FLIP_NEED + ' से कम वोट का अंतर पाटना है');
+      var tight = rows.filter(function (r) { return r.need != null; }).sort(function (x, y) { return x.need - y.need; })[0];
+      if (tight) add('close', 'Tightest: ' + tight.seat + ' -- ' + tight.cand + ' (' + tight.party + ') ahead by only ' + nf(tight.margin) + ' votes, ' + tight.left + ' rounds to go',
+                     'सबसे कड़ी टक्कर: ' + sh(tight) + ' — ' + chi(tight) + ' (' + pHi(tight.party) + ') सिर्फ़ ' + nf(tight.margin) + ' वोट से आगे, ' + tight.left + ' राउंड बाक़ी', tight.no);
+    }
+    /* declared seats: the closest and the biggest win (at least two declared, else there is no "closest") */
+    var dec = rows.filter(function (r) { return r.status === 'won' && r.margin != null; });
+    if (dec.length >= 2) {
+      var lo = dec.reduce(function (x, y) { return y.margin < x.margin ? y : x; }), hiR = dec.reduce(function (x, y) { return y.margin > x.margin ? y : x; });
+      var so = c.lead > 0 ? [' so far: ', 'अब तक '] : [': ', ''];
+      add('won', 'Narrowest win' + so[0] + lo.seat + ' -- ' + lo.cand + ' (' + lo.party + ') by ' + nf(lo.margin) + ' votes',
+          so[1] + 'सबसे कम अंतर की जीत: ' + sh(lo) + ' — ' + chi(lo) + ' (' + pHi(lo.party) + '), ' + nf(lo.margin) + ' वोट से', lo.no);
+      add('won', 'Biggest win' + so[0] + hiR.seat + ' -- ' + hiR.cand + ' (' + hiR.party + ') by ' + nf(hiR.margin) + ' votes',
+          so[1] + 'सबसे बड़ी जीत: ' + sh(hiR) + ' — ' + chi(hiR) + ' (' + pHi(hiR.party) + '), ' + nf(hiR.margin) + ' वोट से', hiR.no);
+    }
+    return out;
+  }
+
   /* ---- read one ECI folder ---- */
   async function pollFolder(folder) {
     var now = Date.now(), idx = EL.parseIndex(await get(ECI + folder + '/index.htm'), folder), F = live[folder] || (live[folder] = { folder: folder, contests: {} });
@@ -266,10 +367,17 @@ function createElectionRoom(opts) {
                      round: det && det.round ? det.round + '/' + det.rounds : null, photo: top ? top.photo : null,
                      vsVotes: second ? second.votes : null, vsPhoto: second ? second.photo : null, vsAbbr: second ? abbrGuess(second.party) : null,
                      vsHi: second ? FACE_HI[hiKey(second.name)] || null : null });
+        var sl = seats[seats.length - 1]; sl.left = sl.status === 'won' ? null : roundsLeft(sl.round); sl.need = needOf(sl.status, sl.margin, sl.left);
       }
       var anyLead = seats.some(function (s) { return s.status !== 'won'; });
-      F.contests = { bye: { key: folder + ':bye', folder: folder, kind: idx.kind, en: meta(null).en, hi: meta(null).hi, state: null, title: idx.title,
-                            status: anyLead ? (idx.updated && now - idx.updated > LIVE_FRESH_MS ? 'stalled' : 'live') : 'final', updated: idx.updated, checkedAt: now, byeSeats: seats } };
+      /* no seat with a trend yet (no cards, or none won / leading): counting has not begun */
+      var begun = seats.some(function (s) { return /^(won|lead|trail)$/.test(s.status); });
+      var oldB = F.contests && F.contests.bye;
+      var bye = { key: folder + ':bye', folder: folder, kind: idx.kind, en: meta(null).en, hi: meta(null).hi, state: null, title: idx.title,
+                  status: !begun ? 'waiting' : anyLead ? (idx.updated && now - idx.updated > LIVE_FRESH_MS ? 'stalled' : 'live') : 'final', updated: idx.updated, checkedAt: now, byeSeats: seats, flipNeed: FLIP_NEED };
+      bye.startedAt = startedAt(oldB, bye, folder, now);
+      bye.flash = flashOf(bye, null);
+      F.contests = { bye: bye };
       return F;
     }
     /* general: one contest per state (and All India for Lok Sabha) */
@@ -286,7 +394,8 @@ function createElectionRoom(opts) {
       var L = list[k], seatList = null, old = F.contests[L.key];
       /* the seat list (close fights, declared, flips, big faces): every poll while live, once when final */
       var houseSize = old && old.seats || 0;
-      if (L.code && (L.table.totals.lead > 0 || !old || !old.known)) {
+      var begunG = L.table.totals.lead + L.table.totals.won > 0;            // before counting: no seat list to read
+      if (L.code && begunG && (L.table.totals.lead > 0 || !old || !old.known)) {
         seatList = [];
         for (var p = 1; p <= 40; p++) {
           await sleep(GAP_MS);
@@ -315,7 +424,8 @@ function createElectionRoom(opts) {
       }
       var cm = meta(L.st); cm.seats = houseSize; cm.code = L.code || null;
       var c = buildContest(L.key, cm, L.table, seatList, now);
-      if (!seatList && old) { ['close', 'declared', 'faces', 'known', 'trailing', 'lost', 'abbrOf', 'duels'].forEach(function (f) { c[f] = old[f]; }); }
+      if (!seatList && old) { ['close', 'declared', 'faces', 'known', 'trailing', 'lost', 'abbrOf', 'duels', 'canFlip'].forEach(function (f) { c[f] = old[f]; }); }
+      c.startedAt = startedAt(old, c, folder, now);
       c = carry(old, c);
       /* head-to-heads: the candidate page of each priority seat (votes, round, ECI photos);
          at most 10 pages a poll, a seat still counting re-read after 2.5 min, a declared one once */
@@ -330,6 +440,7 @@ function createElectionRoom(opts) {
         }
         c.duels = picks.map(function (p) { var h = candCache[folder + ':' + L.code + ':' + p.row.no]; return duelOf(c, p, h && h.det); });
       }
+      c.flash = flashOf(c, rowsOf[L.key]);
       F.contests[L.key] = c;
     }
     return F;
@@ -365,12 +476,18 @@ function createElectionRoom(opts) {
   async function run() {
     if (busy || Date.now() < nextAt) return; busy = true;
     try {
-      if (!known.length || Date.now() - lastCheck > IDLE_MS) { known = await discover(); lastCheck = Date.now(); }
+      if (!known.length || Date.now() - lastCheck > DISCOVER_MS) {
+        var was = known, first = !lastCheck; known = await discover(); lastCheck = Date.now();
+        /* a folder ECI put up while we were already watching: its counting starts now (startedAt) */
+        if (!first) known.forEach(function (f) { if (was.indexOf(f) < 0 && !live[f]) freshFolder[f] = 1; });
+      }
       var anyLive = false, newFinals = [];
       for (var i = 0; i < known.length; i++) {
-        var f = known[i], wasLive = live[f] && Object.keys(live[f].contests).some(function (k) { return live[f].contests[k].status === 'live'; });
-        /* a finished folder is read again only every 15 min (in case of a recount) */
-        if (live[f] && !wasLive && Date.now() - (live[f].checkedAt || 0) < IDLE_MS) continue;
+        var f = known[i], stOf = function (s) { return live[f] && Object.keys(live[f].contests).some(function (k) { return live[f].contests[k].status === s; }); };
+        var wasLive = stOf('live'), waiting = stOf('waiting');
+        /* a finished folder is read again only every 15 min (in case of a recount); one waiting
+           for counting to start, every 2 min */
+        if (live[f] && !wasLive && Date.now() - (live[f].checkedAt || 0) < (waiting ? WAIT_MS : IDLE_MS)) continue;
         try { await pollFolder(f); } catch (e) { lastError = f + ': ' + e.message; if (live[f]) live[f].error = e.message; continue; }
         Object.keys(live[f].contests).forEach(function (k) {
           var c = live[f].contests[k];
@@ -434,6 +551,12 @@ function createElectionRoom(opts) {
       if (have.length < 10 && dc[r.no] && !have.some(function (p) { return p.row.no === r.no; })) have.push({ row: r, why: r.status === 'won' ? (r.party === FOCUS ? 'bjpbig' : 'won') : (r.party === FOCUS || r.vsParty === FOCUS ? 'bjpclose' : 'close') });
     });
     c.duels = (have.length >= 4 ? have : picks).map(function (p) { return duelOf(c, p, dc[p.row.no]); });
+    /* the seat list is one archived moment (39 declared, counting on): per-seat lines only on the
+       steps after it that are still counting; never lines about all seats (it has 160 of 243) */
+    var listWon = demoData.seatList.filter(function (s) { return s.status === 'won'; }).length;
+    c.flash = flashOf(c, rowsOf.demo, { seats: f.totals.won >= listWon && f.totals.lead > 0, whole: false });
+    c.canFlip = null;
+    if (!f.totals.lead) c.close = [];                    // the last step has every seat declared: no seat is still "close"
     return c;
   }
   return {
@@ -459,10 +582,13 @@ function createElectionRoom(opts) {
         Object.keys(live[f].contests).forEach(function (k) {
           var c = live[f].contests[k];
           if (!want(typeOf(c.kind)) || !okState(c, st)) return;
-          if (c.status !== 'live' && now - (c.updated || c.checkedAt || 0) > FINAL_KEEP_MS) return;        // an old final belongs in "past"
+          if (c.status !== 'live' && c.status !== 'waiting' && now - (c.updated || c.checkedAt || 0) > FINAL_KEEP_MS) return;        // an old final belongs in "past"
           contests.push(filterBye(c, st));
         });
       });
+      /* the practice replay never hides real counting: while ECI shows live trends the demo is skipped */
+      var realLive = contests.some(function (c) { return c.status === 'live'; }), demoSkipped = false;
+      if (demo && realLive) { demo = false; demoSkipped = true; }
       if (demo) { var d = demoView(now); if (d && want('vs') && okState(d, st)) contests = [d]; }
       contests.sort(function (a, b) { return (b.status === 'live' || b.status === 'demo') - (a.status === 'live' || a.status === 'demo') || (b.seats || 0) - (a.seats || 0); });
       /* past: what this server saw itself, then the archive -- newest first, one per (election, state) */
@@ -475,11 +601,26 @@ function createElectionRoom(opts) {
       }).sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); }).slice(0, 8)
         .map(function (r) { return r.byeSeats && st ? Object.assign({}, r, { byeSeats: r.byeSeats.filter(function (s) { return s.state === st; }) }) : r; });
       var anyLive = contests.some(function (c) { return c.status === 'live'; });
-      return { generatedAt: new Date(now).toISOString(), mode: demo ? 'demo' : anyLive ? 'live' : contests.length ? 'final' : 'past', worker: worker,
+      var anyFinal = contests.some(function (c) { return c.status !== 'waiting'; });
+      return { generatedAt: new Date(now).toISOString(), mode: demo ? 'demo' : anyLive ? 'live' : anyFinal ? 'final' : contests.length ? 'waiting' : 'past', worker: worker, demoSkipped: demoSkipped,
                checkedAt: lastCheck || null, folders: known, contests: contests, past: past, state: st || null, type: type || 'all',
                alliancesNote: true, majorityNote: true, partyHi: cfg.party_hi, partyColor: cfg.party_color };
     },
-    hasDemo: function () { return !!demoData; }
+    hasDemo: function () { return !!demoData; },
+    /* for every screen's watch (a few bytes, every few minutes): what is being counted, and what
+       started in the last hour (startedAt: when this server saw it start) */
+    watch: function () {
+      var now = Date.now(), out = [];
+      Object.keys(live).forEach(function (f) {
+        Object.keys(live[f].contests).forEach(function (k) {
+          var c = live[f].contests[k];
+          if (c.status !== 'live') return;
+          out.push({ key: c.key, kind: c.kind, state: c.state, title: c.title, en: c.en, hi: c.hi,
+                     startedAt: c.startedAt && now - c.startedAt < START_SHOW_MS ? c.startedAt : null });
+        });
+      });
+      return { live: out, at: new Date(now).toISOString() };
+    }
   };
 }
 

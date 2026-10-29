@@ -898,6 +898,21 @@ body.mr .banner.proto{display:none}          /* the recorded-data strip is about
 .er-wrap > .er-t{flex:1 1 auto;min-height:0;height:auto}
 .er-wrap .er-arc{max-width:21rem} .er-wrap .er-arc .c b{font-size:3rem} .er-wrap .er-als{margin-top:.4rem} .er-wrap .er-al .nm{font-size:1.7rem} .er-wrap .er-l{padding:1.1rem 1.6rem} .er-wrap .er-al{padding:.5rem 1.1rem;margin-top:.5rem} .er-wrap .er-al .n{font-size:3rem}
 .er-wrap .er-p{padding:.55rem 1rem}
+.er-wrap > .er-g{flex:1 1 auto;min-height:0;height:auto;overflow:hidden}
+.er-c .hd .er-flip.in{position:static;color:#fff;font-size:1.05rem}
+.er-need{margin-top:.35rem;font-size:1.15rem;color:var(--muted);font-weight:600}
+.er-need.hot{color:#FF8A80}
+.er-fl{flex:1 1 auto;min-height:0;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;grid-gap:1rem;align-content:start}
+.er-fi{display:flex;align-items:flex-start;padding:1.1rem 1.4rem;border-radius:1.2rem;font-family:var(--deva);font-weight:700;font-size:1.65rem;line-height:1.3}
+.er-fi i{flex:0 0 auto;width:.55rem;align-self:stretch;border-radius:.3rem;margin-right:1rem;background:var(--gold)}
+.er-fi.k-maj i{background:#00C853} .er-fi.k-flip i,.er-fi.k-close i{background:#FF5252} .er-fi.k-face i{background:#40C4FF} .er-fi.k-won i{background:#FFC857} .er-fi.k-big i{background:#B388FF}
+body.phone .er-fl{grid-template-columns:1fr} body.phone .er-fi{font-size:1.35rem}
+.er-alert{position:fixed;left:50%;bottom:5.5rem;-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:70;display:flex;align-items:center;gap:1.2rem;
+  padding:1rem 1.4rem 1rem 1.6rem;border-radius:1.2rem;background:#B71C1C;color:#fff;box-shadow:0 1.2rem 3rem rgba(0,0,0,.5);max-width:calc(100vw - 2rem)}
+.er-alert b{font-family:var(--deva);font-size:1.6rem;font-weight:800;display:block} .er-alert small{display:block;font-size:1.1rem;opacity:.9}
+.er-alert button{flex:0 0 auto;font:inherit;font-size:1.1rem;font-weight:700;border:0;border-radius:.6rem;padding:.5rem .9rem;cursor:pointer;background:#fff;color:#B71C1C}
+.er-alert button.ghost{background:transparent;color:#fff;border:.08rem solid rgba(255,255,255,.6)}
+body.phone .er-alert{left:1rem;right:1rem;-webkit-transform:none;transform:none;flex-wrap:wrap}
 .er-hl{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;padding:1.1rem 2rem;border-radius:1.4rem;
   background:linear-gradient(90deg,rgba(230,81,0,.55),rgba(230,81,0,.12) 60%,rgba(26,8,3,.6));border:.08rem solid rgba(255,200,87,.45);
   -webkit-animation:rise .6s cubic-bezier(.2,.8,.2,1) both;animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
@@ -1689,7 +1704,17 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     erWhy_won: ['Just declared', 'अभी घोषित'], erWhy_bjpbig: ['BJP big win', 'भाजपा की बड़ी जीत'], erWhy_close: ['Close fight', 'कड़ी टक्कर'], erWhy_bye: ['By-election', 'उपचुनाव'],
     erAheadBy: ['votes ahead', 'वोट से आगे'], erWonBy: ['votes — won', 'वोट से जीते'], erVotes: ['votes', 'वोट'], erBehind: ['BEHIND', 'पीछे'], erLostT: ['LOST', 'हारे'], erWonT: ['WON', 'जीते'], erAheadT: ['AHEAD', 'आगे'],
     erT_byels: ['Lok Sabha by-election', 'लोकसभा उपचुनाव'], erT_byevs: ['Assembly by-elections', 'विधानसभा उपचुनाव'],
-    erT_council: ['Rajya Sabha / Council', 'राज्यसभा / विधान परिषद'], erT_local: ['Municipal / Panchayat', 'नगर निकाय / पंचायत']
+    erT_council: ['Rajya Sabha / Council', 'राज्यसभा / विधान परिषद'], erT_local: ['Municipal / Panchayat', 'नगर निकाय / पंचायत'],
+    erFlash: ['Headlines', 'बड़ी ख़बरें'], erFlashNote: ['Every line is a fixed rule filled with ECI\'s numbers — "won" only for seats ECI declared', 'हर लाइन एक तय नियम है, ECI के आँकड़ों से — "जीत" सिर्फ़ ECI की घोषित सीटों पर'],
+    erCanFlip: ['Can still flip', 'पलट सकती है'], erNeed: ['{l} rounds left · ~{n} votes a round to catch up', '{l} राउंड बाक़ी · हर राउंड ~{n} वोट पाटने होंगे'],
+    erAllRounds: ['All rounds counted · not yet declared', 'सभी राउंड गिने गए · घोषणा बाक़ी'],
+    erFlipDef: ['"Can still flip": lead ÷ rounds left is under {n} votes (ECI\'s EVM rounds; postal votes are counted apart)', '"पलट सकती है": बढ़त ÷ बचे राउंड, {n} वोट से कम (ECI के EVM राउंड; डाक मत अलग गिने जाते हैं)'],
+    erFlipN: ['{n} can still flip', '{n} पलट सकती हैं'],
+    erWaiting: ['COUNTING SOON', 'मतगणना जल्द'], erWaitT: ['Counting has not started yet', 'मतगणना अभी शुरू नहीं हुई'],
+    erWaitP: ['The Election Commission has put up the results page. Trends will show here as soon as counting begins.', 'चुनाव आयोग ने नतीजों का पेज खोल दिया है। गिनती शुरू होते ही रुझान यहाँ दिखेंगे।'],
+    erStartT: ['Counting has started', 'मतगणना शुरू'], erStartGo: ['Opening the Election Room in {n} s', '{n} सेकंड में चुनाव कक्ष खुल रहा है'],
+    erStartStay: ['Stay here', 'यहीं रहें'], erSrcEci: ['Election Commission of India', 'भारत निर्वाचन आयोग'], erStartOpen: ['Open now', 'अभी खोलें'],
+    erDemoOff: ['Real counting is on — the practice replay was switched off', 'असली मतगणना चल रही है — अभ्यास रीप्ले बंद किया गया']
   };
   Object.keys(ER_T).forEach(function (k) { T.en[k] = ER_T[k][0]; T.hi[k] = ER_T[k][1]; });
   if (PROTO && !PROTO.live) {        // a recorded file is not "live" (PROTO.live: fed from Political Pulse)
@@ -3082,6 +3107,8 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       if (state.stopped || state.mode !== 'election' || !m || m.__notfound) return;
       state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
       state.snap = m; state.lastOk = Date.now();
+      /* real counting began while this screen was on the practice replay: the replay is switched off for good */
+      if (m.demoSkipped && ER.demo) { ER.demo = false; store('nazar_er_demo', '0'); }
       try { store('nazar_er_snap', JSON.stringify({ at: new Date().toISOString(), s: m })); } catch (e) {}
       onData(first); if (MR.open) renderMrPanel();
       schedule(m.mode === 'live' || m.mode === 'demo' ? 30000 : 120000);       // counting day: every 30 s
@@ -3116,6 +3143,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (st === 'live') return '<span class="er-b live"><i></i>' + esc(t('erLive')) + '</span>';
     if (st === 'demo') return '<span class="er-b demo">' + esc(t('erDemo')) + '</span>';
     if (st === 'stalled') return '<span class="er-b stalled">' + esc(t('erStalled')) + '</span>';
+    if (st === 'waiting') return '<span class="er-b stalled">' + esc(t('erWaiting')) + '</span>';
     if (st === 'final') return '<span class="er-b final">' + esc(t('erFinal')) + '</span>';
     if (st === 'old') return '<span class="er-b old">' + esc(t('erOld')) + (date ? ' · ' + esc(erDate(date)) : '') + '</span>';
     return '';
@@ -3256,13 +3284,32 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function erLine(c, cand, party, lo) {
     return '<div class="er-ln' + (lo ? ' lo' : '') + '"><i style="background:' + erPColor(c, party) + '"></i><em>' + esc(cand || '') + '</em><small>' + esc(erPName(c, party)) + '</small></div>';
   }
+  /* the catch-up line under a margin: rounds left and the average a round needed (the server's
+     arithmetic: margin ÷ rounds left), or "all rounds counted" */
+  function erNeedLine(s) {
+    if (s.status === 'won') return '';
+    if (s.need != null) return '<div class="er-need' + (s.need < erFlipNeed ? ' hot' : '') + '">' + esc(fill(t('erNeed'), { l: s.left, n: fmtInt(s.need) })) + '</div>';
+    if (s.left === 0) return '<div class="er-need">' + esc(t('erAllRounds')) + '</div>';
+    return '';
+  }
+  var erFlipNeed = 500;                       // the server's FLIP_NEED, sent as c.flipNeed
   function erClose(c) {
     var flip = {}; (c.recentFlips || []).forEach(function (f) { flip[f.no] = 1; });
-    return '<div class="er-g">' + c.close.slice(0, 8).map(function (s) {
-      return '<div class="er-c er-glass">' + (flip[s.no] ? '<span class="er-flip">' + esc(t('erFlip')) + '</span>' : '') + '<div class="hd"><b>' + esc(erN(s.seat, s.seatHi)) + '</b><span>' + esc(fill(t('erRound'), { r: s.round || '–' })) + '</span></div>'
+    if (c.flipNeed) erFlipNeed = c.flipNeed;
+    return '<div class="er-wrap"><div class="er-g">' + c.close.slice(0, 8).map(function (s) {
+      var tag = flip[s.no] ? t('erFlip') : s.need != null && s.need < erFlipNeed ? t('erCanFlip') : '';
+      /* the tag takes the round's place (the rounds left are on the line under the margin) */
+      return '<div class="er-c er-glass"><div class="hd"><b>' + esc(erN(s.seat, s.seatHi)) + '</b>'
+        + (tag ? '<span class="er-flip in">' + esc(tag) + '</span>' : '<span>' + esc(fill(t('erRound'), { r: s.round || '–' })) + '</span>') + '</div>'
         + erLine(c, erN(s.cand, s.candHi), s.party) + (s.vs ? erLine(c, erN(s.vs, s.vsHi), s.vsParty, true) : '')
-        + '<div class="er-mg">' + esc(fmtInt(s.margin)) + '<small>' + esc(t('erOnly')) + '</small></div></div>';
-    }).join('') + '</div>';
+        + '<div class="er-mg">' + esc(fmtInt(s.margin)) + '<small>' + esc(t('erOnly')) + '</small></div>' + erNeedLine(s) + '</div>';
+    }).join('') + '</div><div class="er-note">' + esc(fill(t('erFlipDef'), { n: fmtInt(erFlipNeed) })) + '</div></div>';
+  }
+  /* the headlines: the server's fixed rules filled with ECI's numbers (election_room.js flashOf) */
+  function erFlashes(c) {
+    return '<div class="er-wrap"><div class="er-fl">' + (c.flash || []).slice(0, 8).map(function (f) {
+      return '<div class="er-fi er-glass k-' + esc(f.k) + '"><i></i><span>' + esc(LANG === 'hi' ? f.hi : f.en) + '</span></div>';
+    }).join('') + '</div><div class="er-note">' + esc(t('erFlashNote')) + '</div></div>';
   }
   function erFaces(c) {
     var key = { won: 'erWon', lead: 'erLead', trail: 'erTrail', lost: 'erLost' };
@@ -3288,7 +3335,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
         + '<div><b>' + esc(erN(s.cand, s.candHi)) + '</b><span>' + esc(s.abbr ? erPName(c, s.abbr) || s.abbr : s.party) + '</span></div></div>'
         + '<span class="er-st ' + (won ? 'won' : 'lead') + '">' + esc(t(won ? 'erWon' : 'erLead')) + (s.margin != null ? ' · ' + esc(fill(t('erBy'), { n: fmtInt(s.margin) })) : '') + '</span>'
         + (s.vs ? '<div class="er-ln lo" style="margin-top:.6rem"><em>' + esc(t('erVs')) + ' ' + esc(erN(s.vs, s.vsHi)) + '</em><small>' + esc(s.vsParty || '') + '</small></div>' : '')
-        + (s.round ? '<div class="er-note">' + esc(fill(t('erRound'), { r: s.round })) + (s.votes ? ' · ' + esc(fmtInt(s.votes)) + ' ' + esc(t('erOnly').split(' ')[0]) : '') + '</div>' : '') + '</div>';
+        + (s.round ? '<div class="er-note">' + esc(fill(t('erRound'), { r: s.round })) + (s.votes ? ' · ' + esc(fmtInt(s.votes)) + ' ' + esc(t('erOnly').split(' ')[0]) : '') + '</div>' : '') + erNeedLine(s) + '</div>';
     }).join('') + '</div>';
   }
   /* past results: up to four elections, top parties as bars, who crossed the majority */
@@ -3320,6 +3367,17 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       var hot = c.status === 'live' || c.status === 'demo', w = 1 + Math.min(0.5, erMove(c) / 12), place = c.state ? stName(c.state) : '';
       var base = { sub: function () { return erSrc(c); } };
       function sc(o) { var x = {}; for (var k in base) x[k] = base[k]; for (var j in o) x[j] = o[j]; return x; }
+      /* ECI's page is up, counting has not begun: say so (no zero tally) */
+      if (c.status === 'waiting') {
+        L.push(sc({ id: 'er-wait-' + c.key, dur: 16000, imp: true, hero: 'mid', title: function () { return erTitle('erWaitT', place || erCName(c), 'waiting'); },
+                    label: function () { return t('erWaitT'); }, render: function () { return erMsg(erCName(c) + ' — ' + t('erWaitT'), t('erWaitP')); } }));
+        return;
+      }
+      var flashScene = function () {
+        if (!(c.flash || []).length) return;
+        L.push(sc({ id: 'er-flash-' + c.key, dur: 16000, imp: hot, hero: 'mid', title: function () { return erTitle('erFlash', place, c.status); },
+                    label: function () { return t('erFlash') + (place ? ' · ' + place : ''); }, render: function () { return erFlashes(c); } }));
+      };
       var duels = erDuelsOf(c);
       function duelScene() {
         if (!duels.length) return;
@@ -3328,6 +3386,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
                     after: function (el) { erDuelRun(el, 'er-duel-' + c.key); } }));
       }
       if (c.byeSeats) {
+        if (hot) flashScene();
         duelScene();
         if (duels.length) return;
         for (var i = 0; i < c.byeSeats.length; i += 6) (function (chunk, k) {
@@ -3337,8 +3396,10 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       }
       L.push(sc({ id: 'er-tally-' + c.key, dur: Math.round(18000 * w), imp: hot, hero: 'mid', title: function () { return erTitle('erTally', place || erCName(c), c.status); },
                   label: function () { return t('erTally') + (place ? ' · ' + place : ''); }, render: function () { return erTally(c); } }));
+      flashScene();
       duelScene();
-      if (hot && c.close && c.close.length) L.push(sc({ id: 'er-close-' + c.key, dur: 16000, imp: (c.recentFlips || []).length > 0, title: function () { return erTitle('erClose', place, c.status); },
+      if (hot && c.close && c.close.length) L.push(sc({ id: 'er-close-' + c.key, dur: 16000, imp: (c.recentFlips || []).length > 0 || c.canFlip > 0,
+                  title: function () { return erTitle('erClose', [place, c.canFlip ? fill(t('erFlipN'), { n: c.canFlip }) : ''].filter(Boolean).join(' · '), c.status); },
                   label: function () { return t('erClose') + (place ? ' · ' + place : ''); }, render: function () { return erClose(c); } }));
       if (c.faces && c.faces.length) L.push(sc({ id: 'er-faces-' + c.key, dur: 15000, title: function () { return erTitle('erFaces', place, c.status); },
                   label: function () { return t('erFaces') + (place ? ' · ' + place : ''); }, render: function () { return erFaces(c); } }));
@@ -3379,6 +3440,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     var m = state.snap, out = []; if (!m) return out;
     (m.contests || []).forEach(function (c) {
       if (c.status !== 'live' && c.status !== 'demo') return;
+      (c.flash || []).slice(0, 6).forEach(function (f) { out.push({ head: LANG === 'hi' ? f.hi : f.en, src: 'ECI' }); });
       (c.declared || []).slice(0, 12).forEach(function (s) { out.push({ head: erN(s.seat, s.seatHi) + ': ' + erN(s.cand, s.candHi) + ' (' + erPName(c, s.party) + ') ' + t('erWon') + (s.margin != null ? ' · ' + fill(t('erBy'), { n: fmtInt(s.margin) }) : ''), src: 'ECI' }); });
     });
     if (out.length) return out;
@@ -3391,6 +3453,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       if (m.mode === 'demo') { lvl = 'delayed'; txt = t('erChipDemo'); }
       else if (live) { lvl = 'live'; txt = fill(t('erChipLive'), { a: live.updated ? fmtAgo(Math.max(0, (Date.now() - live.updated) / 60000)) : '–' }); }
       else if (m.mode === 'final') { lvl = 'recent'; txt = t('erChipFinal'); }
+      else if (m.mode === 'waiting') { lvl = 'recent'; txt = t('erWaitT'); }
       else { lvl = 'stale'; txt = t('erChipNone'); }
     }
     if (state.offline) { lvl = 'offline'; txt = t('offline') + ' · ' + txt; }
@@ -3399,6 +3462,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function erHonesty() {
     var m = state.snap, parts = [];
     if (!m) return '';
+    if (m.demoSkipped) parts.push('<span class="warn">' + esc(t('erDemoOff')) + '</span>');
     if (m.mode === 'demo') parts.push('<span class="warn">' + esc(t('erNoteDemo')) + '</span>');
     else if (ER.type === 'council' || ER.type === 'local') parts.push('<span class="warn">' + esc(t('erNoteNews')) + '</span>');
     else if (m.mode === 'past') parts.push('<span class="warn">' + esc(t('erNoteNone')) + '</span>');
@@ -3453,10 +3517,47 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     clearTimeout(fetchTimer); fetchData(true);
   }
   /* start screen: a red LIVE tag on the Election Room's strip while counting is on */
-  function erChooserLive() {
-    api('/api/election-room?scope=' + SCOPE + '&type=all').then(function (m) {
-      var on = m && m.mode === 'live'; $('chElec').className = 'ch-media ch-er' + (on ? ' live' : '');
+  function erChooserLive() { erWatch(); }
+  /* every screen, every 3 minutes: is anything being counted, did counting just start?
+     (?watch=1 -- a few bytes). The server says "started" only when it saw the start itself.
+     Each start is announced once per screen; off the Election Room it opens by itself after 15 s
+     unless someone presses "Stay here". */
+  var erWatchT = null;
+  function erWatchStart() { if (DEMO || erWatchT) return; erWatch(); erWatchT = setInterval(erWatch, 180000); }
+  function erWatch() {
+    if (DEMO) return;
+    api('/api/election-room?watch=1').then(function (w) {
+      if (!w || !w.live) return;
+      $('chElec').className = 'ch-media ch-er' + (w.live.length ? ' live' : '');
+      var c = w.live.filter(function (x) { return x.startedAt && !store('nazar_er_seen_' + x.key); })[0];
+      if (c) erStartAlert(c);
     }).catch(function () {});
+  }
+  function erStartAlert(c) {
+    store('nazar_er_seen_' + c.key, '1');
+    var old = $('erAlert'); if (old) old.parentNode.removeChild(old);
+    var auto = state.mode !== 'election', n = 15, el = document.createElement('div'), tm = null;
+    el.id = 'erAlert'; el.className = 'er-alert'; el.setAttribute('role', 'alert');
+    function close() { clearInterval(tm); if (el.parentNode) el.parentNode.removeChild(el); }
+    function go() {
+      close();
+      ER.type = 'all'; ER.pick = c.state && STATE_HI[c.state] ? c.state : '-'; ER.city = ''; ER.demo = false;
+      store('nazar_er_state', ER.pick); store('nazar_er_type', ER.type); store('nazar_er_city', ''); store('nazar_er_demo', '0');
+      startShow('election');
+    }
+    function draw() {
+      el.innerHTML = '<div><b>' + esc(t('erStartT') + ' · ' + erCName(c)) + '</b><small>' + esc(auto ? fill(t('erStartGo'), { n: n }) : t('erSrcEci')) + '</small></div>'
+        + (auto ? '<button type="button" data-a="go">' + esc(t('erStartOpen')) + '</button><button type="button" class="ghost" data-a="stay">' + esc(t('erStartStay')) + '</button>' : '');
+      [].forEach.call(el.querySelectorAll('button'), function (b) { b.onclick = function () { if (b.getAttribute('data-a') === 'go') go(); else close(); }; });
+    }
+    draw(); document.body.appendChild(el);
+    tm = setInterval(function () {
+      n--;
+      if (auto && n <= 0) { go(); return; }
+      if (!auto && n <= -5) { close(); return; }                 // in the Election Room: a 20 s notice
+      if (auto) draw();
+    }, 1000);
+    if (!auto) { clearTimeout(fetchTimer); fetchData(true); }
   }
 
   /* ============================================================ MODES */
@@ -3480,6 +3581,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (STATE) $('stPill').className = mode === 'person' ? 'chip stpill hidden' : 'chip stpill';
     $('chooser').className = 'hidden'; $('app').style.visibility = ''; setCls(document.body, 'choosing', false);
     state.stopped = false; clearTimeout(fetchTimer); fetchData(true);
+    erWatchStart();
   }
 
   /* ------------------------------------------------------- start screen */
@@ -3488,7 +3590,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     clearTimeout(state.timer); clearSceneWork(); clearTimeout(fetchTimer);
     state.mode = null; $('app').style.visibility = 'hidden'; $('chooser').className = ''; setCls(document.body, 'choosing', true);
     mrPanel(false); setCls(document.body, 'mr', false); setCls(document.body, 'er', false); $('mrBtn').className = 'tbtn hidden'; $('erBack').className = 'tbtn er-back hidden';
-    if (!DEMO) erChooserLive();
+    if (!DEMO) { if (erWatchT) erChooserLive(); else erWatchStart(); }
     heroLevel('hi'); renderRecent(); loadStates(); $('chInput').value = ''; $('chList').innerHTML = '';
     chLeft = CHOOSER_AUTO_S; tickChooser(); clearTimeout(chResumeT);
     clearInterval(chT); chT = setInterval(tickChooser, 1000);
