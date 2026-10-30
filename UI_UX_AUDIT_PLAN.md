@@ -477,7 +477,17 @@ Each phase ends with screenshots at 1920×1080, 1280×720, 3840×2160, the 375 p
 - **I3.** The skip hint is a visible key chip that dims after 4 s.
 - **I4.** The full intro plays once a day per device; later opens get a 2-second sting (disc, ring, wordmark, tagline). `?intro=1` forces the full one, and a soft reload skips it as before.
 - On phone: older `.ch-media` rules hid the new seat bar and shrank the Election Room title; both fixed. The All-India map on the start screen is 2rem shorter so everything fits at 720p.
-| **7. Motion pass** | Section 11, as one consistent layer | Medium |
+| **7. Motion pass** ✅ done 30 Oct | Section 11, as one consistent layer | Medium |
+
+**Phase 7 — what was done (30 Oct):**
+- **Already there before this phase (checked, not changed):** live numbers count to the new value glowing gold, with the card pulsing ("bump") and a ▲ badge for rises; the duel bar grows from the middle; the LIVE dot pulses only when live. Phases 2–5 added the panel slide, the "next" highlight, the breakout meter and the intro.
+- **New screen:** a short saffron line draws in under the title, and the time line fades in.
+- **Bars:** party bars grow one after another, 70 ms apart, so the order reads as the ranking.
+- **Rank moves:** "▲2" / "▼1" beside the rank on the trending cards and party bars when the order changed since the last loop. It stays 10 minutes and is kept per state and period (`rankMoves`, unit-tested).
+- **Attacks:** severity is five dots filling left to right (the number stays in the tooltip and on the rows).
+- **Map:** the numbered badges arrive in rank order (90 ms apart); the lit state's outline pulses.
+- **Ticker:** the label flashes red twice when a BREAKING item appears that has not been shown before.
+- Everything is `transform`/`opacity` (the map pulse uses stroke width), and all of it is off under `body.reduced`. No screen's fit changed.
 | **8. Phone** | F1–F5, L1–L3 | Medium |
 
 **How each change is checked:**

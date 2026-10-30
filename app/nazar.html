@@ -1618,6 +1618,33 @@ body.phone .ch-tr .av{width:4.2rem;height:4.2rem} body.phone .ch-tr b{font-size:
 body.phone .ch-media .ch-seat i{display:block} body.phone .ch-media .ch-live i.ch-dot{display:inline-block}
 body.phone .ch-media b span{font-size:inherit}            /* (the Election Room title was shrunk by the phone .ch-media span rule) */ body.phone .ch-seat{width:6rem} body.phone .ch-logos .mr-lg{width:2.8rem;height:2.8rem}
 
+/* ---------- motion (audit phase 7): each movement says something ---------- */
+/* a new screen: a short saffron line draws in under its title */
+.st-head > div:first-child{position:relative}
+.st-head.wipe > div:first-child:after{content:'';position:absolute;left:0;bottom:-.5rem;width:7rem;height:.3rem;border-radius:.3rem;background:linear-gradient(90deg,#E65100,#FFC857);-webkit-transform-origin:left center;transform-origin:left center;-webkit-animation:wipeIn .45s cubic-bezier(.2,.7,.2,1) .1s both;animation:wipeIn .45s cubic-bezier(.2,.7,.2,1) .1s both}
+@-webkit-keyframes wipeIn{from{-webkit-transform:scaleX(0)}to{-webkit-transform:none}} @keyframes wipeIn{from{transform:scaleX(0)}to{transform:none}}
+.st-head.wipe .st-when{-webkit-animation:inFade .5s .15s ease both;animation:inFade .5s .15s ease both}
+body.reduced .st-head.wipe > div:first-child:after,body.reduced .st-head.wipe .st-when{-webkit-animation:none;animation:none}
+/* who moved since the last loop */
+.rkm{display:inline-block;margin-left:.6rem;padding:.05rem .45rem;border-radius:.4rem;font-family:var(--head);font-weight:700;font-size:1.2rem;line-height:1.4;vertical-align:.15rem;-webkit-animation:pop .5s cubic-bezier(.2,1.4,.4,1) .4s both;animation:pop .5s cubic-bezier(.2,1.4,.4,1) .4s both}
+.rkm.up{color:#0b2a12;background:var(--good)} .rkm.down{color:#fff;background:rgba(255,107,91,.85)}
+body.reduced .rkm{-webkit-animation:none;animation:none}
+/* attacks: severity as five dots, filling left to right */
+.ak-sev{display:inline-flex;align-items:center;background:rgba(0,0,0,.25);border:.08rem solid var(--sevc,#FF7043)}
+.ak-sev i{display:block;width:.9rem;height:.9rem;border-radius:50%;margin-right:.3rem;background:rgba(255,255,255,.18)}
+.ak-sev i.on{background:var(--sevc,#FF7043);-webkit-animation:pop .35s cubic-bezier(.2,1.4,.4,1) both;animation:pop .35s cubic-bezier(.2,1.4,.4,1) both}
+.ak-sev small{margin-left:.5rem}
+body.reduced .ak-sev i.on{-webkit-animation:none;animation:none}
+/* map: the badges arrive in rank order; the lit state's outline pulses */
+.mapb{-webkit-animation:mbPop .45s cubic-bezier(.2,1.4,.4,1) both;animation:mbPop .45s cubic-bezier(.2,1.4,.4,1) both;transform-box:fill-box;-webkit-transform-origin:center;transform-origin:center}
+@-webkit-keyframes mbPop{from{opacity:0;-webkit-transform:scale(.2)}to{opacity:1;-webkit-transform:none}} @keyframes mbPop{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:none}}
+.map-svg path.hl{-webkit-animation:hlPulse 1s ease-out;animation:hlPulse 1s ease-out}
+@-webkit-keyframes hlPulse{0%{stroke-width:.4}100%{stroke-width:.12}} @keyframes hlPulse{0%{stroke-width:.4}100%{stroke-width:.12}}
+body.reduced .mapb,body.reduced .map-svg path.hl{-webkit-animation:none;animation:none}
+/* ticker: a new BREAKING item flashes the label red once */
+.tk-lbl.flash{-webkit-animation:tkFlash 1.1s ease 2;animation:tkFlash 1.1s ease 2}
+@-webkit-keyframes tkFlash{0%,100%{background:linear-gradient(135deg,#E65100,#FF9933)}40%{background:#D50000}} @keyframes tkFlash{0%,100%{background:linear-gradient(135deg,#E65100,#FF9933)}40%{background:#D50000}}
+
 /* ---------- shared helpers (audit G5 / G6) ---------- */
 /* cut text to whole lines with "…" (fitClamps lowers the count when a card is squeezed) */
 .clamp-1,.clamp-2,.clamp-3{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden} .clamp-1{-webkit-line-clamp:1} .clamp-2{-webkit-line-clamp:2} .clamp-3{-webkit-line-clamp:3}
@@ -2386,6 +2413,11 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     if (!items.length) { $('ticker').style.display = 'none'; return; }
     $('ticker').style.display = '';
     var showBreaking = s && s.status && (s.status.level === 'live' || s.status.level === 'recent');
+    /* a BREAKING item not shown before: the label flashes red once */
+    state.tkSeen = state.tkSeen || {};
+    var newBrk = showBreaking && items.some(function (x) { return x.breaking && !state.tkSeen[x.head]; });
+    items.forEach(function (x) { if (x.breaking) state.tkSeen[x.head] = 1; });
+    if (newBrk && !REDUCED) state.tmo.push(setTimeout(function () { var lb = $('tkLbl'); setCls(lb, 'flash', false); void lb.offsetWidth; setCls(lb, 'flash', true); }, 400));
     function one(x) {
       var tag = (showBreaking && x.breaking) ? '<span class="tk-tag brk">' + esc(t('tkBreaking')) + '</span>' : (x.topic ? '<span class="tk-tag">' + esc(newsTopic(x.topic)) + '</span>' : '');
       return '<div class="tk-item">' + tag + '<span>' + esc(x.head) + '</span><span class="tk-src">— ' + esc(x.src || ('@' + x.handle)) + (x.date ? ' · ' + esc(fmtWhen(x.date)) : '') + '</span></div>';
@@ -2623,6 +2655,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     real.sort(function (a, b) { return metric === 'posts' ? b.posts - a.posts : b.views - a.views; });
     var rows = real.slice(0, 6); if (oth) rows.push(oth);
     var max = 0; rows.forEach(function (p) { var v = metric === 'posts' ? p.posts : p.views; if (v > max) max = v; });
+    var mv = rankMoves('bars|' + metric, real.slice(0, 6).map(function (p) { return p.party; }));
     var html = rows.map(function (p) {
       var v = metric === 'posts' ? p.posts : p.views, w = max ? Math.max(1.5, 100 * v / max) : 0, sub = '';
       if (p.party === 'Others') sub = fill(t('othersSub'), { n: p.parts || '' });
@@ -2639,16 +2672,28 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       }
       var share = metric === 'posts' ? p.postShare : p.viewShare;
       return '<div class="bar-row' + (p.party === 'Others' ? ' others' : '') + '"><div class="bar-name">' + (p.party === 'Others' ? '<i class="dot" style="background:' + p.color + '"></i>' : plogo(p.logo, p.color))
-        + esc(partyName(p.party)) + '</div><div class="bar-mid"><div class="bar-track"><div class="bar-fill" data-w="' + w.toFixed(1) + '" style="background:' + p.color + '"></div></div>'
+        + esc(partyName(p.party)) + rkBadge(mv[p.party]) + '</div><div class="bar-mid"><div class="bar-track"><div class="bar-fill" data-w="' + w.toFixed(1) + '" style="background:' + p.color + '"></div></div>'
         + '<div class="bar-sub">' + sub + '</div></div><div class="bar-val">' + esc(metric === 'posts' ? fmtInt(v) : fmtShort(v))
         + (share !== null && share !== undefined ? '<small>' + share + '%</small>' : '') + '</div></div>';
     }).join('');
     return '<div class="glass full"><div class="vc"><div>' + html + '</div><div class="note">' + esc(metric === 'posts' ? t('notePosts') : t('noteViews')) + '</div></div></div>';
   }
+  /* who moved: each list remembers its last order (per state and period); a change shows
+     "▲2" / "▼1" beside the rank for 10 minutes */
+  var RK = {};
+  function rankMoves(key, ids) {
+    key += '|' + SCOPE + '|' + HOURS;
+    var r = RK[key] || (RK[key] = { ranks: null, moves: {} }), now = Date.now(), out = {};
+    if (r.ranks) ids.forEach(function (id, i) { var was = r.ranks[id]; if (was !== undefined && was !== i) r.moves[id] = { d: was - i, at: now }; });
+    r.ranks = {}; ids.forEach(function (id, i) { r.ranks[id] = i; });
+    Object.keys(r.moves).forEach(function (id) { var m = r.moves[id]; if (now - m.at < 10 * 60000) out[id] = m.d; else delete r.moves[id]; });
+    return out;
+  }
+  function rkBadge(d) { return d ? '<span class="rkm ' + (d > 0 ? 'up' : 'down') + '">' + (d > 0 ? '▲' : '▼') + Math.abs(d) + '</span>' : ''; }
   function sTrending(s, party) {
-    var L = (s.leadersByParty || {})[party] || [], c = colorOf(party);
+    var L = (s.leadersByParty || {})[party] || [], c = colorOf(party), mv = rankMoves('tr|' + party, L.map(function (l) { return l.handle; }));
     return '<div class="leads">' + L.map(function (l, i) {
-      return '<div class="lead' + (i === 0 ? ' lead-1' : '') + '"><div class="rank">' + esc(fill(t('rank'), { n: i + 1 })) + '</div>' + avatar(l.name, l.avatar, c)
+      return '<div class="lead' + (i === 0 ? ' lead-1' : '') + '"><div class="rank">' + esc(fill(t('rank'), { n: i + 1 })) + rkBadge(mv[l.handle]) + '</div>' + avatar(l.name, l.avatar, c)
         + '<div><div class="ln">' + esc(l.name) + '</div><div class="ls">' + esc(l.state ? stName(l.state) : '') + '</div>'
         + '<div class="lv">' + esc(fmtShort(l.views)) + '</div><div class="ll">' + esc(t('viewsWord') + ' · ' + postsTxt(l.posts)) + '</div></div></div>';
     }).join('') + '</div>';
@@ -2712,7 +2757,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     var sum = LANG === 'hi' ? x.summaryHi : x.summaryEn;
     return '<div class="ak-c' + (lead ? ' ak-lead' : '') + '" style="--sevc:' + sevColor(x.severity) + '">'
       + '<div class="ak-top"><span class="ak-rk">#' + (i + 1) + '</span>'
-      + '<span class="ak-sev"><b>' + esc(String(x.severity)) + '</b><small>/5 ' + esc(t('atkSev')) + '</small></span>'
+      + '<span class="ak-sev" title="' + esc(x.severity + '/5') + '">' + [1, 2, 3, 4, 5].map(function (k) { return '<i' + (k <= x.severity ? ' class="on" style="-webkit-animation-delay:' + (0.25 + k * 0.09).toFixed(2) + 's;animation-delay:' + (0.25 + k * 0.09).toFixed(2) + 's"' : '') + '></i>'; }).join('') + '<small>' + esc(t('atkSev')) + '</small></span>'
       + '<span class="ak-tg">→ ' + esc(atkTarget(x)) + '</span>' + (x.topic ? '<span class="ak-tp">' + esc(atkTopic(x)) + '</span>' : '') + '</div>'
       + '<div class="ak-who">' + avatar(x.name, x.avatar, x.color) + '<div class="n"><b>' + esc(x.name) + '</b><span>'
       + (x.party ? '<i class="ak-pt" style="background:' + (x.color || '#7a3b12') + '">' + esc(x.party) + '</i>' : '')
@@ -2764,7 +2809,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
         try { bb = pth && pth.getBBox(); } catch (e) { bb = null; }
         if (!bb || !bb.width) return;
         var g = document.createElementNS(NS, 'g'), c = document.createElementNS(NS, 'circle'), tx = document.createElementNS(NS, 'text'), cx = bb.x + bb.width / 2, cy = bb.y + bb.height / 2;
-        g.setAttribute('class', 'mapb'); g.setAttribute('data-s', name);
+        g.setAttribute('class', 'mapb'); g.setAttribute('data-s', name); g.style.animationDelay = (0.35 + k * 0.09).toFixed(2) + 's';
         c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', rr); c.setAttribute('stroke-width', rr * 0.16);
         tx.setAttribute('x', cx); tx.setAttribute('y', cy); tx.setAttribute('font-size', rr * 1.25); tx.textContent = String(k + 1);
         g.appendChild(c); g.appendChild(tx); sv.appendChild(g);
@@ -3010,7 +3055,8 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   }
   function growBars(el) {
     var bars = el.querySelectorAll('.bar-fill');
-    state.tmo.push(setTimeout(function () { [].forEach.call(bars, function (b) { b.style.width = b.getAttribute('data-w') + '%'; }); }, REDUCED ? 0 : 120));
+    /* one after another, 70 ms apart: the order is the ranking */
+    state.tmo.push(setTimeout(function () { [].forEach.call(bars, function (b, i) { if (!REDUCED) b.style.transitionDelay = (i * 70) + 'ms'; b.style.width = b.getAttribute('data-w') + '%'; }); }, REDUCED ? 0 : 120));
   }
   function clearSceneWork() {
     state.raf.forEach(function (id) { cancelAnimationFrame(id); }); state.raf = [];
@@ -3020,6 +3066,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   /* ---------------------------------------------------- scene engine */
   function renderScene(sc) {
     $('stTitle').innerHTML = sc.title();
+    var hd = $('stTitle').parentNode.parentNode; setCls(hd, 'wipe', false); void hd.offsetWidth; setCls(hd, 'wipe', true);
     $('stWhen').textContent = [sc.sub ? (typeof sc.sub === 'function' ? sc.sub() : t(sc.sub)) : '', whenText(state.snap)].filter(Boolean).join(' · ');
     renderCount();
     heroLevel(sc.hero || 'lo');
