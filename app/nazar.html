@@ -1645,6 +1645,33 @@ body.reduced .mapb,body.reduced .map-svg path.hl{-webkit-animation:none;animatio
 .tk-lbl.flash{-webkit-animation:tkFlash 1.1s ease 2;animation:tkFlash 1.1s ease 2}
 @-webkit-keyframes tkFlash{0%,100%{background:linear-gradient(135deg,#E65100,#FF9933)}40%{background:#D50000}} @keyframes tkFlash{0%,100%{background:linear-gradient(135deg,#E65100,#FF9933)}40%{background:#D50000}}
 
+/* ---------- phone, loading, error, empty (audit phase 8) ---------- */
+/* L1 skeleton of the rooms' first screen, with a slow sheen */
+.sk-c{pointer-events:none}
+.sk-c:after{content:'';position:absolute;top:0;bottom:0;left:0;width:45%;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,200,87,.07),rgba(255,255,255,0));-webkit-transform:translateX(-100%);transform:translateX(-100%);-webkit-animation:skSheen 1.8s ease-in-out infinite;animation:skSheen 1.8s ease-in-out infinite}
+@-webkit-keyframes skSheen{to{-webkit-transform:translateX(330%)}} @keyframes skSheen{to{transform:translateX(330%)}}
+.sk-c i{display:block;height:1.4rem;border-radius:.7rem;background:rgba(255,247,238,.09)}
+.sk-h{display:flex;align-items:center}
+.sk-h i{height:1.3rem} .sk-h i.o{width:3.6rem;height:3.6rem;border-radius:.9rem;margin-right:1.2rem;flex:0 0 auto}
+.sk-im{height:auto!important;flex:0 0 32%;margin:1.4rem -2.6rem 0;border-radius:0!important;background:rgba(255,247,238,.05)!important}
+.sk-t{margin-top:auto;padding-top:1.4rem}
+.sk-t i{height:1.9rem;margin-top:.9rem}
+.mr-lead .sk-t i{height:2.6rem;margin-top:1.1rem}
+body.reduced .sk-c:after{-webkit-animation:none;animation:none;display:none}
+/* L2 the overlay (cannot reach the server, sign in, not found): the brand disc, a clear action, the next try counted down */
+.ov-box{border-color:rgba(255,200,87,.3);background:linear-gradient(180deg,#3a1005,#220803);box-shadow:0 3rem 6rem rgba(0,0,0,.6)}
+.ov-lg{width:7.2rem;height:7.2rem;margin:-6.8rem auto 1.8rem;box-shadow:0 0 0 .3rem rgba(255,200,87,.6),0 1rem 3rem rgba(230,81,0,.5)}
+.ov-lg:empty{display:none}
+.ov-box .ov-lg{margin:-6.8rem auto 1.8rem!important;width:7.2rem!important;height:7.2rem!important}   /* (phone rules for the header logo must not move it) */
+.overlay .ov-box{margin-top:4rem}
+.ov-cd{margin:1.6rem 0 0!important;font-size:1.35rem!important;color:var(--dim)!important}
+.ov-cd:empty{display:none}
+/* L3 one empty-state look: a short saffron line above the message */
+.empty h3:before{content:'';display:block;width:5rem;height:.3rem;margin:0 auto 1.8rem;border-radius:.3rem;background:linear-gradient(90deg,#E65100,#FFC857)}
+.empty .ldr + h3:before{display:none}
+/* F5 phone: the floating controls are prev / pause / next only (full screen is the phone's own) */
+body.phone .foot .ctl .sep,body.phone .foot .ctl #cFull{display:none}
+
 /* ---------- shared helpers (audit G5 / G6) ---------- */
 /* cut text to whole lines with "…" (fitClamps lowers the count when a card is squeezed) */
 .clamp-1,.clamp-2,.clamp-3{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden} .clamp-1{-webkit-line-clamp:1} .clamp-2{-webkit-line-clamp:2} .clamp-3{-webkit-line-clamp:3}
@@ -1785,7 +1812,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   <div class="mrp-f"><span class="mrp-hint" id="mrpHint"></span><button type="button" class="mrp-x" id="mrpX"></button></div>
 </div>
 <div class="banner hidden" id="banner"></div>
-<div class="overlay hidden" id="overlay"><div class="ov-box"><h2 id="ovTitle"></h2><p id="ovText"></p><span id="ovAct"></span></div></div>
+<div class="overlay hidden" id="overlay"><div class="ov-box"><div class="logo ov-lg" id="ovLg"></div><h2 id="ovTitle"></h2><p id="ovText"></p><span id="ovAct"></span><p class="ov-cd" id="ovCd"></p></div></div>
 
 <script>
 (function () {
@@ -1878,6 +1905,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       rkGapTop: '{v} views behind #1', rkLead: '{v} views ahead of #2',
       pfNowT: 'Last {h} hours vs a usual day', pfPostsL: 'Posts', pfVppL: 'Views per post', pfNow: 'now', pfUsual: 'usual',
       rhPeak: 'busiest hour (IST)', rhNoData: 'no data', rhNone: 'No posts in this period',
+      retryIn: 'Trying again in {n} s', tkShort: 'Latest',
       setK: 'Settings', rngK: 'Period', spdK: 'Screen speed', langK: 'Language', savedChip: 'Saved · {d}',
       rngTitle: 'Period shown on every screen', rngH: '{h} h', vsPrevV: '{v}% views vs previous {h} h',
       hLatest: 'Latest post {d}', hEst: 'Counts are estimates from the accounts we collect',
@@ -1950,6 +1978,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       rkGapTop: '#1 से {v} व्यूज़ पीछे', rkLead: '#2 से {v} व्यूज़ आगे',
       pfNowT: 'पिछले {h} घंटे बनाम आम दिन', pfPostsL: 'पोस्ट', pfVppL: 'व्यूज़ प्रति पोस्ट', pfNow: 'अभी', pfUsual: 'आम तौर पर',
       rhPeak: 'बजे — सबसे सक्रिय घंटा', rhNoData: 'डेटा नहीं', rhNone: 'इस अवधि में कोई पोस्ट नहीं',
+      retryIn: '{n} सेकंड में फिर कोशिश', tkShort: 'ताज़ा',
       setK: 'सेटिंग', rngK: 'अवधि', spdK: 'स्क्रीन की गति', langK: 'भाषा', savedChip: 'सहेजा · {d}',
       rngTitle: 'हर स्क्रीन पर कितने घंटे का हिसाब', rngH: '{h} घंटे', vsPrevV: 'व्यूज़ पिछले {h} घंटे से {v}%',
       hLatest: 'ताज़ा पोस्ट {d}', hEst: 'आँकड़े हमारे संग्रहित खातों पर आधारित अनुमान हैं',
@@ -2392,7 +2421,8 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     if (state.mode === 'election') return (s.contests || []).some(function (c) { return c.status === 'live'; });
     var a = state.all; return !!(a && a.status && (a.status.level === 'live' || a.status.level === 'recent'));
   }
-  function tkLabel() { return state.mode === 'person' ? t('tkLblP') : state.mode === 'media' ? t('mrTk') : state.mode === 'election' ? t('erTk') : t('tkLbl'); }
+  function tkLabel() {
+    if (PHONE) return t('tkShort'); return state.mode === 'person' ? t('tkLblP') : state.mode === 'media' ? t('mrTk') : state.mode === 'election' ? t('erTk') : t('tkLbl'); }
   function tickerItems() {
     if (state.mode === 'media') return mrTicker();
     if (state.mode === 'election') return erTicker();
@@ -3351,6 +3381,14 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   function showLoader(ready) {
     if (state.snap) return;
     $('stTitle').innerHTML = ''; $('stWhen').textContent = ''; $('stCount').textContent = '';   // no heading left over from the last screen
+    $('pgN').textContent = ''; $('pgSeg').innerHTML = '<b class="cur"><i></i></b>'; heroLevel('');       // nor its count, nor the start screen's full-size photos
+    if (!ready && (state.mode === 'media' || state.mode === 'election')) {
+      $('stWhen').textContent = t('loadP');
+      var card = function (lead) { return '<div class="mr-c sk-c' + (lead ? ' mr-lead' : '') + '"><div class="sk-h"><i class="o"></i><i style="width:40%"></i></div>'
+        + (lead ? '<i class="sk-im"></i>' : '') + '<div class="sk-t"><i></i><i></i><i style="width:62%"></i></div></div>'; };
+      $('scene').innerHTML = '<div class="mr-w n5 sk">' + card(true) + card() + card() + card() + card() + '</div>';
+      return;
+    }
     $('scene').innerHTML ='<div class="glass full"><div class="empty"><div class="ldr"><i></i></div><h3>' + esc(t(ready ? 'readyT' : 'loadT'))
       + '</h3><p>' + esc(t(ready ? 'readyP' : 'loadP')) + '</p></div></div>';
   }
@@ -3377,7 +3415,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       var saved = key ? savedGet(key, url) : null;
       if (saved) { state.savedAt = saved.at; state.snap = saved.s; if (state.mode === 'all') state.all = saved.s; onData(true); }
       else if (err && err.ready) showLoader(true);
-      else firstFail();
+      else firstFail(retryMs());
     } else if (!state.savedAt) state.savedAt = new Date(state.lastOk || Date.now()).toISOString();
     state.prefill = false;
     renderChip(); renderHonesty();
@@ -3450,12 +3488,23 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     if (kind === 'auth') overlay(t('authT'), t('authP'), '<a class="btn" href="/login">' + esc(t('authA')) + '</a>');
     else overlay(t('forbT'), t('forbP'), '<a class="btn" href="' + (SCOPE === 'up' ? '/up' : '/') + '">' + esc(t('forbA')) + '</a>');
   }
-  function firstFail() {
+  function firstFail(ms) {
+    $('stTitle').innerHTML = ''; $('stWhen').textContent = ''; $('pgN').textContent = '';   // not the last screen's heading behind it
     overlay(t('firstFailT'), t('firstFailP'), '<button type="button" class="btn" id="ovRetry">' + esc(t('retry')) + '</button>');
+    /* when the next try comes, counted down (the screen tries by itself; the button is for now) */
+    if (ms) {
+      var end = Date.now() + ms, tick = function () { var n = Math.max(0, Math.ceil((end - Date.now()) / 1000)); $('ovCd').textContent = n ? fill(t('retryIn'), { n: n }) : ''; if (!n) clearInterval(ovT); };
+      tick(); ovT = setInterval(tick, 1000);
+    }
     var b = $('ovRetry'); if (b) b.onclick = function () { hideOverlay(); clearTimeout(fetchTimer); fetchData(true); };
   }
-  function overlay(title, text, act) { $('ovTitle').textContent = title; $('ovText').textContent = text; $('ovAct').innerHTML = act || ''; $('overlay').className = 'overlay'; }
-  function hideOverlay() { $('overlay').className = 'overlay hidden'; }
+  var ovT = null;
+  function overlay(title, text, act) {
+    clearInterval(ovT); $('ovCd').textContent = '';
+    if (!$('ovLg').innerHTML) $('ovLg').innerHTML = $('hdLogo').innerHTML;            // the same disc as the header
+    $('ovTitle').textContent = title; $('ovText').textContent = text; $('ovAct').innerHTML = act || ''; $('overlay').className = 'overlay';
+  }
+  function hideOverlay() { clearInterval(ovT); $('overlay').className = 'overlay hidden'; }
 
   /* ======================================================= MEDIA ROOM */
   /* Live news from free feeds (server: media_room.js). Two choices, kept on this screen

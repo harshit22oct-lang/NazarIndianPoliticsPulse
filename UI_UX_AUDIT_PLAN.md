@@ -488,7 +488,16 @@ Each phase ends with screenshots at 1920×1080, 1280×720, 3840×2160, the 375 p
 - **Map:** the numbered badges arrive in rank order (90 ms apart); the lit state's outline pulses.
 - **Ticker:** the label flashes red twice when a BREAKING item appears that has not been shown before.
 - Everything is `transform`/`opacity` (the map pulse uses stroke width), and all of it is off under `body.reduced`. No screen's fit changed.
-| **8. Phone** | F1–F5, L1–L3 | Medium |
+| **8. Phone** ✅ done 30 Oct | F1–F5, L1–L3 | Medium |
+
+**Phase 8 — what was done (30 Oct):**
+- **L1 room loading.** The Media/Election Room's first load shows the shape of the coming screen: a lead card with a picture band and four small cards, all as soft placeholders with a slow sheen, plus "ताज़ा डेटा लाया जा रहा है" under the header. The main show keeps its plain loading card. While loading, the last screen's count is cleared and the photos go to the quiet level.
+- **L2 "cannot reach the server".** The overlay (also used for sign-in, no access, leader not found) carries the brand disc and a warmer box. "Cannot reach" counts down to the next automatic try ("15 सेकंड में फिर कोशिश"), and the last screen's heading behind it is cleared.
+- **L3 empty states.** One look: a short saffron line above the message (no news, no data, nothing counted).
+- **F4.** On phones the ticker label is just "ताज़ा" / "Latest", so the headline gets the room.
+- **F5.** The phone's floating controls are prev / pause / next only (full screen is the phone's own). It stays a floating pill that hides after 3 s rather than a full-width dock.
+- **F1–F3** were covered earlier: the phone top bar is 2 rows (phase 2), cards are near-solid over the photos (phase 1), Election titles wrap (phase 5).
+- **Testing note:** the browser pane stopped repainting while hidden, so these were checked in a fresh tab inside a frame. The page state was also read directly.
 
 **How each change is checked:**
 - Screenshot before/after per scene ID.
