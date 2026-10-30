@@ -1129,8 +1129,8 @@ body.phone .logo{width:3.2rem;height:3.2rem;margin-right:.7rem}
 body.phone .wm{font-size:2.2rem}
 body.phone .right{width:100%;flex-wrap:wrap;justify-content:flex-start;margin-top:.6rem}
 body.phone .right > *{margin:0 .5rem .5rem 0}
-body.phone #swBtn,body.phone #langBtn{position:absolute;top:.3rem;margin:0}
-body.phone #langBtn{right:0} body.phone #swBtn{right:5.4rem}
+/* language now lives in the settings panel; "नज़र बदलें" keeps the top-right corner */
+body.phone #swBtn{position:absolute;top:.3rem;margin:0;right:0}
 body.phone .chip,body.phone .tbtn,body.phone .spd{height:2.8rem;font-size:1.1rem}
 body.phone .chip{padding:0 .9rem} body.phone .tbtn{padding:0 .9rem}
 body.phone .spd button{padding:0 .8rem;font-size:1.1rem;min-width:0;height:2.2rem}
@@ -1252,7 +1252,7 @@ body.phone-land .top{flex-wrap:nowrap}
 body.phone-land .brand{padding-right:0;min-height:0}
 body.phone-land .right{width:auto;flex-wrap:nowrap;margin-top:0}
 body.phone-land .right > *{margin:0 0 0 .5rem}
-body.phone-land #swBtn,body.phone-land #langBtn{position:static}
+body.phone-land #swBtn{position:static}
 /* all-states panel: two columns, nearly full screen */
 body.phone .st-box{width:auto;max-width:none;margin:0 .8rem;max-height:92%;padding:1.4rem}
 body.phone .st-top h2{font-size:2.4rem}
@@ -1310,6 +1310,68 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
 .bj-c b,.ak-who b,.ak-row .n b,.mr-who b,.mr-sh b,.kpi-v.txt{padding-top:.22em;padding-bottom:.14em;margin-top:-.22em;margin-bottom:-.14em}
 .ln{line-height:1.3}
 .er-cand .nm{line-height:1.4}
+/* ---------- frame (audit phase 2: C1-C8) ---------- */
+/* C1 one settings button (period · speed · language) instead of two toggles and a language button */
+.set-btn{display:flex;align-items:center}
+.set-btn svg{width:1.9rem;height:1.9rem;fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round;margin-right:.7rem;flex:0 0 auto}
+.set-btn svg circle{fill:#1a0703}
+.set-car{display:block;width:.6rem;height:.6rem;border-right:.2rem solid var(--muted);border-bottom:.2rem solid var(--muted);-webkit-transform:rotate(45deg);transform:rotate(45deg);margin:-.35rem 0 0 .9rem;flex:0 0 auto}
+.set-btn[aria-expanded="true"]{border-color:var(--gold);background:rgba(255,153,51,.14)}
+.setp{position:absolute;top:8.6rem;right:3.4rem;z-index:40;min-width:36rem;padding:1.2rem 1.8rem;border-radius:1.6rem;background:rgba(30,9,3,.98);border:.08rem solid rgba(255,200,87,.35);
+  box-shadow:0 2rem 5rem rgba(0,0,0,.6);-webkit-animation:setIn .22s cubic-bezier(.2,.7,.2,1) both;animation:setIn .22s cubic-bezier(.2,.7,.2,1) both}
+@-webkit-keyframes setIn{from{opacity:0;-webkit-transform:translateY(-.6rem)}to{opacity:1;-webkit-transform:none}}
+@keyframes setIn{from{opacity:0;transform:translateY(-.6rem)}to{opacity:1;transform:none}}
+body.reduced .setp{-webkit-animation:none;animation:none}
+.setp-r{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0}
+.setp-r + .setp-r{border-top:.08rem solid rgba(255,200,87,.12)}
+.setp-k{font-size:1.35rem;color:var(--muted);font-weight:600;margin-right:2.4rem;white-space:nowrap}
+body.mr #setRngR{display:none}
+/* the rooms: "नज़र बदलें" already goes back to the start screen -- one button is enough */
+#erBack{display:none!important}
+/* C2 the status pill says how fresh the data is by colour: live pulses, fresh green, late amber, old red */
+.chip.lvl-recent{border-color:rgba(123,211,137,.45)}
+.chip.lvl-delayed,.chip.lvl-saved{border-color:rgba(255,179,0,.6);background:rgba(255,179,0,.12)} .chip.lvl-saved .cd{background:var(--amber)}
+.chip.lvl-stale{border-color:rgba(255,107,91,.6);background:rgba(255,107,91,.14);color:#FFD9D3} .chip.lvl-stale .cd{background:var(--bad)}
+/* C3 "next" in every mode; it lights up for the last seconds of a screen */
+.st-count.nx{-webkit-transition:color .4s ease,-webkit-transform .4s ease;transition:color .4s ease,transform .4s ease}
+.st-count.nx.soon{color:var(--text);-webkit-transform:translateX(-.4rem);transform:translateX(-.4rem)}
+.st-count.nx.soon b{color:#FFE3A3}
+/* C5 the progress rail: one segment per screen, the one on now fills; the count at its end */
+#prog{display:flex;align-items:center;height:auto;background:none;border-radius:0;overflow:visible;margin-top:.6rem}
+.pg-seg{flex:1 1 auto;display:flex;height:.45rem;min-width:0}
+.pg-seg b{display:block;-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;height:100%;margin-right:.35rem;border-radius:.3rem;background:rgba(255,255,255,.12);overflow:hidden}
+.pg-seg b:last-child{margin-right:0}
+.pg-seg b.done{background:rgba(255,200,87,.5)}
+.pg-seg b i{display:block;height:100%;width:0;background:linear-gradient(90deg,#E65100,#FFC857)}
+.pg-n{flex:0 0 auto;margin-left:1.4rem;font-family:var(--head);font-weight:700;font-size:1.35rem;color:var(--muted);letter-spacing:.06rem;white-space:nowrap}
+/* C6 the controls live in the footer row (space kept for them), never over the screen */
+.foot{flex:0 0 auto;display:flex;align-items:center;margin-top:.7rem;min-height:3.4rem}
+.foot .honesty{flex:1 1 auto;min-width:0;margin-top:0;margin-right:1.6rem}
+.foot .ctl{position:static;left:auto;bottom:auto;-webkit-transform:none;transform:none;flex:0 0 auto;margin-left:auto;padding:.2rem .4rem;box-shadow:none;background:rgba(24,7,3,.9);-webkit-transition:opacity .25s ease;transition:opacity .25s ease}
+.foot .ctl button{width:3rem;height:3rem}
+.foot .ctl svg{width:1.7rem;height:1.7rem}
+.foot .ctl .dots{display:none}
+body.kiosk .foot{min-height:0} body.kiosk .foot .ctl{display:none}
+/* C7 caveats as small amber tags, not a run-on line of small print */
+.honesty .warn{display:inline-block;margin-right:.8rem;padding:.1rem 1rem .15rem;border-radius:2rem;line-height:1.55;color:#FFD27A;background:rgba(255,179,0,.1);border:.08rem solid rgba(255,179,0,.35)}
+.honesty .warn:before{content:'';display:inline-block;width:.55rem;height:.55rem;border-radius:50%;background:var(--amber);margin-right:.65rem;vertical-align:.2rem}
+/* C8 ticker: soft edges, a diamond between items, the source quieter than the headline, a dot that pulses only for fresh news */
+.tk-track{-webkit-mask-image:linear-gradient(90deg,rgba(0,0,0,0) 0,#000 2.6rem,#000 calc(100% - 5rem),rgba(0,0,0,0) 100%);mask-image:linear-gradient(90deg,rgba(0,0,0,0) 0,#000 2.6rem,#000 calc(100% - 5rem),rgba(0,0,0,0) 100%)}
+.tk-item{border-right:0;padding:0 0 0 2.4rem}
+.tk-item:after{content:'';display:block;flex:0 0 auto;width:.55rem;height:.55rem;margin-left:2.4rem;background:var(--saffron);opacity:.75;-webkit-transform:rotate(45deg);transform:rotate(45deg)}
+.tk-src{color:var(--dim);font-weight:400}
+.tk-dot{display:block;width:.8rem;height:.8rem;border-radius:50%;background:rgba(255,255,255,.6);margin-right:.9rem;flex:0 0 auto}
+.tk-lbl.fresh .tk-dot{background:#fff;-webkit-animation:tkPulse 1.8s ease-out infinite;animation:tkPulse 1.8s ease-out infinite}
+@-webkit-keyframes tkPulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.8)}70%{box-shadow:0 0 0 .7rem rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+@keyframes tkPulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.8)}70%{box-shadow:0 0 0 .7rem rgba(255,255,255,0)}100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}}
+body.reduced .tk-lbl .tk-dot{-webkit-animation:none;animation:none}
+/* phone: the rail stays a thin strip on the bottom edge, the controls float above it as before */
+body.phone .pg-n{display:none} body.phone .pg-seg{height:100%} body.phone .pg-seg b{margin-right:.2rem;border-radius:0}
+body.phone .foot{min-height:0}
+body.phone .foot .ctl{position:fixed;left:50%;bottom:4.6rem;-webkit-transform:translateX(-50%);transform:translateX(-50%);margin:0;z-index:20;padding:.4rem;box-shadow:0 1rem 3rem rgba(0,0,0,.5)}
+body.phone .setp{position:relative;top:auto;right:auto;left:auto;min-width:0;margin:.6rem 0 0}
+body.phone .setp-r{flex-wrap:wrap}
+
 /* ---------- shared helpers (audit G5 / G6) ---------- */
 /* cut text to whole lines with "…" (fitClamps lowers the count when a card is squeezed) */
 .clamp-1,.clamp-2,.clamp-3{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden} .clamp-1{-webkit-line-clamp:1} .clamp-2{-webkit-line-clamp:2} .clamp-3{-webkit-line-clamp:3}
@@ -1416,30 +1478,25 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       <div class="chip stpill hidden" id="stPill"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg><span id="stPillTxt"></span></div>
       <div class="chip lvl-nodata" id="chip"><i class="cd"></i><span id="chipTxt">…</span></div>
       <div class="clock"><b id="clk">--:--</b><span id="cdate"></span></div>
-      <div class="spd" id="rng" role="group"><button type="button" data-h="24"></button><button type="button" data-h="48"></button><button type="button" data-h="72"></button></div>
-      <div class="spd" id="spd" role="group"><svg class="spd-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 17a8 8 0 1 1 15 0"/><path d="M12 13l4-4"/><circle cx="12" cy="13" r="1.2"/></svg><button type="button" data-s="slow"></button><button type="button" data-s="normal"></button><button type="button" data-s="fast"></button></div>
+      <button class="tbtn set-btn" id="setBtn" type="button" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span id="setTxt"></span><i class="set-car"></i></button>
       <button class="tbtn hidden" id="mrBtn" type="button"></button>
       <button class="tbtn" id="swBtn" type="button"></button>
-      <button class="tbtn" id="langBtn" type="button">हिंदी</button>
       <button class="tbtn" id="backBtn" type="button">&#8592; <span id="backTxt">Dashboard</span></button>
       <button class="tbtn er-back hidden" id="erBack" type="button">&#8592; <span id="erBackTxt"></span></button>
     </div>
   </header>
+  <div class="setp hidden" id="setp" role="dialog" aria-labelledby="setBtn">
+    <div class="setp-r" id="setRngR"><div class="setp-k" id="setRngK"></div><div class="spd" id="rng" role="group"><button type="button" data-h="24"></button><button type="button" data-h="48"></button><button type="button" data-h="72"></button></div></div>
+    <div class="setp-r"><div class="setp-k" id="setSpdK"></div><div class="spd" id="spd" role="group"><svg class="spd-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 17a8 8 0 1 1 15 0"/><path d="M12 13l4-4"/><circle cx="12" cy="13" r="1.2"/></svg><button type="button" data-s="slow"></button><button type="button" data-s="normal"></button><button type="button" data-s="fast"></button></div></div>
+    <div class="setp-r"><div class="setp-k" id="setLangK"></div><button class="tbtn" id="langBtn" type="button">हिंदी</button></div>
+  </div>
   <main id="stage" aria-live="polite">
     <div class="st-head"><div><div class="st-title" id="stTitle"></div><div class="st-when" id="stWhen"></div></div><div class="st-count" id="stCount"></div></div>
     <div id="scene"></div>
   </main>
-  <div class="honesty" id="honesty"></div>
-  <div id="prog"><i></i></div>
+  <div class="foot"><div class="honesty" id="honesty"></div><div class="ctl" id="ctl"><button type="button" id="cPrev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button><button type="button" id="cPlay" aria-label="Pause"><svg viewBox="0 0 24 24" fill="currentColor" id="cPlayIco"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button><button type="button" id="cNext" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button><div class="dots" id="cDots"></div><div class="sep"></div><button type="button" id="cFull" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div><span class="pg-n" id="pgN"></span></div>
+  <div id="prog"><div class="pg-seg" id="pgSeg"><b class="cur"><i></i></b></div></div>
   <footer class="ticker" id="ticker"><div class="tk-lbl" id="tkLbl"></div><div class="tk-track" id="tkTrack"></div></footer>
-</div>
-<div class="ctl" id="ctl">
-  <button type="button" id="cPrev" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
-  <button type="button" id="cPlay" aria-label="Pause"><svg viewBox="0 0 24 24" fill="currentColor" id="cPlayIco"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg></button>
-  <button type="button" id="cNext" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
-  <div class="dots" id="cDots"></div>
-  <div class="sep"></div>
-  <button type="button" id="cFull" aria-label="Full screen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
 </div>
 <div class="mrp hidden" id="mrp" role="dialog" aria-labelledby="mrpT">
   <div class="mrp-h"><div><b id="mrpT"></b><small id="mrpSum"></small></div></div>
@@ -1541,6 +1598,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       fewPosts: 'Too few posts', when24: 'Last {h} hours · up to {d}', whenDay: '{d} · latest complete day',
       hWindow24: '<b>Showing:</b> last {h} hours up to {d}', hWindowDay: '<b>Showing:</b> {d}, the latest complete day — newer data is incomplete',
       hWindowThin: '<b>Showing:</b> last {h} hours up to {d} — fewer posts than usual came in, data may be incomplete',
+      setK: 'Settings', rngK: 'Period', spdK: 'Screen speed', langK: 'Language', savedChip: 'Saved · {d}',
       rngTitle: 'Period shown on every screen', rngH: '{h} h', vsPrevV: '{v}% views vs previous {h} h',
       hLatest: 'Latest post {d}', hEst: 'Counts are estimates from the accounts we collect',
       hSource: 'Data source not reachable at last check ({d})', hIdle: 'No new data from the source at last check ({d})',
@@ -1607,6 +1665,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       fewPosts: 'बहुत कम पोस्ट', when24: 'पिछले {h} घंटे · {d} तक', whenDay: '{d} · ताज़ा पूरा दिन',
       hWindow24: '<b>दिखाया जा रहा है:</b> {d} तक पिछले {h} घंटे', hWindowDay: '<b>दिखाया जा रहा है:</b> {d}, ताज़ा पूरा दिन — नया डेटा अधूरा है',
       hWindowThin: '<b>दिखाया जा रहा है:</b> {d} तक पिछले {h} घंटे — आम दिनों से कम पोस्ट आए, डेटा अधूरा हो सकता है',
+      setK: 'सेटिंग', rngK: 'अवधि', spdK: 'स्क्रीन की गति', langK: 'भाषा', savedChip: 'सहेजा · {d}',
       rngTitle: 'हर स्क्रीन पर कितने घंटे का हिसाब', rngH: '{h} घंटे', vsPrevV: 'व्यूज़ पिछले {h} घंटे से {v}%',
       hLatest: 'ताज़ा पोस्ट {d}', hEst: 'आँकड़े हमारे संग्रहित खातों पर आधारित अनुमान हैं',
       hSource: 'पिछली जाँच में डेटा स्रोत तक पहुँच नहीं ({d})', hIdle: 'पिछली जाँच में स्रोत से नया डेटा नहीं ({d})',
@@ -1973,8 +2032,11 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     $('cdate').textContent = fmtDay(p.y + '-' + (p.mo < 10 ? '0' : '') + p.mo + '-' + (p.d < 10 ? '0' : '') + p.d + ' 00:00', true);
   }
   function renderChip() {
-    if (state.mode === 'media') { mrChip(); return; }
-    if (state.mode === 'election') { erChip(); return; }
+    if (state.mode === 'media') mrChip(); else if (state.mode === 'election') erChip(); else mainChip();
+    /* a saved copy on screen while the fresh one loads: the pill says so (amber), with its time */
+    if (state.prefill && state.savedAt && !state.offline) { $('chip').className = 'chip lvl-saved'; $('chipTxt').textContent = fill(t('savedChip'), { d: fmtTimeIso(state.savedAt) }); }
+  }
+  function mainChip() {
     var s = state.snap, el = $('chip'), txt, lvl = s && s.status ? s.status.level : 'nodata';
     if (state.offline) lvl = 'offline';
     el.className = 'chip lvl-' + lvl;
@@ -2000,13 +2062,14 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     $('chQ').textContent = t('chQ'); $('chQs').textContent = t('chQs');
     $('chAllK').textContent = t('chAllK'); $('chAllT').textContent = t('chAllT'); $('chAllD').textContent = t('chAllD');
     $('chOneK').textContent = t('chOneK'); $('chOneT').textContent = t('chOneT'); $('chInput').placeholder = t('chPh'); $('chHint').textContent = t('chHint');
-    $('tkLbl').textContent = tkLabel();
+    $('tkLbl').innerHTML = '<i class="tk-dot"></i>' + esc(tkLabel());
     if (DEMO) showBanner('demo', t('demo')); else if (ASOF) showBanner('hist', fill(t('hist'), { d: ASOF }));
     else if (PROTO && PROTO.from && !PROTO.live) showBanner('proto', fill(t('proto'), { a: fmtDay(PROTO.from), b: fmtWhen(PROTO.to) }));
     if (PHONE) $('inSkip').textContent = t('skipTouch');
     if (STATE) { $('stPill').className = state.mode === 'person' ? 'chip stpill hidden' : 'chip stpill'; $('stPillTxt').textContent = stName(STATE); }
     if (typeof renderSpeed === 'function' && $('spd')) renderSpeed();
     if (typeof renderRange === 'function' && $('rng')) renderRange();
+    if ($('setTxt')) renderSetBtn();
     if (stList) renderStates();
     renderClock(); renderChip(); renderHonesty(); renderRecent();
     if (state.snap) { renderTicker(true); rerender(); }
@@ -2030,12 +2093,20 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     if (s.degraded) parts.push('<span class="warn">' + fill(t('hDegraded'), { d: esc(fmtTimeIso(s.degraded.generatedAt)) }) + '</span>');
     if (savedNote()) parts.push(savedNote());
     if (s.mode === 'historical') parts.unshift('<span class="warn">' + t('hHist') + '</span>');
-    $('honesty').innerHTML = parts.join(' &nbsp;·&nbsp; ');
+    $('honesty').innerHTML = parts.join(''); $('honesty').title = $('honesty').textContent;
   }
   function fmtTimeIso(iso) { var ms = Date.parse(iso); if (!isFinite(ms)) return ''; var d = new Date(ms + 19800000); return fmtTime({ h: d.getUTCHours(), mi: d.getUTCMinutes() }); }
 
   /* ------------------------------------------------------------- ticker */
   var TK_SINGLE = null;
+  /* the label dot pulses only when the news really is fresh */
+  function tickerFresh() {
+    var s = state.snap;
+    if (!s || state.offline) return false;
+    if (state.mode === 'media') return !!(s.lastRun && Date.now() - s.lastRun < 30 * 60000);
+    if (state.mode === 'election') return (s.contests || []).some(function (c) { return c.status === 'live'; });
+    var a = state.all; return !!(a && a.status && (a.status.level === 'live' || a.status.level === 'recent'));
+  }
   function tkLabel() { return state.mode === 'person' ? t('tkLblP') : state.mode === 'media' ? t('mrTk') : state.mode === 'election' ? t('erTk') : t('tkLbl'); }
   function tickerItems() {
     if (state.mode === 'media') return mrTicker();
@@ -2052,7 +2123,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     var key = state.mode + '|' + LANG + '|' + document.documentElement.style.fontSize + '|' + items.map(function (x) { return x.head; }).join('|');
     if (!force && key === state.tickerKey) return;
     state.tickerKey = key;
-    $('tkLbl').textContent = tkLabel();
+    $('tkLbl').innerHTML = '<i class="tk-dot"></i>' + esc(tkLabel()); setCls($('tkLbl'), 'fresh', tickerFresh());
     if (TK_SINGLE) { clearInterval(TK_SINGLE); TK_SINGLE = null; }
     if (!items.length) { $('ticker').style.display = 'none'; return; }
     $('ticker').style.display = '';
@@ -2663,8 +2734,17 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       if (n.scrollHeight <= n.clientHeight + 1 || !n.clientHeight) return;
       var cs = getComputedStyle(n), lines = parseInt(cs.webkitLineClamp, 10), lh = parseFloat(cs.lineHeight);
       if (!lines || !lh) return;
-      var fit = Math.max(1, Math.floor((n.clientHeight + 2) / lh));
-      if (fit < lines) { n.style.webkitLineClamp = String(fit); n.setAttribute('data-fc', '1'); }
+      /* (scrollHeight is the whole text's height whatever the clamp, so the test is: is the box
+         tall enough for k whole lines?) A line short by a hair -- part of the line spacing, not
+         the letters -- still counts as fitting. */
+      var slack = Math.max(2, 0.15 * lh), used = Math.min(lines, Math.round(n.scrollHeight / lh));
+      if (n.clientHeight + slack >= used * lh) return;
+      /* a squeezed card shrinks all its rows together, so try each line count, most first, and
+         keep the first the box really holds once laid out again */
+      for (var k = used - 1; k >= 1; k--) {
+        n.style.webkitLineClamp = String(k); n.setAttribute('data-fc', '1');
+        if (n.clientHeight + slack >= k * lh) break;
+      }
     });
   }
   var FIT_LISTS = '.ak-l', FIT_BOXES = '.er-c, .er-l, .er-r, .ak-c';
@@ -2680,8 +2760,10 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
      sees what is coming, not a number) */
   function renderCount() {
     var el = $('stCount'), n = state.scenes.length, nx = n > 1 ? state.scenes[(state.idx + 1) % n] : null;
-    if (state.mode === 'media' || state.mode === 'election') { el.className = 'st-count nx'; el.innerHTML = nx && nx.label ? '<b>' + esc(t('mrNext')) + '</b>' + esc(nx.label()) : ''; return; }
-    el.className = 'st-count'; el.textContent = (state.idx + 1) + ' / ' + n;
+    /* every mode: what comes next (the count is at the end of the progress rail) */
+    var lbl = '';
+    if (nx) { if (nx.label) lbl = nx.label(); else { var d = document.createElement('div'); d.innerHTML = nx.title(); lbl = d.textContent; } }
+    el.className = 'st-count nx'; el.innerHTML = lbl ? '<b>' + esc(t('mrNext')) + '</b>' + esc(lbl) : '';
   }
   function rerender() { var sc = state.scenes[state.idx]; if (!sc) return; clearSceneWork(); renderScene(sc); }
   function show(i) {
@@ -2719,7 +2801,8 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     var frac = state.dur ? Math.min(1, (Date.now() - state.start) / state.dur) : 0;
     clearTimeout(state.timer);
     state.dur = newDur; state.start = Date.now() - frac * newDur; state.remaining = newDur * (1 - frac);
-    var bar = $('prog').firstChild; bar.style.transition = 'width ' + state.remaining + 'ms linear'; bar.style.width = '100%';
+    var bar = progBar(); bar.style.transition = 'width ' + state.remaining + 'ms linear'; bar.style.width = '100%';
+    soonAt(state.remaining);
     state.timer = setTimeout(function () { advance(); }, state.remaining);
   }
   [].forEach.call($('spd').querySelectorAll('button'), function (b) { b.onclick = function () { setSpeed(b.getAttribute('data-s')); wake(); }; });
@@ -2735,7 +2818,42 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     HOURS = h; store('nazar_hours', String(h)); renderRange();
     if (state.mode && state.mode !== 'media') { clearTimeout(fetchTimer); fetchData(true); }
   }
-  [].forEach.call($('rng').querySelectorAll('button'), function (b) { b.onclick = function () { setRange(+b.getAttribute('data-h')); wake(); }; });
+  [].forEach.call($('rng').querySelectorAll('button'), function (b) { b.onclick = function () { setRange(+b.getAttribute('data-h')); renderSetBtn(); wake(); }; });
+  /* one settings button: it shows the period on screen (in the rooms just "settings") and opens
+     period · speed · language. A remote moves with the arrows, OK chooses, Back closes. */
+  function renderSetBtn() {
+    var rooms = state.mode === 'media' || state.mode === 'election';
+    $('setTxt').textContent = rooms ? t('setK') : fill(t('rngH'), { h: HOURS });
+    $('setBtn').title = t('setK');
+    $('setRngK').textContent = t('rngK'); $('setSpdK').textContent = t('spdK'); $('setLangK').textContent = t('langK');
+  }
+  function setOpen() { return $('setp').className.indexOf('hidden') < 0; }
+  function setPanel(open) {
+    setCls($('setp'), 'hidden', !open); $('setBtn').setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) { renderSetBtn(); var b = $('setp').querySelector('button.on') || $('setp').querySelector('button'); if (b && document.body.className.indexOf('kbd') >= 0) { try { b.focus(); } catch (e) {} } }
+    else if (document.activeElement && $('setp').contains(document.activeElement)) { try { $('setBtn').focus(); } catch (e) {} }
+  }
+  $('setBtn').onclick = function (e) { setPanel(!setOpen()); wake(); };
+  document.addEventListener('click', function (e) { if (setOpen() && !$('setp').contains(e.target) && !$('setBtn').contains(e.target)) setPanel(false); });
+  function setKey(e) {
+    var k = e.key || '', bs = [].slice.call($('setp').querySelectorAll('button')).filter(function (b) { return b.offsetParent !== null; });
+    var i = bs.indexOf(document.activeElement), j;
+    if (k === 'Escape' || k === 'Esc' || k === 'Backspace' || k === 'GoBack' || k === 'BrowserBack') { setPanel(false); e.preventDefault(); return; }
+    if (k === 'ArrowRight' || k === 'Right') j = i + 1;
+    else if (k === 'ArrowLeft' || k === 'Left') j = i - 1;
+    else if (k === 'ArrowDown' || k === 'Down' || k === 'ArrowUp' || k === 'Up') {
+      /* the row below / above: its chosen button, else its first */
+      var rows = [].slice.call($('setp').querySelectorAll('.setp-r')).filter(function (r) { return r.offsetParent !== null; });
+      var cur = document.activeElement, ri = -1; rows.forEach(function (r, n) { if (r.contains(cur)) ri = n; });
+      var nr = rows[(ri + ((k === 'ArrowDown' || k === 'Down') ? 1 : -1) + rows.length) % rows.length];
+      var to = nr && (nr.querySelector('button.on') || nr.querySelector('button')); if (to) { try { to.focus(); } catch (x) {} }
+      e.preventDefault(); return;
+    }
+    else if (k === 'Enter' || k === ' ' || k === 'Spacebar') { if (i >= 0) { bs[i].click(); e.preventDefault(); } return; }
+    else return;
+    e.preventDefault();
+    if (bs.length) { try { bs[(j + bs.length) % bs.length].focus(); } catch (x) {} }
+  }
   /* next screen -- but on a phone, not while someone is reading: a touch or a scroll
      holds the current screen for 20 s */
   function advance() {
@@ -2751,22 +2869,24 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   function startTimer(ms) {
     state.base = ms; ms = Math.round(ms * SPEED_MUL[SPEED]);
     state.start = Date.now(); state.dur = ms; state.remaining = ms;
-    var bar = $('prog').firstChild; bar.style.transition = 'none'; bar.style.width = '0%'; void bar.offsetWidth;
+    var bar = progBar(); bar.style.transition = 'none'; bar.style.width = '0%'; void bar.offsetWidth;
+    soonAt(-1);
     if (state.paused) return;
+    soonAt(ms);
     bar.style.transition = 'width ' + ms + 'ms linear'; bar.style.width = '100%';
     state.timer = setTimeout(function () { advance(); }, ms);
   }
   function pause(on) {
-    var bar = $('prog').firstChild;
+    var bar = progBar();
     if (on && !state.paused) {
       state.paused = true; clearTimeout(state.timer);
       state.remaining = Math.max(0, state.dur - (Date.now() - state.start));
-      var w = bar.getBoundingClientRect().width, tw = $('prog').getBoundingClientRect().width;
+      var w = bar.getBoundingClientRect().width, tw = bar.parentNode.getBoundingClientRect().width; soonAt(-1);
       bar.style.transition = 'none'; bar.style.width = (tw ? 100 * w / tw : 0) + '%';
     } else if (!on && state.paused) {
       state.paused = false; state.start = Date.now() - (state.dur - state.remaining);
       bar.style.transition = 'width ' + state.remaining + 'ms linear'; bar.style.width = '100%';
-      state.timer = setTimeout(function () { advance(); }, state.remaining);
+      state.timer = setTimeout(function () { advance(); }, state.remaining); soonAt(state.remaining);
     }
     $('cPlayIco').innerHTML = state.paused ? '<polygon points="7 5 19 12 7 19 7 5"/>' : '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>';
     $('cPlay').setAttribute('aria-label', state.paused ? 'Play' : 'Pause');
@@ -2774,7 +2894,25 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     /* Election Room: pause only pauses; the panel opens from "Choose election" and closes when the show goes on */
     else if (state.mode === 'election' && !state.paused) mrPanel(false);
   }
-  function renderDots() { var h = ''; for (var i = 0; i < state.scenes.length; i++) h += '<i' + (i === state.idx ? ' class="on"' : '') + '></i>'; $('cDots').innerHTML = h; }
+  function renderDots() {
+    var n = state.scenes.length, h = '', i;
+    for (i = 0; i < n; i++) h += '<i' + (i === state.idx ? ' class="on"' : '') + '></i>';
+    $('cDots').innerHTML = h;
+    /* the rail: one segment per screen (a long loop gets one bar), the one on now fills */
+    var r = '';
+    if (n > 1 && n <= 30) for (i = 0; i < n; i++) r += '<b' + (i < state.idx ? ' class="done"' : i === state.idx ? ' class="cur"' : '') + '><i></i></b>';
+    else r = '<b class="cur"><i></i></b>';
+    $('pgSeg').innerHTML = r;
+    $('pgN').textContent = n > 1 ? (state.idx + 1) + ' / ' + n : '';
+  }
+  function progBar() { return $('pgSeg').querySelector('.cur i') || $('pgSeg').querySelector('i'); }
+  /* "next" lights up for the last 5 s of a screen (ms: time left; -1: off) */
+  var soonT = null;
+  function soonAt(ms) {
+    clearTimeout(soonT); setCls($('stCount'), 'soon', false);
+    if (ms < 0 || state.scenes.length < 2) return;
+    soonT = setTimeout(function () { setCls($('stCount'), 'soon', true); }, Math.max(0, ms - 5000));
+  }
 
   /* --------------------------------------------------------- map data */
   function loadGeo() {
@@ -3096,7 +3234,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     }
     if (m.lastRun && now - m.lastRun > 45 * 60000) parts.push('<span class="warn">' + esc(fill(t('mrPaused'), { a: fmtAgo((now - m.lastRun) / 60000) })) + '</span>');
     if (savedNote()) parts.push(savedNote());
-    return parts.join(' &nbsp;·&nbsp; ');
+    return parts.join('');
   }
   function fetchMedia(first) {
     var url = mrUrl(), gen = state.gen, pre = first ? prefill('nazar_mr_snap', url) : null;
@@ -3631,7 +3769,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       else if (live) { lvl = 'live'; txt = fill(t('erChipLive'), { a: live.updated ? fmtAgo(Math.max(0, (Date.now() - live.updated) / 60000)) : '–' }); }
       else if (m.mode === 'final') { lvl = 'recent'; txt = t('erChipFinal'); }
       else if (m.mode === 'waiting') { lvl = 'recent'; txt = t('erWaitT'); }
-      else { lvl = 'stale'; txt = t('erChipNone'); }
+      else { lvl = 'nodata'; txt = t('erChipNone'); }          // nothing being counted is normal, not a warning
     }
     if (state.offline) { lvl = 'offline'; txt = t('offline') + ' · ' + txt; }
     $('chip').className = 'chip lvl-' + lvl; $('chipTxt').textContent = txt;
@@ -3644,7 +3782,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     else if (ER.type === 'council' || ER.type === 'local') parts.push('<span class="warn">' + esc(t('erNoteNews')) + '</span>');
     else if (m.mode === 'past') parts.push('<span class="warn">' + esc(t('erNoteNone')) + '</span>');
     if (savedNote()) parts.push(savedNote());
-    return parts.join(' &nbsp;·&nbsp; ');
+    return parts.join('');
   }
   /* ---- the "which election" panel (the Media Room's panel, with the Election Room's choices) ---- */
   function renderErPanel() {
@@ -3739,7 +3877,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
 
   /* ============================================================ MODES */
   function startShow(mode, handle) {
-    stopChooser();
+    stopChooser(); setPanel(false);
     state.mode = mode; state.person = handle || ''; state.snap = null; state.psnap = null; state.tickerKey = '';
     state.fails = 0; state.offline = false; state.savedAt = null; state.prefill = false; state.fresh = false;
     state.scenes = []; state.idx = -1; clearTimeout(state.timer); clearSceneWork(); $('scene').innerHTML = '';
@@ -3752,7 +3890,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     $('mrBtn').textContent = t(mode === 'election' ? 'erBtn' : 'mrBtn');
     /* the Election Room's own Back (top right) -- the start screen is one press away */
     $('erBack').className = (mode === 'election' || mode === 'media') && !KIOSK ? 'tbtn er-back' : 'tbtn er-back hidden';
-    $('brandSub').textContent = brandText(mode);
+    $('brandSub').textContent = brandText(mode); renderSetBtn();
     /* the state pill belongs to the state's own screens, not to a leader's (All India) channel */
     if (STATE) $('stPill').className = mode === 'person' ? 'chip stpill hidden' : 'chip stpill';
     $('chooser').className = 'hidden'; $('app').style.visibility = ''; setCls(document.body, 'choosing', false);
@@ -3763,6 +3901,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   /* ------------------------------------------------------- start screen */
   var chT = null, chLeft = 0, chSel = -1, chRes = [], chSearchT = null;
   function openChooser() {
+    setPanel(false);
     clearTimeout(state.timer); clearSceneWork(); clearTimeout(fetchTimer); state.gen = (state.gen || 0) + 1;
     state.mode = null; $('app').style.visibility = 'hidden'; $('chooser').className = ''; setCls(document.body, 'choosing', true);
     mrPanel(false); setCls(document.body, 'mr', false); setCls(document.body, 'er', false); $('mrBtn').className = 'tbtn hidden'; $('erBack').className = 'tbtn er-back hidden';
@@ -4060,6 +4199,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     if (!introDone) { endIntro(); return; }
     if (!state.mode) return;
     if (MR.open) { mrKey(e); return; }
+    if (setOpen()) { setKey(e); return; }
     var k = e.key || '';
     if ((k === 'm' || k === 'M') && state.mode === 'media') pause(true);
     else if ((k === 'm' || k === 'M') && state.mode === 'election') erOpenPanel();

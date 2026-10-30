@@ -417,7 +417,18 @@ Each phase ends with screenshots at 1920×1080, 1280×720, 3840×2160, the 375 p
 - **G4 colour.** Role tokens `--cta / --cta-glow / --edge` added. The panel's main button is brand saffron (was green). Segmented toggles keep their saffron fill for now; the gold ring is used for focus (G6), not selection.
 - **G5 clamping.** `fitClamps()` runs after every screen is fitted: text whose box is squeezed gets whole lines and ends in "…" (fixed 2 headlines in Election news and 4 in the Media Room at 1280×720). `.clamp-1/2/3` helpers added.
 - **G6 focus.** A gold ring with glow while a remote/keyboard is in use (`body.kbd`, always on in kiosk); a mouse click or touch hides it.
-| **2. Chrome** | C1 top bar, C2 status pill, C3 "आगे", C5 progress rail, C6 controls dock, C7 footer, C8 ticker | Medium |
+| **2. Chrome** ✅ done 30 Oct | C1 top bar, C2 status pill, C3 "आगे", C5 progress rail, C6 controls dock, C7 footer, C8 ticker | Medium |
+
+**Phase 2 — what was done (30 Oct):**
+- **C1 top bar.** One settings button showing the period ("24 घंटे ⌄"; "सेटिंग" in the rooms) opens period · speed · language. Remote: arrows move inside it, OK chooses, Back closes. The duplicate "← वापस" in the rooms is gone. Phone top bar: 2 rows instead of 3.
+- **C2 status pill.** Live pulses, fresh green, late amber, old red. A saved copy on screen shows "सहेजा · 15:34" in amber. "No counting now" in the Election Room stays neutral grey (normal, not a warning).
+- **C3 next.** "आगे · <next screen>" in every mode; it lights up for the last 5 s of a screen.
+- **C5 rail.** One segment per screen (one bar past 30 screens), the one on now fills, done ones gold. "2 / 13" at the right end of the footer row.
+- **C6 controls.** Prev / pause / next / full screen are docked at the right of the footer row with space kept, so they no longer cover content. Hidden on TV kiosk; phone keeps the floating dock.
+- **C7 footer.** Caveats are amber tags; the full text is in the row's tooltip.
+- **C8 ticker.** Soft fade at both edges, ◆ between items, the source quieter than the headline, and a label dot that pulses only when the news is fresh.
+- **G5 follow-up.** `fitClamps` now picks the most whole lines the box really holds (small news cards: 2 clean lines, before 2.4 sliced).
+- **Found, not fixed:** `.er-alert` (the counting alert toast) uses flex `gap`, which Chromium 68 ignores. Fix with margins in phase 5.
 | **3. Content fixes** | Q1–Q5, X1, X2 | Small–medium (server + data) |
 | **4. Weak scenes** | S7, S8/P3, S11/P8, P4, P0, P1, P2, S10 | Large |
 | **5. Rooms** | M1 thumbnails, M2–M6, E1–E7 | Large (M1 needs server work) |
