@@ -933,8 +933,9 @@ body.mr .banner.proto{display:none}          /* the recorded-data strip is about
 .er-fi i{flex:0 0 auto;width:.55rem;align-self:stretch;border-radius:.3rem;margin-right:1rem;background:var(--gold)}
 .er-fi.k-maj i{background:#00C853} .er-fi.k-flip i,.er-fi.k-close i{background:#FF5252} .er-fi.k-face i{background:#40C4FF} .er-fi.k-won i{background:#FFC857} .er-fi.k-big i{background:#B388FF}
 body.phone .er-fl{grid-template-columns:1fr} body.phone .er-fi{font-size:1.35rem}
-.er-alert{position:fixed;left:50%;bottom:5.5rem;-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:70;display:flex;align-items:center;gap:1.2rem;
+.er-alert{position:fixed;left:50%;bottom:5.5rem;-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:70;display:flex;align-items:center;
   padding:1rem 1.4rem 1rem 1.6rem;border-radius:1.2rem;background:#B71C1C;color:#fff;box-shadow:0 1.2rem 3rem rgba(0,0,0,.5);max-width:calc(100vw - 2rem)}
+.er-alert > * + *{margin-left:1.2rem}                 /* (flex gap: not on Chromium 68) */
 .er-alert b{font-family:var(--deva);font-size:1.6rem;font-weight:800;display:block} .er-alert small{display:block;font-size:1.3rem;opacity:.9}
 .er-alert button{flex:0 0 auto;font:inherit;font-size:1.3rem;font-weight:700;border:0;border-radius:.6rem;padding:.5rem .9rem;cursor:pointer;background:#fff;color:#B71C1C}
 .er-alert button.ghost{background:transparent;color:#fff;border:.08rem solid rgba(255,255,255,.6)}
@@ -1482,9 +1483,9 @@ body.reduced .fp-r{-webkit-animation:none;animation:none}
 .dbars .nod b{font-family:var(--body);font-size:1.2rem;font-weight:600;color:var(--dim)}
 /* map: larger, and the top states numbered on it */
 .mapw{grid-template-columns:1.3fr 1fr}
-.mb circle{fill:#FFC857;stroke:#1a0703}
-.mb text{font-family:var(--head);font-weight:700;fill:#1a0703;text-anchor:middle;dominant-baseline:central}
-.mb.hl circle{fill:#fff}
+.mapb circle{fill:#FFC857;stroke:#1a0703}
+.mapb text{font-family:var(--head);font-weight:700;fill:#1a0703;text-anchor:middle;dominant-baseline:central}
+.mapb.hl circle{fill:#fff}
 .legend span{font-size:1.4rem}
 /* tall screens and phones */
 body.portrait .tpc,body.portrait .rk2,body.portrait .rh2{grid-template-columns:1fr;height:auto}
@@ -1506,6 +1507,50 @@ body.phone .rl-h b{font-size:3.6rem} body.phone .rl-r .n{font-size:1.4rem} body.
 body.phone .pfc-r{flex-wrap:wrap} body.phone .pfc-r .l{flex-basis:100%;font-size:1.2rem}
 body.phone .dl{height:24rem}
 body.phone .bo-main .av{width:6.4rem;height:6.4rem;font-size:2.3rem} body.phone .bo-ml b{font-size:2.2rem}
+
+/* ---------- the rooms (audit phase 5) ---------- */
+/* M1 pictures: a band across the big card (fading into it), a faded backdrop behind the small ones */
+.mr-im{flex:0 0 33%;min-height:0;position:relative;overflow:hidden;margin:1.4rem -2.6rem 0;background:#140502}
+.mr-im img{display:block;width:100%;height:100%;object-fit:cover}
+.mr-im:after{content:'';position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(180deg,rgba(24,7,2,0),rgba(24,7,2,.95))}
+.mr-c.mr-lead.has-im .mr-t{margin:1.2rem 0 auto;font-size:2.8rem;line-height:1.32}
+.mr-bg{position:absolute;top:0;left:0;right:0;height:72%;overflow:hidden;pointer-events:none}
+.mr-bg img{display:block;width:100%;height:100%;object-fit:cover;opacity:.42}
+.mr-bg:after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(24,7,2,.55) 0%,rgba(24,7,2,.3) 35%,rgba(24,7,2,.96) 100%)}
+.mr-c > .mr-h,.mr-c > .mr-t,.mr-c > .mr-f{position:relative;z-index:1}
+.mr-c.has-im .mr-t{text-shadow:0 .1rem .6rem rgba(0,0,0,.7)}
+/* M2 a small card may use four lines (fitClamps trims to the room there really is) */
+.mr-t{-webkit-line-clamp:4}
+/* M3 "just in" is a ribbon on the card's top edge */
+.mr-new{position:absolute;top:0;right:1.6rem;z-index:2;display:flex;align-items:center;height:2rem;padding:0 .9rem;border-radius:0 0 .7rem .7rem;background:var(--live);color:#fff;font-size:1.2rem;font-weight:700;letter-spacing:.03rem;box-shadow:0 .4rem 1.2rem rgba(255,61,0,.4)}
+.mr-new .mr-dot{background:#fff;width:.6rem;height:.6rem;margin-right:.45rem}
+.mr-c.is-new{padding-top:2.6rem} .mr-c.mr-lead.is-new{padding-top:3rem}
+body.portrait .mr-im,body.phone .mr-im{flex:none;height:18rem}
+body.phone .mr-im{height:15rem;margin-left:-1.6rem;margin-right:-1.6rem} body.phone .mr-bg img{opacity:.24} body.phone .mr-c.mr-lead.has-im .mr-t{font-size:2.1rem}
+
+/* M6 the "what to show" panel: the screen behind dims, the panel slides in from the right */
+body.mrp-on #app:after{content:'';position:fixed;top:0;left:0;right:0;bottom:0;z-index:25;background:rgba(10,3,1,.62);pointer-events:none;-webkit-animation:dimIn .24s ease both;animation:dimIn .24s ease both}
+@-webkit-keyframes dimIn{from{opacity:0}to{opacity:1}} @keyframes dimIn{from{opacity:0}to{opacity:1}}
+.mrp:not(.hidden){-webkit-animation:mrpIn .26s cubic-bezier(.2,.7,.2,1) both;animation:mrpIn .26s cubic-bezier(.2,.7,.2,1) both}
+@-webkit-keyframes mrpIn{from{opacity:0;-webkit-transform:translateX(2.4rem)}to{opacity:1;-webkit-transform:none}} @keyframes mrpIn{from{opacity:0;transform:translateX(2.4rem)}to{opacity:1;transform:none}}
+body.reduced .mrp:not(.hidden),body.reduced.mrp-on #app:after{-webkit-animation:none;animation:none}
+
+/* E1 past results: a mark before each party, the majority line across every bar, the winners ticked */
+.er-pc .mb em{display:flex;align-items:center;flex-basis:10rem}
+.er-pc .mb em i{flex:0 0 auto;width:1rem;height:1rem;border-radius:.25rem;margin-right:.6rem}
+.er-pc .mb span{position:relative}
+.er-pc .mb .mj{position:absolute;top:-.2rem;bottom:-.2rem;width:0;border-left:.18rem dashed rgba(255,247,238,.55)}
+.er-pc .mb.w em,.er-pc .mb.w b{color:var(--gold)}
+.er-pc .mb.w em:after{content:'';display:inline-block;width:.45rem;height:.85rem;margin-left:.6rem;border:solid var(--good);border-width:0 .2rem .2rem 0;-webkit-transform:rotate(45deg);transform:rotate(45deg)}
+/* E2 bye-polls: the winning party as a coloured chip */
+.er-ln small.pc{color:#fff;padding:.1rem .7rem;border-radius:.5rem;font-size:1.25rem;text-shadow:0 .08rem .2rem rgba(0,0,0,.35)}
+/* E3 the head-to-head stands on a card (it floated on the photo before) */
+.er-ds{background:var(--glass);border:.08rem solid var(--line);border-radius:1.8rem;box-shadow:0 2rem 4rem rgba(0,0,0,.35)}
+body.phone .er-c .hd{flex-wrap:wrap} body.phone .er-c .hd b{white-space:normal}
+
+/* E7 a footer note that informs (nothing being counted, news only) is neutral, not a warning */
+.honesty .inf{display:inline-block;margin-right:.8rem;padding:.1rem 1rem .15rem;border-radius:2rem;line-height:1.55;color:var(--muted);background:rgba(255,255,255,.06);border:.08rem solid rgba(255,255,255,.14)}
+.honesty .inf:before{content:'';display:inline-block;width:.55rem;height:.55rem;border-radius:50%;background:var(--grey);margin-right:.65rem;vertical-align:.2rem}
 
 /* ---------- shared helpers (audit G5 / G6) ---------- */
 /* cut text to whole lines with "…" (fitClamps lowers the count when a card is squeezed) */
@@ -1959,7 +2004,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     erNoteNews: ['No official live source for this type of election — headlines from news, not official figures', 'इस तरह के चुनाव का कोई आधिकारिक LIVE स्रोत नहीं — ख़बरों से, आधिकारिक आँकड़े नहीं'],
     erChipLive: ['Counting LIVE · {a}', 'मतगणना LIVE · {a}'], erChipFinal: ['Final results', 'अंतिम नतीजे'], erChipNone: ['No counting now', 'अभी कोई मतगणना नहीं'], erChipDemo: ['DEMO · practice', 'DEMO · अभ्यास'],
     erNoneT: ['Nothing to show yet', 'अभी दिखाने को कुछ नहीं'], erNoneP: ['No results or news for this election and area. Pause (or press "Choose election") to pick another.', 'इस चुनाव और क्षेत्र के लिए न नतीजे मिले, न ख़बरें। दूसरा चुनने के लिए रोकें (या "चुनाव चुनें" दबाएँ)।'],
-    erTk: ['Election · latest', 'चुनाव · ताज़ा'], erWinner: ['Majority: {a} ({n})', 'बहुमत: {a} ({n})'], erNoMaj: ['No one past the majority mark', 'किसी को बहुमत नहीं'],
+    erTk: ['Election · latest', 'चुनाव · ताज़ा'], erMajN: ['majority {n}', 'बहुमत {n}'], erWinner: ['Majority: {a} ({n})', 'बहुमत: {a} ({n})'], erNoMaj: ['No one past the majority mark', 'किसी को बहुमत नहीं'],
     erpT: ['Which election to show?', 'कौन-सा चुनाव दिखाएँ?'], erpArea: ['Area', 'क्षेत्र'], erpAll: ['All India', 'पूरा देश'], erpCity: ['City (for news)', 'शहर (ख़बरों के लिए)'], erpAnyCity: ['All cities', 'सारे शहर'],
     erpType: ['Type of election', 'चुनाव का प्रकार'], erpOfficial: ['Official results (ECI)', 'आधिकारिक नतीजे (ECI)'], erpNewsG: ['News only (no official live source)', 'सिर्फ़ ख़बरें (कोई आधिकारिक LIVE स्रोत नहीं)'],
     erpPractice: ['Practice', 'अभ्यास'], erpDemo: ['Replay Bihar 2025 counting (DEMO)', 'बिहार 2025 की मतगणना दोबारा चलाएँ (DEMO)'],
@@ -2652,7 +2697,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
         try { bb = pth && pth.getBBox(); } catch (e) { bb = null; }
         if (!bb || !bb.width) return;
         var g = document.createElementNS(NS, 'g'), c = document.createElementNS(NS, 'circle'), tx = document.createElementNS(NS, 'text'), cx = bb.x + bb.width / 2, cy = bb.y + bb.height / 2;
-        g.setAttribute('class', 'mb'); g.setAttribute('data-s', name);
+        g.setAttribute('class', 'mapb'); g.setAttribute('data-s', name);
         c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', rr); c.setAttribute('stroke-width', rr * 0.16);
         tx.setAttribute('x', cx); tx.setAttribute('y', cy); tx.setAttribute('font-size', rr * 1.25); tx.textContent = String(k + 1);
         g.appendChild(c); g.appendChild(tx); sv.appendChild(g);
@@ -2662,7 +2707,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       [].forEach.call(rows, function (r) { setCls(r, 'hl', false); });
       var r = rows[i % rows.length], name = r.getAttribute('data-s'); setCls(r, 'hl', true);
       if (svg) { svg.className = 'map-svg dimmed'; [].forEach.call(svg.querySelectorAll('path'), function (p) { p.setAttribute('class', p.getAttribute('data-s') === name ? 'hl' : ''); }); }
-      if (sv) [].forEach.call(sv.querySelectorAll('.mb'), function (b) { b.setAttribute('class', b.getAttribute('data-s') === name ? 'mb hl' : 'mb'); });
+      if (sv) [].forEach.call(sv.querySelectorAll('.mapb'), function (b) { b.setAttribute('class', b.getAttribute('data-s') === name ? 'mapb hl' : 'mapb'); });
       i++;
     }
     hl(); if (!REDUCED) state.tmo.push(setInterval(hl, 2600));
@@ -3352,14 +3397,20 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   function mrCard(c, lead, tp) {
     /* a feed without publish times (PIB): we only know when we found it -- say so, and never "just in" */
     var fresh = !c.nd && mrNew(c.f, c.p), off = c.k === 'official', o = c.o || [];
-    var by = MR_BY[tp] && c.ab ? '<small class="mr-by ' + tp + '">' + esc(t(MR_BY[tp][c.ab])) + '</small>' : '<small>' + esc(t(off ? 'mrOffLong' : 'mrMedLong')) + '</small>';
-    var when = c.nd ? esc(fill(t('mrFound'), { a: mrAgo(c.p) }))
-      : (fresh ? '<i class="mr-dot"></i>' + esc(t('mrJust')) + ' · ' : '') + esc(mrAgo(c.p)) + (lead ? ' · ' + esc(fmtTime(ip(c.d) || { h: 0, mi: 0 })) : '');
+    /* under the publisher: whose voice (attack / good-news screens) or "official"; "news outlet" said nothing */
+    var by = MR_BY[tp] && c.ab ? '<small class="mr-by ' + tp + '">' + esc(t(MR_BY[tp][c.ab])) + '</small>' : (off ? '<small>' + esc(t('mrOffLong')) + '</small>' : '');
+    var when = c.nd ? esc(fill(t('mrFound'), { a: mrAgo(c.p) })) : esc(mrAgo(c.p)) + (lead ? ' · ' + esc(fmtTime(ip(c.d) || { h: 0, mi: 0 })) : '');
+    /* "just in" is a ribbon in the corner (it used to push the publisher's name off the card) */
+    var ribbon = fresh ? '<span class="mr-new"><i class="mr-dot"></i>' + esc(t('mrJust')) + '</span>' : '';
+    /* the story's picture: a band on the big card, a faded backdrop on the small ones; gone if it does not load */
+    var im = c.im && /^https:\/\//.test(c.im) ? '<div class="' + (lead ? 'mr-im' : 'mr-bg') + '"><img alt="" referrerpolicy="no-referrer" src="' + esc(c.im)
+      + '" onerror="var d=this.parentNode,a=d.parentNode;a.removeChild(d);a.className=a.className.replace(\' has-im\',\'\')"></div>' : '';
     var also = c.n ? '<span class="mr-also">' + o.map(function (x) { return mrLogo(x.n, x.l); }).join('')
       + '<span>' + esc(fill(t(c.n > o.length ? 'mrAlsoN' : 'mrAlso'), { s: o.map(function (x) { return x.n; }).join(', '), n: c.n - o.length })) + '</span></span>' : '';
-    return '<a class="mr-c' + (lead ? ' mr-lead' : '') + (off ? ' off' : '') + '" href="' + esc(c.u) + '" target="_blank" rel="noopener noreferrer">'
-      + '<div class="mr-h">' + mrLogo(c.s, c.lg) + '<div class="mr-who"><b>' + esc(c.s) + '</b>' + by + '</div>'
-      + '<span class="mr-when' + (fresh ? ' fresh' : '') + '">' + when + '</span></div>'
+    var head = '<div class="mr-h">' + mrLogo(c.s, c.lg) + '<div class="mr-who"><b>' + esc(c.s) + '</b>' + by + '</div>'
+      + '<span class="mr-when' + (fresh ? ' fresh' : '') + '">' + when + '</span></div>';
+    return '<a class="mr-c' + (lead ? ' mr-lead' : '') + (off ? ' off' : '') + (im ? ' has-im' : '') + (ribbon ? ' is-new' : '') + '" href="' + esc(c.u) + '" target="_blank" rel="noopener noreferrer">'
+      + (lead ? head + im : im + head) + ribbon
       + '<div class="mr-t">' + esc(c.t) + '</div>'
       + (also || c.v ? '<div class="mr-f">' + also + (c.v ? '<span class="mr-vid">' + MR_PLAY + esc(t('mrVideo')) + '</span>' : '') + '</div>' : '')
       + '</a>';
@@ -3483,6 +3534,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
 
   /* ---- the "what to show" panel (opens on pause; changes apply at once) ---- */
   function mrPanel(open) {
+    setCls(document.body, 'mrp-on', !!open);                                  // the screen behind dims while choosing
     if (!open) { MR.open = false; MR.statesOpen = false; MR.pending = null; clearTimeout(MR.idleT); $('mrp').className = 'mrp hidden'; return; }
     var was = MR.open; MR.open = true; $('mrp').className = 'mrp'; renderMrPanel(); mrIdle();
     if (!was && !PHONE) setTimeout(function () { var b = $('mrp').querySelector('button.o.on') || $('mrp').querySelector('button.o'); if (b) { try { b.focus(); } catch (e) {} } }, 30);
@@ -3883,13 +3935,17 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   function erPast(list) {
     return '<div class="er-g c2">' + list.map(function (r) {
       if (r.byeSeats) return '<div class="er-c er-glass er-pc"><div class="hd"><b>' + esc(erCName(r)) + '</b>' + erBadge('old', r.date) + '</div>'
-        + r.byeSeats.slice(0, 5).map(function (s) { return '<div class="er-ln"><i style="background:' + erPColor(r, s.abbr) + '"></i><em>' + esc(erN(s.seat, s.seatHi) + ' · ' + erN(s.cand, s.candHi)) + '</em><small>' + esc(s.abbr ? erPName(r, s.abbr) || s.abbr : s.party) + '</small></div>'; }).join('') + '</div>';
+        + r.byeSeats.slice(0, 5).map(function (s) { return '<div class="er-ln"><em>' + esc(erN(s.seat, s.seatHi) + ' · ' + erN(s.cand, s.candHi)) + '</em><small class="pc" style="background:' + erPColor(r, s.abbr) + '">' + esc(s.abbr ? erPName(r, s.abbr) || s.abbr : s.party) + '</small></div>'; }).join('') + '</div>';
       var top = (r.parties || []).slice(0, 5), al = (r.alliances || [])[0], win = al && al.total >= r.majority ? al : null;
       var pw = !win && top[0] && top[0].won >= r.majority ? top[0] : null;
       return '<div class="er-c er-glass er-pc"><div class="hd"><b>' + esc(erCName(r)) + '</b>' + erBadge('old', r.date) + '</div>'
-        + top.map(function (p) { return '<div class="mb"><em>' + esc(LANG === 'hi' && p.hi ? p.hi : p.abbr) + '</em><span><i style="width:' + Math.round(100 * p.won / r.seats) + '%;background:' + (p.color || '#8D6E63') + '"></i></span><b>' + p.won + '</b></div>'; }).join('')
+        + top.map(function (p) {
+          var w = (win && p.alliance && p.alliance === win.id) || (pw && p.abbr === pw.abbr), mj = r.majority && r.seats ? (100 * r.majority / r.seats).toFixed(1) : null;
+          return '<div class="mb' + (w ? ' w' : '') + '"><em><i style="background:' + (p.color || '#8D6E63') + '"></i>' + esc(LANG === 'hi' && p.hi ? p.hi : p.abbr) + '</em><span><i style="width:' + Math.round(100 * p.won / r.seats) + '%;background:' + (p.color || '#8D6E63') + '"></i>'
+            + (mj ? '<u class="mj" style="left:' + mj + '%"></u>' : '') + '</span><b>' + p.won + '</b></div>';
+        }).join('')
         + '<div class="wn">' + esc(win ? fill(t('erWinner'), { a: erAName(win), n: win.total }) : pw ? fill(t('erWinner'), { a: LANG === 'hi' && pw.hi ? pw.hi : pw.abbr, n: pw.won }) : t('erNoMaj'))
-        + ' · ' + esc(fill(t('erSeats'), { n: r.seats })) + '</div></div>';
+        + ' · ' + esc(fill(t('erSeats'), { n: r.seats })) + (r.majority ? ' · ' + esc(fill(t('erMajN'), { n: r.majority })) : '') + '</div></div>';
     }).join('') + '</div>';
   }
   function erMsg(h, p) { return '<div class="glass full"><div class="empty"><h3>' + esc(h) + '</h3><p>' + esc(p) + '</p></div></div>'; }
@@ -4007,8 +4063,8 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     if (!m) return '';
     if (m.demoSkipped) parts.push('<span class="warn">' + esc(t('erDemoOff')) + '</span>');
     if (m.mode === 'demo') parts.push('<span class="warn">' + esc(t('erNoteDemo')) + '</span>');
-    else if (ER.type === 'council' || ER.type === 'local') parts.push('<span class="warn">' + esc(t('erNoteNews')) + '</span>');
-    else if (m.mode === 'past') parts.push('<span class="warn">' + esc(t('erNoteNone')) + '</span>');
+    else if (ER.type === 'council' || ER.type === 'local') parts.push('<span class="inf">' + esc(t('erNoteNews')) + '</span>');
+    else if (m.mode === 'past') parts.push('<span class="inf">' + esc(t('erNoteNone')) + '</span>');
     if (savedNote()) parts.push(savedNote());
     return parts.join('');
   }

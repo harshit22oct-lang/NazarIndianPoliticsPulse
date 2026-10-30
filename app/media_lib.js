@@ -55,9 +55,37 @@ function parseFeed(xml) {
     var date = tag(b, 'pubDate') || tag(b, 'published') || tag(b, 'updated') || tag(b, 'dc:date');
     if (!title || !/^https?:\/\//i.test(link)) continue;
     var dom = srcUrl ? (/^https?:\/\/(?:www\.)?([^\/:?#]+)/i.exec(decode(srcUrl[1])) || [])[1] : '';
-    out.push({ title: title, link: link, date: parseDate(date), publisher: src ? decode(src[1]) : '', domain: dom ? dom.toLowerCase() : '', video: /<yt:videoId>/i.test(b) });
+    out.push({ title: title, link: link, date: parseDate(date), publisher: src ? decode(src[1]) : '', domain: dom ? dom.toLowerCase() : '', video: /<yt:videoId>/i.test(b), img: feedImage(b) });
   }
   return out;
+}
+/* the article's picture, when the feed gives one (media:content / media:thumbnail / an image
+   enclosure / an <img> in the description; a YouTube video's thumbnail). https only. */
+function imgUrl(u) {
+  u = decode(String(u || '')).trim();
+  if (/^\/\//.test(u)) u = 'https:' + u;
+  u = u.replace(/^http:\/\//i, 'https://');
+  if (!/^https:\/\/[^\s"'<>]+$/i.test(u) || u.length > 600) return '';
+  if (/feedburner\.com\/~|\/pixel|1x1|spacer\.gif|\/blank\./i.test(u)) return '';       // tracking pixels, spacers
+  return u;
+}
+function feedImage(b) {
+  var m = /<media:content\b[^>]*?url=["']([^"']+)["'][^>]*>/i.exec(b);
+  /* (a YouTube feed's media:content is the video player, not a picture: only images count) */
+  var notImg = m && (/medium=["'](?!image)/i.test(m[0]) || /type=["'](?!image)/i.test(m[0]) || /youtube\.com\/(v|embed)\//i.test(m[1]));
+  if (m && !notImg && imgUrl(m[1])) return imgUrl(m[1]);
+  m = /<media:thumbnail\b[^>]*?url=["']([^"']+)["']/i.exec(b); if (m && imgUrl(m[1])) return imgUrl(m[1]);
+  m = /<enclosure\b[^>]*?url=["']([^"']+)["'][^>]*>/i.exec(b);
+  if (m && (/type=["']image/i.test(m[0]) || /\.(jpe?g|png|webp)(\?|$)/i.test(m[1])) && imgUrl(m[1])) return imgUrl(m[1]);
+  m = /<img\b[^>]*?src=["']([^"']+)["']/i.exec(b) || /&lt;img\b[\s\S]{0,300}?src=(?:&quot;|["'])([^"'&]+)/i.exec(b);
+  if (m && imgUrl(m[1])) return imgUrl(m[1]);
+  var v = /<yt:videoId>([\w-]{6,20})<\/yt:videoId>/i.exec(b);
+  return v ? 'https://i.ytimg.com/vi/' + v[1] + '/hqdefault.jpg' : '';
+}
+/* a YouTube link's thumbnail (headlines saved before pictures were kept) */
+function ytThumb(u) {
+  var m = /youtube\.com\/watch\?v=([\w-]{6,20})|youtu\.be\/([\w-]{6,20})/i.exec(String(u || ''));
+  return m ? 'https://i.ytimg.com/vi/' + (m[1] || m[2]) + '/hqdefault.jpg' : '';
 }
 
 /* one id per article: the link without tracking parameters */
@@ -224,7 +252,10 @@ function card(g, logoOf, tag) {
   var off = pool.filter(function (x) { return x.kind === 'official'; })[0];
   var top = off || pool[0], names = {}, others = [];
   its.forEach(function (x) { if (x.srcName !== top.srcName && !names[x.srcName]) { names[x.srcName] = 1; others.push({ n: x.srcName, l: logoOf(x) }); } });
-  return { t: top.title, u: top.url, s: top.srcName, lg: logoOf(top), k: top.kind, p: top.pub, d: istStr(top.pub), v: !!top.video, nd: !!top.noDate,
+  /* the picture: this headline's, else another copy of the same story's, else a video's thumbnail */
+  var withImg = top.img ? top : its.filter(function (x) { return x.img; })[0];
+  var im = withImg ? withImg.img : ytThumb(top.url);
+  return { t: top.title, u: top.url, s: top.srcName, lg: logoOf(top), k: top.kind, p: top.pub, d: istStr(top.pub), v: !!top.video, nd: !!top.noDate, im: im || null,
            n: others.length, o: others.slice(0, 3), f: top.seen,           // f = first seen: the page shows NEW for 30 minutes
            as: top.ai ? top.ai.s : null, ab: top.ai ? top.ai.b : null };   // the AI's stance and whose voice (for the attack / good-news screens)
 }

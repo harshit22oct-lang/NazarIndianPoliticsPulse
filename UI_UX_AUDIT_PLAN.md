@@ -450,7 +450,20 @@ Each phase ends with screenshots at 1920×1080, 1280×720, 3840×2160, the 375 p
 - **P2 rhythm.** A 24-hour dial (one spoke per hour, busiest hour in gold and named in the middle: "07–08 बजे"). Missing days are hatched "डेटा नहीं" instead of "–".
 - **S10 map.** Numbered badges on the top 6 states, matching the list; the lit state's badge turns white. (A wider map column did not help: the map is height-bound.)
 - Checked at 1280×720 (all fit; the profile and map need 92–94%) and on a 375 px phone (no sideways scroll).
-| **5. Rooms** | M1 thumbnails, M2–M6, E1–E7 | Large (M1 needs server work) |
+| **5. Rooms** ✅ done 30 Oct | M1 thumbnails, M2–M6, E1–E7 | Large (M1 needs server work) |
+
+**Phase 5 — what was done (30 Oct):**
+- **M1 pictures.** `parseFeed` keeps each article's picture (`media:content` when it is an image, `media:thumbnail`, an image enclosure, an `<img>` in the description, or a YouTube thumbnail), https only, no tracking pixels. Tested on the live feeds: India Today, NDTV, ABP, News18, Indian Express, The Hindu, HT, TOI, Bhaskar and YouTube give pictures; Aaj Tak, Zee, Amar Ujala, PIB and Google News results do not. Pictures are saved for new headlines and added to known ones when they turn up again. Saved YouTube headlines get a thumbnail from their link right away. The lead card shows a picture band; small cards a faded picture behind the top. A picture that fails to load is removed and the card is text-only. **Render collects the news (`MEDIA_WORKER` on), so publisher pictures fill in as it collects after the deploy.**
+- **M2.** Small cards may use 4 lines (`fitClamps` trims to the room there is).
+- **M3.** "समाचार माध्यम" under every publisher is gone (stance labels and "official" stay). "अभी आई" is a red ribbon on the card's top edge.
+- **M6.** The "what to show" panel dims the screen behind it and slides in.
+- **E1 past results.** A colour mark before each party, a dashed majority line across every bar, the winning parties ticked, "बहुमत N" in the footer.
+- **E2 bye-polls.** The winning party is a coloured chip.
+- **E3 head-to-head.** It stands on a card now (the vote bar already grew from the middle; the winner glow and greyed loser already existed).
+- **E4 counting day.** The tally (seat arc with majority mark, alliances, "past majority" headline, party table, flips) already covers it; checked with the Bihar 2025 replay. No change.
+- **E7.** "No counting now" / "news only" notes are neutral grey tags, not amber warnings.
+- **`.er-alert`** no longer uses flex `gap` (old TVs).
+- The map badges were renamed `.mapb` (they shared `.mb` with the Election Room's party rows).
 | **6. Start screen + intro** | C4, C9–C12, I1–I4 | Medium |
 | **7. Motion pass** | Section 11, as one consistent layer | Medium |
 | **8. Phone** | F1–F5, L1–L3 | Medium |

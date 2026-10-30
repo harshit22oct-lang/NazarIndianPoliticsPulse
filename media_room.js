@@ -120,7 +120,7 @@ function makeStore(dataDir, aiUsage) {
     save: async function (all, fresh, changed, status) {
       if (uri) {
         var d = await conn(), ops = fresh.map(function (x) { return { updateOne: { filter: { _id: x._id }, update: { $setOnInsert: Object.assign({}, x, { at: new Date(x.seen) }) }, upsert: true } }; })
-          .concat(changed.map(function (x) { return { updateOne: { filter: { _id: x._id }, update: { $set: { states: x.states, nat: x.nat, dom: x.dom || null } } } }; }));
+          .concat(changed.map(function (x) { return { updateOne: { filter: { _id: x._id }, update: { $set: { states: x.states, nat: x.nat, dom: x.dom || null, img: x.img || null } } } }; }));
         if (ops.length) await d.collection('media_items').bulkWrite(ops, { ordered: false });
         await d.collection('media_meta').updateOne({ _id: 'status' }, { $set: { status: status, at: new Date() } }, { upsert: true });
         return;
@@ -178,7 +178,7 @@ function createMediaRoom(opts) {
     if (f.state && states.indexOf(f.state) < 0) states.push(f.state);
     return { _id: ML.idOf(e.link), url: e.link, title: title, src: f.src, srcName: srcName, kind: f.kind, via: f.via, pub: pub, seen: now,
              noDate: !isFinite(e.date), video: !!e.video, hi: ML.isHindi(title), states: states, nat: !f.state, tags: tagger(title, f.src),
-             dom: f.via === 'gnews' ? e.domain || null : null };
+             dom: f.via === 'gnews' ? e.domain || null : null, img: e.img || null };
   }
   /* a source's logo: our own sources (and a news search result from one of them) use the
      source's X profile photo; any other publisher its website icon, fetched once and kept */
@@ -225,8 +225,8 @@ function createMediaRoom(opts) {
             var old = items[it._id];
             if (!old) { items[it._id] = it; fresh.push(it); n++; return; }
             var more = it.states.filter(function (x) { return old.states.indexOf(x) < 0; });   // the same article found again through a state feed
-            if (more.length || (it.nat && !old.nat) || (it.dom && !old.dom)) {
-              old.states = old.states.concat(more); old.nat = old.nat || it.nat; old.dom = old.dom || it.dom; changed.push(old);
+            if (more.length || (it.nat && !old.nat) || (it.dom && !old.dom) || (it.img && !old.img)) {
+              old.states = old.states.concat(more); old.nat = old.nat || it.nat; old.dom = old.dom || it.dom; old.img = old.img || it.img; changed.push(old);
             }
           });
           s.lastOk = now; s.items = got.length; s.error = null; s.fails = 0; if (newest) s.newest = Math.max(s.newest || 0, newest); if (n) s.lastNew = now;
