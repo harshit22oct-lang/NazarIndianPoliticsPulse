@@ -159,7 +159,12 @@ function oppositionRift(n) {
 var RULES = { opposition_rift: oppositionRift, ai: function () { return function () { return false; }; } };
 
 function makeTagger(cfg) {
-  var tests = (cfg.narratives || []).map(function (n) { return { id: n.id, test: n.rule && RULES[n.rule] ? RULES[n.rule](n) : anyRe(n.words) }; });
+  /* a topic may also list "need" words: then one of them must be there too ("launches" alone made
+     a car launch "governance"; with need, a government actor has to be named as well) */
+  var tests = (cfg.narratives || []).map(function (n) {
+    var base = n.rule && RULES[n.rule] ? RULES[n.rule](n) : anyRe(n.words), need = n.need && n.need.length ? anyRe(n.need) : null;
+    return { id: n.id, test: need ? function (t) { return base(t) && need(t); } : base };
+  });
   var groupOf = {}; (cfg.sources || []).forEach(function (s) { groupOf[s.id] = s.group; });
   return function (title, srcId) {
     var tags = [];

@@ -126,7 +126,7 @@
     { "id": "party", "en": "Party announcements", "hi": "पार्टी घोषणाएँ", "on": true, "priority": 2,
       "words": ["appointed", "joins", "resigns", "candidate list", "ticket", "national executive", "नियुक्त", "शामिल", "इस्तीफ़ा", "कार्यकारिणी", "प्रत्याशी", "टिकट"] },
     { "id": "governance", "en": "Governance & schemes", "hi": "सरकार और योजनाएँ", "on": true, "priority": 3,
-      "words": ["scheme", "cabinet", "launches", "inaugurates", "policy", "योजना", "कैबिनेट", "उद्घाटन", "लोकार्पण", "नीति"] },
+      "need": ["government", "govt", "Centre", "Union", "minister", "ministry", "Chief Minister", "CM", "PM", "Modi", "Yogi", "cabinet", "scheme", "yojana", "PIB", "collector", "सरकार", "मंत्री", "मंत्रालय", "मुख्यमंत्री", "प्रधानमंत्री", "सीएम", "केंद्र", "कैबिनेट", "योजना", "कलेक्टर", "जिलाधिकारी"], "words": ["scheme", "cabinet", "launches", "inaugurates", "policy", "योजना", "कैबिनेट", "उद्घाटन", "लोकार्पण", "नीति"] },
     { "id": "controversy", "en": "Controversies & allegations", "hi": "विवाद और आरोप", "on": true, "priority": 2,
       "words": ["scam", "corruption", "allegation", "ED", "CBI", "raid", "audio clip", "घोटाला", "भ्रष्टाचार", "आरोप", "छापा", "विवाद"] },
     { "id": "lawandorder", "en": "Law & order", "hi": "क़ानून-व्यवस्था", "on": true, "priority": 3,

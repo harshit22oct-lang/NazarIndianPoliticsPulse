@@ -429,7 +429,16 @@ Each phase ends with screenshots at 1920×1080, 1280×720, 3840×2160, the 375 p
 - **C8 ticker.** Soft fade at both edges, ◆ between items, the source quieter than the headline, and a label dot that pulses only when the news is fresh.
 - **G5 follow-up.** `fitClamps` now picks the most whole lines the box really holds (small news cards: 2 clean lines, before 2.4 sliced).
 - **Found, not fixed:** `.er-alert` (the counting alert toast) uses flex `gap`, which Chromium 68 ignores. Fix with margins in phase 5.
-| **3. Content fixes** | Q1–Q5, X1, X2 | Small–medium (server + data) |
+| **3. Content fixes** ✅ done 30 Oct | Q1–Q5, X1, X2 | Small–medium (server + data) |
+
+**Phase 3 — what was done (30 Oct):**
+- **Q1 foreign elections.** `ELEC_ABROAD` in `server.js` now covers Israel/Netanyahu/Knesset, Iran, Russia, Ukraine, Turkey, Brazil, New York/Mamdani and more, with Hindi spellings. News digests ("Morning Brief", "Top Headlines") are dropped from election news (`ELEC_DIGEST`). Across all states × types: 296 headlines, 0 foreign or digest (it was 4).
+- **Q2 wrong topic.** A topic can list `need` words (`media_lib.js` `makeTagger`). "Governance & schemes" now needs a government actor (सरकार, मंत्री, CM, cabinet, scheme…), so car and phone launches are out. AI labels still win where present.
+- **Q3 run-together ticker text.** It came from YouTube **Shorts** titles. Shorts links are now treated as clips, like #shorts, and kept out of the Media Room and Election news (`isClip` in `media_room.js`). Labels run together in titles ("NovemberTime:") are split.
+- **Q4 avatars.** The two flagged photos are the leaders' own X photos, so they aren't wrong files. Added `app/live_assets/avatars_override/` (a `<handle>.jpg` there wins) with a README listing the flagged handles; the team adds headshots with a known source. The avatar route now accepts only real handles, which also fixes a malformed `%`-escape that could have crashed the server.
+- **Q5 "CJP".** Not a typo: the Cockroach Janta Party, with its own accounts. Journalist Rajdeep Sardesai is marked CJP in the master sheet, but he is already excluded as a journalist; the sheet entry could be cleaned at the source.
+- **X1 share links.** `/live/media`, `/live/election`, `/live/n/<handle>`, `/live/s/<State>` (spaces or hyphens) open their view. A bare `/live` still starts on All India.
+- **X2 chooser countdown.** Already worked: opening the state list or typing in search holds it. The audit note was wrong; no change.
 | **4. Weak scenes** | S7, S8/P3, S11/P8, P4, P0, P1, P2, S10 | Large |
 | **5. Rooms** | M1 thumbnails, M2–M6, E1–E7 | Large (M1 needs server work) |
 | **6. Start screen + intro** | C4, C9–C12, I1–I4 | Medium |

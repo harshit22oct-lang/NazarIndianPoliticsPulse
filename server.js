@@ -735,7 +735,9 @@ var ELEC_WORD = /चुनाव|मतगणना|मतदान|नतीज
 /* another country's election is not the Election Room's ("US midterm election 2026", Trump) */
 /* (not Pakistan or Bangladesh: Indian campaigns name them all the time -- "infiltrators", "Pakistan
    will celebrate" -- so they say nothing about whose election it is) */
-var ELEC_ABROAD = /\b(America|American|midterms?|mid-terms?|Trump|Biden|Kamala Harris|Britain|British|Canada|Canadian|Nepal|Sri Lanka|Japan|Germany|France|Australia)\b|अमेरिक|यूएस|मिड ?टर्म|ट्रंप|बाइडेन|ब्रिटेन|कनाडा|नेपाल|श्रीलंका|जापान|जर्मनी|फ्रांस|ऑस्ट्रेलिया/i;
+var ELEC_ABROAD = /\b(America|American|midterms?|mid-terms?|Trump|Biden|Kamala Harris|Britain|British|Canada|Canadian|Nepal|Sri Lanka|Japan|Germany|France|Australia|Israel|Israeli|Netanyahu|Knesset|Iran|Iranian|Russia|Russian|Putin|Ukraine|Zelensky|Brazil|Italy|Spain|Turkey|Turkish|Erdogan|Netherlands|Dutch|Poland|Hungary|Ireland|Scotland|New Zealand|Singapore|Malaysia|Indonesia|Thailand|Philippines|Maldives|Myanmar|South Africa|Argentina|Mexico|New York|NYC|Mamdani|European Parliament)\b|अमेरिक|यूएस|मिड ?टर्म|ट्रंप|बाइडेन|ब्रिटेन|कनाडा|नेपाल|श्रीलंका|जापान|जर्मनी|फ्रांस|ऑस्ट्रेलिया|इज़?रा[इय]ल|इसराइल|नेतन्याहू|ईरान|पुतिन|यूक्रेन|ब्राज़?ील|इटली|तुर्की|मालदीव|म्यांमार|न्यूयॉर्क|ममदानी/i;
+/* news digests ("Morning Brief", "Top Headlines") mix every topic: not an election story */
+var ELEC_DIGEST = /morning brief|evening brief|top headlines|news bulletin|headlines today|टॉप हेडलाइंस/i;
 var ELEC_ABROAD_CS = /\b(US|U\.S\.|USA|UK)\b/;          // capitals only: "us" is an English word
 function electionNews(st, type, city) {
   var re = ELEC_NEWS[type] || ELEC_NEWS.all, cre = null;
@@ -743,7 +745,7 @@ function electionNews(st, type, city) {
     var pair = ELEC_CFG.cities[st].filter(function (c) { return c[0] === city; })[0];
     if (pair) cre = new RegExp(pair.map(function (x) { return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'), 'i');
   }
-  var test = function (t) { return re.test(t) && !ELEC_ABROAD.test(t) && !ELEC_ABROAD_CS.test(t) && (type === 'all' || type === 'local' || type === 'council' || ELEC_WORD.test(t)) && (!cre || cre.test(t)); };
+  var test = function (t) { return re.test(t) && !ELEC_ABROAD.test(t) && !ELEC_ABROAD_CS.test(t) && !ELEC_DIGEST.test(t) && (type === 'all' || type === 'local' || type === 'council' || ELEC_WORD.test(t)) && (!cre || cre.test(t)); };
   /* scanning every headline takes a moment: the same news is kept for a minute */
   var k = (st || '-') + '|' + type + '|' + (city || ''), c = elecNewsMemo[k];
   if (c && Date.now() - c.at < 60000) return c.v;
@@ -817,9 +819,25 @@ var server = http.createServer(function (req, res) {
     if (cm && snapCache.get('snap:all')) return send(res, 200, 'text/html; charset=utf-8', pageHtml(cm.v));
     return send(res, 503, 'text/html; charset=utf-8', LOADING_PAGE, { 'Retry-After': '5' });
   }
+  /* links to one view, for sharing: /live/media, /live/election, /live/n/<handle>, /live/s/<State>.
+     A bare /live always starts on All India; these open their view (link=1 tells the page) */
+  if ((m = /^\/live\/(media|election)\/?$/.exec(p))) { res.writeHead(302, { Location: '/live?mode=' + m[1] + '&link=1' }); return res.end(); }
+  if ((m = /^\/live\/n\/([A-Za-z0-9_]{1,40})\/?$/.exec(p))) { res.writeHead(302, { Location: '/live?h=' + m[1] + '&link=1' }); return res.end(); }
+  if ((m = /^\/live\/s\/([^\/]{2,60})\/?$/.exec(p))) {
+    var shSt = null; try { shSt = decodeURIComponent(m[1]).replace(/[-_]+/g, ' ').trim(); } catch (e2) {}
+    var shList = STATES.length ? STATES : ((snapCache.get('states') || {}).v || []), shHit = shSt && shList.filter(function (x) { return x.state.toLowerCase() === shSt.toLowerCase(); })[0];
+    res.writeHead(302, { Location: shHit ? '/live?scope=' + encodeURIComponent('st:' + shHit.state) + '&link=1' : (shSt && /^(up|uttar pradesh)$/i.test(shSt) ? '/up' : '/live') });
+    return res.end();
+  }
   if (p === '/live/india-states.json') return file(res, path.join(APP, 'live_india_states.json'));
   if ((m = /^\/live\/img\/a\/([^\/]+)$/.exec(p))) {
-    var rawH = decodeURIComponent(m[1]).toLowerCase();
+    /* an X handle: letters, digits, _ (also keeps a malformed %-escape from throwing, and any
+       path out of the avatars folder) */
+    var rawH = String(m[1]).toLowerCase();
+    if (!/^[a-z0-9_]{1,40}$/.test(rawH)) return send(res, 404, 'text/plain', 'Not found');
+    /* a better photo chosen by the team (a face, not a crowd or a poster) wins over the X photo */
+    var ovr = path.join(ASSETS, 'avatars_override', rawH + '.jpg');
+    if (fs.existsSync(ovr)) return file(res, ovr);
     var e = imgIx.avatars[rawH];
     if (e && e.file && /^avatars\/[^\/\\]+\.jpg$/.test(e.file) && fs.existsSync(path.join(ASSETS, e.file))) {
       return file(res, path.join(ASSETS, e.file));

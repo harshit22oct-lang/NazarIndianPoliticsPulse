@@ -1534,7 +1534,8 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   /* these used to be kept on the device for good: dropped, so an old choice never comes back */
   try { ['nazar_er_state', 'nazar_er_city', 'nazar_er_demo', 'nazar_er_type', 'nazar_mr_state'].forEach(function (k) { window.localStorage.removeItem(k); }); } catch (e) {}
   (function () {
-    var keep = Q.kiosk === '1' || sstore('nazar_keep') === '1';
+    /* link=1: a shared link to one view (/live/media, /live/n/<handle>, /live/s/<State>) opens that view */
+    var keep = Q.kiosk === '1' || Q.link === '1' || sstore('nazar_keep') === '1';
     sstore('nazar_keep', null);
     if (keep) return;
     Object.keys(Q).forEach(function (k) { if (VIEW_KEYS.test(k) && !(k === 'scope' && Q[k] === 'up')) delete Q[k]; });

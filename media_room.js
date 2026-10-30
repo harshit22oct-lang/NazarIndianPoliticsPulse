@@ -34,6 +34,9 @@ var ALWAYS = ['Uttar Pradesh'];
 
 function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 function escRe(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+/* social-media clips are not news: tagged #shorts / #viral, or a YouTube Shorts link (their titles
+   are often a poster's text run together: "Date: 1st NovemberTime: 12:00 PM Where: ...") */
+function isClip(x) { return /#shorts|#viral/i.test(x.title) || /youtube\.com\/shorts\//i.test(x.url || ''); }
 function gnUrl(q, lang) {
   return 'https://news.google.com/rss/search?q=' + encodeURIComponent(q + ' when:1d') + (lang === 'hi' ? '&hl=hi&gl=IN&ceid=IN:hi' : '&hl=en-IN&gl=IN&ceid=IN:en');
 }
@@ -335,9 +338,11 @@ function createMediaRoom(opts) {
       }
       if (x.via !== 'gnews' && NAMEOF[x.src]) x.srcName = NAMEOF[x.src];     // a source renamed in the config
       if (!/\s/.test(x.title) && /-/.test(x.title)) x.title = x.title.replace(/-+/g, ' ').replace(/^./, function (c) { return c.toUpperCase(); });   // saved before the slug fix
+      /* labels run together when a feed drops its line breaks ("NovemberTime: 12:00 PM") */
+      x.title = x.title.replace(/([a-z0-9)])(Time|Where|Venue|When|Date|Place)(\s?:)/g, '$1 · $2$3');
     });
-    /* social-media clips ("... #shorts #viralvideo") are not news for this room */
-    var mine = all.filter(function (x) { return (st ? x.states.indexOf(st) >= 0 : x.nat) && !/#shorts|#viral/i.test(x.title); });
+    /* social-media clips are not news for this room */
+    var mine = all.filter(function (x) { return (st ? x.states.indexOf(st) >= 0 : x.nat) && !isClip(x); });
     cache[key] = { at: Date.now(), v: ML.buildView({ items: mine, topics: topics.map(function (t) { return t.id; }), sources: SRC, bySource: !st, logoOf: logoOf, now: Date.now() }) };
     return cache[key].v;
   }
@@ -403,7 +408,7 @@ function createMediaRoom(opts) {
     find: function (test, st, hours, limit) {
       var since = Date.now() - (hours || 24) * 3600000;
       var mine = Object.keys(items).map(function (k) { return items[k]; }).filter(function (x) {
-        return x.pub >= since && (st ? x.states.indexOf(st) >= 0 : true) && !/#shorts|#viral/i.test(x.title) && test(x.title);
+        return x.pub >= since && (st ? x.states.indexOf(st) >= 0 : true) && !isClip(x) && test(x.title);
       });
       return ML.newsCards(mine, logoOf, limit);
     }
