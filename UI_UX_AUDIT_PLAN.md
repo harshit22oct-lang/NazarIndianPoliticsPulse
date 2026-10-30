@@ -439,7 +439,17 @@ Each phase ends with screenshots at 1920×1080, 1280×720, 3840×2160, the 375 p
 - **Q5 "CJP".** Not a typo: the Cockroach Janta Party, with its own accounts. Journalist Rajdeep Sardesai is marked CJP in the master sheet, but he is already excluded as a journalist; the sheet entry could be cleaned at the source.
 - **X1 share links.** `/live/media`, `/live/election`, `/live/n/<handle>`, `/live/s/<State>` (spaces or hyphens) open their view. A bare `/live` still starts on All India.
 - **X2 chooser countdown.** Already worked: opening the state list or typing in search holds it. The audit note was wrong; no change.
-| **4. Weak scenes** | S7, S8/P3, S11/P8, P4, P0, P1, P2, S10 | Large |
+| **4. Weak scenes** ✅ done 30 Oct | S7, S8/P3, S11/P8, P4, P0, P1, P2, S10 | Large |
+
+**Phase 4 — what was done (30 Oct):**
+- **S7 breakout.** The multiplier sits above a meter from usual views per post (grey, e.g. 446) to now (green, 1.4 हज़ार), with the green part growing in. Runner-ups (up to 4) each carry a small meter. A note says what "usual" means.
+- **S8 / P3 top post.** A post card: author line, the post sized by length (a short line like "सत्यम् शिवम् सुन्दरम्" large), a soft quote mark. Beside it: views, likes, likes per 100 views. All India adds the post's share of all views ("8.9% of 4,147 posts"); a leader's channel adds their latest post when it is a different one.
+- **S11 / P8 in simple words.** A front-page layout: each fact's number large in its own column (up green, down amber), the sentence beside it, rows coming in one by one.
+- **P4 rank.** Three ladders (party, state, All India): #1, the one above, the leader (highlighted), the one below, "⋮" for the gap, and "N views behind #1" (or "ahead of #2"). The server now sends these neighbours (`rankIn` in `live_lib.js`).
+- **P1 profile.** A "last 24 h vs a usual day" panel with paired bars for posts and views per post fills the empty lower half; zero stats are dimmed.
+- **P2 rhythm.** A 24-hour dial (one spoke per hour, busiest hour in gold and named in the middle: "07–08 बजे"). Missing days are hatched "डेटा नहीं" instead of "–".
+- **S10 map.** Numbered badges on the top 6 states, matching the list; the lit state's badge turns white. (A wider map column did not help: the map is height-bound.)
+- Checked at 1280×720 (all fit; the profile and map need 92–94%) and on a 375 px phone (no sideways scroll).
 | **5. Rooms** | M1 thumbnails, M2–M6, E1–E7 | Large (M1 needs server work) |
 | **6. Start screen + intro** | C4, C9–C12, I1–I4 | Medium |
 | **7. Motion pass** | Section 11, as one consistent layer | Medium |

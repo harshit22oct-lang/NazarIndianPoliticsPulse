@@ -1372,6 +1372,141 @@ body.phone .foot .ctl{position:fixed;left:50%;bottom:4.6rem;-webkit-transform:tr
 body.phone .setp{position:relative;top:auto;right:auto;left:auto;min-width:0;margin:.6rem 0 0}
 body.phone .setp-r{flex-wrap:wrap}
 
+/* ---------- rebuilt screens (audit phase 4) ---------- */
+/* breakout: the multiplier, then a meter from usual (grey) to now (green) */
+.bo-main{flex-direction:column;align-items:stretch;justify-content:center}
+.bo-hd{display:flex;align-items:center}
+.bo-main .av{width:10rem;height:10rem;font-size:3.6rem;margin:0 2rem 0 0}
+.bo-who{flex:1 1 auto;min-width:0}
+.bo-nm{margin-top:0;font-size:3.4rem}
+.bo-xw{flex:0 0 auto;margin-left:2rem;text-align:right}
+.bo-x{font-size:8.4rem}
+.bo-xl{font-size:1.4rem;max-width:22rem;margin:.4rem 0 0 auto;line-height:1.3}
+.bo-mk{margin-top:3.2rem;font-size:1.4rem;color:var(--muted);letter-spacing:.06rem}
+.bo-m{margin-top:.8rem}
+.bo-tr{display:flex;height:.7rem;border-radius:1rem;overflow:hidden;background:rgba(255,255,255,.08)}
+.bo-m.big .bo-tr{height:2.2rem;border-radius:1.2rem}
+.bo-tr i{display:block;height:100%}
+.bo-tr .u{background:rgba(255,247,238,.32)}
+.bo-tr .g{background:linear-gradient(90deg,#3E9E57,#7BD389);-webkit-transform-origin:left center;transform-origin:left center;-webkit-animation:boGrow 1.1s cubic-bezier(.2,.7,.2,1) .3s both;animation:boGrow 1.1s cubic-bezier(.2,.7,.2,1) .3s both}
+@-webkit-keyframes boGrow{from{-webkit-transform:scaleX(0)}to{-webkit-transform:none}}
+@keyframes boGrow{from{transform:scaleX(0)}to{transform:none}}
+body.reduced .bo-tr .g{-webkit-animation:none;animation:none}
+.bo-ml{display:flex;justify-content:space-between;margin-top:1rem}
+.bo-ml > span{display:flex;flex-direction:column}
+.bo-ml > .n{align-items:flex-end;text-align:right}
+.bo-ml b{font-family:var(--head);font-weight:700;font-size:3.2rem;line-height:1}
+.bo-ml .n b{color:var(--good)}
+.bo-ml b .u,.tpc-st b .u,.fp-k .u,.rl-r .v .u,.pfc-b em .u{font-size:.55em;margin-left:.12em}
+.bo-ml small{font-size:1.35rem;color:var(--muted);margin-top:.35rem}
+.bo-main .bo-detail{margin-top:2rem}
+.bo-row .n .bo-m{margin-top:.7rem}
+/* the most-viewed post: the post, and what it did */
+.tpc{display:grid;grid-template-columns:1fr 34rem;grid-gap:2rem;height:100%}
+.tpc-main{display:flex;flex-direction:column;min-height:0;min-width:0;position:relative;overflow:hidden}
+.tpc-main:before{content:'\201C';position:absolute;top:-3rem;right:2.2rem;font-family:Georgia,'Times New Roman',serif;font-size:24rem;line-height:1;color:rgba(255,153,51,.13);pointer-events:none}
+.tpc-by{display:flex;align-items:center;flex:0 0 auto;position:relative}
+.tpc-by .av{width:7rem;height:7rem;font-size:2.6rem;margin-right:1.6rem;border-width:.25rem}
+.tpc-by b{display:block;font-family:var(--head);font-size:2.8rem;line-height:1.1}
+.tpc-by span{font-size:1.4rem;color:var(--muted)}
+.tpc-q{flex:0 1 auto;min-height:0;margin:auto 0;padding:2rem 0 1rem;font-size:3.2rem;line-height:1.42;font-weight:500;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:6;overflow:hidden;position:relative}
+.tpc-q.l{font-size:4rem;line-height:1.36}
+.tpc-q.xl{font-size:6.4rem;line-height:1.22;font-weight:700}
+.tpc-side{display:flex;flex-direction:column;min-height:0}
+.tpc-stats{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:1rem 2.2rem}
+.tpc-st{padding:.8rem 0;border-bottom:.08rem solid rgba(255,200,87,.12)} .tpc-st:last-child{border-bottom:0}
+.tpc-st b{display:block;font-family:var(--head);font-weight:700;font-size:3.4rem;line-height:1;white-space:nowrap}
+.tpc-st.big b{font-size:5.2rem;color:var(--gold)}
+.tpc-st > span{display:block;font-size:1.4rem;color:var(--muted);margin-top:.3rem}
+.tpc-ctx{flex:0 0 auto;margin-top:1.2rem;padding:1.3rem 2rem}
+.tpc-ctx b{display:block;font-family:var(--head);font-weight:700;font-size:3.4rem;line-height:1;color:var(--gold)}
+.tpc-ctx span{display:block;font-size:1.4rem;color:var(--muted);margin-top:.5rem;line-height:1.35}
+.tpc-ctx small{display:block;font-size:1.3rem;font-weight:700;color:var(--gold);letter-spacing:.04rem}
+.tpc-ctx p{font-size:1.6rem;line-height:1.4;margin:.5rem 0 .3rem;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+/* "in simple words": a front page -- the number in its own column, the sentence beside it */
+.glass.fp{display:flex;flex-direction:column;padding-top:1rem;padding-bottom:1rem}
+.fp-r{flex:1 1 0;display:flex;align-items:center;min-height:0;border-bottom:.08rem solid rgba(255,200,87,.13);-webkit-animation:rowIn .55s cubic-bezier(.2,.7,.2,1) both;animation:rowIn .55s cubic-bezier(.2,.7,.2,1) both}
+.fp-r:last-child{border-bottom:0}
+.fp-k{flex:0 0 22rem;text-align:right;padding-right:3rem;font-family:var(--head);font-weight:700;font-size:5rem;line-height:1;color:var(--gold);white-space:nowrap}
+.fp-k small{display:block;font-family:var(--body);font-size:1.35rem;font-weight:600;color:var(--muted);margin-top:.4rem}
+.fp-k.up{color:var(--good)} .fp-k.down{color:var(--amber)}
+.fp-s{flex:1 1 auto;min-width:0;font-size:2.5rem;line-height:1.38;padding-left:3rem;border-left:.2rem solid rgba(255,153,51,.35)}
+.fp-s b{color:var(--gold);font-weight:700}
+body.reduced .fp-r{-webkit-animation:none;animation:none}
+/* where they stand: one ladder per list */
+.rk2{display:grid;grid-template-columns:repeat(3,1fr);grid-gap:2rem;height:100%}
+.rl{display:flex;flex-direction:column;min-height:0;min-width:0}
+.rl-h{display:flex;align-items:center;flex:0 0 auto;padding-bottom:1.4rem;margin-bottom:1rem;border-bottom:.08rem solid rgba(255,200,87,.15)}
+.rl-h b{font-family:var(--head);font-weight:700;font-size:6rem;line-height:.9;color:var(--gold);margin-right:1.4rem}
+.rl-h span{font-size:1.6rem;font-weight:600;line-height:1.25}
+.rl-h small{display:block;font-size:1.35rem;font-weight:400;color:var(--muted)}
+.rl-list{flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;min-height:0}
+.rl-r{display:flex;align-items:center;padding:.9rem 1rem;border-radius:1rem}
+.rl-r .k{flex:0 0 4.4rem;font-family:var(--head);font-weight:700;font-size:1.8rem;color:var(--dim)}
+.rl-r .av{width:4.4rem;height:4.4rem;font-size:1.6rem;border-width:.18rem;margin-right:1.1rem}
+.rl-r .n{flex:1 1 auto;min-width:0;font-size:1.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl-r .v{flex:0 0 auto;margin-left:1rem;font-family:var(--head);font-weight:700;font-size:1.9rem;white-space:nowrap}
+.rl-r.me{background:linear-gradient(90deg,rgba(255,153,51,.28),rgba(255,153,51,.06));box-shadow:inset .3rem 0 0 var(--gold)}
+.rl-r.me .k,.rl-r.me .v{color:var(--gold)} .rl-r.me .n{font-weight:700}
+.rl-gap{padding:.1rem 0 .1rem 2.3rem}
+.rl-gap i{display:block;width:.4rem;height:.4rem;border-radius:50%;background:var(--dim);margin:.18rem 0}
+.rl-gap-t{flex:0 0 auto;margin-top:1rem;padding-top:1rem;border-top:.08rem solid rgba(255,200,87,.1);font-size:1.4rem;color:var(--muted);text-align:center}
+/* profile: zero stats quiet, and "this period vs usual" as paired bars */
+.pf-k div.z b{color:var(--dim)}
+.pfc{margin-top:1.4rem;padding:1.1rem 1.8rem;border-radius:1.4rem;background:rgba(0,0,0,.22);border:.08rem solid var(--line)}
+.pfc-h{font-size:1.35rem;font-weight:700;color:var(--gold);letter-spacing:.04rem;margin-bottom:.6rem}
+.pfc-r{display:flex;align-items:center;padding:.3rem 0}
+.pfc-r .l{flex:0 0 17rem;font-size:1.6rem;color:var(--muted)}
+.pfc-b{flex:1 1 auto;min-width:0}
+.pfc-b div{display:flex;align-items:center;margin:.15rem 0}
+.pfc-b i{display:block;flex:0 0 auto;height:1.1rem;min-width:.6rem;border-radius:1rem}
+.pfc-b .n{background:linear-gradient(90deg,#E65100,#FFC857)} .pfc-b .u{background:rgba(255,247,238,.3)}
+.pfc-b em{font-style:normal;font-size:1.35rem;color:var(--muted);margin-left:1rem;white-space:nowrap}
+.pfc-b em b{font-family:var(--head);font-size:1.9rem;color:var(--text)}
+/* when they post: a 24-hour dial and the last days */
+.rh2{display:grid;grid-template-columns:1fr 1.25fr;grid-gap:3rem;height:100%}
+.dlw{display:flex;flex-direction:column;min-height:0;min-width:0}
+.rh2 h4{flex:0 0 auto;font-family:var(--head);font-size:1.8rem;color:var(--gold);margin-bottom:1.2rem}
+.dl{position:relative;flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center}
+.dl svg{position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible}
+.dl-ring{fill:none;stroke:rgba(255,200,87,.2);stroke-width:.5}
+.dl-b{stroke:#E8792B;stroke-width:4;stroke-linecap:round}
+.dl-b.pk{stroke:#FFC857}
+.dl-z{fill:rgba(255,247,238,.3)}
+.dl-t{font-size:5.2px;font-family:var(--head);font-weight:700;fill:rgba(255,247,238,.55);text-anchor:middle;dominant-baseline:central}
+.dl-c{position:absolute;top:50%;left:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);text-align:center;white-space:nowrap}
+.dl-c b{display:block;font-family:var(--head);font-weight:700;font-size:4.4rem;line-height:1;color:var(--gold)}
+.dl-c span{display:block;font-size:1.3rem;color:var(--muted);margin-top:.3rem}
+.rh2 .dbars{flex:1 1 auto;height:auto;min-height:0}
+.dbars .nod i{height:35%!important;background:repeating-linear-gradient(135deg,rgba(255,255,255,.16) 0,rgba(255,255,255,.16) .35rem,rgba(255,255,255,0) .35rem,rgba(255,255,255,0) .9rem);border:.08rem dashed rgba(255,255,255,.28);border-bottom:0}
+.dbars .nod b{font-family:var(--body);font-size:1.2rem;font-weight:600;color:var(--dim)}
+/* map: larger, and the top states numbered on it */
+.mapw{grid-template-columns:1.3fr 1fr}
+.mb circle{fill:#FFC857;stroke:#1a0703}
+.mb text{font-family:var(--head);font-weight:700;fill:#1a0703;text-anchor:middle;dominant-baseline:central}
+.mb.hl circle{fill:#fff}
+.legend span{font-size:1.4rem}
+/* tall screens and phones */
+body.portrait .tpc,body.portrait .rk2,body.portrait .rh2{grid-template-columns:1fr;height:auto}
+body.portrait .tpc-q{font-size:2.3rem} body.portrait .tpc-q.l{font-size:2.8rem} body.portrait .tpc-q.xl{font-size:4rem}
+body.portrait .tpc-st.big b{font-size:4.2rem} body.portrait .tpc-main:before{font-size:14rem}
+body.portrait .fp-k{flex-basis:11rem;padding-right:1.6rem;font-size:3rem} body.portrait .fp-s{font-size:1.8rem;padding-left:1.6rem}
+body.portrait .dl{height:30rem;flex:none} body.portrait .rh2 .dbars{height:14rem;flex:none}
+body.portrait .bo-hd{flex-wrap:wrap} body.portrait .bo-xw{margin:1.2rem 0 0;text-align:left;width:100%} body.portrait .bo-xl{margin-left:0}
+body.portrait .bo-main .av{margin:0 1.4rem 0 0}
+body.portrait .bo-main{align-items:stretch}                 /* (an older rule shrank the meter to its labels) */
+.dbars div{min-width:0} .dbars span{overflow:hidden;text-overflow:ellipsis;max-width:100%}
+body.phone .dbars div{margin:0 .2rem} body.phone .dbars span{font-size:1rem;line-height:1.2}
+body.phone .glass.fp{height:auto} body.phone .fp-r{flex:none;padding:1.1rem 0}
+body.phone .fp-k{flex-basis:8.6rem;padding-right:1.2rem;font-size:2.4rem} body.phone .fp-k small{font-size:1rem} body.phone .fp-s{font-size:1.5rem;padding-left:1.2rem}
+body.phone .tpc-by .av{width:4.8rem;height:4.8rem;font-size:1.7rem} body.phone .tpc-by b{font-size:1.8rem} body.phone .tpc-by span{font-size:1.1rem}
+body.phone .tpc-q{font-size:1.85rem;-webkit-line-clamp:9} body.phone .tpc-q.l{font-size:2.2rem} body.phone .tpc-q.xl{font-size:3rem}
+body.phone .tpc-st b{font-size:2.6rem} body.phone .tpc-st.big b{font-size:3.4rem} body.phone .tpc-st > span,body.phone .tpc-ctx > span{font-size:1.1rem}
+body.phone .rl-h b{font-size:3.6rem} body.phone .rl-r .n{font-size:1.4rem} body.phone .rl-r .v{font-size:1.5rem}
+body.phone .pfc-r{flex-wrap:wrap} body.phone .pfc-r .l{flex-basis:100%;font-size:1.2rem}
+body.phone .dl{height:24rem}
+body.phone .bo-main .av{width:6.4rem;height:6.4rem;font-size:2.3rem} body.phone .bo-ml b{font-size:2.2rem}
+
 /* ---------- shared helpers (audit G5 / G6) ---------- */
 /* cut text to whole lines with "…" (fitClamps lowers the count when a card is squeezed) */
 .clamp-1,.clamp-2,.clamp-3{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden} .clamp-1{-webkit-line-clamp:1} .clamp-2{-webkit-line-clamp:2} .clamp-3{-webkit-line-clamp:3}
@@ -1599,6 +1734,11 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       fewPosts: 'Too few posts', when24: 'Last {h} hours · up to {d}', whenDay: '{d} · latest complete day',
       hWindow24: '<b>Showing:</b> last {h} hours up to {d}', hWindowDay: '<b>Showing:</b> {d}, the latest complete day — newer data is incomplete',
       hWindowThin: '<b>Showing:</b> last {h} hours up to {d} — fewer posts than usual came in, data may be incomplete',
+      boUsual: 'Usual', boNow: 'Now', boVpp: 'Views per post', boBase: 'Usual = a typical post of the previous {d} days ({n} posts)',
+      tpLikes: 'Likes', tpRate: 'Likes per 100 views', tpShare: 'of all views, among {n} original posts', tpLatest: 'Latest post',
+      rkGapTop: '{v} views behind #1', rkLead: '{v} views ahead of #2',
+      pfNowT: 'Last {h} hours vs a usual day', pfPostsL: 'Posts', pfVppL: 'Views per post', pfNow: 'now', pfUsual: 'usual',
+      rhPeak: 'busiest hour (IST)', rhNoData: 'no data', rhNone: 'No posts in this period',
       setK: 'Settings', rngK: 'Period', spdK: 'Screen speed', langK: 'Language', savedChip: 'Saved · {d}',
       rngTitle: 'Period shown on every screen', rngH: '{h} h', vsPrevV: '{v}% views vs previous {h} h',
       hLatest: 'Latest post {d}', hEst: 'Counts are estimates from the accounts we collect',
@@ -1666,6 +1806,11 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       fewPosts: 'बहुत कम पोस्ट', when24: 'पिछले {h} घंटे · {d} तक', whenDay: '{d} · ताज़ा पूरा दिन',
       hWindow24: '<b>दिखाया जा रहा है:</b> {d} तक पिछले {h} घंटे', hWindowDay: '<b>दिखाया जा रहा है:</b> {d}, ताज़ा पूरा दिन — नया डेटा अधूरा है',
       hWindowThin: '<b>दिखाया जा रहा है:</b> {d} तक पिछले {h} घंटे — आम दिनों से कम पोस्ट आए, डेटा अधूरा हो सकता है',
+      boUsual: 'सामान्य', boNow: 'अभी', boVpp: 'व्यूज़ प्रति पोस्ट', boBase: 'सामान्य = पिछले {d} दिन का आम पोस्ट ({n} पोस्ट)',
+      tpLikes: 'लाइक्स', tpRate: 'हर 100 व्यूज़ पर लाइक्स', tpShare: '{n} मूल पोस्ट के कुल व्यूज़ में से', tpLatest: 'ताज़ा पोस्ट',
+      rkGapTop: '#1 से {v} व्यूज़ पीछे', rkLead: '#2 से {v} व्यूज़ आगे',
+      pfNowT: 'पिछले {h} घंटे बनाम आम दिन', pfPostsL: 'पोस्ट', pfVppL: 'व्यूज़ प्रति पोस्ट', pfNow: 'अभी', pfUsual: 'आम तौर पर',
+      rhPeak: 'बजे — सबसे सक्रिय घंटा', rhNoData: 'डेटा नहीं', rhNone: 'इस अवधि में कोई पोस्ट नहीं',
       setK: 'सेटिंग', rngK: 'अवधि', spdK: 'स्क्रीन की गति', langK: 'भाषा', savedChip: 'सहेजा · {d}',
       rngTitle: 'हर स्क्रीन पर कितने घंटे का हिसाब', rngH: '{h} घंटे', vsPrevV: 'व्यूज़ पिछले {h} घंटे से {v}%',
       hLatest: 'ताज़ा पोस्ट {d}', hEst: 'आँकड़े हमारे संग्रहित खातों पर आधारित अनुमान हैं',
@@ -2396,24 +2541,46 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
         + '<div class="lv">' + esc(fmtShort(l.views)) + '</div><div class="ll">' + esc(t('viewsWord') + ' · ' + postsTxt(l.posts)) + '</div></div></div>';
     }).join('') + '</div>';
   }
+  /* breakout: how far above their usual a leader's posts are doing -- a meter from the usual
+     views per post (grey) to now (green); the next ones as rows with a small meter */
+  function boMeter(m, big) {
+    var r = m.recentMedian || 0, b = m.baseMedian || 0, u = r > 0 ? Math.max(4, Math.min(100, 100 * b / r)) : 100;
+    var h = '<div class="bo-m' + (big ? ' big' : '') + '"><div class="bo-tr"><i class="u" style="width:' + u.toFixed(1) + '%"></i><i class="g" style="width:' + (100 - u).toFixed(1) + '%"></i></div>';
+    if (big) h += '<div class="bo-ml"><span><b>' + numHtml(fmtShort(b)) + '</b><small>' + esc(t('boUsual')) + '</small></span><span class="n"><b>' + numHtml(fmtShort(r)) + '</b><small>' + esc(t('boNow')) + '</small></span></div>';
+    return h + '</div>';
+  }
   function sBreakout(s) {
     var b = s.breakout || [], m = b[0]; if (!m) return '';
-    var main = '<div class="bo-main">' + avatar(m.name, m.avatar, colorOf(m.party)) + '<div><div class="bo-x">' + esc(String(m.ratio)) + '×</div>'
-      + '<div class="bo-xl">' + esc(t('boX')) + '</div><div class="bo-nm">' + esc(m.name) + '</div>'
-      + '<div class="bo-meta">' + esc([m.party, m.state ? stName(m.state) : ''].filter(Boolean).join(' · ')) + '</div>'
-      + '<div class="bo-detail">' + esc(fill(t('boDetail'), { r: fmtShort(m.recentMedian), b: fmtShort(m.baseMedian), n: m.basePosts, d: s.breakBaseDays || 14 })) + '</div></div></div>';
-    var more = b.slice(1, 4).map(function (x) {
+    var main = '<div class="bo-main"><div class="bo-hd">' + avatar(m.name, m.avatar, colorOf(m.party)) + '<div class="bo-who"><div class="bo-nm">' + esc(m.name) + '</div>'
+      + '<div class="bo-meta">' + esc([m.party, m.state ? stName(m.state) : ''].filter(Boolean).join(' · ')) + '</div></div>'
+      + '<div class="bo-xw"><div class="bo-x">' + esc(String(m.ratio)) + '×</div><div class="bo-xl">' + esc(t('boX')) + '</div></div></div>'
+      + '<div class="bo-mk">' + esc(t('boVpp')) + '</div>' + boMeter(m, true)
+      + '<div class="bo-detail">' + esc(fill(t('boBase'), { n: m.basePosts, d: s.breakBaseDays || 14 })) + '</div></div>';
+    var more = b.slice(1, 5).map(function (x) {
       return '<div class="bo-row">' + avatar(x.name, x.avatar, colorOf(x.party)) + '<div class="n"><b>' + esc(x.name) + '</b><span>'
-        + esc([x.party, x.state ? stName(x.state) : ''].filter(Boolean).join(' · ')) + '</span></div><div class="x">' + esc(String(x.ratio)) + '×</div></div>';
+        + esc([x.party, x.state ? stName(x.state) : ''].filter(Boolean).join(' · ')) + '</span>' + boMeter(x, false) + '</div><div class="x">' + esc(String(x.ratio)) + '×</div></div>';
     }).join('');
     return '<div class="bo">' + main + '<div class="bo-more vc"><div>' + more + '</div></div></div>';
   }
-  function postCard(p, name, party, st, av) {
-    return '<div class="glass full"><div class="vc"><div><div class="tp-q">“' + esc(clipQuote(p.text)) + '”</div><div class="tp-by">' + avatar(name, av, colorOf(party))
-      + '<div><b>' + esc(name) + '</b><span>' + esc([party, st ? stName(st) : '', fill(t('postedAt'), { d: fmtWhen(p.date) })].filter(Boolean).join(' · ')) + '</span></div>'
-      + '<div class="tp-v"><b>' + esc(fmtShort(p.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div></div></div></div></div>';
+  /* the most-viewed post: the post itself (a short one big, a long one smaller) with its author,
+     and beside it what it did -- views, likes, likes per 100 views -- and one line of context */
+  function quoteSize(s) { var n = String(s || '').length; return n < 40 ? ' xl' : n < 110 ? ' l' : ''; }
+  function postCard(p, name, party, st, av, side) {
+    var txt = clipQuote(p.text), hasL = p.likes !== null && p.likes !== undefined;
+    var stats = '<div class="tpc-st big"><b>' + numHtml(fmtShort(p.views)) + '</b><span>' + esc(t('viewsWord')) + '</span></div>'
+      + (hasL ? '<div class="tpc-st"><b>' + numHtml(fmtShort(p.likes)) + '</b><span>' + esc(t('tpLikes')) + '</span></div>' : '')
+      + (hasL && p.views ? '<div class="tpc-st"><b>' + esc(fmtDec(Math.round(1000 * p.likes / p.views) / 10)) + '</b><span>' + esc(t('tpRate')) + '</span></div>' : '');
+    return '<div class="tpc"><div class="glass tpc-main"><div class="tpc-by">' + avatar(name, av, colorOf(party)) + '<div><b>' + esc(name) + '</b><span>'
+      + esc([party, st ? stName(st) : '', fill(t('postedAt'), { d: fmtWhen(p.date) })].filter(Boolean).join(' · ')) + '</span></div></div>'
+      + '<div class="tpc-q' + quoteSize(txt) + '">' + esc(txt) + '</div></div>'
+      + '<div class="tpc-side"><div class="glass tpc-stats">' + stats + '</div>' + (side || '') + '</div></div>';
   }
-  function sTopPost(s) { var p = s.topPost; return p ? postCard(p, p.name, p.party, p.state, p.avatar || null) : ''; }
+  function sTopPost(s) {
+    var p = s.topPost; if (!p) return '';
+    var k = s.kpis || {}, side = '';
+    if (k.views && p.views) side = '<div class="glass tpc-ctx"><b>' + esc(fmtDec(Math.round(1000 * p.views / k.views) / 10)) + '%</b><span>' + esc(fill(t('tpShare'), { n: fmtInt(k.originalPosts) })) + '</span></div>';
+    return postCard(p, p.name, p.party, p.state, p.avatar || null, side);
+  }
   /* biggest attacks: the sticky top two as cards, the next ones as rows */
   function sevColor(v) { return v >= 4.5 ? '#FF3D00' : v >= 3.5 ? '#FF7043' : '#FFB300'; }
   function atkTarget(x) {
@@ -2475,30 +2642,51 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   }
   function afterMap(el) {
     var rows = el.querySelectorAll('.ms-row'); if (!rows.length) return;
-    var svg = $('mapSvg'), i = 0;
+    var svg = $('mapSvg'), i = 0, sv = svg && svg.querySelector('svg');
+    /* a numbered badge on each listed state, at the middle of its outline (same numbers as the list) */
+    if (sv && sv.getBBox) {
+      var vb = String(sv.getAttribute('viewBox') || '0 0 100 100').split(/[\s,]+/).map(Number), rr = Math.max(vb[2], vb[3]) * 0.03, NS = 'http://www.w3.org/2000/svg';
+      [].forEach.call(rows, function (row, k) {
+        var name = row.getAttribute('data-s'), pth = null, bb = null;
+        [].forEach.call(sv.querySelectorAll('path'), function (pp) { if (pp.getAttribute('data-s') === name) pth = pp; });
+        try { bb = pth && pth.getBBox(); } catch (e) { bb = null; }
+        if (!bb || !bb.width) return;
+        var g = document.createElementNS(NS, 'g'), c = document.createElementNS(NS, 'circle'), tx = document.createElementNS(NS, 'text'), cx = bb.x + bb.width / 2, cy = bb.y + bb.height / 2;
+        g.setAttribute('class', 'mb'); g.setAttribute('data-s', name);
+        c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', rr); c.setAttribute('stroke-width', rr * 0.16);
+        tx.setAttribute('x', cx); tx.setAttribute('y', cy); tx.setAttribute('font-size', rr * 1.25); tx.textContent = String(k + 1);
+        g.appendChild(c); g.appendChild(tx); sv.appendChild(g);
+      });
+    }
     function hl() {
       [].forEach.call(rows, function (r) { setCls(r, 'hl', false); });
       var r = rows[i % rows.length], name = r.getAttribute('data-s'); setCls(r, 'hl', true);
       if (svg) { svg.className = 'map-svg dimmed'; [].forEach.call(svg.querySelectorAll('path'), function (p) { p.setAttribute('class', p.getAttribute('data-s') === name ? 'hl' : ''); }); }
+      if (sv) [].forEach.call(sv.querySelectorAll('.mb'), function (b) { b.setAttribute('class', b.getAttribute('data-s') === name ? 'mb hl' : 'mb'); });
       i++;
     }
     hl(); if (!REDUCED) state.tmo.push(setInterval(hl, 2600));
   }
+  /* "in simple words": a front page -- each fact's number large in its own column, the sentence beside it */
   function factList(items) {
-    return '<div class="glass full"><div class="vc"><ul class="facts">' + items.slice(0, 5).map(function (x) { return '<li><i></i><span>' + x + '</span></li>'; }).join('') + '</ul></div></div>';
+    return '<div class="glass full fp">' + items.slice(0, 5).map(function (x, i) {
+      if (typeof x === 'string') x = { s: x };
+      var d = (0.1 + i * 0.13).toFixed(2) + 's';
+      return '<div class="fp-r" style="-webkit-animation-delay:' + d + ';animation-delay:' + d + '"><div class="fp-k' + (x.c ? ' ' + x.c : '') + '">' + (x.k || '') + '</div><div class="fp-s">' + x.s + '</div></div>';
+    }).join('') + '</div>';
   }
   function sFacts(s) {
     var whenTxt = s.window.mode === 'rolling' ? fill(t('fWhen24'), { h: hrsOf(s) }) : fill(t('fWhenDay'), { d: fmtDay(s.window.from) }), out = [];
     (s.facts || []).forEach(function (f) {
-      var x = null;
-      if (f.type === 'window_posts') x = fill(t('fWindow'), { posts: esc(fmtInt(f.posts)), when: esc(whenTxt) });
-      else if (f.type === 'party_per_account') x = fill(t('fPer'), { a: esc(f.a), b: esc(f.b), ap: esc(fmtDec(f.aPer)), bp: esc(fmtDec(f.bPer)) });
-      else if (f.type === 'top_state') x = fill(t('fState'), { s: esc(stName(f.state)), n: esc(fmtInt(f.posts)) });
-      else if (f.type === 'top_post') x = fill(t('fTop'), { n: esc(f.name), v: esc(fmtShort(f.views)) });
-      else if (f.type === 'breakout') x = fill(t('fBreak'), { n: esc(f.name), x: esc(String(f.ratio)) });
-      else if (f.type === 'media_volume') x = fill(t('fMedia'), { n: esc(fmtInt(f.posts)) });
-      else if (f.type === 'vs_previous') x = fill(f.pct >= 0 ? t('fPrevUp') : t('fPrevDown'), { p: esc(String(Math.abs(f.pct))) });
-      if (x) out.push(x);
+      var x = null, k = '', c = '';
+      if (f.type === 'window_posts') { x = fill(t('fWindow'), { posts: esc(fmtInt(f.posts)), when: esc(whenTxt) }); k = numHtml(fmtInt(f.posts)); }
+      else if (f.type === 'party_per_account') { x = fill(t('fPer'), { a: esc(f.a), b: esc(f.b), ap: esc(fmtDec(f.aPer)), bp: esc(fmtDec(f.bPer)) }); k = esc(fmtDec(f.aPer)) + '<small>' + esc(f.a) + '</small>'; }
+      else if (f.type === 'top_state') { x = fill(t('fState'), { s: esc(stName(f.state)), n: esc(fmtInt(f.posts)) }); k = numHtml(fmtInt(f.posts)); }
+      else if (f.type === 'top_post') { x = fill(t('fTop'), { n: esc(f.name), v: esc(fmtShort(f.views)) }); k = numHtml(fmtShort(f.views)); }
+      else if (f.type === 'breakout') { x = fill(t('fBreak'), { n: esc(f.name), x: esc(String(f.ratio)) }); k = esc(String(f.ratio)) + '×'; c = 'up'; }
+      else if (f.type === 'media_volume') { x = fill(t('fMedia'), { n: esc(fmtInt(f.posts)) }); k = numHtml(fmtInt(f.posts)); }
+      else if (f.type === 'vs_previous') { x = fill(f.pct >= 0 ? t('fPrevUp') : t('fPrevDown'), { p: esc(String(Math.abs(f.pct))) }); k = (f.pct >= 0 ? '+' : '−') + esc(String(Math.abs(f.pct))) + '%'; c = f.pct >= 0 ? 'up' : 'down'; }
+      if (x) out.push({ k: k, s: x, c: c });
     });
     return factList(out);
   }
@@ -2535,38 +2723,77 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   /* ---------- One leader ---------- */
   function pName(p) { return p.person.name; }
   function sPProfile(p) {
-    var me = p.person, k = p.kpis || {}, u = p.usual || {}, chips = [];
+    var me = p.person, k = p.kpis || {}, u = p.usual || {}, chips = [], hrs = hrsOf(p);
     if (u.postsVsUsual !== null && u.postsVsUsual !== undefined && k.posts) chips.push('<span class="' + (u.postsVsUsual >= 1 ? 'up' : 'down') + '">' + esc(fill(t('pVsUsual'), { x: u.postsVsUsual })) + '</span>');
     if (u.viewsVsUsual !== null && u.viewsVsUsual !== undefined) chips.push('<span class="' + (u.viewsVsUsual >= 1 ? 'up' : 'down') + '">' + esc(fill(t('pViewsUsual'), { x: u.viewsVsUsual })) + '</span>');
     if (u.postsPerDay !== null && u.postsPerDay !== undefined) chips.push('<span>' + esc(fill(t('pUsualDay'), { n: u.postsPerDay })) + '</span>');
+    /* this period against their usual: two bars per measure (now, usual), from the same numbers as the chips */
+    function row(lbl, now, usual, f) {
+      var mx = Math.max(now, usual, 1), w = function (v) { return 'calc((100% - 17rem) * ' + (v / mx).toFixed(3) + ')'; };
+      return '<div class="pfc-r"><span class="l">' + esc(lbl) + '</span><div class="pfc-b"><div><i class="n" style="width:' + w(now) + '"></i><em>' + esc(t('pfNow')) + ' <b>' + numHtml(f(now)) + '</b></em></div>'
+        + '<div><i class="u" style="width:' + w(usual) + '"></i><em>' + esc(t('pfUsual')) + ' <b>' + numHtml(f(usual)) + '</b></em></div></div></div>';
+    }
+    var cmp = '';
+    if (u.postsPerDay !== null && u.postsPerDay !== undefined) cmp += row(t('pfPostsL'), k.posts || 0, Math.round(u.postsPerDay * hrs / 24), fmtInt);
+    if (k.posts && u.viewsPerPost && u.viewsVsUsual !== null && u.viewsVsUsual !== undefined) cmp += row(t('pfVppL'), Math.round(u.viewsPerPost * u.viewsVsUsual), u.viewsPerPost, fmtShort);
     var meta = (me.party ? plogo(me.partyLogo, me.color) + '<span class="pt" style="background:' + me.color + '">' + esc(me.party) + '</span>' : '')
       + (me.designation ? '<span>' + esc(me.designation) + '</span>' : '') + (me.state ? '<span>' + esc(stName(me.state)) + '</span>' : '') + (me.ac ? '<span>' + esc(me.ac) + '</span>' : '')
       + '<span>@' + esc(me.handle) + '</span>';
+    function kt(v, f, lbl) { return '<div' + (v ? '' : ' class="z"') + '><b data-count="' + v + '" data-f="' + f + '">0</b><span>' + lbl + '</span></div>'; }
     var body = !k.posts && !k.reposts
       ? '<div class="empty" style="height:auto;align-items:flex-start;text-align:left;margin-top:2rem"><h3>' + esc(t('pNoPosts')) + '</h3><p>' + esc(p.lastPostEver ? fill(t('pNoPostsP'), { d: fmtWhen(p.lastPostEver) }) : t('pNoPostsP2')) + '</p></div>'
-      : '<div class="pf-k"><div><b data-count="' + k.posts + '" data-f="int">0</b><span>' + t('pPosts') + '</span></div><div><b data-count="' + k.reposts + '" data-f="int">0</b><span>' + t('pReposts') + '</span></div>'
-        + '<div><b data-count="' + k.views + '" data-f="short">0</b><span>' + t('pViews') + '</span></div><div><b data-count="' + k.likes + '" data-f="short">0</b><span>' + t('pLikes') + '</span></div></div>'
-        + (chips.length ? '<div class="pf-chips">' + chips.join('') + '</div>' : '');
+      : '<div class="pf-k">' + kt(k.posts, 'int', t('pPosts')) + kt(k.reposts, 'int', t('pReposts')) + kt(k.views, 'short', t('pViews')) + kt(k.likes, 'short', t('pLikes')) + '</div>'
+        + (cmp ? '<div class="pfc"><div class="pfc-h">' + esc(fill(t('pfNowT'), { h: hrs })) + '</div>' + cmp + '</div>' : (chips.length ? '<div class="pf-chips">' + chips.join('') + '</div>' : ''));
     return '<div class="glass full"><div class="pf"><div class="pf-av">' + avatar(me.name, me.avatar, me.color) + '</div><div><div class="pf-nm">' + esc(me.name) + '</div><div class="pf-meta">' + meta + '</div>' + body + '</div></div></div>';
   }
+  /* when they post: a 24-hour dial (one spoke per hour, longer = more posts, the busiest hour in
+     gold and named in the middle) and the last days as bars; a day whose posts did not all reach
+     us is hatched "no data", never a false 0 */
+  function hh(h) { return (h < 10 ? '0' : '') + h + ':00'; }
   function sPRhythm(p) {
-    var hmax = Math.max.apply(null, p.hourly.concat([1])), dmax = 1;
-    p.daily.forEach(function (d) { if (d.posts > dmax) dmax = d.posts; });
-    var hb = p.hourly.map(function (v) { return '<div style="height:' + (100 * v / hmax).toFixed(1) + '%" title="' + v + '"></div>'; }).join('');
-    /* posts null = a day whose posts did not all reach us: "–" and no bar, never a false 0 */
-    var db = p.daily.map(function (d) {
-      if (d.posts === null) return '<div class="nod"><b>–</b><i style="height:0"></i><span>' + esc(fmtDay(d.day + ' 00:00')) + '</span></div>';
+    var hr = p.hourly || [], hmax = Math.max.apply(null, hr.concat([0])), peak = hr.indexOf(hmax), dmax = 1, R0 = 37, R1 = 57, sv = '', i;
+    sv += '<circle cx="0" cy="0" r="' + R0 + '" class="dl-ring"></circle>';
+    for (i = 0; i < 24; i++) {
+      var a = (i + 0.5) / 24 * 2 * Math.PI - Math.PI / 2, v = hr[i] || 0, ca = Math.cos(a), sa = Math.sin(a), r0 = R0 + 2.4;
+      if (v && hmax) { var r1 = r0 + 3 + (R1 - r0 - 3) * v / hmax; sv += '<line x1="' + (r0 * ca).toFixed(2) + '" y1="' + (r0 * sa).toFixed(2) + '" x2="' + (r1 * ca).toFixed(2) + '" y2="' + (r1 * sa).toFixed(2) + '" class="dl-b' + (i === peak ? ' pk' : '') + '"></line>'; }
+      else sv += '<circle cx="' + (r0 * ca).toFixed(2) + '" cy="' + (r0 * sa).toFixed(2) + '" r=".7" class="dl-z"></circle>';
+    }
+    [0, 6, 12, 18].forEach(function (h) { var a = h / 24 * 2 * Math.PI - Math.PI / 2; sv += '<text x="' + (62.5 * Math.cos(a)).toFixed(2) + '" y="' + (62.5 * Math.sin(a)).toFixed(2) + '" class="dl-t">' + (h < 10 ? '0' : '') + h + '</text>'; });
+    var ctr = hmax ? '<b>' + (peak < 10 ? '0' : '') + peak + '–' + ((peak + 1) % 24 < 10 ? '0' : '') + ((peak + 1) % 24) + '</b><span>' + esc(t('rhPeak')) + '</span>' : '<span>' + esc(t('rhNone')) + '</span>';
+    (p.daily || []).forEach(function (d) { if (d.posts > dmax) dmax = d.posts; });
+    var db = (p.daily || []).map(function (d) {
+      if (d.posts === null) return '<div class="nod"><b>' + esc(t('rhNoData')) + '</b><i></i><span>' + esc(fmtDay(d.day + ' 00:00')) + '</span></div>';
       return '<div><b>' + d.posts + '</b><i style="height:' + (100 * d.posts / dmax).toFixed(1) + '%"></i><span>' + esc(fmtDay(d.day + ' 00:00')) + '</span></div>';
     }).join('');
-    return '<div class="glass full"><div class="rh"><div><h4>' + esc(t('pHours')) + '</h4><div class="hbars">' + hb + '</div><div class="hlab"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div></div>'
-      + '<div><h4>' + esc(t('pDays')) + '</h4><div class="dbars">' + db + '</div></div></div></div>';
+    return '<div class="glass full"><div class="rh2"><div class="dlw"><h4>' + esc(t('pHours')) + '</h4><div class="dl"><svg viewBox="-68 -68 136 136" preserveAspectRatio="xMidYMid meet">' + sv + '</svg><div class="dl-c">' + ctr + '</div></div></div>'
+      + '<div class="dlw"><h4>' + esc(t('pDays')) + '</h4><div class="dbars">' + db + '</div></div></div></div>';
   }
-  function sPTop(p) { var x = p.topPost || p.latestPost; return x ? postCard(x, p.person.name, p.person.party, p.person.state, p.person.avatar) : ''; }
+  function sPTop(p) {
+    var x = p.topPost || p.latestPost, l = p.latestPost, side = '';
+    if (!x) return '';
+    /* beside their top post: the latest one, when it is a different post */
+    if (l && p.topPost && l.url !== p.topPost.url) side = '<div class="glass tpc-ctx tpc-late"><small>' + esc(t('tpLatest')) + ' · ' + esc(fmtWhen(l.date)) + '</small><p>' + esc(clipQuote(l.text)) + '</p><span>' + esc(fmtShort(l.views)) + ' ' + esc(t('viewsWord')) + '</span></div>';
+    return postCard(x, p.person.name, p.person.party, p.person.state, p.person.avatar, side);
+  }
+  /* where they stand: one ladder per list -- #1, the one just above, them, the one just below --
+     and how far they are from the top (or ahead of #2) */
   function sPRank(p) {
-    var r = p.rank || {}, me = p.person, tiles = '';
-    function tile(x, lbl) { return x ? '<div><b>#' + x.rank + '<small>' + esc(fill(t('pOf'), { n: fmtInt(x.of) })) + '</small></b><span>' + esc(lbl) + '</span></div>' : ''; }
-    tiles += tile(r.party, fill(t('pRankParty'), { p: me.party || '' })) + tile(r.state, fill(t('pRankState'), { s: stName(me.state || '') })) + tile(r.all, t('pRankAll'));
-    return '<div class="rk">' + tiles + '</div>';
+    var r = p.rank || {}, me = p.person;
+    function col(x, lbl) {
+      if (!x) return '';
+      var rows = '', prev = 0, near = x.near || [], top = near[0], second = near.filter(function (n) { return n.rank === 2; })[0], gap = '';
+      near.forEach(function (n) {
+        if (prev && n.rank > prev + 1) rows += '<div class="rl-gap"><i></i><i></i><i></i></div>';
+        prev = n.rank;
+        rows += '<div class="rl-r' + (n.me ? ' me' : '') + '"><span class="k">#' + n.rank + '</span>' + avatar(n.name, '/live/img/a/' + encodeURIComponent(String(n.handle || '').toLowerCase()), colorOf(n.party))
+          + '<span class="n">' + esc(String(n.name || '').replace(/^(Shri|Smt\.?|Sri|Dr\.?|Kumari)\s+/i, '')) + '</span><span class="v">' + numHtml(fmtShort(n.views)) + '</span></div>';   // (no honorific: the row is narrow)
+      });
+      if (x.rank === 1 && second) gap = fill(t('rkLead'), { v: fmtShort(x.views - second.views) });
+      else if (x.rank > 1 && top && x.views !== undefined) gap = fill(t('rkGapTop'), { v: fmtShort(top.views - x.views) });
+      return '<div class="glass rl"><div class="rl-h"><b>#' + x.rank + '</b><span>' + esc(lbl) + '<small>' + esc(fill(t('pOf'), { n: fmtInt(x.of) })) + '</small></span></div>'
+        + '<div class="rl-list">' + rows + '</div>' + (gap ? '<div class="rl-gap-t">' + esc(gap) + '</div>' : '') + '</div>';
+    }
+    return '<div class="rk2">' + col(r.party, fill(t('pRankParty'), { p: me.party || '' })) + col(r.state, fill(t('pRankState'), { s: stName(me.state || '') })) + col(r.all, t('pRankAll')) + '</div>';
   }
   function sPRivals(p) {
     var R = p.rivals || { list: [] };
@@ -2597,15 +2824,15 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   function sPFacts(p) {
     var whenTxt = p.window.mode === 'rolling' ? fill(t('fWhen24'), { h: hrsOf(p) }) : fill(t('fWhenDay'), { d: fmtDay(p.window.from) }), out = [], nm = esc(p.person.name);
     (p.facts || []).forEach(function (f) {
-      var x = null;
-      if (f.type === 'p_posts') x = fill(t('fpPosts'), { n: nm, p: fmtInt(f.posts), r: fmtInt(f.reposts), when: esc(whenTxt) });
-      else if (f.type === 'p_vs_usual') x = fill(t('fpUsual'), { x: f.x, d: f.perDay });
-      else if (f.type === 'p_rank_state') x = fill(t('fpRankS'), { r: f.rank, o: fmtInt(f.of), s: esc(stName(f.state)) });
-      else if (f.type === 'p_rank_party') x = fill(t('fpRankP'), { r: f.rank, o: fmtInt(f.of), p: esc(f.party) });
-      else if (f.type === 'p_top') x = fill(t('fpTop'), { v: esc(fmtShort(f.views)) });
-      else if (f.type === 'p_rivals') x = fill(t('fpRiv'), { n: f.n, p: esc(f.place), b: f.busier });
-      else if (f.type === 'p_mentions') x = fill(t('fpMent'), { n: f.n });
-      if (x) out.push(x);
+      var x = null, k = '', c = '';
+      if (f.type === 'p_posts') { x = fill(t('fpPosts'), { n: nm, p: fmtInt(f.posts), r: fmtInt(f.reposts), when: esc(whenTxt) }); k = numHtml(fmtInt(f.posts)); }
+      else if (f.type === 'p_vs_usual') { x = fill(t('fpUsual'), { x: f.x, d: f.perDay }); k = esc(String(f.x)) + '×'; c = f.x >= 1 ? 'up' : 'down'; }
+      else if (f.type === 'p_rank_state') { x = fill(t('fpRankS'), { r: f.rank, o: fmtInt(f.of), s: esc(stName(f.state)) }); k = '#' + esc(String(f.rank)) + '<small>' + esc(stName(f.state)) + '</small>'; }
+      else if (f.type === 'p_rank_party') { x = fill(t('fpRankP'), { r: f.rank, o: fmtInt(f.of), p: esc(f.party) }); k = '#' + esc(String(f.rank)) + '<small>' + esc(f.party) + '</small>'; }
+      else if (f.type === 'p_top') { x = fill(t('fpTop'), { v: esc(fmtShort(f.views)) }); k = numHtml(fmtShort(f.views)); }
+      else if (f.type === 'p_rivals') { x = fill(t('fpRiv'), { n: f.n, p: esc(f.place), b: f.busier }); k = esc(String(f.n)); }
+      else if (f.type === 'p_mentions') { x = fill(t('fpMent'), { n: f.n }); k = esc(String(f.n)); }
+      if (x) out.push({ k: k, s: x, c: c });
     });
     return factList(out);
   }

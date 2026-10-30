@@ -633,7 +633,11 @@ function rankIn(totals, key, filter) {
   var arr = Object.keys(totals).filter(function (k) { return !filter || filter(totals[k]); })
     .sort(function (a, b) { return totals[b].views - totals[a].views; });
   var i = arr.indexOf(key);
-  return i < 0 ? null : { rank: i + 1, of: arr.length };
+  if (i < 0) return null;
+  /* the ladder the page draws: #1, the one just above, this leader, the one just below */
+  var near = [0, i - 1, i, i + 1].filter(function (j, n, a) { return j >= 0 && j < arr.length && a.indexOf(j) === n; })
+    .map(function (j) { var x = totals[arr[j]]; return { rank: j + 1, handle: x.handle, name: x.name, party: x.party, views: x.views, me: j === i }; });
+  return { rank: i + 1, of: arr.length, views: totals[key].views, near: near };
 }
 
 /* rows: this handle's posts from BREAK_BASE_DAYS before the window to its end.
