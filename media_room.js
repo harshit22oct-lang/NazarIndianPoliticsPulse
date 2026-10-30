@@ -144,7 +144,7 @@ function makeStore(dataDir, aiUsage) {
 function createMediaRoom(opts) {
   var log = opts.log || console.log, AI = MAI.createLabeller({ log: log }), store = makeStore(opts.dataDir, AI.usage);
   var cfg = JSON.parse(fs.readFileSync(CFG_FILE, 'utf8')), tagger = ML.makeTagger(cfg), NAT = nationalFeeds(cfg);
-  var items = {}, status = {}, nextAt = {}, watch = {}, watchSaved = {}, cache = {}, busy = false, worker = false, firstPass = true, lastRun = 0;
+  var items = {}, status = {}, nextAt = {}, watch = {}, watchSaved = {}, cache = {}, busy = false, worker = false, firstPass = true, lastRun = 0, loaded = false;
   /* weight: how much longer a topic's screen stays up (important ones longer); from the
      config, otherwise by priority */
   var topics = cfg.narratives.slice().map(function (n, i) {
@@ -359,6 +359,7 @@ function createMediaRoom(opts) {
   return {
     start: async function () {
       try { await reload(); } catch (e) { log('  [media] could not load saved headlines: ' + e.message); }
+      loaded = true;                                                        // the saved headlines are in (or could not be read)
       worker = String(process.env.MEDIA_WORKER || 'on').toLowerCase() !== 'off';
       log('  [media] ' + (worker ? 'collecting' : 'display only (MEDIA_WORKER=off)') + ' -- ' + Object.keys(items).length + ' saved headlines, ' + NAT.length + ' feeds, store: ' + store.kind);
       if (!worker) {
@@ -381,6 +382,8 @@ function createMediaRoom(opts) {
         all: view('all'), local: st ? view('st:' + st) : null, sources: sourceStatus(), ai: aiInfo()
       };
     },
+    /* false while the saved headlines are still being read at startup (the page shows "getting ready") */
+    ready: function () { return loaded; },
     states: Object.keys(ML.STATE_HI),
     /* counting day: the Election Room adds "<state> results / counting" searches for each state
        being counted (Hindi + English), read every 15 min like the rest, kept until restart */

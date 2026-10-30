@@ -700,6 +700,10 @@ body.portrait .ak{grid-template-columns:1fr;grid-template-rows:auto 1fr}
 .empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .empty h3{font-family:var(--head);font-size:3.6rem}
 .empty p{font-size:1.6rem;color:var(--muted);margin-top:1rem;max-width:70rem;line-height:1.5}
+.ldr{width:22rem;height:.4rem;border-radius:.4rem;margin:0 auto 2.4rem;overflow:hidden;background:rgba(255,255,255,.12)}
+.ldr i{display:block;width:40%;height:100%;background:linear-gradient(90deg,#E65100,#FFC857);animation:ldr 1.4s ease-in-out infinite}
+@keyframes ldr{0%{margin-left:-40%}100%{margin-left:100%}}
+body.reduced .ldr i{animation:none;width:100%;opacity:.6}
 
 /* ---------- Media Room: news cards, latest per source, the "what to show" panel ---------- */
 /* the news wall: one lead story down the left, up to four more beside it */
@@ -1473,7 +1477,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   /* standalone prototype: the server reads a recorded CSV export, not a live feed */
   var PROTO = window.NAZAR_PROTO || null;
   var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  var REFRESH_MS = 60000, BACKOFF = [60000, 120000, 300000], SOFT_RELOAD_MS = 6 * 3600000, CHOOSER_AUTO_S = 20;
+  var REFRESH_MS = 60000, BACKOFF = [60000, 120000, 300000], FIRST_RETRY = [5000, 10000, 20000, 30000, 60000], API_TIMEOUT_MS = 20000, SOFT_RELOAD_MS = 6 * 3600000, CHOOSER_AUTO_S = 20;
   /* leader photos -- replace the files (same names) to change them; see live_assets/leaders/ATTRIBUTION.md */
   var HERO = {
     heroM: ['/live/img/leaders/modi-standing.webp', 'Narendra Modi'],
@@ -1525,7 +1529,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       authT: 'Please sign in again', authP: 'Your session has ended. Sign in, then open Nazar again from the dashboard.', authA: 'Sign in',
       forbT: 'No access', forbP: 'Your account cannot view this dashboard.', forbA: 'Go to my dashboard',
       nfT: 'Leader not found', nfP: 'This leader is not in the list for this dashboard.', nfA: 'Choose again',
-      firstFailT: 'Cannot reach the server', firstFailP: 'Nazar will keep trying every few minutes.', retry: 'Try now',
+      firstFailT: 'Cannot reach the server', firstFailP: 'Nazar will keep trying by itself.', retry: 'Try now',
+      loadT: 'Loading…', loadP: 'Getting the latest data', readyT: 'Nazar is getting ready', readyP: 'The server is starting up — this screen opens by itself in a moment.',
+      hPrefill: 'Saved data from {d} — updating',
       demo: 'Demo — sample numbers, not real data', hist: 'Historical test · as of {d}', proto: 'Recorded data · {a} – {b}',
       nodataP: 'There is no complete window of data yet. This screen updates by itself as soon as data arrives.',
       fWindow: 'Tracked political accounts published <b>{posts}</b> original posts {when}.', fWhen24: 'in the last {h} hours', fWhenDay: 'on {d}',
@@ -1589,7 +1595,9 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       authT: 'कृपया दोबारा साइन इन करें', authP: 'आपका सत्र समाप्त हो गया है। साइन इन करें और डैशबोर्ड से नज़र फिर खोलें।', authA: 'साइन इन',
       forbT: 'पहुँच नहीं', forbP: 'आपका खाता यह डैशबोर्ड नहीं देख सकता।', forbA: 'मेरे डैशबोर्ड पर जाएँ',
       nfT: 'नेता नहीं मिला', nfP: 'यह नेता इस डैशबोर्ड की सूची में नहीं है।', nfA: 'फिर से चुनें',
-      firstFailT: 'सर्वर से संपर्क नहीं', firstFailP: 'नज़र हर कुछ मिनट में फिर कोशिश करेगा।', retry: 'अभी कोशिश करें',
+      firstFailT: 'सर्वर से संपर्क नहीं', firstFailP: 'नज़र अपने आप फिर कोशिश करता रहेगा।', retry: 'अभी कोशिश करें',
+      loadT: 'लोड हो रहा है…', loadP: 'ताज़ा डेटा लाया जा रहा है', readyT: 'नज़र तैयार हो रहा है', readyP: 'सर्वर शुरू हो रहा है — यह स्क्रीन कुछ ही पलों में अपने आप खुलेगी।',
+      hPrefill: '{d} का सहेजा डेटा — अपडेट हो रहा है',
       demo: 'डेमो — नमूना आँकड़े, असली डेटा नहीं', hist: 'पुराने समय का परीक्षण · {d} तक', proto: 'रिकॉर्ड किया गया डेटा · {a} – {b}',
       nodataP: 'अभी डेटा की कोई पूरी अवधि उपलब्ध नहीं है। डेटा आते ही यह स्क्रीन अपने आप अपडेट होगी।',
       fWindow: 'ट्रैक किए गए राजनीतिक खातों ने {when} <b>{posts}</b> मूल पोस्ट किए।', fWhen24: 'पिछले {h} घंटों में', fWhenDay: '{d} को',
@@ -2000,7 +2008,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (pl && pl.state === 'source_unreachable') parts.push('<span class="warn">' + fill(t('hSource'), { d: esc(fmtWhen(pl.lastAttemptAt)) }) + '</span>');
     else if (pl && pl.state === 'source_idle') parts.push('<span class="warn">' + fill(t('hIdle'), { d: esc(fmtWhen(pl.lastAttemptAt)) }) + '</span>');
     if (s.degraded) parts.push('<span class="warn">' + fill(t('hDegraded'), { d: esc(fmtTimeIso(s.degraded.generatedAt)) }) + '</span>');
-    if (state.offline && state.savedAt) parts.push('<span class="warn">' + fill(t('hSaved'), { d: esc(fmtTimeIso(state.savedAt)) }) + '</span>');
+    if (savedNote()) parts.push(savedNote());
     if (s.mode === 'historical') parts.unshift('<span class="warn">' + t('hHist') + '</span>');
     $('honesty').innerHTML = parts.join(' &nbsp;·&nbsp; ');
   }
@@ -2751,16 +2759,76 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function api(url) {
     var m = apiMemo[url];
     if (m && Date.now() - m.at < 25000) return m.p;
-    var p = fetch(url, { credentials: 'same-origin', cache: 'no-store' }).then(function (r) {
-      if (r.status === 401) { stop('auth'); return null; }
-      if (r.status === 403) { stop('forbidden'); return null; }
-      if (r.status === 404) return { __notfound: true };
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
+    /* a server that does not answer within 20 s counts as down (a restarting server can hold a
+       request for minutes): the screen falls back to its saved copy and asks again soon */
+    var ctl = typeof AbortController === 'function' ? new AbortController() : null, tm = null;
+    var p = new Promise(function (ok, no) {
+      tm = setTimeout(function () { try { if (ctl) ctl.abort(); } catch (e) {} var e = new Error('timeout'); e.timeout = true; no(e); }, API_TIMEOUT_MS);
+      fetch(url, ctl ? { credentials: 'same-origin', cache: 'no-store', signal: ctl.signal } : { credentials: 'same-origin', cache: 'no-store' }).then(function (r) {
+        if (r.status === 401) { stop('auth'); return null; }
+        if (r.status === 403) { stop('forbidden'); return null; }
+        if (r.status === 404) return { __notfound: true };
+        /* 503: the server is up but still loading its data -- "getting ready", not "unreachable" */
+        if (r.status === 503) { var e = new Error('HTTP 503'); e.ready = true; throw e; }
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).then(ok, no);
     });
+    p.then(function () { clearTimeout(tm); }, function () { clearTimeout(tm); });
     apiMemo[url] = { at: Date.now(), p: p };
     p.catch(function () { if (apiMemo[url] && apiMemo[url].p === p) delete apiMemo[url]; });
     return p;
+  }
+  /* ---- never a blank screen: while the first answer for a screen is on its way, the copy this
+     browser saved last time is shown (marked "saved -- updating"), else a loading card ---- */
+  function savedGet(key, url) {
+    try { var s = JSON.parse(store(key) || 'null'); return s && s.s && (!url || s.u === url) ? s : null; } catch (e) { return null; }
+  }
+  function savedPut(key, url, snap) { try { store(key, JSON.stringify({ at: new Date().toISOString(), u: url || undefined, s: snap })); } catch (e) {} }
+  function savedNote() {
+    if (!state.savedAt || !(state.offline || state.prefill)) return '';
+    return '<span class="warn">' + fill(t(state.offline ? 'hSaved' : 'hPrefill'), { d: esc(fmtTimeIso(state.savedAt)) }) + '</span>';
+  }
+  function showLoader(ready) {
+    if (state.snap) return;
+    $('stTitle').innerHTML = ''; $('stWhen').textContent = ''; $('stCount').textContent = '';   // no heading left over from the last screen
+    $('scene').innerHTML ='<div class="glass full"><div class="empty"><div class="ldr"><i></i></div><h3>' + esc(t(ready ? 'readyT' : 'loadT'))
+      + '</h3><p>' + esc(t(ready ? 'readyP' : 'loadP')) + '</p></div></div>';
+  }
+  /* the first answer for a screen: a moment's wait shows nothing new; after that the saved copy
+     (or the loading card) is put up, and the fresh answer replaces it in place */
+  function prefill(key, url) {
+    return setTimeout(function () {
+      if (state.snap || state.stopped) return;
+      var saved = key ? savedGet(key, url) : null;
+      if (!saved) { showLoader(false); return; }
+      state.prefill = true; state.savedAt = saved.at; state.snap = saved.s; if (state.mode === 'all') state.all = saved.s;
+      onData(true); renderChip(); renderHonesty();
+    }, 350);
+  }
+  /* no answer yet for this screen (or only a saved one): ask again in seconds, not minutes */
+  function retryMs() {
+    var a = state.fresh ? BACKOFF : FIRST_RETRY;
+    return a[Math.min(state.fails - 1, a.length - 1)];
+  }
+  function loadFailed(err, key, url) {
+    if (state.stopped) return;
+    state.fails++; state.offline = true;
+    if (!state.snap) {
+      var saved = key ? savedGet(key, url) : null;
+      if (saved) { state.savedAt = saved.at; state.snap = saved.s; if (state.mode === 'all') state.all = saved.s; onData(true); }
+      else if (err && err.ready) showLoader(true);
+      else firstFail();
+    } else if (!state.savedAt) state.savedAt = new Date(state.lastOk || Date.now()).toISOString();
+    state.prefill = false;
+    renderChip(); renderHonesty();
+    schedule(retryMs());
+  }
+  function loadOk() {
+    var was = state.prefill;
+    state.fails = 0; state.offline = false; state.savedAt = null; state.prefill = false; state.fresh = true; hideOverlay();
+    state.lastOk = Date.now();
+    return was;
   }
   function q(extra) { return '?scope=' + SCOPE + '&hrs=' + HOURS + (ASOF ? '&asof=' + encodeURIComponent(ASOF) : '') + (extra || ''); }
   /* leaders are searched and shown All India, whatever state this page is on */
@@ -2785,14 +2853,19 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function schedule(ms) { clearTimeout(fetchTimer); if (!state.stopped) fetchTimer = setTimeout(fetchData, ms); }
   function fetchData(first) {
     if (state.stopped || !state.mode) return;
+    state.gen = (state.gen || 0) + 1;                                   // an answer to an older request is dropped
     if (state.mode === 'media') { fetchMedia(first); return; }
     if (state.mode === 'election') { fetchElection(first); return; }
     if (DEMO) { state.all = demoSnap(); state.snap = state.all; onData(first); return; }
-    var mode = state.mode, h = state.person;
+    var mode = state.mode, h = state.person, gen = state.gen;
+    /* the person screens have no saved copy (they show the loading card) */
+    var key = mode === 'all' && !ASOF ? 'pulse_live_snap_' + SCOPE + (HOURS !== 24 ? '_' + HOURS : '') : null;
+    var pre = first ? prefill(key, null) : null;
     var calls = [api('/api/live-snapshot' + (mode === 'person' ? qp() : q()))];
     if (mode === 'person') calls.push(api('/api/live-person' + qp('&h=' + encodeURIComponent(h))));
     Promise.all(calls).then(function (res) {
-      if (state.stopped || mode !== state.mode) return;
+      clearTimeout(pre);
+      if (state.stopped || gen !== state.gen) return;
       var all = res[0], per = res[1];
       if (!all) return;
       if (mode === 'person' && per && per.__notfound) {
@@ -2800,24 +2873,17 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
         $('ovAgain').onclick = function () { hideOverlay(); openChooser(); }; return;
       }
       if (mode === 'person' && !per) return;
-      state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
+      var was = loadOk();
       noteLive(all);                                                   // what changed since the last answer
       state.all = all; state.psnap = per || null; state.snap = mode === 'person' ? per : all;
-      state.lastOk = Date.now();
-      if (mode === 'all' && !ASOF) { try { store('pulse_live_snap_' + SCOPE + (HOURS !== 24 ? '_' + HOURS : ''), JSON.stringify({ at: new Date().toISOString(), s: all })); } catch (e) {} }
+      if (key) savedPut(key, null, all);
       if (!state.geo) loadGeo();
-      onData(first);
+      onData(first && !was);
       schedule(REFRESH_MS);
-    }).catch(function () {
-      if (state.stopped) return;
-      state.fails++; state.offline = true;
-      if (!state.snap) {
-        var saved = null; try { saved = JSON.parse(store('pulse_live_snap_' + SCOPE + (HOURS !== 24 ? '_' + HOURS : '')) || 'null'); } catch (e) { saved = null; }
-        if (saved && saved.s && !ASOF && state.mode === 'all') { state.savedAt = saved.at; state.all = saved.s; state.snap = saved.s; onData(true); }
-        else firstFail();
-      } else if (!state.savedAt) state.savedAt = new Date(state.lastOk || Date.now()).toISOString();
-      renderChip(); renderHonesty();
-      schedule(BACKOFF[Math.min(state.fails - 1, BACKOFF.length - 1)]);
+    }).catch(function (err) {
+      clearTimeout(pre);
+      if (gen !== state.gen) return;
+      loadFailed(err, key, null);
     });
   }
   function stop(kind) {
@@ -2995,26 +3061,23 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       if (m.ai && m.ai.state === 'paused') parts.push('<span class="warn">' + esc(t('mrAiPaused')) + '</span>');
     }
     if (m.lastRun && now - m.lastRun > 45 * 60000) parts.push('<span class="warn">' + esc(fill(t('mrPaused'), { a: fmtAgo((now - m.lastRun) / 60000) })) + '</span>');
-    if (state.offline && state.savedAt) parts.push('<span class="warn">' + fill(t('hSaved'), { d: esc(fmtTimeIso(state.savedAt)) }) + '</span>');
+    if (savedNote()) parts.push(savedNote());
     return parts.join(' &nbsp;·&nbsp; ');
   }
   function fetchMedia(first) {
-    api(mrUrl()).then(function (m) {
-      if (state.stopped || state.mode !== 'media' || !m || m.__notfound) return;
-      state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
-      state.snap = m; state.lastOk = Date.now();
-      try { store('nazar_mr_snap', JSON.stringify({ at: new Date().toISOString(), s: m })); } catch (e) {}
-      onData(first); if (MR.open) renderMrPanel();
+    var url = mrUrl(), gen = state.gen, pre = first ? prefill('nazar_mr_snap', url) : null;
+    api(url).then(function (m) {
+      clearTimeout(pre);
+      if (state.stopped || gen !== state.gen || state.mode !== 'media' || !m || m.__notfound) return;
+      var was = loadOk();
+      state.snap = m;
+      savedPut('nazar_mr_snap', url, m);
+      onData(first && !was); if (MR.open) renderMrPanel();
       schedule(m.collecting && !m.lastRun ? 20000 : REFRESH_MS);             // first collection: look again soon
-    }).catch(function () {
-      if (state.stopped) return;
-      state.fails++; state.offline = true;
-      if (!state.snap) {
-        var saved = null; try { saved = JSON.parse(store('nazar_mr_snap') || 'null'); } catch (e) { saved = null; }
-        if (saved && saved.s) { state.savedAt = saved.at; state.snap = saved.s; onData(true); } else firstFail();
-      } else if (!state.savedAt) state.savedAt = new Date(state.lastOk || Date.now()).toISOString();
-      renderChip(); renderHonesty();
-      schedule(BACKOFF[Math.min(state.fails - 1, BACKOFF.length - 1)]);
+    }).catch(function (err) {
+      clearTimeout(pre);
+      if (gen !== state.gen) return;
+      loadFailed(err, 'nazar_mr_snap', url);
     });
   }
 
@@ -3184,24 +3247,21 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
       + (st && ER.city ? '&city=' + encodeURIComponent(ER.city) : '') + (ER.demo ? '&demo=1' : '');
   }
   function fetchElection(first) {
-    api(erUrl()).then(function (m) {
-      if (state.stopped || state.mode !== 'election' || !m || m.__notfound) return;
-      state.fails = 0; state.offline = false; state.savedAt = null; hideOverlay();
-      state.snap = m; state.lastOk = Date.now();
+    var url = erUrl(), gen = state.gen, pre = first ? prefill('nazar_er_snap', url) : null;
+    api(url).then(function (m) {
+      clearTimeout(pre);
+      if (state.stopped || gen !== state.gen || state.mode !== 'election' || !m || m.__notfound) return;
+      var was = loadOk();
+      state.snap = m;
       /* real counting began while this screen was on the practice replay: the replay is switched off for good */
       if (m.demoSkipped && ER.demo) { ER.demo = false; sstore('nazar_er_demo', '0'); }
-      try { store('nazar_er_snap', JSON.stringify({ at: new Date().toISOString(), s: m })); } catch (e) {}
-      onData(first); if (MR.open) renderMrPanel();
+      savedPut('nazar_er_snap', url, m);
+      onData(first && !was); if (MR.open) renderMrPanel();
       schedule(m.mode === 'live' || m.mode === 'demo' ? 30000 : 120000);       // counting day: every 30 s
-    }).catch(function () {
-      if (state.stopped) return;
-      state.fails++; state.offline = true;
-      if (!state.snap) {
-        var saved = null; try { saved = JSON.parse(store('nazar_er_snap') || 'null'); } catch (e) { saved = null; }
-        if (saved && saved.s) { state.savedAt = saved.at; state.snap = saved.s; onData(true); } else firstFail();
-      } else if (!state.savedAt) state.savedAt = new Date(state.lastOk || Date.now()).toISOString();
-      renderChip(); renderHonesty();
-      schedule(BACKOFF[Math.min(state.fails - 1, BACKOFF.length - 1)]);
+    }).catch(function (err) {
+      clearTimeout(pre);
+      if (gen !== state.gen) return;
+      loadFailed(err, 'nazar_er_snap', url);
     });
   }
   /* ---- names, colours, badges ---- */
@@ -3549,7 +3609,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
     if (m.mode === 'demo') parts.push('<span class="warn">' + esc(t('erNoteDemo')) + '</span>');
     else if (ER.type === 'council' || ER.type === 'local') parts.push('<span class="warn">' + esc(t('erNoteNews')) + '</span>');
     else if (m.mode === 'past') parts.push('<span class="warn">' + esc(t('erNoteNone')) + '</span>');
-    if (state.offline && state.savedAt) parts.push('<span class="warn">' + fill(t('hSaved'), { d: esc(fmtTimeIso(state.savedAt)) }) + '</span>');
+    if (savedNote()) parts.push(savedNote());
     return parts.join(' &nbsp;·&nbsp; ');
   }
   /* ---- the "which election" panel (the Media Room's panel, with the Election Room's choices) ---- */
@@ -3647,6 +3707,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   function startShow(mode, handle) {
     stopChooser();
     state.mode = mode; state.person = handle || ''; state.snap = null; state.psnap = null; state.tickerKey = '';
+    state.fails = 0; state.offline = false; state.savedAt = null; state.prefill = false; state.fresh = false;
     state.scenes = []; state.idx = -1; clearTimeout(state.timer); clearSceneWork(); $('scene').innerHTML = '';
     /* (the address is not changed: a refresh or a new tab starts on All India) */
     if (mode === 'person') rememberRecent(handle);
@@ -3668,7 +3729,7 @@ body.phone .ch-media b{font-size:1.9rem} body.phone .ch-media span{font-size:1.1
   /* ------------------------------------------------------- start screen */
   var chT = null, chLeft = 0, chSel = -1, chRes = [], chSearchT = null;
   function openChooser() {
-    clearTimeout(state.timer); clearSceneWork(); clearTimeout(fetchTimer);
+    clearTimeout(state.timer); clearSceneWork(); clearTimeout(fetchTimer); state.gen = (state.gen || 0) + 1;
     state.mode = null; $('app').style.visibility = 'hidden'; $('chooser').className = ''; setCls(document.body, 'choosing', true);
     mrPanel(false); setCls(document.body, 'mr', false); setCls(document.body, 'er', false); $('mrBtn').className = 'tbtn hidden'; $('erBack').className = 'tbtn er-back hidden';
     if (!DEMO) { if (erWatchT) erChooserLive(); else erWatchStart(); }

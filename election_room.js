@@ -84,7 +84,7 @@ function createElectionRoom(opts) {
   var demoData = null; try { demoData = JSON.parse(fs.readFileSync(path.join(dataDir, 'election_demo.json'), 'utf8')); } catch (e) {}
   var DEMO_CODE = demoData && demoData.state ? EL.BYNAME[String(demoData.state).toLowerCase()] || null : null;
   /* live: folder -> { folder, kind, title, updated, checkedAt, error, contests: { key: contest } } */
-  var live = {}, finals = [], worker = false, busy = false, nextAt = 0, lastCheck = 0, lastError = null;
+  var live = {}, finals = [], loaded = false, worker = false, busy = false, nextAt = 0, lastCheck = 0, lastError = null;
   var trail = {};                                                     // contest key -> [{t, by party total}] for the arrows
   var candCache = {};                                                 // folder:code:no -> { at, status, det } (candidate pages)
   var seatPrev = {};                                                  // contest key -> { seatNo: {party, status} } for flips / declared
@@ -564,6 +564,7 @@ function createElectionRoom(opts) {
       /* the demo's Hindi names (archived ECI Hindi pages, fetch-election-history.js demo-hi) */
       if (demoData && demoData.hi && DEMO_CODE) learnHi(demoData.folder, DEMO_CODE, demoData.hi, demoData.seatList);
       try { var s = await store.load(); if (s.live) live = s.live; finals = (s.finals || []).filter(function (x) { return x && x._id; }); } catch (e) { log('  [election] could not load saved results: ' + e.message); }
+      loaded = true;
       /* ELECTION_WORKER=on|off overrides MEDIA_WORKER for this room alone */
       worker = String(process.env.ELECTION_WORKER || process.env.MEDIA_WORKER || 'on').toLowerCase() !== 'off';
       log('  [election] ' + (worker ? 'watching results.eci.gov.in' : 'display only (MEDIA_WORKER=off)') + ' -- ' + history.length + ' archived results, ' + finals.length + ' saved, demo: ' + (demoData ? demoData.frames.length + ' frames' : 'none'));
@@ -607,6 +608,8 @@ function createElectionRoom(opts) {
                alliancesNote: true, majorityNote: true, partyHi: cfg.party_hi, partyColor: cfg.party_color };
     },
     hasDemo: function () { return !!demoData; },
+    /* false while the saved results are still being read at startup */
+    ready: function () { return loaded; },
     /* for every screen's watch (a few bytes, every few minutes): what is being counted, and what
        started in the last hour (startedAt: when this server saw it start) */
     watch: function () {

@@ -744,8 +744,14 @@ function electionNews(st, type, city) {
     if (pair) cre = new RegExp(pair.map(function (x) { return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|'), 'i');
   }
   var test = function (t) { return re.test(t) && !ELEC_ABROAD.test(t) && !ELEC_ABROAD_CS.test(t) && (type === 'all' || type === 'local' || type === 'council' || ELEC_WORD.test(t)) && (!cre || cre.test(t)); };
-  try { return mediaRoom.find(test, st || null, 48, 12); } catch (e) { return []; }
+  /* scanning every headline takes a moment: the same news is kept for a minute */
+  var k = (st || '-') + '|' + type + '|' + (city || ''), c = elecNewsMemo[k];
+  if (c && Date.now() - c.at < 60000) return c.v;
+  var v; try { v = mediaRoom.find(test, st || null, 48, 12); } catch (e) { return []; }
+  elecNewsMemo[k] = { at: Date.now(), v: v };
+  return v;
 }
+var elecNewsMemo = {};
 /* the last good screens: served at once after a restart while the posts load (snap_cache.js) */
 var snapCache = require('./snap_cache.js').createSnapCache(DATA);
 /* saved screens: 'snap:<scope>' for 24 h (as before), 'snap:<scope>:<hours>' for 48 / 72 h */
@@ -838,6 +844,7 @@ var server = http.createServer(function (req, res) {
     return siteIcon(m[1], function (fp) { if (fp) return file(res, fp); send(res, 404, 'text/plain', 'Not found'); });
   }
   if (p === '/api/media-room') {
+    if (!mediaRoom.ready()) return json(res, 503, { error: 'News is still loading.', code: 'server' });
     /* ?state=<name> (the Media Room's own pick) wins over the page's scope */
     var mrSt = q.state ? String(q.state).slice(0, 60) : LIVE.stateOfScope(String(q.scope || 'all'));
     try { return json(res, 200, mediaRoom.get(mrSt || null)); }
@@ -849,6 +856,7 @@ var server = http.createServer(function (req, res) {
     var erSt = q.state === '-' ? null : q.state ? String(q.state).slice(0, 60) : LIVE.stateOfScope(String(q.scope || 'all'));
     var erType = /^(all|ls|vs|bye|council|local)$/.test(String(q.type || '')) ? String(q.type) : 'all';
     /* ?watch=1: only what is being counted and what just started (every screen asks every few minutes) */
+    if (!electionRoom.ready()) return json(res, 503, { error: 'Results are still loading.', code: 'server' });
     if (q.watch === '1') { try { return json(res, 200, electionRoom.watch()); } catch (err) { return json(res, 500, { error: 'Results are not available right now.', code: 'server' }); } }
     try {
       if (erSt) mediaRoom.get(erSt);                                     // the Media Room starts collecting this state's news too
