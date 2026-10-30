@@ -1510,10 +1510,10 @@ body.phone .bo-main .av{width:6.4rem;height:6.4rem;font-size:2.3rem} body.phone 
 
 /* ---------- the rooms (audit phase 5) ---------- */
 /* M1 pictures: a band across the big card (fading into it), a faded backdrop behind the small ones */
-.mr-im{flex:0 0 33%;min-height:0;position:relative;overflow:hidden;margin:1.4rem -2.6rem 0;background:#140502}
+.mr-im{flex:0 1 33%;min-height:7rem;position:relative;overflow:hidden;margin:1.4rem -2.6rem 0;background:#140502}
 .mr-im img{display:block;width:100%;height:100%;object-fit:cover}
 .mr-im:after{content:'';position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(180deg,rgba(24,7,2,0),rgba(24,7,2,.95))}
-.mr-c.mr-lead.has-im .mr-t{margin:1.2rem 0 auto;font-size:2.8rem;line-height:1.32}
+.mr-c.mr-lead.has-im .mr-t{margin:1.2rem 0 auto;font-size:2.8rem;line-height:1.32;-webkit-box-flex:0;-webkit-flex-shrink:0;flex-shrink:0;-webkit-line-clamp:3}   /* the picture gives way before the headline does */
 .mr-bg{position:absolute;top:0;left:0;right:0;height:72%;overflow:hidden;pointer-events:none}
 .mr-bg img{display:block;width:100%;height:100%;object-fit:cover;opacity:.42}
 .mr-bg:after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(24,7,2,.55) 0%,rgba(24,7,2,.3) 35%,rgba(24,7,2,.96) 100%)}
@@ -1524,7 +1524,8 @@ body.phone .bo-main .av{width:6.4rem;height:6.4rem;font-size:2.3rem} body.phone 
 /* M3 "just in" is a ribbon on the card's top edge */
 .mr-new{position:absolute;top:0;right:1.6rem;z-index:2;display:flex;align-items:center;height:2rem;padding:0 .9rem;border-radius:0 0 .7rem .7rem;background:var(--live);color:#fff;font-size:1.2rem;font-weight:700;letter-spacing:.03rem;box-shadow:0 .4rem 1.2rem rgba(255,61,0,.4)}
 .mr-new .mr-dot{background:#fff;width:.6rem;height:.6rem;margin-right:.45rem}
-.mr-c.is-new{padding-top:2.6rem} .mr-c.mr-lead.is-new{padding-top:3rem}
+.mr-c.mr-lead.is-new{padding-top:3rem}
+.mr-c.is-new:not(.mr-lead) .mr-when{visibility:hidden}   /* on a small card the ribbon says it: no extra line for it */
 body.portrait .mr-im,body.phone .mr-im{flex:none;height:18rem}
 body.phone .mr-im{height:15rem;margin-left:-1.6rem;margin-right:-1.6rem} body.phone .mr-bg img{opacity:.24} body.phone .mr-c.mr-lead.has-im .mr-t{font-size:2.1rem}
 
