@@ -202,7 +202,7 @@ body.proto #backBtn,body.proto #chBack{display:none}
 .in-rays{top:-14%;left:-14%;width:128%;height:128%;opacity:0;animation:inFade 1.4s 3.6s ease forwards}
 .in-rays g{-webkit-transform-origin:100px 100px;transform-origin:100px 100px;animation:inSpin 70s linear infinite}
 .in-map{top:0;left:0;width:100%;height:100%;animation:inMapDim 1.2s 4.6s ease forwards}
-.in-map path{fill:url(#inTri);fill-opacity:0;stroke:#FFB04D;stroke-width:.05;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;
+.in-map path{fill:url(#inTri);fill-opacity:0;stroke:#FFB04D;stroke-width:.11;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;
   animation:inDraw 1.1s ease forwards,inFill 1.4s 2.3s ease forwards}
 @keyframes inDraw{0%{stroke-dashoffset:1;stroke:#FFF3C4}60%{stroke:#FFE08A}100%{stroke-dashoffset:0;stroke:#FF9933}}
 @keyframes inFill{to{fill-opacity:.2}}
@@ -327,7 +327,7 @@ body.reduced .in-lotus,body.reduced .in-spark,body.reduced .in-burst,body.reduce
 /* a small India map next to the buttons: every state shaded by how active it is; click to choose */
 .ch-all{width:50rem} .ch-one{width:54rem}
 .ch-st-body{display:grid;grid-template-columns:16rem 1fr;grid-gap:1.4rem;align-items:start}
-.ch-map svg{display:block;width:100%;height:17rem}
+.ch-map svg{display:block;width:100%;height:15rem}
 .ch-map path{stroke:rgba(255,214,140,.55);stroke-width:.7px;vector-effect:non-scaling-stroke;fill:rgba(255,255,255,.05);transition:fill .15s}
 .ch-map path.ok{cursor:pointer}
 .ch-map path.ok:hover,.ch-map path.hov{fill:#FFC857!important;stroke:#fff}
@@ -1553,6 +1553,71 @@ body.phone .er-c .hd{flex-wrap:wrap} body.phone .er-c .hd b{white-space:normal}
 .honesty .inf{display:inline-block;margin-right:.8rem;padding:.1rem 1rem .15rem;border-radius:2rem;line-height:1.55;color:var(--muted);background:rgba(255,255,255,.06);border:.08rem solid rgba(255,255,255,.14)}
 .honesty .inf:before{content:'';display:inline-block;width:.55rem;height:.55rem;border-radius:50%;background:var(--grey);margin-right:.65rem;vertical-align:.2rem}
 
+/* ---------- start screen + intro (audit phase 6) ---------- */
+/* C4 the rooms' cards show what is in them now */
+.ch-media .ch-vis,.ch-media .ch-logos,.ch-media .ch-seat{display:flex;margin-top:0}   /* (an older .ch-media span rule made these blocks) */
+.ch-vis{flex:0 0 auto;display:flex;align-items:center;margin-right:1.4rem}
+.ch-rooms .ch-media .ch-vis svg{margin-right:0}
+.ch-logos{display:flex;align-items:center}
+.ch-logos .mr-lg{width:3.4rem;height:3.4rem;border-radius:50%;border:.2rem solid #2a0c03;margin-right:-1rem;box-shadow:0 .3rem .8rem rgba(0,0,0,.4)}
+.ch-logos .mr-lg:last-child{margin-right:0}
+.ch-seat{position:relative;display:flex;width:9rem;height:1.4rem;border-radius:.7rem;overflow:hidden;background:rgba(255,255,255,.08)}
+.ch-seat i{display:block;height:100%}
+.ch-seat u{position:absolute;top:-.1rem;bottom:-.1rem;width:0;border-left:.18rem dashed #fff;opacity:.85}
+.ch-rooms .ch-media{padding:1rem 1.8rem}
+.ch-media .ch-dot.old{background:var(--amber)} .ch-media .ch-dot{display:inline-block;width:.7rem;height:.7rem;border-radius:50%;background:var(--good);margin-right:.6rem;vertical-align:.1rem}
+.ch-media .ch-live{display:block;font-size:1.4rem;line-height:1.4;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.15rem;opacity:0}
+.ch-media .ch-live b{display:inline;font-size:inherit;color:var(--gold);font-weight:700;margin-right:.6rem}
+.ch-media .ch-live.in{opacity:1;-webkit-animation:chLive .5s cubic-bezier(.2,.7,.2,1) both;animation:chLive .5s cubic-bezier(.2,.7,.2,1) both}
+@-webkit-keyframes chLive{from{opacity:0;-webkit-transform:translateY(.6rem)}to{opacity:1;-webkit-transform:none}} @keyframes chLive{from{opacity:0;transform:translateY(.6rem)}to{opacity:1;transform:none}}
+.ch-media .ch-live:empty{display:none}
+/* C9 the leader card: recent picks with faces, and who is talked about now */
+.ch-recent button.pp{display:flex;align-items:center;padding:.35rem 1.2rem .35rem .4rem}
+.ch-recent button.pp .av{width:2.8rem;height:2.8rem;font-size:1.1rem;border-width:.12rem;margin-right:.7rem}
+.ch-recent{align-items:center}
+.ch-trend{margin-top:1rem;padding-top:.9rem;border-top:.08rem solid rgba(255,200,87,.14)}
+.ch-tk{font-family:var(--head);font-weight:700;font-size:1.3rem;letter-spacing:.14rem;text-transform:uppercase;color:var(--gold);margin-bottom:.9rem}
+.ch-tr{display:flex}
+.ch-tr button{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;padding:.6rem .3rem;margin-right:.6rem;border-radius:1.2rem;border:.08rem solid transparent;background:rgba(255,255,255,.04);cursor:pointer;color:var(--text)}
+.ch-tr button:last-child{margin-right:0}
+.ch-tr button:hover,.ch-tr button:focus{border-color:var(--gold);background:rgba(255,153,51,.14);outline:none}
+.ch-tr .av{width:4.4rem;height:4.4rem;font-size:1.6rem;border-width:.18rem}
+.ch-tr b{display:block;max-width:100%;margin-top:.6rem;font-size:1.3rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ch-tr span{font-family:var(--head);font-weight:700;font-size:1.35rem;color:var(--gold)} .ch-tr span .u{font-size:.8em;margin-left:.1em}
+/* C10 search: the typed part highlighted; slim scrollbars */
+.ch-row mark{background:none;color:var(--gold)}
+.ch-list::-webkit-scrollbar,.st-grid::-webkit-scrollbar,.mrp-body ::-webkit-scrollbar{width:.6rem}
+.ch-list::-webkit-scrollbar-thumb,.st-grid::-webkit-scrollbar-thumb,.mrp-body ::-webkit-scrollbar-thumb{background:rgba(255,153,51,.45);border-radius:.6rem}
+.ch-list::-webkit-scrollbar-track,.st-grid::-webkit-scrollbar-track,.mrp-body ::-webkit-scrollbar-track{background:transparent}
+/* C11 state picker: activity bars that can be seen */
+.st-item i{height:.55rem;border-radius:0 .3rem 0 0}
+/* C12 the countdown: the seconds inside the ring that fills */
+.ch-go{position:relative}
+.ch-n{position:absolute;left:0;top:50%;width:3.6rem;margin-top:-.95rem;text-align:center;font-family:var(--head);font-weight:700;font-size:1.6rem;line-height:1.9rem;color:var(--gold)}
+.ch-n:empty{display:none}
+/* I3 skip: a visible key chip */
+.in-skip{padding:.6rem 1.4rem;border-radius:2rem;border:.08rem solid rgba(255,200,87,.35);background:rgba(0,0,0,.28);font-size:1.35rem;color:var(--muted);-webkit-animation:skipDim 1s 4s ease forwards;animation:skipDim 1s 4s ease forwards}
+@-webkit-keyframes skipDim{to{opacity:.45}} @keyframes skipDim{to{opacity:.45}}
+/* I4 after the first visit of the day: a 2-second sting -- the disc, its ring, the wordmark */
+#intro.quick .in-map,#intro.quick .in-rays,#intro.quick .in-lotus,#intro.quick .in-burst,#intro.quick .in-embers,#intro.quick .in-spark,#intro.quick .in-stats,#intro.quick .in-skip{display:none}
+#intro.quick .in-glow{-webkit-animation:inGlow 1.2s ease forwards;animation:inGlow 1.2s ease forwards}
+#intro.quick .in-logo{-webkit-animation:inDisc .7s .05s cubic-bezier(.2,1.25,.35,1) forwards;animation:inDisc .7s .05s cubic-bezier(.2,1.25,.35,1) forwards}
+#intro.quick .in-logo:after{-webkit-animation:inShine .9s .6s ease-in-out forwards;animation:inShine .9s .6s ease-in-out forwards}
+#intro.quick .in-ring .r1{-webkit-animation:inRing .8s .3s cubic-bezier(.6,0,.2,1) forwards;animation:inRing .8s .3s cubic-bezier(.6,0,.2,1) forwards}
+#intro.quick .in-ring .r2{-webkit-animation:inFade .6s .6s ease forwards,inSpin 40s linear infinite;animation:inFade .6s .6s ease forwards,inSpin 40s linear infinite}
+#intro.quick .in-wm b{-webkit-animation:inUp .6s .35s cubic-bezier(.2,.9,.25,1) forwards,inShimmer 1s .8s ease-in-out forwards;animation:inUp .6s .35s cubic-bezier(.2,.9,.25,1) forwards,inShimmer 1s .8s ease-in-out forwards}
+#intro.quick .in-wm .nz{-webkit-animation:inTrack .8s .55s cubic-bezier(.2,.8,.2,1) forwards;animation:inTrack .8s .55s cubic-bezier(.2,.8,.2,1) forwards}
+#intro.quick .in-wm .tri{-webkit-animation:inBar .6s .75s ease forwards;animation:inBar .6s .75s ease forwards}
+#intro.quick .in-wm i{-webkit-animation:inRise .6s .9s ease forwards;animation:inRise .6s .9s ease forwards}
+/* (older .ch-media rules styled every i and b in the card: the arrow and the title -- not the bar or the live line) */
+.ch-media .ch-seat i,.ch-media .ch-live i.ch-dot{margin-left:0;padding-left:0;font-size:0;flex:0 0 auto}
+.ch-media .ch-live i.ch-dot{margin-right:.6rem}
+body .ch-media .ch-live b{font-family:var(--body);font-size:inherit;line-height:inherit;font-weight:700;display:inline}
+.ch-tr span{white-space:nowrap}
+body.phone .ch-tr .av{width:4.2rem;height:4.2rem} body.phone .ch-tr b{font-size:1.05rem} body.phone .ch-tr span{font-size:1.05rem}
+body.phone .ch-media .ch-seat i{display:block} body.phone .ch-media .ch-live i.ch-dot{display:inline-block}
+body.phone .ch-media b span{font-size:inherit}            /* (the Election Room title was shrunk by the phone .ch-media span rule) */ body.phone .ch-seat{width:6rem} body.phone .ch-logos .mr-lg{width:2.8rem;height:2.8rem}
+
 /* ---------- shared helpers (audit G5 / G6) ---------- */
 /* cut text to whole lines with "…" (fitClamps lowers the count when a card is squeezed) */
 .clamp-1,.clamp-2,.clamp-3{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden} .clamp-1{-webkit-line-clamp:1} .clamp-2{-webkit-line-clamp:2} .clamp-3{-webkit-line-clamp:3}
@@ -1622,7 +1687,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     <div class="ch-card ch-all" id="chAll" tabindex="0" role="button">
       <div class="ch-k" id="chAllK"></div><div class="ch-t" id="chAllT"></div><div class="ch-d" id="chAllD"></div>
       <div class="ch-st hidden" id="chSt"><div class="ch-st-k"><svg viewBox="0 0 24 24"><path d="M12 2C8 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3-7-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg><span id="chStK"></span></div><div class="ch-st-body"><div class="ch-map"><div id="chMap"></div><div class="ch-map-tip" id="chMapTip"></div></div><div class="ch-st-list" id="chStList"></div></div></div>
-      <div class="ch-go"><svg class="ch-ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" stroke="rgba(255,255,255,.15)"/><circle id="chRing" cx="18" cy="18" r="15" stroke="#FFC857" stroke-dasharray="94.25" stroke-dashoffset="0" transform="rotate(-90 18 18)"/></svg><span id="chGo"></span></div>
+      <div class="ch-go"><svg class="ch-ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" stroke="rgba(255,255,255,.15)"/><circle id="chRing" cx="18" cy="18" r="15" stroke="#FFC857" stroke-dasharray="94.25" stroke-dashoffset="0" transform="rotate(-90 18 18)"/></svg><b class="ch-n" id="chN"></b><span id="chGo"></span></div>
     </div>
     <div class="ch-card ch-one">
       <div class="ch-k" id="chOneK"></div><div class="ch-t" id="chOneT"></div>
@@ -1630,16 +1695,17 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
         <input id="chInput" type="text" autocomplete="off" spellcheck="false"></div>
       <div class="ch-list" id="chList"></div>
       <div class="ch-recent" id="chRecent"></div>
+      <div class="ch-trend" id="chTrend"></div>
       <div class="ch-hint" id="chHint"></div>
     </div>
   </div>
   <div class="ch-rooms">
   <div class="ch-media" id="chMedia" tabindex="0" role="button">
-    <svg viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="13" rx="2"/><path d="M8 21h8M12 17.5V21"/><path d="M6.5 9h7M6.5 12.5h11"/></svg>
-    <div><b id="chMediaT"></b><span id="chMediaD"></span></div><i id="chMediaGo"></i>
+    <span class="ch-vis" id="chMediaVis"><svg viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="13" rx="2"/><path d="M8 21h8M12 17.5V21"/><path d="M6.5 9h7M6.5 12.5h11"/></svg></span>
+    <div><b id="chMediaT"></b><span id="chMediaD"></span><span class="ch-live" id="chMediaLive"></span></div><i id="chMediaGo"></i>
   </div>
   <div class="ch-media ch-er" id="chElec" tabindex="0" role="button">
-    <svg viewBox="0 0 24 24"><rect x="3.5" y="10" width="17" height="10.5" rx="1.5"/><path d="M8 10V4.5h8V10"/><path d="M9.5 7.5l1.7 1.7 3.3-3.4"/><path d="M8 14h8"/></svg>
+    <span class="ch-vis" id="chElecVis"><svg viewBox="0 0 24 24"><rect x="3.5" y="10" width="17" height="10.5" rx="1.5"/><path d="M8 10V4.5h8V10"/><path d="M9.5 7.5l1.7 1.7 3.3-3.4"/><path d="M8 14h8"/></svg></span>
     <div><b><span id="chElecT"></span><span class="er-live" id="chElecLive"></span></b><span id="chElecD"></span></div><i id="chElecGo"></i>
   </div>
   </div>
@@ -1757,7 +1823,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       tkLbl: 'Latest from media', tkLblP: 'In the news', tkBreaking: 'Breaking',
       chQ: 'Whose view today?', chQs: 'Choose the whole country, one state, or follow one leader closely.',
       chAllK: 'Full picture', chAllT: SCOPE === 'up' ? 'Uttar Pradesh' : 'All India', chAllD: 'Every party, every state — who is posting, who is being seen, what the news says.',
-      chGo: 'Starts by itself in {n}s', chGoNow: 'Start now', chOneK: 'Personal channel', chOneT: 'One leader',
+      chGo: 'Starts by itself in {n}s', chGo2: 'seconds — then it starts by itself', chGoNow: 'Start now', chTrendK: 'Talked about now', chErLive: 'Counting now: {c}', chErLast: 'Latest result: {c} · {d}', chOneK: 'Personal channel', chOneT: 'One leader',
       chPh: 'Type a name or @handle…', chHint: 'Use ↑ ↓ and Enter, or tap a name.', chNone: 'No leader found with that name.',
       intro1: 'leaders tracked', intro2: 'states', intro3: 'posts analysed',
       glance: 'At a glance', posts: 'Who is posting the most?', views: 'Whose posts are seen the most?',
@@ -1829,7 +1895,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       tkLbl: 'मीडिया से ताज़ा', tkLblP: 'ख़बरों में', tkBreaking: 'ब्रेकिंग',
       chQ: 'आज किसकी नज़र से देखें?', chQs: 'पूरा देश देखें, एक राज्य चुनें, या किसी एक नेता पर नज़र रखें।',
       chAllK: 'पूरी तस्वीर', chAllT: SCOPE === 'up' ? 'उत्तर प्रदेश' : 'पूरा भारत', chAllD: 'हर पार्टी, हर राज्य — कौन पोस्ट कर रहा है, किसे देखा जा रहा है, ख़बरें क्या कहती हैं।',
-      chGo: '{n} सेकंड में अपने आप शुरू', chGoNow: 'अभी शुरू करें', chOneK: 'निजी चैनल', chOneT: 'एक नेता',
+      chGo: '{n} सेकंड में अपने आप शुरू', chGo2: 'सेकंड में अपने आप शुरू', chGoNow: 'अभी शुरू करें', chTrendK: 'अभी चर्चा में', chErLive: 'अभी मतगणना: {c}', chErLast: 'पिछला नतीजा: {c} · {d}', chOneK: 'निजी चैनल', chOneT: 'एक नेता',
       chPh: 'नाम या @हैंडल लिखें…', chHint: '↑ ↓ और Enter दबाएँ, या नाम पर टैप करें।', chNone: 'इस नाम से कोई नेता नहीं मिला।',
       intro1: 'नेताओं पर नज़र', intro2: 'राज्य', intro3: 'पोस्ट का विश्लेषण',
       glance: 'एक नज़र में', posts: 'सबसे ज़्यादा कौन पोस्ट कर रहा है?', views: 'किसके पोस्ट सबसे ज़्यादा देखे गए?',
@@ -4191,16 +4257,52 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     state.mode = null; $('app').style.visibility = 'hidden'; $('chooser').className = ''; setCls(document.body, 'choosing', true);
     mrPanel(false); setCls(document.body, 'mr', false); setCls(document.body, 'er', false); $('mrBtn').className = 'tbtn hidden'; $('erBack').className = 'tbtn er-back hidden';
     if (!DEMO) { if (erWatchT) erChooserLive(); else erWatchStart(); }
-    heroLevel('hi'); renderRecent(); loadStates(); $('chInput').value = ''; $('chList').innerHTML = '';
+    heroLevel('hi'); renderRecent(); renderTrend(); renderRoomCards(); loadStates(); $('chInput').value = ''; $('chList').innerHTML = ''; setCls($('chTrend'), 'hidden', false);
     chLeft = CHOOSER_AUTO_S; tickChooser(); clearTimeout(chResumeT);
     clearInterval(chT); chT = setInterval(tickChooser, 1000);
     /* not on phones: focusing would open the keyboard and scroll the page */
     if (!('ontouchstart' in window) && !PHONE) setTimeout(function () { try { $('chInput').focus(); } catch (e) {} }, 300);
     if (PHONE) $('chooser').scrollTop = 0;
   }
+  /* the rooms on the start screen show what is in them right now: the Media Room its newest
+     headlines (one at a time) and the faces of their publishers; the Election Room what is being
+     counted, or the last result as a seat bar with the majority mark */
+  var chRoomT = null;
+  function renderRoomCards() {
+    clearInterval(chRoomT); chRoomT = null;
+    if (DEMO) return;
+    api(mrUrl()).then(function (m) {
+      if (!m || m.__notfound || !m.all || state.mode) return;
+      var tk = (m.all.ticker || []).filter(function (x) { return x && x.t; }).slice(0, 8), seen = {}, n = 0, logos = '';
+      tk.forEach(function (x) { if (x.lg && !seen[x.s] && n < 3) { seen[x.s] = 1; n++; logos += mrLogo(x.s, x.lg); } });
+      if (logos) $('chMediaVis').innerHTML = '<span class="ch-logos">' + logos + '</span>';
+      /* two lines, like the Election Room card: the description makes way for the live headline; the dot is
+         green when the news is fresh (collected in the last 30 min), and says when, on hover */
+      if (!tk.length) return;
+      var fresh = m.lastRun && Date.now() - m.lastRun < 30 * 60000;
+      setCls($('chMediaD'), 'hidden', true);
+      if (m.lastRun) $('chMediaLive').title = fill(t('mrChipUpd'), { a: fmtAgo(Math.max(0, (Date.now() - m.lastRun) / 60000)) });
+      var i = 0, show = function () {
+        var x = tk[i % tk.length], el = $('chMediaLive'); i++;
+        el.className = 'ch-live'; el.innerHTML = '<i class="ch-dot' + (fresh ? '' : ' old') + '"></i>' + (x.s ? '<b>' + esc(x.s) + '</b>' : '') + esc(x.t); void el.offsetWidth; el.className = 'ch-live in';
+      };
+      show(); if (!REDUCED) chRoomT = setInterval(show, 4500);
+    }).catch(function () {});
+    api(erUrl()).then(function (m) {
+      if (!m || m.__notfound || state.mode) return;
+      var live = (m.contests || []).filter(function (c) { return c.status === 'live'; })[0];
+      var r = live || (m.past || []).filter(function (x) { return x.parties && x.parties.length && x.seats; })[0];
+      if (!r) return;
+      var seats = r.seats || 0, bar = '';
+      (r.parties || []).slice(0, 6).forEach(function (p) { var v = live ? (p.won || 0) + (p.lead || 0) : p.won; if (v && seats) bar += '<i style="width:' + (100 * v / seats).toFixed(1) + '%;background:' + (p.color || erPColor(r, p.abbr) || '#8D6E63') + '"></i>'; });
+      if (bar) $('chElecVis').innerHTML = '<span class="ch-seat">' + bar + (r.majority && seats ? '<u style="left:' + (100 * r.majority / seats).toFixed(1) + '%"></u>' : '') + '</span>';
+      $('chElecD').textContent = live ? fill(t('chErLive'), { c: erCName(live) }) : fill(t('chErLast'), { c: erCName(r), d: r.date ? fmtDay(r.date + ' 00:00') : '' });
+    }).catch(function () {});
+  }
   function tickChooser() {
     if (chLeft !== null && chLeft <= 0) { startShow('all'); return; }     // (null <= 0 is true in JS: a held countdown must never start the show)
-    $('chGo').textContent = chLeft === null ? t('chGoNow') : fill(t('chGo'), { n: chLeft });
+    $('chGo').textContent = chLeft === null ? t('chGoNow') : t('chGo2');
+    $('chN').textContent = chLeft === null ? '' : String(chLeft);
     $('chRing').setAttribute('stroke-dashoffset', String(94.25 * (1 - (chLeft || 0) / CHOOSER_AUTO_S)));
     if (chLeft !== null) chLeft--;
   }
@@ -4312,7 +4414,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
      on the start screen always goes on to the show by itself */
   var chResumeT = null, CHOOSER_IDLE_MS = 15000;
   function holdChooser() {
-    if (chLeft !== null) { chLeft = null; clearInterval(chT); $('chGo').textContent = t('chGoNow'); $('chRing').setAttribute('stroke-dashoffset', '0'); }
+    if (chLeft !== null) { chLeft = null; clearInterval(chT); $('chGo').textContent = t('chGoNow'); $('chN').textContent = ''; $('chRing').setAttribute('stroke-dashoffset', '0'); }
     clearTimeout(chResumeT); chResumeT = setTimeout(resumeChooser, CHOOSER_IDLE_MS);
   }
   function resumeChooser() {
@@ -4320,7 +4422,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     if ($('chInput').value.trim() || $('stPanel').className.indexOf('hidden') < 0) { chResumeT = setTimeout(resumeChooser, CHOOSER_IDLE_MS); return; }
     chLeft = CHOOSER_AUTO_S; tickChooser(); clearInterval(chT); chT = setInterval(tickChooser, 1000);
   }
-  function stopChooser() { clearInterval(chT); chT = null; clearTimeout(chResumeT); }
+  function stopChooser() { clearInterval(chT); chT = null; clearTimeout(chResumeT); clearInterval(chRoomT); chRoomT = null; }
   function doSearch() {
     var v = $('chInput').value.trim();
     clearTimeout(chSearchT);
@@ -4333,11 +4435,16 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
         .catch(function () {});
     }, 180);
   }
+  /* the typed text in bold gold inside each result */
+  function hlMatch(name, q) {
+    var n = String(name || ''), i = q ? n.toLowerCase().indexOf(q.toLowerCase().replace(/^@/, '')) : -1, L = q ? q.replace(/^@/, '').length : 0;
+    return i < 0 || !L ? esc(n) : esc(n.slice(0, i)) + '<mark>' + esc(n.slice(i, i + L)) + '</mark>' + esc(n.slice(i + L));
+  }
   function renderList() {
     if (!chRes.length) { $('chList').innerHTML = $('chInput').value.trim().length >= 2 ? '<div class="ch-hint">' + esc(t('chNone')) + '</div>' : ''; return; }
     $('chList').innerHTML = chRes.map(function (p, i) {
       return '<div class="ch-row' + (i === chSel ? ' on' : '') + '" data-i="' + i + '">' + avatar(p.name, p.avatar, p.color)
-        + '<div class="n"><b>' + esc(p.name) + '</b><span>@' + esc(p.handle) + ' · ' + esc([p.designation, p.state ? stName(p.state) : '', p.ac].filter(Boolean).join(' · ')) + '</span></div>'
+        + '<div class="n"><b>' + hlMatch(p.name, $('chInput').value.trim()) + '</b><span>@' + esc(p.handle) + ' · ' + esc([p.designation, p.state ? stName(p.state) : '', p.ac].filter(Boolean).join(' · ')) + '</span></div>'
         + (p.party ? '<span class="pt" style="background:' + p.color + '">' + esc(p.party) + '</span>' : '') + '</div>';
     }).join('');
     [].forEach.call($('chList').querySelectorAll('.ch-row'), function (row) { row.onclick = function () { pick(+row.getAttribute('data-i')); }; });
@@ -4347,12 +4454,31 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
   /* one list of recent leaders on this device (leaders are All India, not per state) */
   function recents() { try { return JSON.parse(store('nazar_recent_all') || '[]') || []; } catch (e) { return []; } }
   function rememberRecent(h) { var r = recents().filter(function (x) { return x.toLowerCase() !== String(h).toLowerCase(); }); r.unshift(h); store('nazar_recent_all', JSON.stringify(r.slice(0, 6))); }
+  /* the leaders in the snapshot (for faces and names on the start screen) */
+  function knownLeaders() {
+    var l = (state.all && state.all.leadersByParty) || {}, out = [];
+    Object.keys(l).forEach(function (p) { (l[p] || []).forEach(function (x) { out.push({ handle: x.handle, name: x.name, views: x.views || 0, avatar: x.avatar, party: p }); }); });
+    return out.sort(function (a, b) { return b.views - a.views; });
+  }
+  function shortName(n) { return String(n || '').replace(/^(Shri|Smt\.?|Sri|Dr\.?|Kumari)\s+/i, ''); }
+  /* "talked about now": the six most-viewed leaders of the last hours, one press opens their channel */
+  function renderTrend() {
+    var top = knownLeaders().filter(function (x) { return !/^(bjp|inc|aap|incindia|bjp4india)/i.test(x.handle); }).slice(0, 5);
+    $('chTrend').innerHTML = top.length ? '<div class="ch-tk">' + esc(t('chTrendK')) + '</div><div class="ch-tr">' + top.map(function (x) {
+      return '<button type="button" data-h="' + esc(x.handle) + '">' + avatar(x.name, x.avatar, colorOf(x.party)) + '<b>' + esc(shortName(x.name)) + '</b><span>' + numHtml(fmtShort(x.views)) + '</span></button>';
+    }).join('') + '</div>' : '';
+    [].forEach.call($('chTrend').querySelectorAll('button'), function (b) { b.onclick = function () { startShow('person', b.getAttribute('data-h')); }; });
+  }
   function renderRecent() {
-    var r = recents();
-    $('chRecent').innerHTML = r.map(function (h) { return '<button type="button" data-h="' + esc(h) + '">@' + esc(h) + '</button>'; }).join('');
+    var r = recents(), by = {};
+    knownLeaders().forEach(function (x) { by[String(x.handle).toLowerCase()] = x; });
+    $('chRecent').innerHTML = r.map(function (h) {
+      var x = by[String(h).toLowerCase()];
+      return '<button type="button" data-h="' + esc(h) + '"' + (x ? ' class="pp"' : '') + '>' + (x ? avatar(x.name, x.avatar, colorOf(x.party)) + esc(shortName(x.name)) : '@' + esc(h)) + '</button>';
+    }).join('');
     [].forEach.call($('chRecent').querySelectorAll('button'), function (b) { b.onclick = function () { startShow('person', b.getAttribute('data-h')); }; });
   }
-  $('chInput').addEventListener('input', function () { holdChooser(); doSearch(); });
+  $('chInput').addEventListener('input', function () { holdChooser(); setCls($('chTrend'), 'hidden', $('chInput').value.trim().length > 0); doSearch(); });
   $('chInput').addEventListener('keydown', function (e) {
     holdChooser();
     if (e.key === 'ArrowDown' || e.key === 'Down') { chSel = Math.min(chRes.length - 1, chSel + 1); renderList(); e.preventDefault(); }
@@ -4384,6 +4510,10 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     var skip = false;
     try { skip = window.sessionStorage.getItem('nazar_skip_intro') === '1'; window.sessionStorage.removeItem('nazar_skip_intro'); } catch (e) {}
     if (Q.intro === '0' || skip) { endIntro(); return; }
+    var today = new Date(Date.now() + 19800000).toISOString().slice(0, 10), seen = store('nazar_intro_day') === today;
+    store('nazar_intro_day', today);
+    if (seen && Q.intro !== '1') { $('intro').className = 'quick'; setTimeout(endIntro, REDUCED ? 600 : 1900); return; }
+    introT0 = Date.now();
     var i, h = '';
     for (i = 0; i < 24; i++) h += '<polygon points="100,100 ' + rayPt(i * 15 - 2.2) + ' ' + rayPt(i * 15 + 2.2) + '"></polygon>';
     $('inRays').innerHTML = h;
@@ -4401,7 +4531,7 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
       var cx = vb[0] + vb[2] / 2, cy = vb[1] + vb[3] / 2, R = Math.sqrt(vb[2] * vb[2] + vb[3] * vb[3]) / 2;
       [].forEach.call($('inMap').querySelectorAll('path'), function (el) {
         var d = 0; try { var b = el.getBBox(), dx = b.x + b.width / 2 - cx, dy = b.y + b.height / 2 - cy; d = Math.sqrt(dx * dx + dy * dy) / R; } catch (e) {}
-        var at = REDUCED ? 0 : 0.3 + Math.min(1, d) * 1.3;
+        var at = REDUCED ? 0 : 0.05 + Math.min(1, d) * 1.1;
         el.style.animationDelay = at.toFixed(2) + 's, 2.3s';
       });
     });
@@ -4425,8 +4555,11 @@ body.kbd .mrp button.o.on:focus,body.kbd .mrp-x:focus,body.kbd .spd button.on:fo
     setTimeout(endIntro, 9200);
   }
   function rayPt(deg) { var r = deg * Math.PI / 180; return (100 + 100 * Math.sin(r)).toFixed(2) + ',' + (100 - 100 * Math.cos(r)).toFixed(2); }
+  var introT0 = Date.now();
   function introStats() {
     if (introDone || !state.all) return;
+    /* the numbers have their moment (6.1 s, after the wordmark): data that arrives earlier waits for it */
+    if (!REDUCED && Date.now() - introT0 < 6000) return;
     var cs = state.all.coverageStats || {}, k = state.all.kpis || {};
     var items = [[fmtInt(cs.handlesMapped), t('intro1')], [STATE ? '' : String(k.statesCovered || ''), t('intro2')], [fmtShort(cs.postsInDatabase), t('intro3')]]
       .filter(function (x) { return x[0] && x[0] !== '–'; });

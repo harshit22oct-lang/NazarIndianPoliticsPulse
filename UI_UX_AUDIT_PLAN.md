@@ -464,7 +464,19 @@ Each phase ends with screenshots at 1920×1080, 1280×720, 3840×2160, the 375 p
 - **E7.** "No counting now" / "news only" notes are neutral grey tags, not amber warnings.
 - **`.er-alert`** no longer uses flex `gap` (old TVs).
 - The map badges were renamed `.mapb` (they shared `.mb` with the Election Room's party rows).
-| **6. Start screen + intro** | C4, C9–C12, I1–I4 | Medium |
+| **6. Start screen + intro** ✅ done 30 Oct | C4, C9–C12, I1–I4 | Medium |
+
+**Phase 6 — what was done (30 Oct):**
+- **C4 rooms.** The two room strips are live cards. Media Room: its 3 latest publishers' logos and the newest headlines one at a time (a green dot when the news is under 30 min old, amber when older). Election Room: what is being counted, or "पिछला नतीजा: <contest> · <date>" with that result as a seat bar and its majority mark. The stock icons stay as the fallback when there is no data. A full 2×2 grid did not fit at 720p, so the rooms stay a row of two (they now fit with the screen's bottom margin).
+- **C9 leader card.** "अभी चर्चा में": the 5 most-viewed leaders as photo buttons (one press opens the channel), hidden while typing. Recent picks show face + name when known.
+- **C10 search.** The typed part is gold in each result; slim saffron scrollbars (search, state list, room panel).
+- **C11 state picker.** Activity bars almost twice as thick. (The state list has only post counts, so there is no lead-party chip.)
+- **C12 countdown.** The seconds sit inside the filling ring.
+- **I1.** The map's outline is drawn thicker and starts at once (the first 1.5 s were near-black).
+- **I2.** The numbers came in as soon as the data arrived (~1 s), under the half-drawn lotus; they now wait for their moment (6 s, after the wordmark).
+- **I3.** The skip hint is a visible key chip that dims after 4 s.
+- **I4.** The full intro plays once a day per device; later opens get a 2-second sting (disc, ring, wordmark, tagline). `?intro=1` forces the full one, and a soft reload skips it as before.
+- On phone: older `.ch-media` rules hid the new seat bar and shrank the Election Room title; both fixed. The All-India map on the start screen is 2rem shorter so everything fits at 720p.
 | **7. Motion pass** | Section 11, as one consistent layer | Medium |
 | **8. Phone** | F1–F5, L1–L3 | Medium |
 
